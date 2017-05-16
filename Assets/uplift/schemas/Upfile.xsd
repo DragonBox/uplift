@@ -17,23 +17,30 @@
   <!-- Make multiple repository types -->
   <xs:complexType name="WebRepositoryType">
     <xs:simpleContent>
-        <xs:extension base="xs:string">
-          <xs:attribute type="xs:string" name="Url" use="required"/>
+        <xs:extension base="RepositoryType">
+          <xs:attribute type="xs:anyURI" name="Url" use="required"/>
         </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="GitRepositoryType">
     <xs:simpleContent>
-      <xs:extension base="xs:string">
-        <xs:attribute type="xs:string" name="Url" use="required"/>
+      <xs:extension base="RepositoryType">
+        <xs:attribute type="xs:anyURI" name="Url" use="required"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="FileRepositoryType">
     <xs:simpleContent>
-        <xs:extension base="xs:string">
+        <xs:extension base="RepositoryType">
           <xs:attribute type="xs:string" name="Path" use="required"/>
         </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="RepositoryType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="ExtractPath" use="optional"/>
+      </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="RepositoriesType">
@@ -43,7 +50,7 @@
       <xs:element type="GitRepositoryType" name="GitRepository"/>
     </xs:choice>
   </xs:complexType>
-  <xs:complexType name="DependencyType">
+  <xs:complexType name="PackageType">
     <xs:simpleContent>
       <xs:extension base="xs:string">
         <xs:attribute type="xs:string" name="Name" use="required"/>
@@ -54,7 +61,7 @@
   </xs:complexType>
   <xs:complexType name="DependenciesType">
     <xs:sequence>
-      <xs:element type="DependencyType" name="Dependency"/>
+      <xs:element type="PackageType" name="Package" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="Upfile">

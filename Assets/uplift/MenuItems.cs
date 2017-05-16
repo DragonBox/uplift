@@ -35,7 +35,7 @@ public class MenuItems : MonoBehaviour {
 
 	[MenuItem("Uplift/Install Dependencies", false, 20)]
 	static void InstallDependencies() {
-
+		UpfileHandler.InstallDependencies();
 	}
 
 

@@ -4,6 +4,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System;
 using System.Collections;
+using Schemas;
 
 public class UpfileHandler {
     const bool debugMode = true;
@@ -41,6 +42,15 @@ public class UpfileHandler {
         return serializer.Deserialize(new FileStream(upfilePath, FileMode.Open)) as Schemas.Upfile;
     }
 
+    public void InstallDependencies() {
+        //FIXME: We should check for all repositories, not the first one
+        FileRepositoryType rt = (FileRepositoryType) Upfile.Repositories[0];
+
+        Debug.Log(rt.ToString());
+        foreach(Schemas.PackageType package in Upfile.Dependencies) {
+            rt.InstallPackage(package);
+        }
+    }
     //FIXME: Prepare proper version checker
     public void CheckUnityVersion() {
         String upfileVersion = Upfile.Requirements.Unity.Version;

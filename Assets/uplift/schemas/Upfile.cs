@@ -24,9 +24,9 @@ namespace Schemas {
         
         private RequirementsType requirementsField;
         
-        private object[] repositoriesField;
+        private RepositoryType[] repositoriesField;
         
-        private DependenciesType dependenciesField;
+        private PackageType[] dependenciesField;
         
         /// <remarks/>
         public RequirementsType Requirements {
@@ -42,7 +42,7 @@ namespace Schemas {
         [System.Xml.Serialization.XmlArrayItemAttribute("FileRepository", typeof(FileRepositoryType), IsNullable=false)]
         [System.Xml.Serialization.XmlArrayItemAttribute("GitRepository", typeof(GitRepositoryType), IsNullable=false)]
         [System.Xml.Serialization.XmlArrayItemAttribute("WebRepository", typeof(WebRepositoryType), IsNullable=false)]
-        public object[] Repositories {
+        public RepositoryType[] Repositories {
             get {
                 return this.repositoriesField;
             }
@@ -52,7 +52,8 @@ namespace Schemas {
         }
         
         /// <remarks/>
-        public DependenciesType Dependencies {
+        [System.Xml.Serialization.XmlArrayItemAttribute("Package", IsNullable=false)]
+        public PackageType[] Dependencies {
             get {
                 return this.dependenciesField;
             }
@@ -121,7 +122,7 @@ namespace Schemas {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DependencyType {
+    public partial class PackageType {
         
         private string nameField;
         
@@ -177,44 +178,27 @@ namespace Schemas {
     }
     
     /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(FileRepositoryType))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(GitRepositoryType))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(WebRepositoryType))]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DependenciesType {
+    public partial class RepositoryType {
         
-        private DependencyType dependencyField;
-        
-        /// <remarks/>
-        public DependencyType Dependency {
-            get {
-                return this.dependencyField;
-            }
-            set {
-                this.dependencyField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GitRepositoryType {
-        
-        private string urlField;
+        private string extractPathField;
         
         private string valueField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string Url {
+        public string ExtractPath {
             get {
-                return this.urlField;
+                return this.extractPathField;
             }
             set {
-                this.urlField = value;
+                this.extractPathField = value;
             }
         }
         
@@ -235,45 +219,9 @@ namespace Schemas {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class WebRepositoryType {
-        
-        private string urlField;
-        
-        private string valueField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string Url {
-            get {
-                return this.urlField;
-            }
-            set {
-                this.urlField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public string Value {
-            get {
-                return this.valueField;
-            }
-            set {
-                this.valueField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class FileRepositoryType {
+    public partial class FileRepositoryType : RepositoryType {
         
         private string pathField;
-        
-        private string valueField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
@@ -285,15 +233,46 @@ namespace Schemas {
                 this.pathField = value;
             }
         }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GitRepositoryType : RepositoryType {
+        
+        private string urlField;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public string Value {
+        [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
+        public string Url {
             get {
-                return this.valueField;
+                return this.urlField;
             }
             set {
-                this.valueField = value;
+                this.urlField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class WebRepositoryType : RepositoryType {
+        
+        private string urlField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
+        public string Url {
+            get {
+                return this.urlField;
+            }
+            set {
+                this.urlField = value;
             }
         }
     }

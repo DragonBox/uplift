@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Upfile" type="Upfile"/>
+  <xs:complexType name="UnityType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="Version"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="RequirementsType">
+    <xs:sequence>
+      <xs:element type="UnityType" name="Unity"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!-- Make multiple repository types -->
+  <xs:complexType name="WebRepositoryType">
+    <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="Url" use="required"/>
+        </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="GitRepositoryType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="Url" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="FileRepositoryType">
+    <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="Path" use="required"/>
+        </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="RepositoriesType">
+    <xs:choice minOccurs="1" maxOccurs="unbounded">
+      <xs:element type="FileRepositoryType" name="FileRepository" />
+      <xs:element type="WebRepositoryType" name="WebRepository"/>
+      <xs:element type="GitRepositoryType" name="GitRepository"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="DependencyType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="Name" use="required"/>
+        <xs:attribute type="xs:string" name="Version" use="required"/>
+        <xs:attribute type="xs:string" name="Repository" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="DependenciesType">
+    <xs:sequence>
+      <xs:element type="DependencyType" name="Dependency"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Upfile">
+    <xs:sequence>
+      <xs:element type="RequirementsType" name="Requirements" minOccurs="0" maxOccurs="1"/>
+      <xs:element type="RepositoriesType" name="Repositories" minOccurs="0" maxOccurs="1"/>
+      <xs:element type="DependenciesType" name="Dependencies" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

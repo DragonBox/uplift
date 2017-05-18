@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema
+    attributeFormDefault="unqualified" elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    >
+
+  <xs:complexType name="Requirement">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="Name" use="required"/>
+        <xs:attribute type="xs:string" name="Version" use="required"/>
+        <xs:attribute type="xs:string" name="License" use="optional"/>
+        <xs:attribute type="xs:string" name="Repository" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <!-- Note: Stub type is meant to be placeholder and changed later along the road -->
+  <xs:complexType name="Stub">
+  </xs:complexType>
+  <xs:complexType name="VersionSpec">
+    <xs:choice>
+      <xs:element type="xs:string" name="MajorVersionMin" maxOccurs="1"/>
+      <xs:element type="xs:string" name="MajorVersionMax" maxOccurs="1"/>
+      <xs:element type="xs:string" name="ExactVersion" maxOccurs="1"/>
+      <xs:element type="xs:string" name="MinVersion" maxOccurs="1"/>
+    </xs:choice>
+  </xs:complexType>
+    <xs:complexType name="DependenciesList">
+    <xs:sequence>
+      <xs:element type="DependencyDefinition" name="Package" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DependencyDefinition">
+    <xs:sequence>
+      <xs:element type="xs:string" name="PackageName"/>
+      <xs:element type="xs:string" name="PackageVersion" minOccurs="0"/>
+      <xs:element type="xs:string" name="Repository" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

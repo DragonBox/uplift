@@ -19,9 +19,8 @@ public class MenuItems : MonoBehaviour {
 		Debug.Log("Hi, I Generate upfile!");
 
 		Schemas.Upfile upfile = new Schemas.Upfile();
-		upfile.Requirements = new Schemas.RequirementsType();
-		upfile.Requirements.Unity = new Schemas.UnityType();
-		upfile.Requirements.Unity.Version = Application.unityVersion;
+		
+		upfile.UnityVersion = Application.unityVersion;
 
 		System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(Schemas.Upfile));
 		serializer.Serialize(new FileStream(UpfileHandler.upfilePath, FileMode.CreateNew), upfile);

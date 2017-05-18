@@ -1,3 +1,3 @@
 interface IRepositoryHandler {
-    void InstallPackage(Schemas.PackageType package);
+    void InstallPackage(Schemas.DependencyDefinition package);
 }

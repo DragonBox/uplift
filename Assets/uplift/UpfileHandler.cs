@@ -9,7 +9,7 @@ using Schemas;
 public class UpfileHandler {
     const bool debugMode = true;
     public const string upfilePath = "Upfile.xml";
-    Schemas.Upfile Upfile;
+    Upfile Upfile;
 
      
     public void Log(string str) {
@@ -20,7 +20,6 @@ public class UpfileHandler {
 
     public void Initialize() {
         if(CheckForUpfile()) {
-            Log("File exists");
             InternalLoadFile();
             CheckUnityVersion();
         } else {
@@ -44,16 +43,16 @@ public class UpfileHandler {
 
     public void InstallDependencies() {
         //FIXME: We should check for all repositories, not the first one
-        FileRepositoryType rt = (FileRepositoryType) Upfile.Repositories[0];
+        FileRepository rt = (FileRepository) Upfile.Repositories[0];
 
         Debug.Log(rt.ToString());
-        foreach(Schemas.PackageType package in Upfile.Dependencies) {
+        foreach(Schemas.DependencyDefinition package in Upfile.Dependencies) {
             rt.InstallPackage(package);
         }
     }
     //FIXME: Prepare proper version checker
     public void CheckUnityVersion() {
-        String upfileVersion = Upfile.Requirements.Unity.Version;
+        String upfileVersion = Upfile.UnityVersion;
         String unityVersion = Application.unityVersion; 
         if(unityVersion != upfileVersion) {
             Debug.LogError(String.Format("Uplift: Upfile.xml Unity Version ({0}) doesn't match Unity's one  ({1}).", upfileVersion, unityVersion));

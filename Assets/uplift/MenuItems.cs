@@ -19,7 +19,7 @@ public class MenuItems : MonoBehaviour {
 		Debug.Log("Hi, I Generate upfile!");
 
 		Schemas.Upfile upfile = new Schemas.Upfile();
-		
+
 		upfile.UnityVersion = Application.unityVersion;
 
 		System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(Schemas.Upfile));
@@ -35,6 +35,11 @@ public class MenuItems : MonoBehaviour {
 	[MenuItem("Uplift/Install Dependencies", false, 20)]
 	static void InstallDependencies() {
 		UpfileHandler.InstallDependencies();
+	}
+
+	[MenuItem("Uplift/Debug/List Packages", false, 40)]
+	static void ListPackages() {
+		UpfileHandler.ListPackages();
 	}
 
 

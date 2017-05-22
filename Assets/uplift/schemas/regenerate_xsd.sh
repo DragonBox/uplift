@@ -1,2 +1,2 @@
 #!/bin/bash
-Xsd Common.xsd Upfile.xsd Uplift.xsd /classes /namespace:Schemas
+Xsd Common.xsd Upfile.xsd Upset.xsd /classes /namespace:Schemas

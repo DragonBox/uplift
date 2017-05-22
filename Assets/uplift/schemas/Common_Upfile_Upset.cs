@@ -147,33 +147,49 @@ namespace Schemas {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class DependencyDefinition {
         
-        private string packageNameField;
+        private VersionSpec itemField;
         
-        private string packageVersionField;
+        private string nameField;
+        
+        private string versionField;
         
         private string repositoryField;
         
         /// <remarks/>
-        public string PackageName {
+        [System.Xml.Serialization.XmlElementAttribute("Version")]
+        public VersionSpec Item {
             get {
-                return this.packageNameField;
+                return this.itemField;
             }
             set {
-                this.packageNameField = value;
+                this.itemField = value;
             }
         }
         
         /// <remarks/>
-        public string PackageVersion {
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string Name {
             get {
-                return this.packageVersionField;
+                return this.nameField;
             }
             set {
-                this.packageVersionField = value;
+                this.nameField = value;
             }
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string Version {
+            get {
+                return this.versionField;
+            }
+            set {
+                this.versionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Repository {
             get {
                 return this.repositoryField;

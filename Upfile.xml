@@ -3,10 +3,9 @@
     <UnityVersion>5.6.0f3</UnityVersion>
     <Repositories>
       <FileRepository Path="../Repository"/>
-      <GitRepository Url="git://jakiesrepo"/>
     </Repositories>
     <Dependencies>
-      <Package Name="project_a" Version=">0.0.1"/>
+      <Package Name="project_a" Version="0.0.1"/>
       <Package Name="project_b" Version="1.0" />
       <Package Name="project_c" Version="2.0" />
     </Dependencies>

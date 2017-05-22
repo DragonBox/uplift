@@ -16,8 +16,8 @@ namespace Schemas {
 
             try {
             FileSystemUtil.copyDirectory(sourcePath, installPath);
-            } catch (DirectoryNotFoundException e) {
-                Debug.LogError("Package {0} not found in specified version {1}")
+            } catch (DirectoryNotFoundException) {
+                Debug.LogError(String.Format("Package {0} not found in specified version {1}", package.Name, package.Version));
             }
         }
 

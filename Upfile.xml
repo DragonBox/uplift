@@ -5,7 +5,7 @@
       <FileRepository Path="../Repository"/>
     </Repositories>
     <Dependencies>
-      <Package Name="project_a" Version="0.0.1"/>
+      <Package Name="project_a" Version="1.0.0"/>
       <Package Name="project_b" Version="1.0" />
       <Package Name="project_c" Version="2.0" />
     </Dependencies>

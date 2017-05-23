@@ -41,6 +41,8 @@ public class UpfileHandler {
         foreach(Schemas.DependencyDefinition package in Upfile.Dependencies) {
             rt.InstallPackage(package);
         }
+
+        UnityEditor.AssetDatabase.Refresh();
     }
 
     internal void ListPackages()
@@ -50,6 +52,15 @@ public class UpfileHandler {
                 Debug.Log("Package: " + package.Name + " Version: " + package.Version);
             }
         }
+    }
+
+    internal void NukePackages()
+    {
+        Debug.LogWarning("Nuking all packages!");
+        foreach(Repository repository in Upfile.Repositories) {
+            repository.NukeAllPackages();
+        }
+        UnityEditor.AssetDatabase.Refresh();
     }
 
     //FIXME: Prepare proper version checker

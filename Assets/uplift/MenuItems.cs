@@ -10,6 +10,13 @@ public class MenuItems : MonoBehaviour {
 	static MenuItems() {
 		UpfileHandler = Initialize.UpfileHandler;
 	}
+
+	[MenuItem("Uplift/Refresh Upfile.xml", false, -15)]
+	static void RefreshUpfile() {
+		UpfileHandler.Initialize();
+	}
+
+
 	[MenuItem("Uplift/Generate Upfile", true, 0)]
 	static bool CheckForUpfile() {
 		return !UpfileHandler.CheckForUpfile();
@@ -42,6 +49,10 @@ public class MenuItems : MonoBehaviour {
 		UpfileHandler.ListPackages();
 	}
 
+		[MenuItem("Uplift/Debug/Nuke All Packages", false, 40)]
+	static void NukePackages() {
+		UpfileHandler.NukePackages();
+	}
 
 
 

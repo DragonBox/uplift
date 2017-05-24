@@ -36,12 +36,16 @@ public class UpfileHandler {
 
     public void InstallDependencies() {
         //FIXME: We should check for all repositories, not the first one
-        FileRepository rt = (FileRepository) Upfile.Repositories[0];
+        //FileRepository rt = (FileRepository) Upfile.Repositories[0];
+        PackageHandler pHandler = new PackageHandler();
 
-        rt.SetContext(Upfile);
-
-        foreach(Schemas.DependencyDefinition package in Upfile.Dependencies) {
-            rt.InstallPackage(package);
+        foreach(DependencyDefinition packageDefinition in Upfile.Dependencies) {
+            PackageHandler.PackageRepo result = pHandler.FindPackageAndRepository(packageDefinition, Upfile.Repositories);
+            if(result.repository != null) {
+                result.repository.SetContext(Upfile);
+                result.repository.InstallPackage(result.package);
+            }
+            
         }
 
         
@@ -50,8 +54,8 @@ public class UpfileHandler {
     internal void ListPackages()
     {
         foreach(Repository repository in Upfile.Repositories) {
-            foreach(Schemas.DependencyDefinition package in repository.ListPackages()) {
-                Debug.Log("Package: " + package.Name + " Version: " + package.Version);
+            foreach(Schemas.Upset package in repository.ListPackages()) {
+                Debug.Log("Package: " + package.PackageName + " Version: " + package.PackageVersion);
             }
         }
     }

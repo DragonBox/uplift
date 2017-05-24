@@ -4,6 +4,7 @@ namespace Schemas {
     public abstract partial class Repository : IRepositoryHandler
     {
 
+        public const string UpsetFile = "Upset.xml";
         protected Upfile upfile;
 
         public virtual void SetContext(Upfile upfile) {
@@ -20,12 +21,12 @@ namespace Schemas {
                 return String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), installPathDefinition);
             }
         }
-        public virtual void InstallPackage(DependencyDefinition package)
+        public virtual void InstallPackage(Upset package)
         {
             throw new NotImplementedException();
         }
 
-        public virtual DependencyDefinition[] ListPackages()
+        public virtual Upset[] ListPackages()
         {
             throw new NotImplementedException();
         }
@@ -35,17 +36,17 @@ namespace Schemas {
             throw new NotImplementedException();
         }
 
-        public virtual void NukePackage(DependencyDefinition package)
+        public virtual void NukePackage(Upset package)
         {
             throw new NotImplementedException();
         }
 
-        public virtual void UninstallPackage(DependencyDefinition package)
+        public virtual void UninstallPackage(Upset package)
         {
             throw new NotImplementedException();
         }
 
-        public virtual void UpdatePackage(DependencyDefinition package)
+        public virtual void UpdatePackage(Upset package)
         {
             throw new NotImplementedException();
         }

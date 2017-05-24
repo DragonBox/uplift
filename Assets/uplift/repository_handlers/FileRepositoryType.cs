@@ -3,47 +3,50 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 
 namespace Schemas {
 
     
+    
     public partial class FileRepository : IRepositoryHandler {
         
-        static string packageMatchPattern = @"([^/\\]*)~(.*)";
         static string formatPattern = "{0}{1}{2}~{3}";
 
-        public override void InstallPackage(DependencyDefinition package) {
-            string sourcePath = String.Format(formatPattern, this.Path, System.IO.Path.DirectorySeparatorChar, package.Name, package.Version);
+        public override void InstallPackage(Upset package) {
+            string sourcePath = String.Format(formatPattern, this.Path, System.IO.Path.DirectorySeparatorChar, package.PackageName, package.PackageVersion);
             
-            string destination = String.Format(formatPattern, installPath, System.IO.Path.DirectorySeparatorChar, package.Name, package.Version);
+            string destination = String.Format(formatPattern, installPath, System.IO.Path.DirectorySeparatorChar, package.PackageName, package.PackageVersion);
                 
             try {
                 FileSystemUtil.copyDirectory(sourcePath, destination);
             } catch (DirectoryNotFoundException) {
-                Debug.LogError(String.Format("Package {0} not found in specified version {1}", package.Name, package.Version));
+                Debug.LogError(String.Format("Package {0} not found in specified version {1}", package.PackageName, package.PackageVersion));
                 Directory.Delete(destination);
             }
 
         }
 
-        public override DependencyDefinition[] ListPackages() {
-            string[] packages =  Directory.GetDirectories(this.Path);
-            List<DependencyDefinition> ddList = new List<DependencyDefinition>();
+        public override Upset[] ListPackages() {
+            string[] directories =  Directory.GetDirectories(this.Path);
+            List<Upset> upsetList = new List<Upset>();
 
-            for(int i=0; i<packages.Length; i++) {
-                string path = packages[i];
-                Match m = Regex.Match(path, packageMatchPattern);
-                DependencyDefinition packageDefinition = new DependencyDefinition();
-                packageDefinition.Version = m.Groups[2].ToString();
-                packageDefinition.Name = m.Groups[1].ToString();
-
-                ddList.Add(packageDefinition);
+            foreach(string directoryName in directories) {
+                string upsetPath = directoryName + System.IO.Path.DirectorySeparatorChar + Repository.UpsetFile;
+                if(File.Exists(upsetPath)) {
+                    XmlSerializer serializer = new XmlSerializer(typeof(Schemas.Upset));
+                    FileStream file = new FileStream(upsetPath, FileMode.Open);
+                    Upset upset = serializer.Deserialize(file) as Upset;
+                    file.Close();
+                    upsetList.Add(upset);
+                }
                 
             }
-            return ddList.ToArray();
+
+            return upsetList.ToArray();
         }
 
-        public override void NukePackage(DependencyDefinition package)
+        public override void NukePackage(Upset package)
         {
             throw new NotImplementedException();
         }
@@ -56,12 +59,12 @@ namespace Schemas {
             }
         }
 
-        public override void UninstallPackage(DependencyDefinition package)
+        public override void UninstallPackage(Upset package)
         {
             throw new NotImplementedException();
         }
 
-        public override void UpdatePackage(DependencyDefinition package)
+        public override void UpdatePackage(Upset package)
         {
             throw new NotImplementedException();
         }

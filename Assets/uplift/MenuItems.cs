@@ -42,6 +42,7 @@ public class MenuItems : MonoBehaviour {
 	[MenuItem("Uplift/Install Dependencies", false, 20)]
 	static void InstallDependencies() {
 		UpfileHandler.InstallDependencies();
+		UnityEditor.AssetDatabase.Refresh();
 	}
 
 	[MenuItem("Uplift/Debug/List Packages", false, 40)]
@@ -52,6 +53,7 @@ public class MenuItems : MonoBehaviour {
 		[MenuItem("Uplift/Debug/Nuke All Packages", false, 40)]
 	static void NukePackages() {
 		UpfileHandler.NukePackages();
+		UnityEditor.AssetDatabase.Refresh();
 	}
 
 

@@ -24,6 +24,8 @@ namespace Schemas {
         
         private string unityVersionField;
         
+        private string packagesRootPathField;
+        
         private Stub configurationField;
         
         private Repository[] repositoriesField;
@@ -37,6 +39,16 @@ namespace Schemas {
             }
             set {
                 this.unityVersionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string PackagesRootPath {
+            get {
+                return this.packagesRootPathField;
+            }
+            set {
+                this.packagesRootPathField = value;
             }
         }
         

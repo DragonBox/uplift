@@ -3,9 +3,22 @@ using System;
 namespace Schemas {
     public abstract partial class Repository : IRepositoryHandler
     {
-        private static string[] installPathDefinition = {"Assets", "uplift", "packages"};
-        protected static string installPath {
-            get { return String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), installPathDefinition); }
+
+        protected Upfile upfile;
+
+        public virtual void SetContext(Upfile upfile) {
+            this.upfile = upfile;
+        }
+
+
+        private static string[] installPathDefinition = {"Assets", "upackages"};
+        protected string installPath {
+            get { 
+                if(this.upfile.PackagesRootPath != null) {
+                    return this.upfile.PackagesRootPath;
+                }
+                return String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), installPathDefinition);
+            }
         }
         public virtual void InstallPackage(DependencyDefinition package)
         {

@@ -10,6 +10,7 @@
   <xs:complexType name="Upfile">
     <xs:sequence>
       <xs:element type="xs:string" name="UnityVersion"/>
+      <xs:element type="xs:string" name="PackagesRootPath" minOccurs="0"/>
       <xs:element type="Stub" name="Configuration" minOccurs="0" /> <!-- To be extended later on, optional -->
       <xs:element type="RepositoriesList" name="Repositories" minOccurs="0" />
       <xs:element type="DependenciesList" name="Dependencies" minOccurs="0" />

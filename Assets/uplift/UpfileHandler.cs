@@ -38,11 +38,13 @@ public class UpfileHandler {
         //FIXME: We should check for all repositories, not the first one
         FileRepository rt = (FileRepository) Upfile.Repositories[0];
 
+        rt.SetContext(Upfile);
+
         foreach(Schemas.DependencyDefinition package in Upfile.Dependencies) {
             rt.InstallPackage(package);
         }
 
-        UnityEditor.AssetDatabase.Refresh();
+        
     }
 
     internal void ListPackages()
@@ -58,10 +60,12 @@ public class UpfileHandler {
     {
         Debug.LogWarning("Nuking all packages!");
         foreach(Repository repository in Upfile.Repositories) {
+            repository.SetContext(Upfile);
             repository.NukeAllPackages();
-        }
-        UnityEditor.AssetDatabase.Refresh();
+        }  
     }
+
+
 
     //FIXME: Prepare proper version checker
     public void CheckUnityVersion() {

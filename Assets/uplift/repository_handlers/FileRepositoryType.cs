@@ -11,12 +11,12 @@ namespace Schemas {
     
     public partial class FileRepository : IRepositoryHandler {
         
-        static string formatPattern = "{0}{1}{2}~{3}";
+        static string formatPattern = "{0}{1}{2}";
 
         public override void InstallPackage(Upset package) {
-            string sourcePath = String.Format(formatPattern, this.Path, System.IO.Path.DirectorySeparatorChar, package.PackageName, package.PackageVersion);
+            string sourcePath = String.Format(formatPattern, this.Path, System.IO.Path.DirectorySeparatorChar, package.MetaInformation.dirName);
             
-            string destination = String.Format(formatPattern, installPath, System.IO.Path.DirectorySeparatorChar, package.PackageName, package.PackageVersion);
+            string destination = String.Format(formatPattern, installPath, System.IO.Path.DirectorySeparatorChar, package.PackageName + "~" + package.PackageVersion);
                 
             try {
                 FileSystemUtil.copyDirectory(sourcePath, destination);
@@ -37,6 +37,7 @@ namespace Schemas {
                     XmlSerializer serializer = new XmlSerializer(typeof(Schemas.Upset));
                     FileStream file = new FileStream(upsetPath, FileMode.Open);
                     Upset upset = serializer.Deserialize(file) as Upset;
+                    upset.MetaInformation.dirName = directoryName;
                     file.Close();
                     upsetList.Add(upset);
                 }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Text.RegularExpressions;
 
-class PackageHandler
+public class PackageHandler
 {
     public struct PackageRepo
     {
@@ -13,7 +13,7 @@ class PackageHandler
         public Schemas.Repository repository;
     }
 
-    internal enum Comparison { NA = 0, LOWER, HIGHER, SAME };
+    public enum Comparison { NA = 0, LOWER, HIGHER, SAME };
     public struct CompareResult {
         public Comparison Major, Minor, Version;
     }
@@ -22,10 +22,8 @@ class PackageHandler
         public int Major, Minor, Version;
     }
 
-    internal PackageRepo FindPackageAndRepository(DependencyDefinition packageDefinition, Repository[] repositories)
-    {
-        PackageRepo result = new PackageRepo();
-
+    internal PackageRepo[] FindCandidatesForDefinition(DependencyDefinition packageDefinition, Repository[] repositories) {
+        List<PackageRepo> result = new List<PackageRepo>();
 
         foreach (var repo in repositories)
         {
@@ -47,9 +45,10 @@ class PackageHandler
                     (compareResult.Major == Comparison.SAME && compareResult.Minor == Comparison.SAME && (compareResult.Version == Comparison.HIGHER || compareResult.Version == Comparison.SAME))
                 )
                 {
-                    result.repository = repo;
-                    result.package = package;
-                    return result;
+                    PackageRepo definition = new PackageRepo();
+                    definition.repository = repo;
+                    definition.package = package;
+                    result.Add(definition);
                 }
                 else {
                     continue;
@@ -61,8 +60,38 @@ class PackageHandler
             }
         }
 
-        Debug.LogWarning("Package: " + packageDefinition.Name + " not found");
-        return result;
+        return result.ToArray();
+    }
+
+    public PackageRepo[] SelectCandidates(PackageRepo[] candidates, CandidateSelectionStrategy strategy) {
+        return strategy.Filter(candidates);
+    }
+    public PackageRepo[] SelectCandidates(PackageRepo[] candidates, CandidateSelectionStrategy[] strategyList) {
+
+        foreach(var strategy in strategyList) {
+            candidates = SelectCandidates(candidates, strategy);
+
+        }
+
+        return candidates;
+    }
+
+
+    internal PackageRepo FindPackageAndRepository(DependencyDefinition packageDefinition, Repository[] repositories)
+    {
+        PackageRepo blankResult = new PackageRepo();
+
+        PackageRepo[] candidates = FindCandidatesForDefinition(packageDefinition, repositories);
+
+        candidates =  SelectCandidates(candidates, new LatestSelectionStrategy());
+
+        if(candidates.Length > 0) {
+            return candidates[0];
+        } else {
+            Debug.LogWarning("Package: " + packageDefinition.Name + " not found");
+            return blankResult;
+        }      
+        
 
 
     }
@@ -135,7 +164,7 @@ class PackageHandler
         return ParseVersion(package.PackageVersion);
     }
 
-    protected VersionStruct ParseVersion(string versionString) {
+    public static VersionStruct ParseVersion(string versionString) {
         string versionMatcherRegexp = @"(?<major>\d+)(\.(?<minor>\d+))?(\.(?<version>\d+))?";
 
         Match matchObject = Regex.Match(versionString, versionMatcherRegexp);
@@ -149,7 +178,7 @@ class PackageHandler
         return result;
     }
 
-    protected int ExtractVersion(Match match, String groupName) {
+    protected static int ExtractVersion(Match match, String groupName) {
         return Int32.Parse(match.Groups[groupName].ToString());
     }
 }

@@ -2,8 +2,8 @@
 * DONE Check into directories for Upset.xml instead of looking only for a dirname in FileRepository
 * DONE Compare versions better and according to the rules
 * DONE Pick candidate for installation from all available repositories and packages
-* TODO When updating package nuke previous version
-* TODO Decide when to update package and when to install one
-* TODO Provide support for versionless (rolling) packages
 * TODO Keep track of currently installed packages along with their specs
+* TODO Decide when to update package and when to install one
+* TODO When updating package nuke previous version
+* TODO Provide support for versionless (rolling) packages
 * TODO Cache package list

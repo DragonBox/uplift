@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema
+    attributeFormDefault="unqualified" elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="Upbring" type="Upbring"/>
+
+  <xs:complexType name="Upbring">
+    <xs:sequence>
+      <xs:element type="InstalledPackage" name="InstalledPackage" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InstalledPackage">
+    <xs:sequence>
+      <xs:element type="InstallationSpecs" name="Install" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="Name" use="required"/>
+    <xs:attribute type="xs:string" name="Version" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="InstallationSpecs">
+    <xs:attribute type="KindSpec" name="Kind" use="required"/>
+    <xs:attribute type="xs:string" name="Path" use="required"/>
+  </xs:complexType>
+
+  <xs:simpleType name="KindSpec" final="restriction">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="Base"/>
+      <xs:enumeration value="Other"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
+
+<!--
+    Example
+    <Upbring>
+      <InstalledPackage Name="XYZZY" Version="1.0">
+        <Install Kind="Base" Path="Assets/uplift/XYZZY~1.0"/>
+      </InstalledPackage>
+      <InstalledPackage Name="ACME" Version="0.1">
+        <Install Kind="Base" Path="Assets/uplift/ACME~0.1"/>
+        <Install Kind="Other" Path="Assets/ACME_audiofiles" />
+      </InstalledPackage>
+    </Upbring>
+
+-->

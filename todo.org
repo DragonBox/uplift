@@ -7,3 +7,5 @@
 * TODO When updating package nuke previous version
 * TODO Provide support for versionless (rolling) packages
 * TODO Cache package list
+* TODO Fix improper encoding in saved xml's
+* TODO Refactor installation path

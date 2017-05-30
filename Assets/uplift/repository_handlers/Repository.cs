@@ -12,15 +12,7 @@ namespace Schemas {
         }
 
 
-        private static string[] installPathDefinition = {"Assets", "upackages"};
-        protected string installPath {
-            get { 
-                if(this.upfile.PackagesRootPath != null) {
-                    return this.upfile.PackagesRootPath;
-                }
-                return String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), installPathDefinition);
-            }
-        }
+
         public virtual void InstallPackage(Upset package)
         {
             throw new NotImplementedException();

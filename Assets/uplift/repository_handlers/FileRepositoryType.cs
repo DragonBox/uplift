@@ -16,7 +16,7 @@ namespace Schemas {
         public override void InstallPackage(Upset package) {
             string sourcePath = String.Format(formatPattern, this.Path, System.IO.Path.DirectorySeparatorChar, package.MetaInformation.dirName);
             
-            string destination = String.Format(formatPattern, installPath, System.IO.Path.DirectorySeparatorChar, package.PackageName + "~" + package.PackageVersion);
+            string destination = LocalHandler.GetLocalDirectory(package.PackageName, package.PackageVersion);
                 
             try {
                 FileSystemUtil.copyDirectory(sourcePath, destination);
@@ -53,11 +53,8 @@ namespace Schemas {
         }
 
         public override void NukeAllPackages() {
-            string[] directories = Directory.GetDirectories(installPath);
+            LocalHandler.NukeAllPackages();
 
-            foreach(string dir in directories) {
-                Directory.Delete(dir, true);
-            }
         }
 
         public override void UninstallPackage(Upset package)

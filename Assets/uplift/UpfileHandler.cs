@@ -6,10 +6,13 @@ using System;
 using System.Collections;
 using Schemas;
 
+// This should be Singleton
 public class UpfileHandler {
     const bool debugMode = true;
     public const string upfilePath = "Upfile.xml";
     Upfile Upfile;
+
+    private static UpfileHandler instance;
 
     public void Initialize() {
         if(CheckForUpfile()) {
@@ -20,6 +23,16 @@ public class UpfileHandler {
         }
     }
     
+    public static UpfileHandler Instance() {
+        if(instance == null) {
+            var uph = new UpfileHandler();
+            instance = uph;
+            uph.Initialize();
+            return uph;
+        } else {
+            return instance;
+        }
+    }
     public bool CheckForUpfile() {
         return File.Exists(upfilePath);
     }
@@ -34,6 +47,10 @@ public class UpfileHandler {
         return serializer.Deserialize(new FileStream(upfilePath, FileMode.Open)) as Schemas.Upfile;
     }
 
+    public string GetPackagesRootPath() {
+        return Upfile.PackagesRootPath;
+    }
+
     public void InstallDependencies() {
         //FIXME: We should check for all repositories, not the first one
         //FileRepository rt = (FileRepository) Upfile.Repositories[0];
@@ -44,7 +61,14 @@ public class UpfileHandler {
             if(result.repository != null) {
                 result.repository.SetContext(Upfile);
                 result.repository.InstallPackage(result.package);
+
+                Upbring upbringFile = Upbring.FromXml();
+
+                upbringFile.AddPackage(result.package);
+                upbringFile.SaveFile();
             }
+            
+            
             
         }
 

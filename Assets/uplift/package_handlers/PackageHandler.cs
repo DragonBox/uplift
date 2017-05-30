@@ -179,6 +179,11 @@ public class PackageHandler
     }
 
     protected static int ExtractVersion(Match match, String groupName) {
-        return Int32.Parse(match.Groups[groupName].ToString());
+        try {
+            return Int32.Parse(match.Groups[groupName].ToString());
+        } catch (FormatException) {
+            return 0;
+        }
+        
     }
 }

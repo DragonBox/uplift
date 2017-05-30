@@ -13,10 +13,5 @@ namespace Schemas {
         {
             throw new NotImplementedException();
         }
-
-        public virtual void UpdatePackage(Upset package)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -47,10 +47,5 @@ namespace Schemas {
             return upsetList.ToArray();
         }
 
-
-        public override void UpdatePackage(Upset package)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

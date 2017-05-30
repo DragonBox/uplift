@@ -13,9 +13,5 @@ namespace Schemas {
             throw new NotImplementedException();
         }
 
-        public override void UpdatePackage(Upset package)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

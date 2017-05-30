@@ -2,10 +2,12 @@
 * DONE Check into directories for Upset.xml instead of looking only for a dirname in FileRepository
 * DONE Compare versions better and according to the rules
 * DONE Pick candidate for installation from all available repositories and packages
-* TODO Keep track of currently installed packages along with their specs
+* DONE Refactor installation path
+* DONE Fix improper encoding in saved xml's
+* DONE Keep track of currently installed packages along with their specs
+* DONE Make repository only download package, not handle it later on
 * TODO Decide when to update package and when to install one
 * TODO When updating package nuke previous version
 * TODO Provide support for versionless (rolling) packages
 * TODO Cache package list
-* TODO Fix improper encoding in saved xml's
-* TODO Refactor installation path
+* TODO Provide support for custom installation places

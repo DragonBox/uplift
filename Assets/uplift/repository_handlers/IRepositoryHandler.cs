@@ -3,5 +3,5 @@ using System;
 
 interface IRepositoryHandler {
     Schemas.Upset[] ListPackages();
-    void InstallPackage(Schemas.Upset package);
+    TemporaryDirectory DownloadPackage(Schemas.Upset package);
 }

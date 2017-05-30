@@ -9,7 +9,7 @@ namespace Schemas {
             throw new NotImplementedException();
         }
 
-        public virtual void InstallPackage(Upset package)
+        public virtual TemporaryDirectory DownloadPackage(Upset package)
         {
             throw new NotImplementedException();
         }

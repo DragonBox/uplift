@@ -60,7 +60,10 @@ public class UpfileHandler {
         foreach(DependencyDefinition packageDefinition in Upfile.Dependencies) {
             PackageHandler.PackageRepo result = pHandler.FindPackageAndRepository(packageDefinition, Upfile.Repositories);
             if(result.repository != null) {
-                result.repository.InstallPackage(result.package);
+
+                TemporaryDirectory td = result.repository.DownloadPackage(result.package);
+
+                LocalHandler.InstallPackage(result.package, td);
 
                 Upbring upbringFile = Upbring.FromXml();
 

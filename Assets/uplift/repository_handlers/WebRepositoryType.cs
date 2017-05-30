@@ -3,7 +3,7 @@ using System;
 namespace Schemas {
     public partial class WebRepositoryType : Repository
     {
-        public override void InstallPackage(Upset package)
+        public override TemporaryDirectory DownloadPackage(Upset package)
         {
             throw new NotImplementedException();
         }

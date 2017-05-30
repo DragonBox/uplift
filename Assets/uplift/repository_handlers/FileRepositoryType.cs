@@ -13,18 +13,20 @@ namespace Schemas {
         
         static string formatPattern = "{0}{1}{2}";
 
-        public override void InstallPackage(Upset package) {
+        public override TemporaryDirectory DownloadPackage(Upset package) {
             string sourcePath = String.Format(formatPattern, this.Path, System.IO.Path.DirectorySeparatorChar, package.MetaInformation.dirName);
-            
-            string destination = LocalHandler.GetLocalDirectory(package.PackageName, package.PackageVersion);
+            TemporaryDirectory td = new TemporaryDirectory();
+
+            //string destination = LocalHandler.GetLocalDirectory(package.PackageName, package.PackageVersion);
                 
             try {
-                FileSystemUtil.copyDirectory(sourcePath, destination);
+                FileSystemUtil.copyDirectory(sourcePath, td.Path);
             } catch (DirectoryNotFoundException) {
                 Debug.LogError(String.Format("Package {0} not found in specified version {1}", package.PackageName, package.PackageVersion));
-                Directory.Delete(destination);
+                td.Destroy();
             }
 
+            return td;
         }
 
         public override Upset[] ListPackages() {

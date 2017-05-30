@@ -13,16 +13,6 @@ namespace Schemas {
             throw new NotImplementedException();
         }
 
-        public override void NukePackage(Upset package)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void UninstallPackage(Upset package)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void UpdatePackage(Upset package)
         {
             throw new NotImplementedException();

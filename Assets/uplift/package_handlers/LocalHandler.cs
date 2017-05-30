@@ -2,6 +2,8 @@ using System;
 using System.IO;
 
 class LocalHandler {
+
+
         private static string[] installPathDefinition = {"Assets", "upackages"};
         protected static string installPath {
             get { 
@@ -26,4 +28,6 @@ class LocalHandler {
 
             Schemas.Upbring.RemoveFile();
         }
+
+                
 }

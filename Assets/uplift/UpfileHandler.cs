@@ -6,7 +6,7 @@ using System;
 using System.Collections;
 using Schemas;
 
-// This should be Singleton
+// Note - this is singleton
 public class UpfileHandler {
     const bool debugMode = true;
     public const string upfilePath = "Upfile.xml";
@@ -14,6 +14,7 @@ public class UpfileHandler {
 
     private static UpfileHandler instance;
 
+    private UpfileHandler() {}
     public void Initialize() {
         if(CheckForUpfile()) {
             InternalLoadFile();
@@ -41,7 +42,7 @@ public class UpfileHandler {
         Upfile = LoadFile();
     }
 
-    static public Schemas.Upfile LoadFile() {
+    public Schemas.Upfile LoadFile() {
         XmlSerializer serializer = new XmlSerializer(typeof(Schemas.Upfile));
 
         return serializer.Deserialize(new FileStream(upfilePath, FileMode.Open)) as Schemas.Upfile;
@@ -59,7 +60,6 @@ public class UpfileHandler {
         foreach(DependencyDefinition packageDefinition in Upfile.Dependencies) {
             PackageHandler.PackageRepo result = pHandler.FindPackageAndRepository(packageDefinition, Upfile.Repositories);
             if(result.repository != null) {
-                result.repository.SetContext(Upfile);
                 result.repository.InstallPackage(result.package);
 
                 Upbring upbringFile = Upbring.FromXml();
@@ -87,10 +87,7 @@ public class UpfileHandler {
     internal void NukePackages()
     {
         Debug.LogWarning("Nuking all packages!");
-        foreach(Repository repository in Upfile.Repositories) {
-            repository.SetContext(Upfile);
-            repository.NukeAllPackages();
-        }  
+        LocalHandler.NukeAllPackages();
     }
 
 

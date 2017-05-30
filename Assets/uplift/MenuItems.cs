@@ -6,20 +6,20 @@ using System.IO;
 
 public class MenuItems : MonoBehaviour {
 
-	static UpfileHandler UpfileHandler;
+
 	static MenuItems() {
-		UpfileHandler = Initialize.UpfileHandler;
+		
 	}
 
 	[MenuItem("Uplift/Refresh Upfile.xml", false, -15)]
 	static void RefreshUpfile() {
-		UpfileHandler.Initialize();
+		UpfileHandler.Instance();
 	}
 
 
 	[MenuItem("Uplift/Generate Upfile", true, 0)]
 	static bool CheckForUpfile() {
-		return !UpfileHandler.CheckForUpfile();
+		return !UpfileHandler.Instance().CheckForUpfile();
 	}
 	[MenuItem("Uplift/Generate Upfile", false, 0)]
 	static void GenerateUpfile() {
@@ -41,18 +41,18 @@ public class MenuItems : MonoBehaviour {
 
 	[MenuItem("Uplift/Install Dependencies", false, 20)]
 	static void InstallDependencies() {
-		UpfileHandler.InstallDependencies();
+		UpfileHandler.Instance().InstallDependencies();
 		UnityEditor.AssetDatabase.Refresh();
 	}
 
 	[MenuItem("Uplift/Debug/List Packages", false, 40)]
 	static void ListPackages() {
-		UpfileHandler.ListPackages();
+		UpfileHandler.Instance().ListPackages();
 	}
 
 		[MenuItem("Uplift/Debug/Nuke All Packages", false, 40)]
 	static void NukePackages() {
-		UpfileHandler.NukePackages();
+		UpfileHandler.Instance().NukePackages();
 		UnityEditor.AssetDatabase.Refresh();
 	}
 

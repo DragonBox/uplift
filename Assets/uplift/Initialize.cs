@@ -9,13 +9,10 @@ using System.Xml.Serialization;
 public class Initialize : MonoBehaviour {
     
 
-    public static UpfileHandler UpfileHandler;
     
 	static  Initialize() {
-        if(UpfileHandler == null) {
-            UpfileHandler = new UpfileHandler();
-            UpfileHandler.Initialize();
-        }
+        // Make sure we initialize UpfileHandler
+        UpfileHandler.Instance();
 
 	}
 

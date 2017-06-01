@@ -7,68 +7,65 @@ using System.Text.RegularExpressions;
 
 public class PackageHandler
 {
-    public struct PackageRepo
-    {
-        public Schemas.Upset package;
-        public Schemas.Repository repository;
-    }
+
 
     public enum Comparison { NA = 0, LOWER, HIGHER, SAME };
-    public struct CompareResult {
+    public struct CompareResult
+    {
         public Comparison Major, Minor, Version;
     }
 
-    public struct VersionStruct {
+    public struct VersionStruct
+    {
         public int Major, Minor, Version;
     }
 
-    internal PackageRepo[] FindCandidatesForDefinition(DependencyDefinition packageDefinition, Repository[] repositories) {
+    internal PackageRepo[] FindCandidatesForDefinition(DependencyDefinition packageDefinition)
+    {
         List<PackageRepo> result = new List<PackageRepo>();
 
-        foreach (var repo in repositories)
+        var pList = PackageList.Instance();
+
+        foreach (var packageRepo in pList.GetAllPackages())
         {
-            Upset[] repoPackages = repo.ListPackages();
 
-            foreach (var package in repoPackages)
+            if (packageRepo.Package.PackageName != packageDefinition.Name)
             {
-                
-                if (package.PackageName != packageDefinition.Name)
-                {
-                    continue;
-                }
-
-                CompareResult compareResult = CompareVersions(package, packageDefinition);
-
-                if (
-                    (compareResult.Major == Comparison.HIGHER) ||
-                    (compareResult.Major == Comparison.SAME && compareResult.Minor == Comparison.HIGHER ) ||
-                    (compareResult.Major == Comparison.SAME && compareResult.Minor == Comparison.SAME && (compareResult.Version == Comparison.HIGHER || compareResult.Version == Comparison.SAME))
-                )
-                {
-                    PackageRepo definition = new PackageRepo();
-                    definition.repository = repo;
-                    definition.package = package;
-                    result.Add(definition);
-                }
-                else {
-                    continue;
-                }
-
-
-                
-
+                continue;
             }
+
+            CompareResult compareResult = CompareVersions(packageRepo.Package, packageDefinition);
+
+            if (
+                (compareResult.Major == Comparison.HIGHER) ||
+                (compareResult.Major == Comparison.SAME && compareResult.Minor == Comparison.HIGHER) ||
+                (compareResult.Major == Comparison.SAME && compareResult.Minor == Comparison.SAME && (compareResult.Version == Comparison.HIGHER || compareResult.Version == Comparison.SAME))
+            )
+            {
+                PackageRepo definition = new PackageRepo();
+                definition.Repository = packageRepo.Repository;
+                definition.Package = packageRepo.Package;
+                result.Add(definition);
+            }
+            else
+            {
+                continue;
+            }
+
         }
 
         return result.ToArray();
     }
 
-    public PackageRepo[] SelectCandidates(PackageRepo[] candidates, CandidateSelectionStrategy strategy) {
+    public PackageRepo[] SelectCandidates(PackageRepo[] candidates, CandidateSelectionStrategy strategy)
+    {
         return strategy.Filter(candidates);
     }
-    public PackageRepo[] SelectCandidates(PackageRepo[] candidates, CandidateSelectionStrategy[] strategyList) {
+    public PackageRepo[] SelectCandidates(PackageRepo[] candidates, CandidateSelectionStrategy[] strategyList)
+    {
 
-        foreach(var strategy in strategyList) {
+        foreach (var strategy in strategyList)
+        {
             candidates = SelectCandidates(candidates, strategy);
 
         }
@@ -77,76 +74,102 @@ public class PackageHandler
     }
 
 
-    internal PackageRepo FindPackageAndRepository(DependencyDefinition packageDefinition, Repository[] repositories)
+    internal PackageRepo FindPackageAndRepository(DependencyDefinition packageDefinition)
     {
         PackageRepo blankResult = new PackageRepo();
 
-        PackageRepo[] candidates = FindCandidatesForDefinition(packageDefinition, repositories);
+        PackageRepo[] candidates = FindCandidatesForDefinition(packageDefinition);
 
-        candidates =  SelectCandidates(candidates, new LatestSelectionStrategy());
+        candidates = SelectCandidates(candidates, new LatestSelectionStrategy());
 
-        if(candidates.Length > 0) {
+        if (candidates.Length > 0)
+        {
             return candidates[0];
-        } else {
+        }
+        else
+        {
             Debug.LogWarning("Package: " + packageDefinition.Name + " not found");
             return blankResult;
-        }      
-        
+        }
+
 
 
     }
 
-    protected CompareResult CompareVersions(VersionStruct packageVersion, VersionStruct dependencyVersion) {
+    protected CompareResult CompareVersions(VersionStruct packageVersion, VersionStruct dependencyVersion)
+    {
         var result = new CompareResult();
 
         // Major version comparison
-        if(packageVersion.Major < dependencyVersion.Major) {
+        if (packageVersion.Major < dependencyVersion.Major)
+        {
             result.Major = Comparison.LOWER;
             return result;
-        } else if(packageVersion.Major > dependencyVersion.Major) {
+        }
+        else if (packageVersion.Major > dependencyVersion.Major)
+        {
             result.Major = Comparison.HIGHER;
             return result;
-        } else if(packageVersion.Major == dependencyVersion.Major) {
+        }
+        else if (packageVersion.Major == dependencyVersion.Major)
+        {
             result.Major = Comparison.SAME;
-        } else {
+        }
+        else
+        {
             result.Major = Comparison.NA;
             return result;
         }
 
 
         // Minor version comparison
-        if(packageVersion.Minor < dependencyVersion.Minor) {
+        if (packageVersion.Minor < dependencyVersion.Minor)
+        {
             result.Minor = Comparison.LOWER;
             return result;
-        } else if(packageVersion.Minor > dependencyVersion.Minor) {
+        }
+        else if (packageVersion.Minor > dependencyVersion.Minor)
+        {
             result.Minor = Comparison.HIGHER;
             return result;
-        } else if(packageVersion.Minor == dependencyVersion.Minor) {
+        }
+        else if (packageVersion.Minor == dependencyVersion.Minor)
+        {
             result.Minor = Comparison.SAME;
-        } else {
+        }
+        else
+        {
             result.Minor = Comparison.NA;
             return result;
         }
 
 
         // Version version comparison
-        if(packageVersion.Version < dependencyVersion.Version) {
+        if (packageVersion.Version < dependencyVersion.Version)
+        {
             result.Version = Comparison.LOWER;
             return result;
-        } else if(packageVersion.Version > dependencyVersion.Version) {
+        }
+        else if (packageVersion.Version > dependencyVersion.Version)
+        {
             result.Version = Comparison.HIGHER;
             return result;
-        } else if(packageVersion.Version == dependencyVersion.Version) {
+        }
+        else if (packageVersion.Version == dependencyVersion.Version)
+        {
             result.Version = Comparison.SAME;
-        } else {
+        }
+        else
+        {
             result.Version = Comparison.NA;
             return result;
         }
 
         return result;
     }
-    protected CompareResult CompareVersions(Upset package, DependencyDefinition dependencyDefinition) {      
-        
+    protected CompareResult CompareVersions(Upset package, DependencyDefinition dependencyDefinition)
+    {
+
         VersionStruct packageVersion = ParseVersion(package);
         VersionStruct dependencyVersion = ParseVersion(dependencyDefinition);
 
@@ -156,15 +179,18 @@ public class PackageHandler
 
 
 
-    protected VersionStruct ParseVersion(DependencyDefinition dependencyDefinition) {
-         return ParseVersion(dependencyDefinition.Version);
+    protected VersionStruct ParseVersion(DependencyDefinition dependencyDefinition)
+    {
+        return ParseVersion(dependencyDefinition.Version);
     }
 
-    protected VersionStruct ParseVersion(Upset package) {
+    protected VersionStruct ParseVersion(Upset package)
+    {
         return ParseVersion(package.PackageVersion);
     }
 
-    public static VersionStruct ParseVersion(string versionString) {
+    public static VersionStruct ParseVersion(string versionString)
+    {
         string versionMatcherRegexp = @"(?<major>\d+)(\.(?<minor>\d+))?(\.(?<version>\d+))?";
 
         Match matchObject = Regex.Match(versionString, versionMatcherRegexp);
@@ -178,12 +204,16 @@ public class PackageHandler
         return result;
     }
 
-    protected static int ExtractVersion(Match match, String groupName) {
-        try {
+    protected static int ExtractVersion(Match match, String groupName)
+    {
+        try
+        {
             return Int32.Parse(match.Groups[groupName].ToString());
-        } catch (FormatException) {
+        }
+        catch (FormatException)
+        {
             return 0;
         }
-        
+
     }
 }

@@ -11,9 +11,9 @@ public class MenuItems : MonoBehaviour {
 		
 	}
 
-	[MenuItem("Uplift/Refresh Upfile.xml", false, -15)]
+	[MenuItem("Uplift/Refresh", false, -15)]
 	static void RefreshUpfile() {
-		UpfileHandler.Instance();
+		UpfileHandler.Instance().Initialize();
 	}
 
 
@@ -45,12 +45,20 @@ public class MenuItems : MonoBehaviour {
 		UnityEditor.AssetDatabase.Refresh();
 	}
 
-	[MenuItem("Uplift/Debug/List Packages", false, 40)]
+
+	[MenuItem("Uplift/Show Update Window", false,30)]
+	static void ShowUpdateWindow() {
+		UpdateUtility uw = new UpdateUtility();
+		uw.ShowUtility();
+		//EditorWindow.GetWindow(typeof(UpdateUtility));
+	}
+
+	[MenuItem("Uplift/Debug/List Packages", false, 50)]
 	static void ListPackages() {
 		UpfileHandler.Instance().ListPackages();
 	}
 
-		[MenuItem("Uplift/Debug/Nuke All Packages", false, 40)]
+		[MenuItem("Uplift/Debug/Nuke All Packages", false, 50)]
 	static void NukePackages() {
 		UpfileHandler.Instance().NukePackages();
 		UnityEditor.AssetDatabase.Refresh();

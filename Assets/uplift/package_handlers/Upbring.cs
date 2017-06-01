@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace Schemas
@@ -40,6 +41,11 @@ namespace Schemas
         }
         public void RemovePackage() {
             throw new NotImplementedException();
+        }
+
+        public InstalledPackage GetInstalledPackage(string packageName) {
+            InstalledPackage spec =  this.InstalledPackage.Where(ip => ip.Name == packageName).First();
+            return spec;
         }
 
         internal void AddPackage(Upset package)

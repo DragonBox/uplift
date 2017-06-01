@@ -19,6 +19,7 @@ public class UpfileHandler {
         if(CheckForUpfile()) {
             InternalLoadFile();
             CheckUnityVersion();
+            LoadPackageList();
         } else {
             Debug.Log("Upfile doesn't exist. Generate new one from menu if needed.");
         }
@@ -52,23 +53,29 @@ public class UpfileHandler {
         return Upfile.PackagesRootPath;
     }
 
+    public void LoadPackageList() {
+        PackageList pList = PackageList.Instance();
+        pList.LoadPackages(Upfile.Repositories);
+
+    }
+
     public void InstallDependencies() {
         //FIXME: We should check for all repositories, not the first one
         //FileRepository rt = (FileRepository) Upfile.Repositories[0];
+        
         PackageHandler pHandler = new PackageHandler();
+        PackageList packageList = PackageList.Instance();
+
+        packageList.LoadPackages(Upfile.Repositories);
 
         foreach(DependencyDefinition packageDefinition in Upfile.Dependencies) {
-            PackageHandler.PackageRepo result = pHandler.FindPackageAndRepository(packageDefinition, Upfile.Repositories);
-            if(result.repository != null) {
+            PackageRepo result = pHandler.FindPackageAndRepository(packageDefinition);
+            if(result.Repository != null) {
 
-                TemporaryDirectory td = result.repository.DownloadPackage(result.package);
+                TemporaryDirectory td = result.Repository.DownloadPackage(result.Package);
 
-                LocalHandler.InstallPackage(result.package, td);
+                LocalHandler.InstallPackage(result.Package, td);
 
-                Upbring upbringFile = Upbring.FromXml();
-
-                upbringFile.AddPackage(result.package);
-                upbringFile.SaveFile();
             }
             
             

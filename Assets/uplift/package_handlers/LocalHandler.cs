@@ -25,11 +25,10 @@ class LocalHandler
 
     public static void NukeAllPackages()
     {
-        string[] directories = Directory.GetDirectories(installPath);
+        Upbring upbring = Upbring.FromXml();
 
-        foreach (string dir in directories)
-        {
-            Directory.Delete(dir, true);
+        foreach(var package in upbring.InstalledPackage) {
+            package.Nuke();
         }
 
         Schemas.Upbring.RemoveFile();
@@ -38,6 +37,35 @@ class LocalHandler
     public static void InstallPackage(Upset package, TemporaryDirectory td)
     {
         FileSystemUtil.copyDirectory(td.Path, GetLocalDirectory(package.PackageName, package.PackageVersion));
+        
+        // Mark file in Upbring
+        Upbring upbringFile = Upbring.FromXml();
+        upbringFile.AddPackage(package);
+        upbringFile.SaveFile();
+
         td.Destroy();
+    }
+
+    public static void UpdatePackage(Upset package, TemporaryDirectory td) {
+        Upbring upbring = Upbring.FromXml();
+
+        // Nuking previous version
+        Schemas.InstalledPackage installedPackage = upbring.GetInstalledPackage(package.PackageName);
+        installedPackage.Nuke();
+
+        InstallPackage(package, td);
+    }
+    
+    public static void UpdatePackage(PackageRepo packageRepo) {
+        TemporaryDirectory td = packageRepo.Repository.DownloadPackage(packageRepo.Package);
+        UpdatePackage(packageRepo.Package, td);
+    }
+
+    // What's the difference between Nuke and Uninstall?
+    // Nuke doesn't care for dependencies (if present)
+    public static void NukePackage(String packageName) {
+        Upbring upbring = Upbring.FromXml();
+        Schemas.InstalledPackage package = upbring.GetInstalledPackage(packageName);
+        package.Nuke();
     }
 }

@@ -6,8 +6,13 @@
 * DONE Fix improper encoding in saved xml's
 * DONE Keep track of currently installed packages along with their specs
 * DONE Make repository only download package, not handle it later on
-* TODO Decide when to update package and when to install one
-* TODO When updating package nuke previous version
+
+* Alpha Ready
+** DONE Decide when to update package and when to install one
+** DONE When updating package nuke previous version
+** TODO Provide support for custom installation places
+* TODO CLI Support
 * TODO Provide support for versionless (rolling) packages
 * TODO Cache package list
-* TODO Provide support for custom installation places
+* DONE Update selected package
+* TODO Update self

@@ -3,8 +3,8 @@ using System.Linq;
 
 class LatestSelectionStrategy : CandidateSelectionStrategy
 {
-    public override PackageHandler.PackageRepo[] Filter(PackageHandler.PackageRepo[] candidates)
+    public override PackageRepo[] Filter(PackageRepo[] candidates)
     {
-        return candidates.OrderBy(pr => pr.package.PackageVersionAsNumber()).Take(1).ToArray();
+        return candidates.OrderBy(pr => pr.Package.PackageVersionAsNumber()).Take(1).ToArray();
     }
 }

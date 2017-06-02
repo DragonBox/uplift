@@ -55,7 +55,7 @@ public class UpfileHandler {
 
     public void LoadPackageList() {
         PackageList pList = PackageList.Instance();
-        pList.LoadPackages(Upfile.Repositories);
+        pList.LoadPackages(Upfile.Repositories, true);
 
     }
 
@@ -64,9 +64,6 @@ public class UpfileHandler {
         //FileRepository rt = (FileRepository) Upfile.Repositories[0];
         
         PackageHandler pHandler = new PackageHandler();
-        PackageList packageList = PackageList.Instance();
-
-        packageList.LoadPackages(Upfile.Repositories);
 
         foreach(DependencyDefinition packageDefinition in Upfile.Dependencies) {
             PackageRepo result = pHandler.FindPackageAndRepository(packageDefinition);

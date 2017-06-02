@@ -33,6 +33,13 @@ public class PackageList {
         }
     }
 
+    public void LoadPackages(Schemas.Repository[] repositories, bool refresh = false) {
+        if(refresh) {
+            packages.Clear();
+        }
+        LoadPackages(repositories);
+    }
+
     public void RefreshPackages() {
         packages.Clear();
         LoadPackages(repositories);

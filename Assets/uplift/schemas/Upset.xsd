@@ -11,7 +11,22 @@
       <xs:element type="xs:string" name="PackageVersion" />
       <xs:element type="xs:string" name="PackageLicense" />
       <xs:element type="DependenciesList" name="Dependencies" minOccurs="0" />
-      <xs:element type="Stub" name="Specification" minOccurs="0" />
+      <xs:element type="InstallSpecifications" name="InstallSpecifications" minOccurs="0" />
     </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InstallSpecifications">
+    <xs:sequence>
+      <xs:element type="InstallSpec" name="Spec" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InstallSpec">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="Source" use="required" />
+        <xs:attribute name="Destination" use="required" />
+      </xs:extension>
+    </xs:simpleContent>
   </xs:complexType>
 </xs:schema>

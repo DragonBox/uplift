@@ -8,7 +8,14 @@ namespace Schemas
         {
             foreach (var spec in this.Install)
             {
-                Directory.Delete(spec.Path, true);
+                if(Directory.Exists(spec.Path)) {
+                    Directory.Delete(spec.Path, true);
+                }
+
+                if(File.Exists(spec.Path)) {
+                    File.Delete(spec.Path);
+                }
+                
             }
         }
     }

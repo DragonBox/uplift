@@ -100,6 +100,53 @@ namespace Schemas {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class InstallSpec {
+        
+        private string sourceField;
+        
+        private string destinationField;
+        
+        private string valueField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string Source {
+            get {
+                return this.sourceField;
+            }
+            set {
+                this.sourceField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string Destination {
+            get {
+                return this.destinationField;
+            }
+            set {
+                this.destinationField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlTextAttribute()]
+        public string Value {
+            get {
+                return this.valueField;
+            }
+            set {
+                this.valueField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class VersionSpec {
         
         private string itemField;
@@ -330,7 +377,7 @@ namespace Schemas {
         
         private DependencyDefinition[] dependenciesField;
         
-        private Stub specificationField;
+        private InstallSpec[] installSpecificationsField;
         
         /// <remarks/>
         public VersionSpec UnityVersion {
@@ -384,12 +431,13 @@ namespace Schemas {
         }
         
         /// <remarks/>
-        public Stub Specification {
+        [System.Xml.Serialization.XmlArrayItemAttribute("Spec", IsNullable=false)]
+        public InstallSpec[] InstallSpecifications {
             get {
-                return this.specificationField;
+                return this.installSpecificationsField;
             }
             set {
-                this.specificationField = value;
+                this.installSpecificationsField = value;
             }
         }
     }

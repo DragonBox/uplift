@@ -16,3 +16,5 @@
 * TODO Cache package list
 * DONE Update selected package
 * TODO Update self
+* TODO Change default paths for Uplift and upackages
+  Namely - remove from Assets paths, it isn't needed.

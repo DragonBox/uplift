@@ -1,0 +1,13 @@
+<Upset>
+  <UnityVersion>
+    <MinVersion>0.0.0</MinVersion>
+  </UnityVersion>
+  <PackageName>project_a</PackageName>
+  <PackageVersion>2.0.7</PackageVersion>
+  <PackageLicense>
+    Other
+  </PackageLicense>
+  <InstallSpecifications>
+    <Spec Source="123" Destination="Assets/test/456"/>
+  </InstallSpecifications>
+</Upset>

@@ -8,7 +8,7 @@ namespace Schemas
     public partial class Upbring
     {
 
-        private static string[] upbringPathDefinition = { "Assets", "upackages", "Upbring.xml" };
+        private static string[] upbringPathDefinition = { "Assets", "Plugins", "upackages", "Upbring.xml" };
         protected static string upbringPath
         {
             get

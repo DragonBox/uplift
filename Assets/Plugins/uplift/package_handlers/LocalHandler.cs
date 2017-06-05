@@ -4,7 +4,7 @@ using Schemas;
 
 class LocalHandler
 {
-    private static string[] installPathDefinition = { "Assets", "upackages" };
+    private static string[] installPathDefinition = { "Assets", "Plugins",  "upackages" };
     protected static string installPath
     {
         get

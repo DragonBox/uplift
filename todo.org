@@ -10,11 +10,12 @@
 * Alpha Ready
 ** DONE Decide when to update package and when to install one
 ** DONE When updating package nuke previous version
-** TODO Provide support for custom installation places
-* TODO CLI Support
+** DONE Provide support for custom installation places
+* DONE CLI Support
+* TODO Change default paths for Uplift and upackages
 * TODO Provide support for versionless (rolling) packages
 * TODO Cache package list
 * DONE Update selected package
 * TODO Update self
-* TODO Change default paths for Uplift and upackages
   Namely - remove from Assets paths, it isn't needed.
+* TODO Create Web repository handler

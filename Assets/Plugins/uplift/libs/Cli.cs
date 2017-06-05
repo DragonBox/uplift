@@ -1,8 +1,8 @@
-using Schemas;
 using UnityEngine;
 
 namespace Uplift
 {
+    using Schemas;
 
     public static class Cli
     {

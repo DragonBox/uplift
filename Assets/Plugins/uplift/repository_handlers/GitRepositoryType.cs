@@ -1,6 +1,6 @@
 using System;
 
-namespace Schemas {
+namespace Uplift.Schemas {
     public partial class GitRepositoryType : Repository
     {
         public override TemporaryDirectory DownloadPackage(Upset package)

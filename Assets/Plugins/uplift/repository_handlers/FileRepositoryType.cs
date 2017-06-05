@@ -5,9 +5,7 @@ using UnityEngine;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
-namespace Schemas {
-
-    
+namespace Uplift.Schemas {
     
     public partial class FileRepository : IRepositoryHandler {
         

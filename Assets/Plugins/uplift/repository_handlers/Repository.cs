@@ -1,6 +1,6 @@
 using System;
 
-namespace Schemas {
+namespace Uplift.Schemas {
     public abstract partial class Repository : IRepositoryHandler
     {
         public const string UpsetFile = "Upset.xml";

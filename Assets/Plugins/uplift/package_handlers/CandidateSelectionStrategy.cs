@@ -1,4 +1,7 @@
-abstract public class CandidateSelectionStrategy
+namespace Uplift
 {
-    abstract public PackageRepo[] Filter(PackageRepo[] candidates);
+    abstract public class CandidateSelectionStrategy
+    {
+        abstract public PackageRepo[] Filter(PackageRepo[] candidates);
+    }
 }

@@ -1,6 +1,6 @@
 using System;
 
-namespace Schemas {
+namespace Uplift.Schemas {
     public partial class WebRepositoryType : Repository
     {
         public override TemporaryDirectory DownloadPackage(Upset package)

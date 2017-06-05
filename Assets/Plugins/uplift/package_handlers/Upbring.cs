@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 
-namespace Schemas
+namespace Uplift.Schemas
 {
     public partial class Upbring
     {

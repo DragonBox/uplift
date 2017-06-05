@@ -12,10 +12,11 @@
 ** DONE When updating package nuke previous version
 ** DONE Provide support for custom installation places
 * DONE CLI Support
-* TODO Change default paths for Uplift and upackages
-* TODO Provide support for versionless (rolling) packages
-* TODO Cache package list
-* DONE Update selected package
-* TODO Update self
+* DONE Change default paths for Uplift and upackages
   Namely - remove from Assets paths, it isn't needed.
+* DONE Update selected package
+* DONE Pack every class in Uplift namespace
+* TODO Update self
+* TODO Provide support for versionless (rolling) packages
 * TODO Create Web repository handler
+* TODO Cache package list

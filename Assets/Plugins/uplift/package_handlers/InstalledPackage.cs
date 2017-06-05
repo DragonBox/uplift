@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Schemas
+namespace Uplift.Schemas
 {
     public partial class InstalledPackage
     {

@@ -1,5 +1,9 @@
-public struct PackageRepo
+namespace Uplift
 {
-    public Schemas.Upset Package;
-    public Schemas.Repository Repository;
+    using Schemas;
+    public struct PackageRepo
+    {
+        public Upset Package;
+        public Repository Repository;
+    }
 }

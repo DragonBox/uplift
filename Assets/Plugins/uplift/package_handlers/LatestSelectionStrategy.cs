@@ -1,10 +1,13 @@
 using System;
 using System.Linq;
 
-class LatestSelectionStrategy : CandidateSelectionStrategy
+namespace Uplift
 {
-    public override PackageRepo[] Filter(PackageRepo[] candidates)
+    class LatestSelectionStrategy : CandidateSelectionStrategy
     {
-        return candidates.OrderBy(pr => pr.Package.PackageVersionAsNumber()).Take(1).ToArray();
+        public override PackageRepo[] Filter(PackageRepo[] candidates)
+        {
+            return candidates.OrderBy(pr => pr.Package.PackageVersionAsNumber()).Take(1).ToArray();
+        }
     }
 }

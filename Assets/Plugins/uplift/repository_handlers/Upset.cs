@@ -1,7 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace Schemas
+namespace Uplift.Schemas
 {
     public partial class Upset
     {

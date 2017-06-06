@@ -1,7 +1,8 @@
 using System;
+using Uplift.Common;
 
 namespace Uplift.Schemas {
-    public partial class GitRepositoryType : Repository
+    public partial class WebRepository : Repository
     {
         public override TemporaryDirectory DownloadPackage(Upset package)
         {

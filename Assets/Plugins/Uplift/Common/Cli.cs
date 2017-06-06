@@ -1,9 +1,7 @@
-using UnityEngine;
+using Uplift.Packages;
 
-namespace Uplift
+namespace Uplift.Common
 {
-    using Schemas;
-
     public static class Cli
     {
         public static string LastArgument() {

@@ -1,9 +1,9 @@
-using System;
 using System.Linq;
+using Uplift.Common;
 
-namespace Uplift
+namespace Uplift.Strategies
 {
-    class LatestSelectionStrategy : CandidateSelectionStrategy
+    internal class LatestSelectionStrategy : CandidateSelectionStrategy
     {
         public override PackageRepo[] Filter(PackageRepo[] candidates)
         {

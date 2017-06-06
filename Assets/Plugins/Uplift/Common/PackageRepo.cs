@@ -1,6 +1,7 @@
-namespace Uplift
+using Uplift.Schemas;
+
+namespace Uplift.Common
 {
-    using Schemas;
     public struct PackageRepo
     {
         public Upset Package;

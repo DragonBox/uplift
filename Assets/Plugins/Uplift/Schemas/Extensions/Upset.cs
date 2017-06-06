@@ -1,5 +1,4 @@
-using System;
-using System.Text.RegularExpressions;
+using Uplift.Packages;
 
 namespace Uplift.Schemas
 {
@@ -14,7 +13,7 @@ namespace Uplift.Schemas
 
         public int PackageVersionAsNumber()
         {
-            PackageHandler.VersionStruct version =  PackageHandler.ParseVersion(this.PackageVersion);
+            PackageHandler.VersionStruct version =  PackageHandler.ParseVersion(PackageVersion);
             return version.Major * 1000000 + version.Minor * 1000 + version.Version;
         }
 

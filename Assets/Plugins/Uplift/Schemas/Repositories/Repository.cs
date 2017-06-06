@@ -1,4 +1,5 @@
 using System;
+using Uplift.Common;
 
 namespace Uplift.Schemas {
     public abstract partial class Repository : IRepositoryHandler

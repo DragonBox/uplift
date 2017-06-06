@@ -1,19 +1,17 @@
-using UnityEngine;
-using UnityEditor;
-using System.Xml.Serialization;
 using System.IO;
-using System;
-using System.Collections;
-
+using System.Xml.Serialization;
+using UnityEngine;
+using Uplift.Common;
+using Uplift.Packages;
+using Uplift.Schemas;
 // Note - this is singleton
 namespace Uplift
 {
-    using Schemas;
     public class UpfileHandler
     {
-        const bool debugMode = true;
+        private const bool debugMode = true;
         public const string upfilePath = "Upfile.xml";
-        Upfile Upfile;
+        private Upfile Upfile;
 
         private static UpfileHandler instance;
 
@@ -56,11 +54,11 @@ namespace Uplift
             Upfile = LoadFile();
         }
 
-        public Schemas.Upfile LoadFile()
+        public Upfile LoadFile()
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(Schemas.Upfile));
+            XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
 
-            return serializer.Deserialize(new FileStream(upfilePath, FileMode.Open)) as Schemas.Upfile;
+            return serializer.Deserialize(new FileStream(upfilePath, FileMode.Open)) as Upfile;
         }
 
         public string GetPackagesRootPath()
@@ -105,7 +103,7 @@ namespace Uplift
         {
             foreach (Repository repository in Upfile.Repositories)
             {
-                foreach (Schemas.Upset package in repository.ListPackages())
+                foreach (Upset package in repository.ListPackages())
                 {
                     Debug.Log("Package: " + package.PackageName + " Version: " + package.PackageVersion);
                 }
@@ -123,11 +121,11 @@ namespace Uplift
         //FIXME: Prepare proper version checker
         public void CheckUnityVersion()
         {
-            String upfileVersion = Upfile.UnityVersion;
-            String unityVersion = Application.unityVersion;
+            var upfileVersion = Upfile.UnityVersion;
+            var unityVersion = Application.unityVersion;
             if (unityVersion != upfileVersion)
             {
-                Debug.LogError(String.Format("Uplift: Upfile.xml Unity Version ({0}) doesn't match Unity's one  ({1}).", upfileVersion, unityVersion));
+                Debug.LogError(string.Format("Uplift: Upfile.xml Unity Version ({0}) doesn't match Unity's one  ({1}).", upfileVersion, unityVersion));
             }
             else
             {

@@ -1,13 +1,13 @@
-using System;
 using System.IO;
+using Uplift.Common;
 using Uplift.Schemas;
 
-namespace Uplift
+namespace Uplift.Packages
 {
-    class LocalHandler
+    internal class LocalHandler
     {
-        private static string[] installPathDefinition = { "Assets", "Plugins", "upackages" };
-        protected static string installPath
+        private static string[] _installPathDefinition = { "Assets", "Plugins", "Upackages" };
+        protected static string InstallPath
         {
             get
             {
@@ -16,13 +16,13 @@ namespace Uplift
                 {
                     return upfile.GetPackagesRootPath();
                 }
-                return String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), installPathDefinition);
+                return string.Join(Path.DirectorySeparatorChar.ToString(), _installPathDefinition);
             }
         }
 
         public static string GetLocalDirectory(string name, string version)
         {
-            return installPath + System.IO.Path.DirectorySeparatorChar + name + "~" + version;
+            return InstallPath + Path.DirectorySeparatorChar + name + "~" + version;
         }
 
         public static void NukeAllPackages()
@@ -34,7 +34,7 @@ namespace Uplift
                 package.Nuke();
             }
 
-            Schemas.Upbring.RemoveFile();
+            Upbring.RemoveFile();
         }
 
         //FIXME: This is super unsafe right now, as we can copy down into the FS.
@@ -45,7 +45,7 @@ namespace Uplift
             // Note: Full package is ALWAYS copied to the upackages directory right now
             string localPackagePath = GetLocalDirectory(package.PackageName, package.PackageVersion);
             upbringFile.AddPackage(package);
-            FileSystemUtil.copyDirectory(td.Path, localPackagePath);
+            FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
             upbringFile.AddLocation(package, KindSpec.Base, localPackagePath);
 
             if (package.InstallSpecifications != null)
@@ -69,7 +69,7 @@ namespace Uplift
                     if (Directory.Exists(sourcePath))
                     {
                         // Working with directory
-                        FileSystemUtil.copyDirectory(sourcePath, spec.Destination);
+                        FileSystemUtil.CopyDirectory(sourcePath, spec.Destination);
                     }
 
                     upbringFile.AddLocation(package, KindSpec.Other, spec.Destination);
@@ -88,7 +88,7 @@ namespace Uplift
             Upbring upbring = Upbring.FromXml();
 
             // Nuking previous version
-            Schemas.InstalledPackage installedPackage = upbring.GetInstalledPackage(package.PackageName);
+            InstalledPackage installedPackage = upbring.GetInstalledPackage(package.PackageName);
             installedPackage.Nuke();
 
             InstallPackage(package, td);
@@ -102,10 +102,10 @@ namespace Uplift
 
         // What's the difference between Nuke and Uninstall?
         // Nuke doesn't care for dependencies (if present)
-        public static void NukePackage(String packageName)
+        public static void NukePackage(string packageName)
         {
             Upbring upbring = Upbring.FromXml();
-            Schemas.InstalledPackage package = upbring.GetInstalledPackage(packageName);
+            InstalledPackage package = upbring.GetInstalledPackage(packageName);
             package.Nuke();
         }
     }

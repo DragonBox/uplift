@@ -1,11 +1,13 @@
 using System;
-using Uplift.Schemas;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Collections.Generic;
-using UnityEngine;
 using System.Text.RegularExpressions;
+using UnityEngine;
+using Uplift.Common;
+using Uplift.Schemas;
+using Uplift.Strategies;
 
-namespace Uplift
+namespace Uplift.Packages
 {
     public class PackageHandler
     {
@@ -22,41 +24,33 @@ namespace Uplift
             public int Major, Minor, Version;
         }
 
+        [SuppressMessage("ReSharper", "ArrangeRedundantParentheses")]
         internal PackageRepo[] FindCandidatesForDefinition(DependencyDefinition packageDefinition)
         {
-            List<PackageRepo> result = new List<PackageRepo>();
-
             var pList = PackageList.Instance();
 
-            foreach (var packageRepo in pList.GetAllPackages())
-            {
-
-                if (packageRepo.Package.PackageName != packageDefinition.Name)
-                {
-                    continue;
-                }
-
-                CompareResult compareResult = CompareVersions(packageRepo.Package, packageDefinition);
-
-                if (
+            return (
+                // From All the available packages
+                from packageRepo in pList.GetAllPackages()
+                // Select the ones that match the definition
+                where packageRepo.Package.PackageName == packageDefinition.Name
+                // And prepare compareResult for them
+                let compareResult = CompareVersions(packageRepo.Package, packageDefinition)
+                // Find the ones which match the logic being:
+                // 1. Major version HIGHER, or
+                // 2. Major version SAME AND Minor version HIGHER, or
+                // 3. Major version SAME, Minor version SAME, Build version HIGHER or SAME
+                where
                     (compareResult.Major == Comparison.HIGHER) ||
                     (compareResult.Major == Comparison.SAME && compareResult.Minor == Comparison.HIGHER) ||
-                    (compareResult.Major == Comparison.SAME && compareResult.Minor == Comparison.SAME && (compareResult.Version == Comparison.HIGHER || compareResult.Version == Comparison.SAME))
-                )
-                {
-                    PackageRepo definition = new PackageRepo();
-                    definition.Repository = packageRepo.Repository;
-                    definition.Package = packageRepo.Package;
-                    result.Add(definition);
-                }
-                else
-                {
-                    continue;
-                }
-
-            }
-
-            return result.ToArray();
+                    (compareResult.Major == Comparison.SAME && compareResult.Minor == Comparison.SAME &&
+                        (compareResult.Version == Comparison.HIGHER || compareResult.Version == Comparison.SAME)
+                    )
+                // And use found package
+                select packageRepo
+            
+            // As an array
+            ).ToArray();
         }
 
         public PackageRepo[] SelectCandidates(PackageRepo[] candidates, CandidateSelectionStrategy strategy)
@@ -193,24 +187,26 @@ namespace Uplift
 
         public static VersionStruct ParseVersion(string versionString)
         {
-            string versionMatcherRegexp = @"(?<major>\d+)(\.(?<minor>\d+))?(\.(?<version>\d+))?";
+            const string versionMatcherRegexp = @"(?<major>\d+)(\.(?<minor>\d+))?(\.(?<version>\d+))?";
 
-            Match matchObject = Regex.Match(versionString, versionMatcherRegexp);
+            var matchObject = Regex.Match(versionString, versionMatcherRegexp);
 
-            var result = new VersionStruct();
+            var result = new VersionStruct
+            {
+                Major = ExtractVersion(matchObject, "major"),
+                Minor = ExtractVersion(matchObject, "minor"),
+                Version = ExtractVersion(matchObject, "version")
+            };
 
-            result.Major = ExtractVersion(matchObject, "major");
-            result.Minor = ExtractVersion(matchObject, "minor");
-            result.Version = ExtractVersion(matchObject, "version");
 
             return result;
         }
 
-        protected static int ExtractVersion(Match match, String groupName)
+        protected static int ExtractVersion(Match match, string groupName)
         {
             try
             {
-                return Int32.Parse(match.Groups[groupName].ToString());
+                return int.Parse(match.Groups[groupName].ToString());
             }
             catch (FormatException)
             {

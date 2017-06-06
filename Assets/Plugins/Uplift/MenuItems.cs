@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.IO;
 using UnityEditor;
-using System.IO;
+using UnityEngine;
+using Uplift.Windows;
+using Uplift.Schemas;
 
 namespace Uplift
 {
@@ -16,47 +16,46 @@ namespace Uplift
         }
 
         [MenuItem("Uplift/Refresh", false, -15)]
-        static void RefreshUpfile()
+        private static void RefreshUpfile()
         {
             UpfileHandler.Instance().Initialize();
         }
 
 
         [MenuItem("Uplift/Generate Upfile", true, 0)]
-        static bool CheckForUpfile()
+        private static bool CheckForUpfile()
         {
             return !UpfileHandler.Instance().CheckForUpfile();
         }
         [MenuItem("Uplift/Generate Upfile", false, 0)]
-        static void GenerateUpfile()
+        private static void GenerateUpfile()
         {
             Debug.Log("Hi, I Generate upfile!");
 
-            Schemas.Upfile upfile = new Schemas.Upfile();
+            var upfile = new Upfile {UnityVersion = Application.unityVersion};
 
-            upfile.UnityVersion = Application.unityVersion;
 
-            System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(Schemas.Upfile));
+            var serializer = new System.Xml.Serialization.XmlSerializer(typeof(Upfile));
             serializer.Serialize(new FileStream(UpfileHandler.upfilePath, FileMode.CreateNew), upfile);
             Debug.Log("Done");
         }
 
         [MenuItem("Uplift/Check Dependencies", false, 20)]
-        static void CheckDependencies()
+        private static void CheckDependencies()
         {
 
         }
 
         [MenuItem("Uplift/Install Dependencies", false, 20)]
-        static void InstallDependencies()
+        private static void InstallDependencies()
         {
             UpfileHandler.Instance().InstallDependencies();
-            UnityEditor.AssetDatabase.Refresh();
+            AssetDatabase.Refresh();
         }
 
 
         [MenuItem("Uplift/Show Update Window", false, 30)]
-        static void ShowUpdateWindow()
+        private static void ShowUpdateWindow()
         {
             UpdateUtility uw = new UpdateUtility();
             uw.ShowUtility();
@@ -64,16 +63,16 @@ namespace Uplift
         }
 
         [MenuItem("Uplift/Debug/List Packages", false, 50)]
-        static void ListPackages()
+        private static void ListPackages()
         {
             UpfileHandler.Instance().ListPackages();
         }
 
         [MenuItem("Uplift/Debug/Nuke All Packages", false, 50)]
-        static void NukePackages()
+        private static void NukePackages()
         {
             UpfileHandler.Instance().NukePackages();
-            UnityEditor.AssetDatabase.Refresh();
+            AssetDatabase.Refresh();
         }
 
     }

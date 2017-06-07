@@ -35,7 +35,10 @@ namespace Uplift
             var upfile = new Upfile {UnityVersion = Application.unityVersion};
 
             var serializer = new System.Xml.Serialization.XmlSerializer(typeof(Upfile));
-            serializer.Serialize(new FileStream(UpfileHandler.upfilePath, FileMode.CreateNew), upfile);
+
+            using (FileStream FS = new FileStream(UpfileHandler.upfilePath, FileMode.CreateNew)) {
+                serializer.Serialize(FS, upfile);
+            }
             Debug.Log("Done");
         }
 

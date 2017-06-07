@@ -1,2 +1,20 @@
-Temp/*
-Library/*
+# /
+/Temp
+/Library
+/target
+/test-results
+/obj
+/*.csproj
+/*.pidb
+/*.sln
+/*.suo
+/*.userprefs
+/*.patch
+/*.log
+*.unityproj
+*.pyc
+*.pidb
+*.pidb.meta
+.DS_Store
+.db
+Thumbs.db

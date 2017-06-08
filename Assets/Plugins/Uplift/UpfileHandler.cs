@@ -53,11 +53,9 @@ namespace Uplift
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
 
-            FileStream fs = new FileStream(upfilePath, FileMode.Open);
-            Upfile deserializedFile = serializer.Deserialize(fs) as Upfile;
-
-            fs.Close();
-            return deserializedFile;
+            using (FileStream fs = new FileStream(upfilePath, FileMode.Open)) {
+                return serializer.Deserialize(fs) as Upfile;
+            }
         }
 
         public string GetPackagesRootPath()

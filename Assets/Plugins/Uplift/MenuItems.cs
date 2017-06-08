@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Xml.Serialization;
 using UnityEditor;
 using UnityEngine;
 using Uplift.Windows;
@@ -32,10 +33,10 @@ namespace Uplift
         {
             Debug.Log("Hi, I Generate upfile!");
 
-            var upfile = new Upfile {UnityVersion = Application.unityVersion};
+            Upfile upfile = new Upfile {UnityVersion = Application.unityVersion};
 
 
-            var serializer = new System.Xml.Serialization.XmlSerializer(typeof(Upfile));
+            XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(Upfile));
             serializer.Serialize(new FileStream(UpfileHandler.upfilePath, FileMode.CreateNew), upfile);
             Debug.Log("Done");
         }

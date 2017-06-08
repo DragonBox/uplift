@@ -13,7 +13,7 @@ namespace Uplift.Windows
         {
             titleContent.text = "Update Utility";
 
-            string packageFormat = "{0} ({1})";
+            const string packageFormat = "{0} ({1})";
 
 
             Upbring upbring = Upbring.FromXml();
@@ -21,7 +21,7 @@ namespace Uplift.Windows
             PackageList packageList = PackageList.Instance();
 
 
-            foreach (var package in upbring.InstalledPackage)
+            foreach (InstalledPackage package in upbring.InstalledPackage)
             {
                 PackageRepo latestPackageRepo = packageList.GetLatestPackage(package.Name);
 
@@ -64,7 +64,7 @@ namespace Uplift.Windows
 
             if (GUILayout.Button("Update Everything"))
             {
-                foreach (var package in upbring.InstalledPackage)
+                foreach (InstalledPackage package in upbring.InstalledPackage)
                 {
                     PackageRepo latestPackageRepo = packageList.GetLatestPackage(package.Name);
                     if (package.Version != latestPackageRepo.Package.PackageVersion)

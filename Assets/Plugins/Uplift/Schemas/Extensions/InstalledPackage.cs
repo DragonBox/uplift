@@ -6,7 +6,7 @@ namespace Uplift.Schemas
     {
         public void Nuke()
         {
-            foreach (var spec in Install)
+            foreach (InstallationSpecs spec in Install)
             {
                 if(Directory.Exists(spec.Path)) {
                     Directory.Delete(spec.Path, true);

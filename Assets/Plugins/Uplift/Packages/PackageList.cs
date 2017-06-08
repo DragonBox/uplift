@@ -34,7 +34,7 @@ namespace Uplift.Packages
                 Repositories = repositories;
             }
 
-            foreach (var repo in repositories)
+            foreach (Repository repo in repositories)
             {
                 LoadPackages(repo);
             }
@@ -58,7 +58,7 @@ namespace Uplift.Packages
         public void LoadPackages(Repository repository)
         {
             PackageRepo pr;
-            foreach (var package in repository.ListPackages())
+            foreach (Upset package in repository.ListPackages())
             {
                 pr = new PackageRepo
                 {

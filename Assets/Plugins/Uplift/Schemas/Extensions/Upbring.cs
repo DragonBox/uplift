@@ -20,21 +20,21 @@ namespace Uplift.Schemas
         {
             if (!File.Exists(upbringPath))
             {
-                var newUpbring = new Upbring {InstalledPackage = new InstalledPackage[0]};
+                Upbring newUpbring = new Upbring {InstalledPackage = new InstalledPackage[0]};
                 return newUpbring;
             }
-            var serializer = new XmlSerializer(typeof(Upbring));
-            var fs = new FileStream(upbringPath, FileMode.Open);
-            var upbringFile = serializer.Deserialize(fs) as Upbring;
+            XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
+            FileStream fs = new FileStream(upbringPath, FileMode.Open);
+            Upbring upbringFile = serializer.Deserialize(fs) as Upbring;
             fs.Close();
             return upbringFile;
         }
 
         public void SaveFile()
         {
-            var serializer = new XmlSerializer(typeof(Upbring));
-            var fs = new FileStream(upbringPath, FileMode.Create);
-            var sw = new StreamWriter(fs, System.Text.Encoding.UTF8);
+            XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
+            FileStream fs = new FileStream(upbringPath, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8);
             serializer.Serialize(sw, this);
             sw.Close();
             fs.Close();
@@ -51,13 +51,13 @@ namespace Uplift.Schemas
 
         public InstalledPackage GetInstalledPackage(string packageName)
         {
-            var spec = InstalledPackage.First(ip => ip.Name == packageName);
+            InstalledPackage spec = InstalledPackage.First(ip => ip.Name == packageName);
             return spec;
         }
 
         internal void AddPackage(Upset package)
         {
-            var newPackage = new InstalledPackage
+            InstalledPackage newPackage = new InstalledPackage
             {
                 Name = package.PackageName,
                 Version = package.PackageVersion
@@ -68,7 +68,7 @@ namespace Uplift.Schemas
                 return;
             }
 
-            var finalArray = new InstalledPackage[InstalledPackage.Length + 1];
+            InstalledPackage[] finalArray = new InstalledPackage[InstalledPackage.Length + 1];
             InstalledPackage.CopyTo(finalArray, 0);
             finalArray[InstalledPackage.Length] = newPackage;
 
@@ -80,7 +80,7 @@ namespace Uplift.Schemas
 
             InstalledPackage internalPackage = null;
             
-            foreach (var t in InstalledPackage)
+            foreach (InstalledPackage t in InstalledPackage)
             {
                 internalPackage = t;
                 if (internalPackage.Name == package.PackageName)
@@ -108,10 +108,10 @@ namespace Uplift.Schemas
 
 
             // Create new spec
-            var newSpec = new InstallationSpecs {Kind = kind,Path = path};
+            InstallationSpecs newSpec = new InstallationSpecs {Kind = kind,Path = path};
             
 
-            var newArray = new InstallationSpecs[internalPackage.Install.Length + 1];
+            InstallationSpecs[] newArray = new InstallationSpecs[internalPackage.Install.Length + 1];
             internalPackage.Install.CopyTo(newArray, 0);
 
             newArray[newArray.Length - 1] = newSpec;

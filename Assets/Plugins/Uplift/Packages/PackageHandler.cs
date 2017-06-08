@@ -27,7 +27,7 @@ namespace Uplift.Packages
         [SuppressMessage("ReSharper", "ArrangeRedundantParentheses")]
         internal PackageRepo[] FindCandidatesForDefinition(DependencyDefinition packageDefinition)
         {
-            var pList = PackageList.Instance();
+            PackageList pList = PackageList.Instance();
 
             return (
                 // From All the available packages
@@ -59,14 +59,7 @@ namespace Uplift.Packages
         }
         public PackageRepo[] SelectCandidates(PackageRepo[] candidates, CandidateSelectionStrategy[] strategyList)
         {
-
-            foreach (var strategy in strategyList)
-            {
-                candidates = SelectCandidates(candidates, strategy);
-
-            }
-
-            return candidates;
+            return strategyList.Aggregate(candidates, SelectCandidates);
         }
 
 
@@ -94,7 +87,7 @@ namespace Uplift.Packages
 
         protected CompareResult CompareVersions(VersionStruct packageVersion, VersionStruct dependencyVersion)
         {
-            var result = new CompareResult();
+            CompareResult result = new CompareResult();
 
             // Major version comparison
             if (packageVersion.Major < dependencyVersion.Major)
@@ -189,9 +182,9 @@ namespace Uplift.Packages
         {
             const string versionMatcherRegexp = @"(?<major>\d+)(\.(?<minor>\d+))?(\.(?<version>\d+))?";
 
-            var matchObject = Regex.Match(versionString, versionMatcherRegexp);
+            Match matchObject = Regex.Match(versionString, versionMatcherRegexp);
 
-            var result = new VersionStruct
+            VersionStruct result = new VersionStruct
             {
                 Major = ExtractVersion(matchObject, "major"),
                 Minor = ExtractVersion(matchObject, "minor"),

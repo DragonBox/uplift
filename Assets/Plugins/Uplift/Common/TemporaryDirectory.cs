@@ -1,10 +1,12 @@
+using System;
 using System.IO;
 
 namespace Uplift.Common
 {
-    public class TemporaryDirectory {
+    public class TemporaryDirectory : IDisposable {
 
         public readonly string Path;
+        protected bool disposed;
 
         public TemporaryDirectory() {
             System.IO.Path.GetTempPath();
@@ -14,8 +16,15 @@ namespace Uplift.Common
             Directory.CreateDirectory(Path);
         }
 
-        public void Destroy() {
+        protected void Finalize()
+        {
+            if (!disposed) Dispose();
+        }
+
+        public void Dispose()
+        {
             Directory.Delete(Path, true);
+            disposed = true;
         }
     }
 }

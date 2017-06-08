@@ -32,17 +32,12 @@ namespace Uplift
 
         public static UpfileHandler Instance()
         {
-            if (instance == null)
-            {
-                var uph = new UpfileHandler();
-                instance = uph;
-                uph.Initialize();
-                return uph;
-            }
-            else
-            {
-                return instance;
-            }
+            if (instance != null) return instance;
+            
+            UpfileHandler uph = new UpfileHandler();
+            instance = uph;
+            uph.Initialize();
+            return uph;
         }
         public bool CheckForUpfile()
         {
@@ -58,7 +53,12 @@ namespace Uplift
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
 
-            return serializer.Deserialize(new FileStream(upfilePath, FileMode.Open)) as Upfile;
+            FileStream fs = new FileStream(upfilePath, FileMode.Open);
+            Upfile deserializedFile = serializer.Deserialize(fs) as Upfile;
+
+            fs.Close();
+            return deserializedFile;
+
         }
 
         public string GetPackagesRootPath()
@@ -86,9 +86,13 @@ namespace Uplift
                 if (result.Repository != null)
                 {
 
-                    TemporaryDirectory td = result.Repository.DownloadPackage(result.Package);
 
-                    LocalHandler.InstallPackage(result.Package, td);
+                    using (TemporaryDirectory td = result.Repository.DownloadPackage(result.Package))
+                    {
+                        LocalHandler.InstallPackage(result.Package, td);
+                    }
+
+                    
 
                 }
 
@@ -121,8 +125,8 @@ namespace Uplift
         //FIXME: Prepare proper version checker
         public void CheckUnityVersion()
         {
-            var upfileVersion = Upfile.UnityVersion;
-            var unityVersion = Application.unityVersion;
+            string upfileVersion = Upfile.UnityVersion;
+            string unityVersion = Application.unityVersion;
             if (unityVersion != upfileVersion)
             {
                 Debug.LogError(string.Format("Uplift: Upfile.xml Unity Version ({0}) doesn't match Unity's one  ({1}).", upfileVersion, unityVersion));

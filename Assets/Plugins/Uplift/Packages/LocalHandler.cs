@@ -29,7 +29,7 @@ namespace Uplift.Packages
         {
             Upbring upbring = Upbring.FromXml();
 
-            foreach (var package in upbring.InstalledPackage)
+            foreach (InstalledPackage package in upbring.InstalledPackage)
             {
                 package.Nuke();
             }
@@ -80,7 +80,7 @@ namespace Uplift.Packages
 
             upbringFile.SaveFile();
 
-            td.Destroy();
+            td.Dispose();
         }
 
         public static void UpdatePackage(Upset package, TemporaryDirectory td)
@@ -96,8 +96,10 @@ namespace Uplift.Packages
 
         public static void UpdatePackage(PackageRepo packageRepo)
         {
-            TemporaryDirectory td = packageRepo.Repository.DownloadPackage(packageRepo.Package);
-            UpdatePackage(packageRepo.Package, td);
+            using(TemporaryDirectory td = packageRepo.Repository.DownloadPackage(packageRepo.Package))
+            {
+                UpdatePackage(packageRepo.Package, td);
+            }
         }
 
         // What's the difference between Nuke and Uninstall?

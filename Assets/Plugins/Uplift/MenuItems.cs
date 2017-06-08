@@ -16,18 +16,18 @@ namespace Uplift
 
         }
 
-        [MenuItem("Uplift/Refresh", false, -15)]
+        [MenuItem("Uplift/Refresh Upfile", false, -15)]
         private static void RefreshUpfile()
         {
             UpfileHandler.Instance().Initialize();
         }
-
 
         [MenuItem("Uplift/Generate Upfile", true, 0)]
         private static bool CheckForUpfile()
         {
             return !UpfileHandler.Instance().CheckForUpfile();
         }
+
         [MenuItem("Uplift/Generate Upfile", false, 0)]
         private static void GenerateUpfile()
         {
@@ -35,16 +35,16 @@ namespace Uplift
 
             Upfile upfile = new Upfile {UnityVersion = Application.unityVersion};
 
-
-            XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(Upfile));
-            serializer.Serialize(new FileStream(UpfileHandler.upfilePath, FileMode.CreateNew), upfile);
+            using (FileStream FS = new FileStream(UpfileHandler.upfilePath, FileMode.CreateNew)) {
+                serializer.Serialize(FS, upfile);
+            }
             Debug.Log("Done");
         }
 
         [MenuItem("Uplift/Check Dependencies", false, 20)]
         private static void CheckDependencies()
         {
-
+            Debug.Log("Do nothing right now");
         }
 
         [MenuItem("Uplift/Install Dependencies", false, 20)]

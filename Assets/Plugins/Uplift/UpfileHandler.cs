@@ -58,7 +58,6 @@ namespace Uplift
 
             fs.Close();
             return deserializedFile;
-
         }
 
         public string GetPackagesRootPath()
@@ -70,7 +69,6 @@ namespace Uplift
         {
             PackageList pList = PackageList.Instance();
             pList.LoadPackages(Upfile.Repositories, true);
-
         }
 
         public void InstallDependencies()
@@ -85,22 +83,12 @@ namespace Uplift
                 PackageRepo result = pHandler.FindPackageAndRepository(packageDefinition);
                 if (result.Repository != null)
                 {
-
-
                     using (TemporaryDirectory td = result.Repository.DownloadPackage(result.Package))
                     {
                         LocalHandler.InstallPackage(result.Package, td);
                     }
-
-                    
-
                 }
-
-
-
             }
-
-
         }
 
         internal void ListPackages()

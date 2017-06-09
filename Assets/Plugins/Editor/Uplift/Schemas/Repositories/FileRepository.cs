@@ -27,9 +27,15 @@ namespace Uplift.Schemas {
         }
 
         public override Upset[] ListPackages() {
-            string[] directories =  Directory.GetDirectories(Path);
             List<Upset> upsetList = new List<Upset>();
 
+            AddExplodedDirectories(upsetList);
+
+            return upsetList.ToArray();
+        }
+
+        private void AddExplodedDirectories(List<Upset> upsetList) {
+            string[] directories =  Directory.GetDirectories(Path);
             foreach(string directoryName in directories) {
                 string upsetPath = directoryName + System.IO.Path.DirectorySeparatorChar + UpsetFile;
                 
@@ -44,7 +50,6 @@ namespace Uplift.Schemas {
                 }
             }
 
-            return upsetList.ToArray();
         }
 
     }

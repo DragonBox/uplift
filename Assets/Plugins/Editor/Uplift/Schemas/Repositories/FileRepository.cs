@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Xml.Serialization;
+using SharpCompress.Archives;
+using SharpCompress.Archives.Tar;
 using Uplift.Extensions;
 using UnityEngine;
 using Uplift.Common;
@@ -28,14 +31,91 @@ namespace Uplift.Schemas {
                 }
             } else if (IsUnityPackage(sourcePath))
             {
-                using (MemoryStream MS = new MemoryStream())
+                using (MemoryStream TarArchiveMS = new MemoryStream())
                 {
                     using (FileStream originalFileStream = new FileStream(sourcePath, FileMode.Open))
                     {
                         using (GZipStream decompressionStream =
                             new GZipStream(originalFileStream, CompressionMode.Decompress))
                         {
-                            decompressionStream.CopyTo(MS);
+                            decompressionStream.CopyTo(TarArchiveMS);
+                            TarArchiveMS.Position = 0;
+                        }
+                    }
+                    TarArchive reader = TarArchive.Open(TarArchiveMS);
+
+                    string assetPath = null;
+                    MemoryStream assetMS = null;
+                    MemoryStream metaMS = null;
+                    foreach (TarArchiveEntry entry in reader.Entries)
+                    {
+                        if (entry.IsDirectory) continue;
+
+                        Debug.Log(entry.Key + " " + entry.GetType());
+                        if (entry.Key.EndsWith("asset"))
+                        {
+                            if (assetMS != null)
+                                throw new InvalidOperationException("Unexpected state: assetMS not null");
+                            assetMS = new MemoryStream();
+                            entry.WriteTo(assetMS);
+                            assetMS.Position = 0;
+                            continue;
+                        }
+                        if (entry.Key.EndsWith("metaData"))
+                        {
+                            // not sure what do do with that right now
+                            // maybe copy it as .meta ? I tried and it causes problems when the editor is in text mode.
+                            // Not even sure what the file contain yet. Convert it using Unity?
+                            Debug.Log("METADATA: " + entry.Key + " " + entry.Size);
+                            /*
+                            metaMS = new MemoryStream();
+                            entry.WriteTo(metaMS);
+                            metaMS.Position = 0;
+                            */
+                            continue;
+                        }
+                        if (entry.Key.EndsWith("pathname"))
+                        {
+                            MemoryStream MSM = new MemoryStream();
+                            entry.WriteTo(MSM);
+                            MSM.Position = 0;
+                            using (StreamReader SR = new StreamReader(MSM))
+                            {
+                                assetPath = SR.ReadToEnd().Split('\n')[0];
+                            }
+                        }
+                        if (assetPath != null)
+                        {
+                            if (assetMS == null)
+                            {
+                                // these are for directories inside the file
+                                Debug.Log("path not null " + assetPath + " but asset not yet read");
+                                assetPath = null;
+                                continue;
+                            }
+                            string AssetPath = td.Path + System.IO.Path.DirectorySeparatorChar + assetPath.Replace('/', System.IO.Path.DirectorySeparatorChar);
+                            var AssetPathDir = new FileInfo(AssetPath).Directory.FullName;
+                            if (!Directory.Exists(AssetPathDir))
+                            {
+                                Directory.CreateDirectory(AssetPathDir);
+                            }
+                            using (FileStream FS = new FileStream(AssetPath, FileMode.Create))
+                            {
+                                assetMS.CopyTo(FS);
+                            }
+                            assetMS.Dispose();
+                            assetMS = null;
+                            if (metaMS != null)
+                            {
+                                string MetaPath = AssetPath + ".meta";
+                                using (FileStream FS = new FileStream(MetaPath, FileMode.Create))
+                                {
+                                    metaMS.CopyTo(FS);
+                                }
+                                metaMS.Dispose();
+                                metaMS = null;
+                            }
+                            assetPath = null;
                         }
                     }
                 }
@@ -111,8 +191,10 @@ namespace Uplift.Schemas {
             upset.UnityVersion = new VersionSpec();
             upset.UnityVersion.ItemElementName = ItemChoiceType.MinVersion;
             upset.UnityVersion.Item = MinUnityVersion;
-
             upset.MetaInformation.dirName = FileName;
+
+            // we need to move things around here
+            //upset.InstallSpecifications = new InstallSpec[0];
             return upset;
         }
     }

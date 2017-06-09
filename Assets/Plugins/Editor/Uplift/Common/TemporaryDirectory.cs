@@ -16,15 +16,18 @@ namespace Uplift.Common
             Directory.CreateDirectory(Path);
         }
 
-        protected void Finalize()
+        ~ TemporaryDirectory()
         {
-            if (!disposed) Dispose();
+            Dispose();
         }
 
         public void Dispose()
         {
-            Directory.Delete(Path, true);
-            disposed = true;
+            if (!disposed)
+            {
+                Directory.Delete(Path, true);
+                disposed = true;
+            }
         }
     }
 }

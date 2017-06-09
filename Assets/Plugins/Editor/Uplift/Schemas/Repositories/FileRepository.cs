@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Xml.Serialization;
+using Uplift.Extensions;
 using UnityEngine;
 using Uplift.Common;
 
@@ -11,19 +13,43 @@ namespace Uplift.Schemas {
         private const string formatPattern = "{0}{1}{2}";
 
         public override TemporaryDirectory DownloadPackage(Upset package) {
-            string sourcePath = string.Format(formatPattern, Path, System.IO.Path.DirectorySeparatorChar, package.MetaInformation.dirName);
             TemporaryDirectory td = new TemporaryDirectory();
 
-            //string destination = LocalHandler.GetLocalDirectory(package.PackageName, package.PackageVersion);
-                
-            try {
-                FileSystemUtil.CopyDirectory(sourcePath, td.Path);
-            } catch (DirectoryNotFoundException) {
-                Debug.LogError(string.Format("Package {0} not found in specified version {1}", package.PackageName, package.PackageVersion));
-                td.Dispose();
+            string sourcePath = string.Format(formatPattern, Path, System.IO.Path.DirectorySeparatorChar, package.MetaInformation.dirName);
+
+            if (Directory.Exists(sourcePath))
+            {
+                // exploded directory
+                try {
+                    FileSystemUtil.CopyDirectory(sourcePath, td.Path);
+                } catch (DirectoryNotFoundException) {
+                    Debug.LogError(string.Format("Package {0} not found in specified version {1}", package.PackageName, package.PackageVersion));
+                    td.Dispose();
+                }
+            } else if (IsUnityPackage(sourcePath))
+            {
+                using (MemoryStream MS = new MemoryStream())
+                {
+                    using (FileStream originalFileStream = new FileStream(sourcePath, FileMode.Open))
+                    {
+                        using (GZipStream decompressionStream =
+                            new GZipStream(originalFileStream, CompressionMode.Decompress))
+                        {
+                            decompressionStream.CopyTo(MS);
+                        }
+                    }
+                }
+            } else
+            {
+                Debug.LogError(string.Format("Package {0} version {1} has an unexpected format and cannot be downloaded ", package.PackageName, package.PackageVersion));
             }
 
             return td;
+        }
+
+        private static bool IsUnityPackage(string Path)
+        {
+            return File.Exists(Path) && ".unityPackage".Equals(System.IO.Path.GetExtension(Path));
         }
 
         public override Upset[] ListPackages() {

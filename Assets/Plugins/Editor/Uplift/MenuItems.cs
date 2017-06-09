@@ -60,9 +60,7 @@ namespace Uplift
         [MenuItem("Uplift/Show Update Window", false, 30)]
         private static void ShowUpdateWindow()
         {
-            UpdateUtility uw = new UpdateUtility();
-            uw.ShowUtility();
-            //EditorWindow.GetWindow(typeof(UpdateUtility));
+            EditorWindow.GetWindow(typeof(UpdateUtility));
         }
 
         [MenuItem("Uplift/Debug/List Packages", false, 50)]

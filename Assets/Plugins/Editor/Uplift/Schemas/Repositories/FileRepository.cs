@@ -30,6 +30,7 @@ namespace Uplift.Schemas {
             List<Upset> upsetList = new List<Upset>();
 
             AddExplodedDirectories(upsetList);
+            AddUnityPackages(upsetList);
 
             return upsetList.ToArray();
         }
@@ -49,8 +50,44 @@ namespace Uplift.Schemas {
                     upsetList.Add(upset);
                 }
             }
-
         }
 
+        private void AddUnityPackages(List<Upset> upsetList) {
+            string[] files =  Directory.GetFiles(Path, "*.unityPackage");
+
+            foreach(string FileName in files)
+            {
+                // assume unityPackage doesn't contain an upset file for now. In the future we can support it
+                Upset upset = InferUpsetFromUnityPackage(FileName);
+                if (upset == null) continue;
+                upsetList.Add(upset);
+            }
+        }
+
+        private static Upset InferUpsetFromUnityPackage(string FileName)
+        {
+            string ShortFileName = System.IO.Path.GetFileNameWithoutExtension(FileName);
+            string[] split = ShortFileName.Split('-');
+            if (split.Length != 2)
+            {
+                Debug.LogWarning("Skipping file " + FileName + " as it doesn't follow the pattern 'PackagName-PackageVersion.unityPackage'");
+                return null;
+            }
+            string PackageName = split[0];
+            string PackageVersion = split[1];
+            string PackageLicense = "Unknown";
+            string MinUnityVersion = "0.0.0";
+
+            Upset upset = new Upset();
+            upset.PackageLicense = PackageLicense;
+            upset.PackageName = PackageName;
+            upset.PackageVersion = PackageVersion;
+            upset.UnityVersion = new VersionSpec();
+            upset.UnityVersion.ItemElementName = ItemChoiceType.MinVersion;
+            upset.UnityVersion.Item = MinUnityVersion;
+
+            upset.MetaInformation.dirName = FileName;
+            return upset;
+        }
     }
 }

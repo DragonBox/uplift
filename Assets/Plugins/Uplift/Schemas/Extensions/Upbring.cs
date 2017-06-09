@@ -24,20 +24,19 @@ namespace Uplift.Schemas
                 return newUpbring;
             }
             XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
-            FileStream fs = new FileStream(upbringPath, FileMode.Open);
-            Upbring upbringFile = serializer.Deserialize(fs) as Upbring;
-            fs.Close();
-            return upbringFile;
+            using(FileStream fs = new FileStream(upbringPath, FileMode.Open)) {
+                return serializer.Deserialize(fs) as Upbring;
+            }
         }
 
         public void SaveFile()
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
-            FileStream fs = new FileStream(upbringPath, FileMode.Create);
-            StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8);
-            serializer.Serialize(sw, this);
-            sw.Close();
-            fs.Close();
+            using(FileStream fs = new FileStream(upbringPath, FileMode.Create)) {
+                using(StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8)) {
+                    serializer.Serialize(sw, this);
+                }
+            }
         }
 
         public static void RemoveFile()

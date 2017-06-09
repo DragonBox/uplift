@@ -36,12 +36,12 @@ namespace Uplift.Schemas {
                 if (!File.Exists(upsetPath)) continue;
                 
                 XmlSerializer serializer = new XmlSerializer(typeof(Upset));
-                FileStream file = new FileStream(upsetPath, FileMode.Open);
-                Upset upset = serializer.Deserialize(file) as Upset;
-                
-                upset.MetaInformation.dirName = directoryName;
-                file.Close();
-                upsetList.Add(upset);
+
+                using (FileStream file = new FileStream(upsetPath, FileMode.Open)) {
+                    Upset upset = serializer.Deserialize(file) as Upset;
+                    upset.MetaInformation.dirName = directoryName;
+                    upsetList.Add(upset);
+                }
             }
 
             return upsetList.ToArray();

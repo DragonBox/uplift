@@ -1,0 +1,55 @@
+<Upfile>
+  <UnityVersion>0.0.0</UnityVersion>
+  <Configuration>
+    <!--
+        Repository configuration part.
+
+        Most often, files here shouldn't be visible by your project.
+        i.e. should be put out of the Assets/ path in your project.
+    -->
+
+    <!-- Path where downloaded, raw, packages are unpacked -->
+    <RepositoryPath  Location="UPackages"                  />
+    <!-- Path where documentation are unpacked             -->
+    <DocsPath        Location="UPackages/Docs"             />
+    <!-- Path where examples are unpacked                  -->
+    <ExamplesPath    Location="UPackages/Examples"         />
+
+    <!--
+        Project configuration part.
+
+        Paths set here most often should be visible by your project,
+        i.e. be in Assets path.
+    -->
+
+    <!-- Path where "usable" files are unpacked                   -->
+    <BaseInstallPath Location="Assets/Upackages"                  />
+    <!-- Path where resources files are unpacked                  -->
+    <ResourcePath    Location="Assets/Upackages"                  />
+    <!-- Path where plugin files are unpacked                     -->
+    <PluginPath      Location="Assets/Plugins" Platform="All"     />
+
+  </Configuration>
+
+  <!-- SAMPLE REPOSITORIES BLOCK
+
+  <Repositories>
+    <FileRepository Path="Path/To/Some/File/Repository" />
+    <WebRepository  Url="Url/To/Some/Web/Repository"    />
+    <GitRepository  Url="Url/To/Some/Git/Repository"    />
+  </Repositories>
+
+  -->
+
+  <!-- SAMPLE DEPENDENCIES BLOCK
+
+  <Dependencies>
+    <Package Name="SomePackage" Repository="Optional.Repository" Version="Optional.Version.Spec" />
+    <Package Name="PackageA">
+      <MajorVersionMin>3</MajorVersionMin>
+    </Package>
+  </Dependencies>
+
+  -->
+
+</Upfile>

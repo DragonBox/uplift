@@ -28,10 +28,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlElementAttribute("InstalledPackage")]
         public InstalledPackage[] InstalledPackage {
             get {
-                return installedPackageField;
+                return this.installedPackageField;
             }
             set {
-                installedPackageField = value;
+                this.installedPackageField = value;
             }
         }
     }
@@ -53,10 +53,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlElementAttribute("Install")]
         public InstallationSpecs[] Install {
             get {
-                return installField;
+                return this.installField;
             }
             set {
-                installField = value;
+                this.installField = value;
             }
         }
         
@@ -64,10 +64,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Name {
             get {
-                return nameField;
+                return this.nameField;
             }
             set {
-                nameField = value;
+                this.nameField = value;
             }
         }
         
@@ -75,10 +75,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Version {
             get {
-                return versionField;
+                return this.versionField;
             }
             set {
-                versionField = value;
+                this.versionField = value;
             }
         }
     }
@@ -98,10 +98,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public KindSpec Kind {
             get {
-                return kindField;
+                return this.kindField;
             }
             set {
-                kindField = value;
+                this.kindField = value;
             }
         }
         
@@ -109,10 +109,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Path {
             get {
-                return pathField;
+                return this.pathField;
             }
             set {
-                pathField = value;
+                this.pathField = value;
             }
         }
     }

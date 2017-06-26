@@ -24,9 +24,7 @@ namespace Uplift.Schemas {
         
         private string unityVersionField;
         
-        private string packagesRootPathField;
-        
-        private Stub configurationField;
+        private Configuration configurationField;
         
         private Repository[] repositoriesField;
         
@@ -35,30 +33,20 @@ namespace Uplift.Schemas {
         /// <remarks/>
         public string UnityVersion {
             get {
-                return unityVersionField;
+                return this.unityVersionField;
             }
             set {
-                unityVersionField = value;
+                this.unityVersionField = value;
             }
         }
         
         /// <remarks/>
-        public string PackagesRootPath {
+        public Configuration Configuration {
             get {
-                return packagesRootPathField;
+                return this.configurationField;
             }
             set {
-                packagesRootPathField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public Stub Configuration {
-            get {
-                return configurationField;
-            }
-            set {
-                configurationField = value;
+                this.configurationField = value;
             }
         }
         
@@ -68,10 +56,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlArrayItemAttribute(typeof(WebRepository), IsNullable=false)]
         public Repository[] Repositories {
             get {
-                return repositoriesField;
+                return this.repositoriesField;
             }
             set {
-                repositoriesField = value;
+                this.repositoriesField = value;
             }
         }
         
@@ -79,10 +67,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlArrayItemAttribute("Package", IsNullable=false)]
         public DependencyDefinition[] Dependencies {
             get {
-                return dependenciesField;
+                return this.dependenciesField;
             }
             set {
-                dependenciesField = value;
+                this.dependenciesField = value;
             }
         }
     }
@@ -92,7 +80,113 @@ namespace Uplift.Schemas {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class Stub {
+    public partial class Configuration {
+        
+        private PathConfiguration repositoryPathField;
+        
+        private PathConfiguration docsPathField;
+        
+        private PathConfiguration examplesPathField;
+        
+        private PathConfiguration baseInstallPathField;
+        
+        private PathConfiguration resourcePathField;
+        
+        private ConfigurationPluginPath pluginPathField;
+        
+        /// <remarks/>
+        public PathConfiguration RepositoryPath {
+            get {
+                return this.repositoryPathField;
+            }
+            set {
+                this.repositoryPathField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PathConfiguration DocsPath {
+            get {
+                return this.docsPathField;
+            }
+            set {
+                this.docsPathField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PathConfiguration ExamplesPath {
+            get {
+                return this.examplesPathField;
+            }
+            set {
+                this.examplesPathField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PathConfiguration BaseInstallPath {
+            get {
+                return this.baseInstallPathField;
+            }
+            set {
+                this.baseInstallPathField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PathConfiguration ResourcePath {
+            get {
+                return this.resourcePathField;
+            }
+            set {
+                this.resourcePathField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public ConfigurationPluginPath PluginPath {
+            get {
+                return this.pluginPathField;
+            }
+            set {
+                this.pluginPathField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class PathConfiguration {
+        
+        private string locationField;
+        
+        private string valueField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string Location {
+            get {
+                return this.locationField;
+            }
+            set {
+                this.locationField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlTextAttribute()]
+        public string Value {
+            get {
+                return this.valueField;
+            }
+            set {
+                this.valueField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -102,31 +196,31 @@ namespace Uplift.Schemas {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class InstallSpec {
         
-        private string sourceField;
+        private InstallSpecType typeField;
         
-        private string destinationField;
+        private string pathField;
         
         private string valueField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string Source {
+        public InstallSpecType Type {
             get {
-                return sourceField;
+                return this.typeField;
             }
             set {
-                sourceField = value;
+                this.typeField = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string Destination {
+        public string Path {
             get {
-                return destinationField;
+                return this.pathField;
             }
             set {
-                destinationField = value;
+                this.pathField = value;
             }
         }
         
@@ -134,12 +228,34 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlTextAttribute()]
         public string Value {
             get {
-                return valueField;
+                return this.valueField;
             }
             set {
-                valueField = value;
+                this.valueField = value;
             }
         }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+    public enum InstallSpecType {
+        
+        /// <remarks/>
+        Base,
+        
+        /// <remarks/>
+        Resource,
+        
+        /// <remarks/>
+        Plugin,
+        
+        /// <remarks/>
+        Docs,
+        
+        /// <remarks/>
+        Examples,
     }
     
     /// <remarks/>
@@ -161,10 +277,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlChoiceIdentifierAttribute("ItemElementName")]
         public string Item {
             get {
-                return itemField;
+                return this.itemField;
             }
             set {
-                itemField = value;
+                this.itemField = value;
             }
         }
         
@@ -172,10 +288,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public ItemChoiceType ItemElementName {
             get {
-                return itemElementNameField;
+                return this.itemElementNameField;
             }
             set {
-                itemElementNameField = value;
+                this.itemElementNameField = value;
             }
         }
     }
@@ -218,10 +334,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlElementAttribute("Version")]
         public VersionSpec Item {
             get {
-                return itemField;
+                return this.itemField;
             }
             set {
-                itemField = value;
+                this.itemField = value;
             }
         }
         
@@ -229,10 +345,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Name {
             get {
-                return nameField;
+                return this.nameField;
             }
             set {
-                nameField = value;
+                this.nameField = value;
             }
         }
         
@@ -240,10 +356,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Version {
             get {
-                return versionField;
+                return this.versionField;
             }
             set {
-                versionField = value;
+                this.versionField = value;
             }
         }
         
@@ -251,10 +367,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Repository {
             get {
-                return repositoryField;
+                return this.repositoryField;
             }
             set {
-                repositoryField = value;
+                this.repositoryField = value;
             }
         }
     }
@@ -277,10 +393,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ExtractPath {
             get {
-                return extractPathField;
+                return this.extractPathField;
             }
             set {
-                extractPathField = value;
+                this.extractPathField = value;
             }
         }
         
@@ -288,10 +404,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlTextAttribute()]
         public string Value {
             get {
-                return valueField;
+                return this.valueField;
             }
             set {
-                valueField = value;
+                this.valueField = value;
             }
         }
     }
@@ -309,10 +425,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Path {
             get {
-                return pathField;
+                return this.pathField;
             }
             set {
-                pathField = value;
+                this.pathField = value;
             }
         }
     }
@@ -330,10 +446,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
         public string Url {
             get {
-                return urlField;
+                return this.urlField;
             }
             set {
-                urlField = value;
+                this.urlField = value;
             }
         }
     }
@@ -351,12 +467,63 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]
         public string Url {
             get {
-                return urlField;
+                return this.urlField;
             }
             set {
-                urlField = value;
+                this.urlField = value;
             }
         }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+    public partial class ConfigurationPluginPath : PathConfiguration {
+        
+        private ConfigurationPluginPathPlatform platformField;
+        
+        private bool platformFieldSpecified;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public ConfigurationPluginPathPlatform Platform {
+            get {
+                return this.platformField;
+            }
+            set {
+                this.platformField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool PlatformSpecified {
+            get {
+                return this.platformFieldSpecified;
+            }
+            set {
+                this.platformFieldSpecified = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+    public enum ConfigurationPluginPathPlatform {
+        
+        /// <remarks/>
+        All,
+        
+        /// <remarks/>
+        iOS,
+        
+        /// <remarks/>
+        Android,
     }
     
     /// <remarks/>
@@ -382,40 +549,40 @@ namespace Uplift.Schemas {
         /// <remarks/>
         public VersionSpec UnityVersion {
             get {
-                return unityVersionField;
+                return this.unityVersionField;
             }
             set {
-                unityVersionField = value;
+                this.unityVersionField = value;
             }
         }
         
         /// <remarks/>
         public string PackageName {
             get {
-                return packageNameField;
+                return this.packageNameField;
             }
             set {
-                packageNameField = value;
+                this.packageNameField = value;
             }
         }
         
         /// <remarks/>
         public string PackageVersion {
             get {
-                return packageVersionField;
+                return this.packageVersionField;
             }
             set {
-                packageVersionField = value;
+                this.packageVersionField = value;
             }
         }
         
         /// <remarks/>
         public string PackageLicense {
             get {
-                return packageLicenseField;
+                return this.packageLicenseField;
             }
             set {
-                packageLicenseField = value;
+                this.packageLicenseField = value;
             }
         }
         
@@ -423,10 +590,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlArrayItemAttribute("Package", IsNullable=false)]
         public DependencyDefinition[] Dependencies {
             get {
-                return dependenciesField;
+                return this.dependenciesField;
             }
             set {
-                dependenciesField = value;
+                this.dependenciesField = value;
             }
         }
         
@@ -434,10 +601,10 @@ namespace Uplift.Schemas {
         [System.Xml.Serialization.XmlArrayItemAttribute("Spec", IsNullable=false)]
         public InstallSpec[] InstallSpecifications {
             get {
-                return installSpecificationsField;
+                return this.installSpecificationsField;
             }
             set {
-                installSpecificationsField = value;
+                this.installSpecificationsField = value;
             }
         }
     }

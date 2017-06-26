@@ -24,8 +24,19 @@
   <xs:complexType name="InstallSpec">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attribute name="Source" use="required" />
-        <xs:attribute name="Destination" use="required" />
+
+        <xs:attribute name="Type" use="required">
+          <xs:simpleType>
+            <xs:restriction base="xs:NMTOKEN">
+              <xs:enumeration value="Base"/>
+              <xs:enumeration value="Resource"/>
+              <xs:enumeration value="Plugin"/>
+              <xs:enumeration value="Docs"/>
+              <xs:enumeration value="Examples"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="Path" use="required" />
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>

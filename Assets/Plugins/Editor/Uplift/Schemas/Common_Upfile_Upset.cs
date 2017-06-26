@@ -90,7 +90,7 @@ namespace Uplift.Schemas {
         
         private PathConfiguration baseInstallPathField;
         
-        private PathConfiguration resourcePathField;
+        private PathConfiguration mediaPathField;
         
         private ConfigurationPluginPath pluginPathField;
         
@@ -135,12 +135,12 @@ namespace Uplift.Schemas {
         }
         
         /// <remarks/>
-        public PathConfiguration ResourcePath {
+        public PathConfiguration MediaPath {
             get {
-                return this.resourcePathField;
+                return this.mediaPathField;
             }
             set {
-                this.resourcePathField = value;
+                this.mediaPathField = value;
             }
         }
         
@@ -162,9 +162,35 @@ namespace Uplift.Schemas {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class PathConfiguration {
         
+        private bool skipPackageStructureField;
+        
+        private bool skipPackageStructureFieldSpecified;
+        
         private string locationField;
         
         private string valueField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public bool SkipPackageStructure {
+            get {
+                return this.skipPackageStructureField;
+            }
+            set {
+                this.skipPackageStructureField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool SkipPackageStructureSpecified {
+            get {
+                return this.skipPackageStructureFieldSpecified;
+            }
+            set {
+                this.skipPackageStructureFieldSpecified = value;
+            }
+        }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]

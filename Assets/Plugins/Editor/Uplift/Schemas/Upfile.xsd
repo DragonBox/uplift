@@ -54,6 +54,7 @@
   <xs:complexType name="PathConfiguration">
     <xs:simpleContent>
       <xs:extension base="xs:string">
+        <xs:attribute name="SkipPackageStructure" type="xs:boolean" use="optional" />
         <xs:attribute name="Location" use="required">
           <xs:simpleType>
             <xs:restriction base="xs:string">
@@ -76,7 +77,7 @@
       <xs:element name="ExamplesPath" type="PathConfiguration" />
 
       <xs:element name="BaseInstallPath" type="PathConfiguration" />
-      <xs:element name="ResourcePath" type="PathConfiguration" />
+      <xs:element name="MediaPath" type="PathConfiguration" />
 
 
       <xs:element name="PluginPath">

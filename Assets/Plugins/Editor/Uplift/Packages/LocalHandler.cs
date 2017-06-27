@@ -52,27 +52,41 @@ namespace Uplift.Packages
             {
                 foreach (InstallSpec spec in package.InstallSpecifications)
                 {
-                    string sourcePath = Path.Combine(td.Path, spec.Source);
+                    string sourcePath = Path.Combine(td.Path, spec.Path);
+                    string destination;
 
+                    PathConfiguration PH = UpfileHandler.Instance().GetDestinationFor(spec.Type);
+
+                    if (PH.SkipPackageStructure)
+                    {
+                        destination = PH.Location;
+                    }
+                    else
+                    {
+                        destination = Path.Combine(PH.Location, package.PackageName + "~" + package.PackageVersion);
+                    }
+                    
+                    // Working with single file
                     if (File.Exists(sourcePath))
                     {
                         // Working with singular file
-                        string directoryPath = Path.GetDirectoryName(spec.Destination);
-                        if (!Directory.Exists(directoryPath))
+                        if (!Directory.Exists(destination))
                         {
-                            Directory.CreateDirectory(directoryPath);
+                            Directory.CreateDirectory(destination);
                         }
-                        File.Copy(sourcePath, spec.Destination);
+                        File.Copy(sourcePath, destination);
 
                     }
+                    
+                    // Working with directory
 
                     if (Directory.Exists(sourcePath))
                     {
                         // Working with directory
-                        FileSystemUtil.CopyDirectory(sourcePath, spec.Destination);
+                        FileSystemUtil.CopyDirectory(sourcePath, destination);
                     }
 
-                    upbringFile.AddLocation(package, KindSpec.Other, spec.Destination);
+                    upbringFile.AddLocation(package, KindSpec.Other, destination);
                 }
             }
             // Mark file in Upbring

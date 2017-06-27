@@ -9,8 +9,6 @@
       having packages/other stuff installed then you need to cleanup
       previous locations manually at your own discretion.
   -->
-
-
   <Configuration>
     <!--
         Repository configuration part.
@@ -20,10 +18,11 @@
     -->
 
     <!--
-        Flags:
+        Path Flags:
 
-        SkipPackageStructure: Don't create package subdirectories
-                              (in form of PackageName~1.0.0)
+        SkipPackageStructure (true|false):
+                                           Don't create package subdirectories
+                                           (in form of PackageName~1.0.0)
 
     -->
 
@@ -42,9 +41,9 @@
     -->
 
     <!-- Path where "usable" files are unpacked                               -->
-    <BaseInstallPath Location="Assets/UPackages" SkipPackageStructure="false" />
+    <BaseInstallPath Location="Assets/UPackages"                              />
     <!-- Path where media  files are unpacked                                 -->
-    <MediaPath    Location="Assets/UPackages"                                 />
+    <MediaPath       Location="Assets/UPackages"                              />
     <!-- Path where plugin files are unpacked                                 -->
     <PluginPath      Location="Assets/Plugins" Platform="All"                 />
 

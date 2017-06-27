@@ -15,7 +15,10 @@ namespace Uplift
 
         private static UpfileHandler instance;
 
-        private UpfileHandler() { }
+        private UpfileHandler()
+        {
+        }
+
         public void Initialize()
         {
             if (CheckForUpfile())
@@ -33,12 +36,13 @@ namespace Uplift
         public static UpfileHandler Instance()
         {
             if (instance != null) return instance;
-            
+
             UpfileHandler uph = new UpfileHandler();
             instance = uph;
             uph.Initialize();
             return uph;
         }
+
         public bool CheckForUpfile()
         {
             return File.Exists(upfilePath);
@@ -53,14 +57,15 @@ namespace Uplift
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
 
-            using (FileStream fs = new FileStream(upfilePath, FileMode.Open)) {
+            using (FileStream fs = new FileStream(upfilePath, FileMode.Open))
+            {
                 return serializer.Deserialize(fs) as Upfile;
             }
         }
 
         public string GetPackagesRootPath()
         {
-            return Upfile.PackagesRootPath;
+            return Upfile.Configuration.RepositoryPath.Location;
         }
 
         public void LoadPackageList()
@@ -115,12 +120,51 @@ namespace Uplift
             string unityVersion = Application.unityVersion;
             if (unityVersion != upfileVersion)
             {
-                Debug.LogError(string.Format("Uplift: Upfile.xml Unity Version ({0}) doesn't match Unity's one  ({1}).", upfileVersion, unityVersion));
+                Debug.LogError(string.Format("Uplift: Upfile.xml Unity Version ({0}) doesn't match Unity's one  ({1}).",
+                    upfileVersion, unityVersion));
             }
             else
             {
                 Debug.Log("Upfile: Version check successful");
             }
+        }
+
+        public PathConfiguration GetDestinationFor(InstallSpecType specType)
+        {
+
+            PathConfiguration PH;
+
+            switch (specType)
+            {
+                case(InstallSpecType.Base):
+                    PH = Upfile.Configuration.BaseInstallPath;
+                    break;
+
+                case(InstallSpecType.Docs):
+                    PH = Upfile.Configuration.DocsPath;
+                    break;
+
+                case(InstallSpecType.Examples):
+                    PH = Upfile.Configuration.ExamplesPath;
+                    break;
+
+                case(InstallSpecType.Plugin):
+                    // TODO: Make additional check for platform
+                    PH = Upfile.Configuration.PluginPath;
+                    break;
+
+                case(InstallSpecType.Media):
+                    PH = Upfile.Configuration.MediaPath;
+                    break;
+
+                default:
+                    PH = Upfile.Configuration.BaseInstallPath;
+                    break;
+            }
+
+            return PH;
+
+
         }
     }
 }

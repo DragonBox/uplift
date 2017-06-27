@@ -272,7 +272,7 @@ namespace Uplift.Schemas {
         Base,
         
         /// <remarks/>
-        Resource,
+        Media,
         
         /// <remarks/>
         Plugin,

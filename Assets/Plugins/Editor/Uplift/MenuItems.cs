@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
+using System.Xml;
 using System.Xml.Serialization;
 using UnityEditor;
 using UnityEngine;
@@ -9,8 +11,8 @@ namespace Uplift
 {
     public class MenuItems : MonoBehaviour
     {
-
-
+        private static string[] _sampleUpliftLocation = {"Assets", "Plugins", "Editor", "Uplift", "Schemas", "Upfile.Sample.xml"};
+        
         static MenuItems()
         {
 
@@ -31,16 +33,17 @@ namespace Uplift
         [MenuItem("Uplift/Generate Upfile", false, 0)]
         private static void GenerateUpfile()
         {
-            Debug.Log("Hi, I Generate upfile!");
 
-            Upfile upfile = new Upfile {UnityVersion = Application.unityVersion};
+            XmlDocument sampleFile = new XmlDocument();
 
-            XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(Upfile));
+            sampleFile.Load(string.Join(Path.DirectorySeparatorChar.ToString(), _sampleUpliftLocation));
 
-            using (FileStream FS = new FileStream(UpfileHandler.upfilePath, FileMode.CreateNew)) {
-                serializer.Serialize(FS, upfile);
-            }
-            Debug.Log("Done");
+            XmlNode versionNode = sampleFile.SelectSingleNode("/Upfile/UnityVersion");
+            
+            versionNode.InnerText = Application.unityVersion.ToString();
+
+            sampleFile.Save("Upfile.xml");
+            
         }
 
         [MenuItem("Uplift/Check Dependencies", false, 20)]

@@ -7,7 +7,10 @@
   <PackageLicense>
     Other
   </PackageLicense>
-  <InstallSpecifications>
-    <Spec Source="123" Destination="Assets/test/456"/>
-  </InstallSpecifications>
+  <Configuration>
+    <Spec Type="Base" Path="base"/>
+    <Spec Type="Media" Path="media"/>
+    <Spec Type="Examples" Path="examples"/>
+    <Spec Type="Docs" Path="docs"/>
+  </Configuration>
 </Upset>

@@ -74,7 +74,7 @@ namespace Uplift.Schemas
             InstalledPackage = finalArray;
         }
 
-        internal void AddLocation(Upset package, KindSpec kind, string path)
+        internal void AddLocation(Upset package, InstallSpecType kind, string path)
         {
 
             InstalledPackage internalPackage = null;

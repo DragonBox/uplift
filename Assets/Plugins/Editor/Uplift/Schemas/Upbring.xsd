@@ -4,6 +4,7 @@
     attributeFormDefault="unqualified" elementFormDefault="qualified"
     xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
+  <xs:include schemaLocation="Common.xsd"/>
   <xs:element name="Upbring" type="Upbring"/>
 
   <xs:complexType name="Upbring">
@@ -21,16 +22,10 @@
   </xs:complexType>
 
   <xs:complexType name="InstallationSpecs">
-    <xs:attribute type="KindSpec" name="Kind" use="required"/>
+    <xs:attribute name="Kind" use="required" type="InstallSpecType"/>
     <xs:attribute type="xs:string" name="Path" use="required"/>
   </xs:complexType>
 
-  <xs:simpleType name="KindSpec" final="restriction">
-    <xs:restriction base="xs:NMTOKEN">
-      <xs:enumeration value="Base"/>
-      <xs:enumeration value="Other"/>
-    </xs:restriction>
-  </xs:simpleType>
 </xs:schema>
 
 <!--

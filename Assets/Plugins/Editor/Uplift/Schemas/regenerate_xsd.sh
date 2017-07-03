@@ -1,3 +1,5 @@
 #!/bin/bash
-Xsd Common.xsd Upfile.xsd Upset.xsd /classes /namespace:Uplift.Schemas
-Xsd Upbring.xsd /classes /namespace:Uplift.Schemas
+
+# Note: all files has to be processed at the same time,
+#       or the generator will make duplicate classes, and you don't want that
+Xsd *.xsd /classes /namespace:Uplift.Schemas

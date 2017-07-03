@@ -46,50 +46,58 @@ namespace Uplift.Packages
             string localPackagePath = GetLocalDirectory(package.PackageName, package.PackageVersion);
             upbringFile.AddPackage(package);
             FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
-            upbringFile.AddLocation(package, KindSpec.Base, localPackagePath);
+            upbringFile.AddLocation(package, InstallSpecType.Base, localPackagePath);
 
-            if (package.InstallSpecifications != null)
+
+            InstallSpec[] specArray;
+            if (package.Configuration == null)
             {
-                foreach (InstallSpec spec in package.InstallSpecifications)
+                // If there is no Configuration present we assume
+                // that the whole package is wrapped in "InstallSpecType.Base"
+                InstallSpec wrapSpec = new InstallSpec
                 {
-                    string sourcePath = Path.Combine(td.Path, spec.Path);
-                    string destination;
+                    Path = "/",
+                    Type = InstallSpecType.Base
+                };
 
-                    PathConfiguration PH = UpfileHandler.Instance().GetDestinationFor(spec.Type);
-
-                    if (PH.SkipPackageStructure)
-                    {
-                        destination = PH.Location;
-                    }
-                    else
-                    {
-                        destination = Path.Combine(PH.Location, package.PackageName + "~" + package.PackageVersion);
-                    }
-                    
-                    // Working with single file
-                    if (File.Exists(sourcePath))
-                    {
-                        // Working with singular file
-                        if (!Directory.Exists(destination))
-                        {
-                            Directory.CreateDirectory(destination);
-                        }
-                        File.Copy(sourcePath, destination);
-
-                    }
-                    
-                    // Working with directory
-
-                    if (Directory.Exists(sourcePath))
-                    {
-                        // Working with directory
-                        FileSystemUtil.CopyDirectory(sourcePath, destination);
-                    }
-
-                    upbringFile.AddLocation(package, KindSpec.Other, destination);
-                }
+                specArray = new[] {wrapSpec};
             }
-            // Mark file in Upbring
+            else
+            {
+                specArray = package.Configuration;
+            }
+
+            foreach (InstallSpec spec in specArray)
+            {
+                var sourcePath = Path.Combine(td.Path, spec.Path);
+                PathConfiguration PH = UpfileHandler.Instance().GetDestinationFor(spec.Type);
+
+                var destination = PH.SkipPackageStructure ?
+                    PH.Location : Path.Combine(PH.Location, package.PackageName + "~" + package.PackageVersion);
+
+                // Working with single file
+                if (File.Exists(sourcePath))
+                {
+                    // Working with singular file
+                    if (!Directory.Exists(destination))
+                    {
+                        Directory.CreateDirectory(destination);
+                    }
+                    File.Copy(sourcePath, destination);
+
+                }
+
+                // Working with directory
+
+                if (Directory.Exists(sourcePath))
+                {
+                    // Working with directory
+                    FileSystemUtil.CopyDirectory(sourcePath, destination);
+                }
+
+                upbringFile.AddLocation(package, spec.Type, destination);
+            }
+
 
 
             upbringFile.SaveFile();

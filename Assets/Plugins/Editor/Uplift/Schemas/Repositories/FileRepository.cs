@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Xml.Serialization;
 using SharpCompress.Archives;
 using SharpCompress.Archives.Tar;
@@ -143,9 +144,14 @@ namespace Uplift.Schemas {
 
         private void AddExplodedDirectories(List<Upset> upsetList) {
             string[] directories =  Directory.GetDirectories(Path);
-            foreach(string directoryName in directories) {
-                string upsetPath = directoryName + System.IO.Path.DirectorySeparatorChar + UpsetFile;
-                
+            foreach(string directoryPath in directories)
+            {
+                string directoryName = directoryPath.Split(System.IO.Path.DirectorySeparatorChar).Last();
+
+                // Don't look at me. System.IO.Path.Combine(string, string, string) doesn't work in Unity :(
+                char SC = System.IO.Path.DirectorySeparatorChar;
+                string upsetPath = Path + SC + directoryName + SC + UpsetFile;
+                    
                 if (!File.Exists(upsetPath)) continue;
                 
                 XmlSerializer serializer = new XmlSerializer(typeof(Upset));

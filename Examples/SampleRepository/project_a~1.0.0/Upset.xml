@@ -8,6 +8,7 @@
     Other
   </PackageLicense>
   <Configuration>
+    <Spec Type="Base" Path=""/>
     <Spec Type="Base" Path="base"/>
     <Spec Type="Media" Path="media"/>
     <Spec Type="Examples" Path="examples"/>

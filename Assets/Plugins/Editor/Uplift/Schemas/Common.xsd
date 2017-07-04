@@ -46,6 +46,7 @@
 
   <xs:simpleType name="InstallSpecType">
     <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="Root"/>
       <xs:enumeration value="Base"/>
       <xs:enumeration value="Media"/>
       <xs:enumeration value="Plugin"/>

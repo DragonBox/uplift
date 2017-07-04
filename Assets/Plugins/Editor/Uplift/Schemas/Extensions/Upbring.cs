@@ -2,18 +2,20 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using Uplift.Packages;
 
 namespace Uplift.Schemas
 {
     public partial class Upbring
     {
 
-        private static string[] upbringPathDefinition = { "Assets", "Plugins", "Upackages", "Upbring.xml" };
+        private static readonly string upbringFileName = "Upbring.xml";
         protected static string upbringPath
         {
             get
             {
-                return string.Join(Path.DirectorySeparatorChar.ToString(), upbringPathDefinition);
+                string repoPath = UpfileHandler.Instance().GetPackagesRootPath();
+                return Path.Combine(repoPath, upbringFileName);
             }
         }
         public static Upbring FromXml()

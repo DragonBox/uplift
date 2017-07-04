@@ -1,11 +1,19 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using UnityEditor;
 using UnityEngine;
 
 namespace Uplift.Common
 {
 	public class FileSystemUtil
 	{
+		public static string JoinPaths(params string[] parameters)
+		{
+			return string.Join(Path.DirectorySeparatorChar.ToString(), parameters);
+		}
 	
 		public static IEnumerable<string> GetFiles(string path) {
 			Queue<string> queue = new Queue<string>();
@@ -96,11 +104,21 @@ namespace Uplift.Common
 				return Application.dataPath + "/../../Data";
 			return Application.dataPath + "/../Data";
 		}
-	
-	
 
-	
 
+		public static List<string> RecursivelyListFiles(string dir, bool relative = false)
+		{
+
+			var files = new List<string>(Directory.GetFiles(dir));
+
+			foreach (var subdir in Directory.GetDirectories(dir))
+			{
+				files.AddRange(RecursivelyListFiles(subdir));
+			}
+			
+			
+			return relative ? files.Select(d => d.Replace(dir, "").Trim('/')).ToList() : files;
+		}
 	}
 }
 

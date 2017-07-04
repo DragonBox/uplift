@@ -123,6 +123,9 @@ namespace Uplift.Schemas {
     public enum InstallSpecType {
         
         /// <remarks/>
+        Root,
+        
+        /// <remarks/>
         Base,
         
         /// <remarks/>

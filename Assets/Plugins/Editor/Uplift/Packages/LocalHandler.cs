@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using Uplift.Common;
 using Uplift.Schemas;
@@ -10,13 +11,16 @@ namespace Uplift.Packages
         public static void NukeAllPackages()
         {
             Upbring upbring = Upbring.FromXml();
+           
+            
 
             foreach (InstalledPackage package in upbring.InstalledPackage)
             {
                 package.Nuke();
             }
 
-            Upbring.RemoveFile();
+            //TODO: Remove file when Upbring properly removes everything
+            //Upbring.RemoveFile();
         }
 
         public static string GetPackageDirectory(Upset package)

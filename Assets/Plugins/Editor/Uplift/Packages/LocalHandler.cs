@@ -20,7 +20,7 @@ namespace Uplift.Packages
             }
 
             //TODO: Remove file when Upbring properly removes everything
-            //Upbring.RemoveFile();
+            Upbring.RemoveFile();
         }
 
         public static string GetPackageDirectory(Upset package)

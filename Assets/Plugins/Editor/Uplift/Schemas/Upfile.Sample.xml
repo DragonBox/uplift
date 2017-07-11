@@ -45,7 +45,7 @@
     <!-- Path where media  files are unpacked                                 -->
     <MediaPath       Location="Assets/UPackages"                              />
     <!-- Path where plugin files are unpacked                                 -->
-    <PluginPath      Location="Assets/Plugins" Platform="All"                 />
+    <PluginPath      Location="Assets/Plugins"                                />
 
   </Configuration>
 

@@ -43,7 +43,7 @@ namespace Uplift.Schemas {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class InstalledPackage {
         
-        private InstallationSpecs[] installField;
+        private InstallSpec[] installField;
         
         private string nameField;
         
@@ -51,7 +51,7 @@ namespace Uplift.Schemas {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("Install")]
-        public InstallationSpecs[] Install {
+        public InstallSpec[] Install {
             get {
                 return this.installField;
             }
@@ -88,20 +88,26 @@ namespace Uplift.Schemas {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class InstallationSpecs {
+    public partial class InstallSpec {
         
-        private InstallSpecType kindField;
+        private InstallSpecType typeField;
         
         private string pathField;
         
+        private PlatformType platformField;
+        
+        private bool platformFieldSpecified;
+        
+        private string valueField;
+        
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public InstallSpecType Kind {
+        public InstallSpecType Type {
             get {
-                return this.kindField;
+                return this.typeField;
             }
             set {
-                this.kindField = value;
+                this.typeField = value;
             }
         }
         
@@ -113,6 +119,39 @@ namespace Uplift.Schemas {
             }
             set {
                 this.pathField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public PlatformType Platform {
+            get {
+                return this.platformField;
+            }
+            set {
+                this.platformField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool PlatformSpecified {
+            get {
+                return this.platformFieldSpecified;
+            }
+            set {
+                this.platformFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlTextAttribute()]
+        public string Value {
+            get {
+                return this.valueField;
+            }
+            set {
+                this.valueField = value;
             }
         }
     }
@@ -144,48 +183,16 @@ namespace Uplift.Schemas {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
     [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class InstallSpec {
-        
-        private InstallSpecType typeField;
-        
-        private string pathField;
-        
-        private string valueField;
+    public enum PlatformType {
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public InstallSpecType Type {
-            get {
-                return this.typeField;
-            }
-            set {
-                this.typeField = value;
-            }
-        }
+        All,
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string Path {
-            get {
-                return this.pathField;
-            }
-            set {
-                this.pathField = value;
-            }
-        }
+        iOS,
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public string Value {
-            get {
-                return this.valueField;
-            }
-            set {
-                this.valueField = value;
-            }
-        }
+        Android,
     }
     
     /// <remarks/>
@@ -482,7 +489,7 @@ namespace Uplift.Schemas {
         
         private PathConfiguration mediaPathField;
         
-        private ConfigurationPluginPath pluginPathField;
+        private PathConfiguration pluginPathField;
         
         /// <remarks/>
         public PathConfiguration RepositoryPath {
@@ -535,7 +542,7 @@ namespace Uplift.Schemas {
         }
         
         /// <remarks/>
-        public ConfigurationPluginPath PluginPath {
+        public PathConfiguration PluginPath {
             get {
                 return this.pluginPathField;
             }
@@ -543,57 +550,6 @@ namespace Uplift.Schemas {
                 this.pluginPathField = value;
             }
         }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-    public partial class ConfigurationPluginPath : PathConfiguration {
-        
-        private ConfigurationPluginPathPlatform platformField;
-        
-        private bool platformFieldSpecified;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public ConfigurationPluginPathPlatform Platform {
-            get {
-                return this.platformField;
-            }
-            set {
-                this.platformField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool PlatformSpecified {
-            get {
-                return this.platformFieldSpecified;
-            }
-            set {
-                this.platformFieldSpecified = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-    public enum ConfigurationPluginPathPlatform {
-        
-        /// <remarks/>
-        All,
-        
-        /// <remarks/>
-        iOS,
-        
-        /// <remarks/>
-        Android,
     }
     
     /// <remarks/>

@@ -119,6 +119,26 @@ namespace Uplift.Common
 			
 			return relative ? files.Select(d => d.Replace(dir, "").Trim('/')).ToList() : files;
 		}
+
+		
+		// Based on dirPaths build recursive dirPaths
+		public static List<string> RecursivelyDirPaths(List<string> dirPaths)
+		{
+			var finalList = new List<string>();
+			foreach (var directory in dirPaths)
+			{
+				finalList.Add(directory);
+				var dirIterator = directory;
+
+				while (!string.IsNullOrEmpty(Path.GetDirectoryName(dirIterator)))
+				{
+					dirIterator = Path.GetDirectoryName(dirIterator);
+					finalList.Add(dirIterator);
+				}
+			}
+
+			return finalList;
+		}
 	}
 }
 

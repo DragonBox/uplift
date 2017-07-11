@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 using UnityEngine;
 using Uplift.Common;
@@ -130,10 +131,12 @@ namespace Uplift
             }
         }
 
-        public PathConfiguration GetDestinationFor(InstallSpecType specType)
+        public PathConfiguration GetDestinationFor(InstallSpec spec)
         {
 
             PathConfiguration PH;
+
+            var specType = spec.Type;
 
             switch (specType)
             {
@@ -151,7 +154,29 @@ namespace Uplift
 
                 case(InstallSpecType.Plugin):
                     // TODO: Make additional check for platform
-                    PH = Upfile.Configuration.PluginPath;
+                    PH = new PathConfiguration()
+                    {
+                        Location = Upfile.Configuration.PluginPath.Location,
+                        SkipPackageStructure = true // Plugins always skip package structure.
+
+                    };
+                    
+                    // Platform as string
+                    string platformAsString;
+
+                    switch (spec.Platform)
+                    {
+                        case(PlatformType.All): // It means, that we just need to point to "Plugins" folder.
+                            platformAsString = ""; 
+                            break;
+                        case(PlatformType.iOS):
+                            platformAsString = "ios";
+                            break;
+                        default:
+                            platformAsString = "UNKNOWN";
+                            break;
+                    }
+                    PH.Location = Path.Combine(PH.Location, platformAsString);
                     break;
 
                 case(InstallSpecType.Media):

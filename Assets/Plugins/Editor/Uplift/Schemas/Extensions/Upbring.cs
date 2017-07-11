@@ -93,7 +93,7 @@ namespace Uplift.Schemas
             // 0 is better than null :)
             if (internalPackage.Install == null)
             {
-                internalPackage.Install = new InstallationSpecs[0];
+                internalPackage.Install = new InstallSpec[0];
             }
             // Note: not catching in case of internalPackage not found
             // as it is valid error throwing condition
@@ -101,7 +101,7 @@ namespace Uplift.Schemas
 
 
             // Check if path doesn't exist and return if it does
-            if (internalPackage.Install.Any(spec => spec.Kind == kind && spec.Path == path))
+            if (internalPackage.Install.Any(spec => spec.Type == kind && spec.Path == path))
             {
                 return;
             }
@@ -109,10 +109,10 @@ namespace Uplift.Schemas
 
 
             // Create new spec
-            InstallationSpecs newSpec = new InstallationSpecs {Kind = kind,Path = path};
+            InstallSpec newSpec = new InstallSpec {Type = kind,Path = path};
             
 
-            InstallationSpecs[] newArray = new InstallationSpecs[internalPackage.Install.Length + 1];
+            InstallSpec[] newArray = new InstallSpec[internalPackage.Install.Length + 1];
             internalPackage.Install.CopyTo(newArray, 0);
 
             newArray[newArray.Length - 1] = newSpec;

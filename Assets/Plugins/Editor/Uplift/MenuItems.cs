@@ -79,5 +79,16 @@ namespace Uplift
             AssetDatabase.Refresh();
         }
 
+        [MenuItem("Uplift/Debug/Install -> Nuke Loop %g", false, 10)]
+        private static void RefreshPackages()
+        {
+            Debug.ClearDeveloperConsole();
+            Debug.Log("Doing full Install -> Nuke Loop");
+            UpfileHandler.Instance().InstallDependencies();
+            AssetDatabase.Refresh();
+            UpfileHandler.Instance().NukePackages();
+            AssetDatabase.Refresh();
+        }
+
     }
 }

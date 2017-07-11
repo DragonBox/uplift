@@ -68,7 +68,7 @@ namespace Uplift.Packages
             foreach (InstallSpec spec in specArray)
             {
                 var sourcePath = FileSystemUtil.JoinPaths(td.Path, spec.Path);
-                PathConfiguration PH = UpfileHandler.Instance().GetDestinationFor(spec.Type);
+                PathConfiguration PH = UpfileHandler.Instance().GetDestinationFor(spec);
 
                 var packageStructurePrefix =
                     PH.SkipPackageStructure ? "" : GetPackageDirectory(package);
@@ -100,7 +100,7 @@ namespace Uplift.Packages
 
                     foreach (var file in FileSystemUtil.RecursivelyListFiles(sourcePath, true))
                     {
-                        upbringFile.AddLocation(package, spec.Type, Path.Combine(packageStructurePrefix, file));
+                        upbringFile.AddLocation(package, spec.Type, Path.Combine(destination, file));
                     }
                     
                     

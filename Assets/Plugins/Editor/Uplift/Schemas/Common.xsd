@@ -54,5 +54,24 @@
       <xs:enumeration value="Examples"/>
     </xs:restriction>
   </xs:simpleType>
+  
+  <xs:simpleType name="PlatformType">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="All"/>
+      <xs:enumeration value="iOS"/>
+      <xs:enumeration value="Android"/>
+      <!-- TODO: More platforms supported -->
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="InstallSpec">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="Type" use="required" type="InstallSpecType"/>
+        <xs:attribute name="Path" use="required" />
+        <xs:attribute name="Platform" use="optional" type="PlatformType"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
 </xs:schema>

@@ -21,12 +21,5 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="InstallSpec">
-    <xs:simpleContent>
-      <xs:extension base="xs:string">
-        <xs:attribute name="Type" use="required" type="InstallSpecType"/>
-        <xs:attribute name="Path" use="required" />
-      </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
+  
 </xs:schema>

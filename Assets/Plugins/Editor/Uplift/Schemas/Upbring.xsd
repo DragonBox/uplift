@@ -15,15 +15,10 @@
 
   <xs:complexType name="InstalledPackage">
     <xs:sequence>
-      <xs:element type="InstallationSpecs" name="Install" maxOccurs="unbounded"/>
+      <xs:element type="InstallSpec" name="Install" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute type="xs:string" name="Name" use="required"/>
     <xs:attribute type="xs:string" name="Version" use="required"/>
-  </xs:complexType>
-
-  <xs:complexType name="InstallationSpecs">
-    <xs:attribute name="Kind" use="required" type="InstallSpecType"/>
-    <xs:attribute type="xs:string" name="Path" use="required"/>
   </xs:complexType>
 
 </xs:schema>

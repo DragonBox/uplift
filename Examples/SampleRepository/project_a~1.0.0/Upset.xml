@@ -13,5 +13,7 @@
     <Spec Type="Media" Path="media"/>
     <Spec Type="Examples" Path="examples"/>
     <Spec Type="Docs" Path="docs"/>
+    <Spec Type="Plugin" Path="ios" Platform="iOS" />
+    <Spec Type="Plugin" Path="all_plugins" Platform="All" />
   </Configuration>
 </Upset>

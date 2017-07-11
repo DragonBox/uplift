@@ -79,25 +79,8 @@
       <xs:element name="BaseInstallPath" type="PathConfiguration" />
       <xs:element name="MediaPath" type="PathConfiguration" />
 
+      <xs:element name="PluginPath" type="PathConfiguration"/>
 
-      <xs:element name="PluginPath">
-        <xs:complexType>
-          <xs:simpleContent>
-            <xs:extension base="PathConfiguration">
-              <xs:attribute name="Platform" use="optional">
-                <xs:simpleType>
-                  <xs:restriction base="xs:NMTOKEN">
-                    <xs:enumeration value="All"/>
-                    <xs:enumeration value="iOS"/>
-                    <xs:enumeration value="Android"/>
-                    <!-- TODO: More platforms supported -->
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:attribute>
-            </xs:extension>
-          </xs:simpleContent>
-        </xs:complexType>
-      </xs:element>
     </xs:sequence>
 
 

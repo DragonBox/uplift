@@ -130,7 +130,7 @@ namespace Uplift.Schemas {
 
         private static bool IsUnityPackage(string Path)
         {
-            return File.Exists(Path) && ".unityPackage".Equals(System.IO.Path.GetExtension(Path));
+            return File.Exists(Path) && ".unitypackage".Equals(System.IO.Path.GetExtension(Path), StringComparison.CurrentCultureIgnoreCase);
         }
 
         public override Upset[] ListPackages() {
@@ -165,10 +165,13 @@ namespace Uplift.Schemas {
         }
 
         private void AddUnityPackages(List<Upset> upsetList) {
-            string[] files =  Directory.GetFiles(Path, "*.unityPackage");
+            string[] files =  Directory.GetFiles(Path, "*.*");
 
             foreach(string FileName in files)
             {
+                if (!IsUnityPackage(FileName)) {
+                    continue;
+                }
                 // assume unityPackage doesn't contain an upset file for now. In the future we can support it
                 Upset upset = InferUpsetFromUnityPackage(FileName);
                 if (upset == null) continue;
@@ -182,7 +185,7 @@ namespace Uplift.Schemas {
             string[] split = ShortFileName.Split('-');
             if (split.Length != 2)
             {
-                Debug.LogWarning("Skipping file " + FileName + " as it doesn't follow the pattern 'PackagName-PackageVersion.unityPackage'");
+                Debug.LogWarning("Skipping file " + FileName + " as it doesn't follow the pattern 'PackagName-PackageVersion.unitypackage'");
                 return null;
             }
             string PackageName = split[0];

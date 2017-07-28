@@ -83,11 +83,17 @@ namespace Uplift.Schemas
             
             foreach (InstalledPackage t in InstalledPackage)
             {
-                internalPackage = t;
-                if (internalPackage.Name == package.PackageName)
+                if (t.Name == package.PackageName)
                 {
+                    internalPackage = t;
                     break;
                 }
+            }
+
+            // No package has been found
+            if(internalPackage == null)
+            {
+                return;
             }
 
             // 0 is better than null :)

@@ -13,11 +13,11 @@ namespace Uplift
     {
         private const bool debugMode = true;
         public const string upfilePath = "Upfile.xml";
-        private Upfile Upfile;
+        protected Upfile Upfile;
 
         private static UpfileHandler instance;
 
-        private UpfileHandler()
+        protected UpfileHandler()
         {
         }
 
@@ -50,7 +50,7 @@ namespace Uplift
             return File.Exists(upfilePath);
         }
 
-        private void InternalLoadFile()
+        internal void InternalLoadFile()
         {
             Upfile = LoadFile();
         }
@@ -160,14 +160,14 @@ namespace Uplift
                         SkipPackageStructure = true // Plugins always skip package structure.
 
                     };
-                    
+
                     // Platform as string
                     string platformAsString;
 
                     switch (spec.Platform)
                     {
                         case(PlatformType.All): // It means, that we just need to point to "Plugins" folder.
-                            platformAsString = ""; 
+                            platformAsString = "";
                             break;
                         case(PlatformType.iOS):
                             platformAsString = "ios";

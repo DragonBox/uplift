@@ -8,6 +8,7 @@ namespace Uplift.Common
             string[] args = System.Environment.GetCommandLineArgs();
             return args[args.Length - 1];
         }
+
         public static void InstallDependencies() {
             UpfileHandler handler = UpfileHandler.Instance();
             handler.InstallDependencies();
@@ -18,7 +19,6 @@ namespace Uplift.Common
 
             PackageRepo pr = PackageList.Instance().GetLatestPackage(packageName);
             LocalHandler.UpdatePackage(pr);
-
         }
 
         public static void NukePackage() {

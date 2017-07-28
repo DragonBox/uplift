@@ -7,7 +7,7 @@ namespace Uplift.Strategies
     {
         public override PackageRepo[] Filter(PackageRepo[] candidates)
         {
-            return candidates.OrderBy(pr => pr.Package.PackageVersionAsNumber()).Take(1).ToArray();
+            return candidates.OrderByDescending(pr => pr.Package.PackageVersionAsNumber()).Take(1).ToArray();
         }
     }
 }

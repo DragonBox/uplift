@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,7 +12,7 @@ namespace Uplift.Packages
     {
 
         // Singleton implementation
-        private PackageList()
+        protected PackageList()
         {
             Packages = new List<PackageRepo>();
         }
@@ -65,7 +66,6 @@ namespace Uplift.Packages
                     Package = package,
                     Repository = repository
                 };
-
                 Packages.Add(pr);
 
             }
@@ -84,7 +84,5 @@ namespace Uplift.Packages
 
             return css.Filter(packages)[0];
         }
-
-
     }
 }

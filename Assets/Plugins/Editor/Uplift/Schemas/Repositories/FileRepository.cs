@@ -11,9 +11,9 @@ using UnityEngine;
 using Uplift.Common;
 
 namespace Uplift.Schemas {
-    
+
     public partial class FileRepository {
-        
+
         private const string formatPattern = "{0}{1}{2}";
 
         public override TemporaryDirectory DownloadPackage(Upset package) {
@@ -23,14 +23,9 @@ namespace Uplift.Schemas {
 
             if (Directory.Exists(sourcePath))
             {
-                // exploded directory
-                try {
-                    FileSystemUtil.CopyDirectory(sourcePath, td.Path);
-                } catch (DirectoryNotFoundException) {
-                    Debug.LogError(string.Format("Package {0} not found in specified version {1}", package.PackageName, package.PackageVersion));
-                    td.Dispose();
-                }
-            } else if (IsUnityPackage(sourcePath))
+                FileSystemUtil.CopyDirectory(sourcePath, td.Path);
+            }
+            else if (IsUnityPackage(sourcePath))
             {
                 using (MemoryStream TarArchiveMS = new MemoryStream())
                 {
@@ -151,9 +146,9 @@ namespace Uplift.Schemas {
                 // Don't look at me. System.IO.Path.Combine(string, string, string) doesn't work in Unity :(
                 char SC = System.IO.Path.DirectorySeparatorChar;
                 string upsetPath = Path + SC + directoryName + SC + UpsetFile;
-                    
+
                 if (!File.Exists(upsetPath)) continue;
-                
+
                 XmlSerializer serializer = new XmlSerializer(typeof(Upset));
 
                 using (FileStream file = new FileStream(upsetPath, FileMode.Open)) {
@@ -185,7 +180,7 @@ namespace Uplift.Schemas {
             string[] split = ShortFileName.Split('-');
             if (split.Length != 2)
             {
-                Debug.LogWarning("Skipping file " + FileName + " as it doesn't follow the pattern 'PackagName-PackageVersion.unitypackage'");
+                Debug.LogWarning("Skipping file " + FileName + " as it doesn't follow the pattern 'PackageName-PackageVersion.unitypackage'");
                 return null;
             }
             string PackageName = split[0];
@@ -203,7 +198,7 @@ namespace Uplift.Schemas {
             upset.MetaInformation.dirName = FileName;
 
             // we need to move things around here
-            //upset.InstallSpecifications = new InstallSpec[0];
+            // upset.InstallSpecifications = new InstallSpec[0];
             return upset;
         }
     }

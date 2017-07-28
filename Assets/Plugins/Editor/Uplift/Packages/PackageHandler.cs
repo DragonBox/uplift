@@ -59,7 +59,7 @@ namespace Uplift.Packages
         }
         public PackageRepo[] SelectCandidates(PackageRepo[] candidates, CandidateSelectionStrategy[] strategyList)
         {
-            return strategyList.Aggregate(candidates, SelectCandidates);
+            return strategyList.Aggregate(new PackageRepo[0], (selected, next) => (selected.Union(SelectCandidates(candidates, next))).ToArray());
         }
 
 

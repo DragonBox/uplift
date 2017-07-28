@@ -2,6 +2,7 @@
 /Temp
 /Library
 /target
+/UPackages
 /test-results
 /obj
 /*.csproj

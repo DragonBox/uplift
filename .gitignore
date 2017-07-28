@@ -5,12 +5,14 @@
 /test-results
 /obj
 /*.csproj
+/*.csproj.user
 /*.pidb
 /*.sln
 /*.suo
 /*.userprefs
 /*.patch
 /*.log
+/*.vs
 *.unityproj
 *.pyc
 *.pidb
@@ -18,3 +20,9 @@
 .DS_Store
 .db
 Thumbs.db
+
+UpliftTesting/bin
+UpliftTesting/obj
+UpliftTesting/*.csproj
+UpliftTesting/*.csproj.user
+UpliftTesting/*.sln

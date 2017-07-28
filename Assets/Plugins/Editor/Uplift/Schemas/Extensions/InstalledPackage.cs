@@ -23,10 +23,6 @@ namespace Uplift.Schemas
                 }
                 else
                 {
-                    var sourceDir = UpfileHandler.Instance().GetDestinationFor(spec).Location;
-
-                    //var filePath = Path.Combine(sourceDir, spec.Path);
-                    // Due to change, filePath right now IS spec.Path
                     var filePath = spec.Path;
 
                     try
@@ -71,9 +67,7 @@ namespace Uplift.Schemas
                 {
                     Debug.LogWarning(
                         "Warning: Nuke Dependency Loop has done more than 5 rounds. This might or might not be error, depending on setup"
-                        );
-                    
-                    
+                        );           
                 }
                 
                 actionsDone = 0;

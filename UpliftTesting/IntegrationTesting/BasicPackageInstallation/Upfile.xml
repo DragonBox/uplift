@@ -1,0 +1,13 @@
+﻿<Upfile>
+  <UnityVersion>0.0.0</UnityVersion>
+  <Configuration>
+    <RepositoryPath  Location="UPackages" />
+    <BaseInstallPath Location="Assets/UPackages" />
+  </Configuration>
+  <Repositories>
+    <FileRepository Path="../IntegrationTesting/BasicPackageInstallation/PackageRepo" />
+  </Repositories>
+  <Dependencies>
+    <Package Name="package_a" Version="1.0.0"/>
+  </Dependencies>
+</Upfile>

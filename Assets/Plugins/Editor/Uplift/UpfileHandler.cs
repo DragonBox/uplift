@@ -6,6 +6,8 @@ using UnityEngine;
 using Uplift.Common;
 using Uplift.Packages;
 using Uplift.Schemas;
+using Uplift.Extensions;
+
 // Note - this is singleton
 namespace Uplift
 {
@@ -15,7 +17,7 @@ namespace Uplift
         public const string upfilePath = "Upfile.xml";
         protected Upfile Upfile;
 
-        private static UpfileHandler instance;
+        protected static UpfileHandler instance;
 
         protected UpfileHandler()
         {
@@ -45,7 +47,7 @@ namespace Uplift
             return uph;
         }
 
-        public bool CheckForUpfile()
+        public virtual bool CheckForUpfile()
         {
             return File.Exists(upfilePath);
         }
@@ -55,13 +57,24 @@ namespace Uplift
             Upfile = LoadFile();
         }
 
-        public Upfile LoadFile()
+        public virtual Upfile LoadFile()
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
 
             using (FileStream fs = new FileStream(upfilePath, FileMode.Open))
             {
-                return serializer.Deserialize(fs) as Upfile;
+                Upfile raw =  serializer.Deserialize(fs) as Upfile;
+                if(raw.Configuration != null)
+                {
+                    if (raw.Configuration.BaseInstallPath != null) { raw.Configuration.BaseInstallPath.Location = raw.Configuration.BaseInstallPath.Location.MakePathOSFriendly(); }
+                    if (raw.Configuration.DocsPath != null) { raw.Configuration.DocsPath.Location = raw.Configuration.DocsPath.Location.MakePathOSFriendly(); }
+                    if (raw.Configuration.ExamplesPath != null) { raw.Configuration.ExamplesPath.Location = raw.Configuration.ExamplesPath.Location.MakePathOSFriendly(); }
+                    if (raw.Configuration.MediaPath != null) { raw.Configuration.MediaPath.Location = raw.Configuration.MediaPath.Location.MakePathOSFriendly(); }
+                    if (raw.Configuration.PluginPath != null) { raw.Configuration.PluginPath.Location = raw.Configuration.PluginPath.Location.MakePathOSFriendly(); }
+                    if (raw.Configuration.RepositoryPath != null) { raw.Configuration.RepositoryPath.Location = raw.Configuration.RepositoryPath.Location.MakePathOSFriendly(); }
+                }                
+
+                return raw;
             }
         }
 
@@ -116,7 +129,7 @@ namespace Uplift
 
 
         //FIXME: Prepare proper version checker
-        public void CheckUnityVersion()
+        public virtual void CheckUnityVersion()
         {
             string upfileVersion = Upfile.UnityVersion;
             string unityVersion = Application.unityVersion;

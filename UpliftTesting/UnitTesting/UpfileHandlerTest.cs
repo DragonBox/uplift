@@ -14,7 +14,7 @@ namespace UpliftTesting.UnitTesting
     [TestFixture]
     class UpfileHandlerTest
     {
-        private UpfileHandlerTester ufh;
+        private UpfileHandler ufh;
         private string pwd;
         private string temp_dir;
 
@@ -23,19 +23,15 @@ namespace UpliftTesting.UnitTesting
         {
             Uplift.TestingProperties.SetLogging(false);
             pwd = Directory.GetCurrentDirectory();
-            ufh = UpfileHandlerTester.TestingInstance();
+            ufh = UpfileHandlerExposer.Instance();
         }
 
         [SetUp]
         protected void Init()
         {
+            UpfileHandlerExposer.ResetSingleton();
+            ufh = UpfileHandlerExposer.Instance();
             temp_dir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        }
-
-        [TearDown]
-        protected void Cleanup()
-        {
-            ufh.Clear();
         }
 
         [Test]
@@ -53,7 +49,11 @@ namespace UpliftTesting.UnitTesting
             {
                 Directory.CreateDirectory(temp_dir);
                 Directory.SetCurrentDirectory(temp_dir);
+                UpfileHandlerExposer.ResetSingleton();
+                ufh = UpfileHandler.Instance();
+
                 File.Create(Path.Combine(temp_dir, "Upfile.xml")).Dispose();
+
                 Assert.IsTrue(ufh.CheckForUpfile());
             }
             finally
@@ -86,12 +86,17 @@ namespace UpliftTesting.UnitTesting
             {
                 Directory.CreateDirectory(temp_dir);
                 Directory.SetCurrentDirectory(temp_dir);
+
+                UpfileHandlerExposer.ResetSingleton();
+                ufh = UpfileHandler.Instance();
+
                 Upfile dummy = new Upfile() {
                     Configuration = new Configuration(),
                     Dependencies = new DependencyDefinition[0],
                     Repositories = new Repository[0],
                     UnityVersion = "foo"
                 };
+
                 XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
                 using (FileStream fs = new FileStream(Path.Combine(temp_dir, "Upfile.xml"), FileMode.Create))
                 {
@@ -125,7 +130,7 @@ namespace UpliftTesting.UnitTesting
             repo_mock.Setup(repo => repo.ListPackages()).Returns(new Upset[] { dummy_package });
             PackageRepo pr = new PackageRepo { Package = dummy_package, Repository = repo_mock.Object };
             Upfile dummy = new Upfile() { Repositories = new Repository[] { repo_mock.Object } };
-            ufh.SetUpfile(dummy);
+            (ufh as UpfileHandlerExposer).SetUpfile(dummy);
             ufh.LoadPackageList();
             CollectionAssert.Contains(PackageList.Instance().GetAllPackages(), pr);
         }
@@ -134,7 +139,7 @@ namespace UpliftTesting.UnitTesting
         public void GetPackagesRootPathTest()
         {
             Upfile dummy = new Upfile() { Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = "foo" } } };
-            ufh.SetUpfile(dummy);
+            (ufh as UpfileHandlerExposer).SetUpfile(dummy);
             Assert.AreEqual("foo", ufh.GetPackagesRootPath());
         }
 
@@ -143,7 +148,7 @@ namespace UpliftTesting.UnitTesting
         {
             PathConfiguration dummy_path = new Mock<PathConfiguration>().Object;
             Upfile dummy = new Upfile() { Configuration = new Configuration() { BaseInstallPath = dummy_path } };
-            ufh.SetUpfile(dummy);
+            (ufh as UpfileHandlerExposer).SetUpfile(dummy);
             InstallSpec spec = new InstallSpec() { Type = InstallSpecType.Base };
             Assert.AreEqual(dummy_path, ufh.GetDestinationFor(spec));
         }
@@ -153,7 +158,7 @@ namespace UpliftTesting.UnitTesting
         {
             PathConfiguration dummy_path = new Mock<PathConfiguration>().Object;
             Upfile dummy = new Upfile() { Configuration = new Configuration() { DocsPath = dummy_path } };
-            ufh.SetUpfile(dummy);
+            (ufh as UpfileHandlerExposer).SetUpfile(dummy);
             InstallSpec spec = new InstallSpec() { Type = InstallSpecType.Docs };
             Assert.AreEqual(dummy_path, ufh.GetDestinationFor(spec));
         }
@@ -163,7 +168,7 @@ namespace UpliftTesting.UnitTesting
         {
             PathConfiguration dummy_path = new Mock<PathConfiguration>().Object;
             Upfile dummy = new Upfile() { Configuration = new Configuration() { ExamplesPath = dummy_path } };
-            ufh.SetUpfile(dummy);
+            (ufh as UpfileHandlerExposer).SetUpfile(dummy);
             InstallSpec spec = new InstallSpec() { Type = InstallSpecType.Examples };
             Assert.AreEqual(dummy_path, ufh.GetDestinationFor(spec));
         }
@@ -173,7 +178,7 @@ namespace UpliftTesting.UnitTesting
         {
             PathConfiguration dummy_path = new Mock<PathConfiguration>().Object;
             Upfile dummy = new Upfile() { Configuration = new Configuration() { MediaPath = dummy_path } };
-            ufh.SetUpfile(dummy);
+            (ufh as UpfileHandlerExposer).SetUpfile(dummy);
             InstallSpec spec = new InstallSpec() { Type = InstallSpecType.Media };
             Assert.AreEqual(dummy_path, ufh.GetDestinationFor(spec));
         }
@@ -183,7 +188,7 @@ namespace UpliftTesting.UnitTesting
         {
             PathConfiguration dummy_path = new Mock<PathConfiguration>().Object;
             Upfile dummy = new Upfile() { Configuration = new Configuration() { BaseInstallPath = dummy_path } };
-            ufh.SetUpfile(dummy);
+            (ufh as UpfileHandlerExposer).SetUpfile(dummy);
             InstallSpec spec = new InstallSpec() { };
             Assert.AreEqual(dummy_path, ufh.GetDestinationFor(spec));
         }
@@ -192,7 +197,7 @@ namespace UpliftTesting.UnitTesting
         public void GetDestinationForGenericPluginTest()
         {
             Upfile dummy = new Upfile() { Configuration = new Configuration() { PluginPath = new PathConfiguration() { Location = "foo", } } };
-            ufh.SetUpfile(dummy);
+            (ufh as UpfileHandlerExposer).SetUpfile(dummy);
             InstallSpec spec = new InstallSpec() {
                 Platform = PlatformType.All,
                 Type = InstallSpecType.Plugin
@@ -205,7 +210,7 @@ namespace UpliftTesting.UnitTesting
         public void GetDestinationForIOSPluginTest()
         {
             Upfile dummy = new Upfile() { Configuration = new Configuration() { PluginPath = new PathConfiguration() { Location = "foo", } } };
-            ufh.SetUpfile(dummy);
+            (ufh as UpfileHandlerExposer).SetUpfile(dummy);
             InstallSpec spec = new InstallSpec()
             {
                 Platform = PlatformType.iOS,

@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using Uplift;
 using System;
 using System.Linq;
+using UpliftTesting.Helpers;
 
 namespace UpliftTesting.UnitTesting
 {
@@ -29,6 +30,7 @@ namespace UpliftTesting.UnitTesting
         {
             upbring = new Upbring();
             temp_dir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            UpfileHandlerExposer.ResetSingleton();
         }
 
         [Test]
@@ -146,9 +148,10 @@ namespace UpliftTesting.UnitTesting
             {
                 Directory.CreateDirectory(temp_dir);
                 Directory.SetCurrentDirectory(temp_dir);
-                string repo_path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-                UpfileHandler ufh = UpfileHandler.Instance();
+                string repo_path = Path.Combine(temp_dir, Path.GetRandomFileName());
                 Directory.CreateDirectory(repo_path);
+
+                UpfileHandler ufh = UpfileHandlerExposer.Instance();
                 Upfile dummy = new Upfile()
                 {
                     Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } },
@@ -156,22 +159,20 @@ namespace UpliftTesting.UnitTesting
                     Repositories = new Repository[0],
                     UnityVersion = "foo"
                 };
-                XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
-                using (FileStream fs = new FileStream(Path.Combine(temp_dir, "Upfile.xml"), FileMode.Create))
-                {
-                    serializer.Serialize(fs, dummy);
-                }
-                ufh.InternalLoadFile();
+                (ufh as UpfileHandlerExposer).SetUpfile(dummy);
+
                 InstalledPackage package_A = new InstalledPackage() { Name = "packageA", Install = new InstallSpec[0], Version = "0.0.0" };
                 Upbring test = new Upbring() { InstalledPackage = new InstalledPackage[] { package_A } };
-                serializer = new XmlSerializer(typeof(Upbring));
+                XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
                 using (FileStream fs = new FileStream(Path.Combine(repo_path, "Upbring.xml"), FileMode.Create))
                 {
                     serializer.Serialize(fs, test);
                 }
-                Assert.AreEqual(package_A.Name, Upbring.FromXml().InstalledPackage[0].Name);
-                //Assert.AreEqual(package_A.Install, Upbring.FromXml().InstalledPackage[0].Install);
-                Assert.AreEqual(package_A.Version, Upbring.FromXml().InstalledPackage[0].Version);
+
+                Assert.That(Upbring.FromXml().InstalledPackage.Any(p =>
+                p.Name == package_A.Name &&
+                p.Version == package_A.Version
+                ));
             }
             finally
             {
@@ -187,22 +188,15 @@ namespace UpliftTesting.UnitTesting
             {
                 Directory.CreateDirectory(temp_dir);
                 Directory.SetCurrentDirectory(temp_dir);
-                string repo_path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-                UpfileHandler ufh = UpfileHandler.Instance();
+                string repo_path = Path.Combine(temp_dir, Path.GetRandomFileName());
                 Directory.CreateDirectory(repo_path);
+
+                UpfileHandler ufh = UpfileHandlerExposer.Instance();
                 Upfile dummy = new Upfile()
                 {
-                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } },
-                    Dependencies = new DependencyDefinition[0],
-                    Repositories = new Repository[0],
-                    UnityVersion = "foo"
+                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } }
                 };
-                XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
-                using (FileStream fs = new FileStream(Path.Combine(temp_dir, "Upfile.xml"), FileMode.Create))
-                {
-                    serializer.Serialize(fs, dummy);
-                }
-                ufh.InternalLoadFile();
+                (ufh as UpfileHandlerExposer).SetUpfile(dummy);
 
                 CollectionAssert.IsEmpty(Upbring.FromXml().InstalledPackage);
             }
@@ -221,38 +215,32 @@ namespace UpliftTesting.UnitTesting
                 Directory.CreateDirectory(temp_dir);
                 Directory.SetCurrentDirectory(temp_dir);
 
-                // UpfileHandler Setup
-                string repo_path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-                UpfileHandler ufh = UpfileHandler.Instance();
+                string repo_path = Path.Combine(temp_dir, Path.GetRandomFileName());
                 Directory.CreateDirectory(repo_path);
+
+                UpfileHandler ufh = UpfileHandlerExposer.Instance();
                 Upfile dummy = new Upfile()
                 {
-                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } },
-                    Dependencies = new DependencyDefinition[0],
-                    Repositories = new Repository[0],
-                    UnityVersion = "foo"
+                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } }
                 };
-                XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
-                using (FileStream fs = new FileStream(Path.Combine(temp_dir, "Upfile.xml"), FileMode.Create))
-                {
-                    serializer.Serialize(fs, dummy);
-                }
-                ufh.InternalLoadFile();
+                (ufh as UpfileHandlerExposer).SetUpfile(dummy);
 
                 InstalledPackage package_A = new InstalledPackage() { Name = "packageA", Install = new InstallSpec[0], Version = "0.0.0" };
                 Upbring test = new Upbring() { InstalledPackage = new InstalledPackage[] { package_A } };
 
                 test.SaveFile();
 
-                serializer = new XmlSerializer(typeof(Upbring));
+                XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
                 Upbring parsed;
                 using (FileStream fs = new FileStream(Path.Combine(repo_path, "Upbring.xml"), FileMode.Open))
                 {
                     parsed = serializer.Deserialize(fs) as Upbring;
                 }
 
-                Assert.AreEqual(test.InstalledPackage[0].Name, parsed.InstalledPackage[0].Name);
-                Assert.AreEqual(test.InstalledPackage[0].Version, parsed.InstalledPackage[0].Version);
+                Assert.That(parsed.InstalledPackage.Any(p =>
+                p.Name == test.InstalledPackage[0].Name &&
+                p.Version == test.InstalledPackage[0].Version
+                ));
             }
             finally
             {
@@ -269,33 +257,19 @@ namespace UpliftTesting.UnitTesting
                 Directory.CreateDirectory(temp_dir);
                 Directory.SetCurrentDirectory(temp_dir);
 
-                // UpfileHandler Setup
-                string repo_path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-                UpfileHandler ufh = UpfileHandler.Instance();
+                string repo_path = Path.Combine(temp_dir, Path.GetRandomFileName());
                 Directory.CreateDirectory(repo_path);
+
+                UpfileHandler ufh = UpfileHandlerExposer.Instance();
                 Upfile dummy = new Upfile()
                 {
-                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } },
-                    Dependencies = new DependencyDefinition[0],
-                    Repositories = new Repository[0],
-                    UnityVersion = "foo"
+                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } }
                 };
-                XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
-                using (FileStream fs = new FileStream(Path.Combine(temp_dir, "Upfile.xml"), FileMode.Create))
-                {
-                    serializer.Serialize(fs, dummy);
-                }
-                ufh.InternalLoadFile();
+                (ufh as UpfileHandlerExposer).SetUpfile(dummy);
 
-                InstalledPackage package_A = new InstalledPackage() { Name = "packageA", Install = new InstallSpec[0], Version = "0.0.0" };
-                Upbring test = new Upbring() { InstalledPackage = new InstalledPackage[] { package_A } };
                 string upbring_path = Path.Combine(repo_path, "Upbring.xml");
-                serializer = new XmlSerializer(typeof(Upbring));
-                using (FileStream fs = new FileStream(upbring_path, FileMode.Create))
-                {
-                    serializer.Serialize(fs, test);
-                }
-                Assert.IsTrue(File.Exists(upbring_path));
+                File.Create(upbring_path).Dispose();                
+
                 Upbring.RemoveFile();
                 Assert.IsFalse(File.Exists(upbring_path));
             }

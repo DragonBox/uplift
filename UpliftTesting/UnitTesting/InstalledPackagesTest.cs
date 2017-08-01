@@ -34,6 +34,7 @@ namespace UpliftTesting.UnitTesting
             ip.Nuke();
 
             Assert.IsFalse(Directory.Exists(installed_path));
+
             // Make sure that the directory is deleted even if the test fails
             if(Directory.Exists(installed_path)) { Directory.Delete(installed_path); }            
         }

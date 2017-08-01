@@ -153,6 +153,13 @@ namespace Uplift.Schemas {
 
                 using (FileStream file = new FileStream(upsetPath, FileMode.Open)) {
                     Upset upset = serializer.Deserialize(file) as Upset;
+                    if(upset.Configuration != null && upset.Configuration.Length != 0)
+                    {
+                        foreach(InstallSpec spec in upset.Configuration)
+                        {
+                            spec.Path = spec.Path.MakePathOSFriendly();
+                        }
+                    }
                     upset.MetaInformation.dirName = directoryName;
                     upsetList.Add(upset);
                 }

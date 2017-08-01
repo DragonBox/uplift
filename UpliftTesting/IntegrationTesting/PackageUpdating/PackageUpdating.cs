@@ -59,7 +59,7 @@ namespace UpliftTesting.IntegrationTesting
         }
 
         [Test]
-        public void SuccessfullStubbing()
+        public void WhenUpdating()
         {
             Cli.InstallDependencies();
             Upbring upbring = Upbring.FromXml();
@@ -97,10 +97,6 @@ namespace UpliftTesting.IntegrationTesting
             p.Version == "1.0.1"
             ), "Upbring did not register an installation with the proper package Name and Version");
             Assert.IsNotEmpty(upbring.InstalledPackage[0].Install, "Upbring file did not register file dependencies");
-            Assert.That(upbring.InstalledPackage[0].Install.Any(i =>
-            i.Path == Path.Combine("UPackages", "package_a~1.0.1") &&
-            i.Type == InstallSpecType.Root
-            ));
             Assert.That(upbring.InstalledPackage[0].Install.Any(i =>
             i.Path == Path.Combine("UPackages", "package_a~1.0.1") &&
             i.Type == InstallSpecType.Root

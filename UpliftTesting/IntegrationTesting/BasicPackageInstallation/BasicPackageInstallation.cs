@@ -39,7 +39,7 @@ namespace UpliftTesting.IntegrationTesting
             catch (FileNotFoundException)
             {
                 Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
-                Assert.IsTrue(false, "The test could not run correctly. See console message.");
+                throw new InvalidOperationException("The test setup is not correct. Please run this test from UpliftTesting/TestResults");
             }
         }
 
@@ -87,10 +87,6 @@ namespace UpliftTesting.IntegrationTesting
             p.Version == "1.0.0"
             ), "Upbring did not register an installation with the proper package Name and Version");
             Assert.IsNotEmpty(upbring.InstalledPackage[0].Install, "Upbring file did not register file dependencies");
-            Assert.That(upbring.InstalledPackage[0].Install.Any(i => 
-            i.Path == Path.Combine("UPackages", "package_a~1.0.0") &&
-            i.Type == InstallSpecType.Root
-            ));
             Assert.That(upbring.InstalledPackage[0].Install.Any(i => 
             i.Path == Path.Combine("UPackages", "package_a~1.0.0") &&
             i.Type == InstallSpecType.Root

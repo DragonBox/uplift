@@ -75,8 +75,6 @@ namespace Uplift.Packages
                 
                 var destination = Path.Combine(PH.Location, packageStructurePrefix);
                 
-                
-
                 // Working with single file
                 if (File.Exists(sourcePath))
                 {
@@ -92,7 +90,6 @@ namespace Uplift.Packages
                 }
 
                 // Working with directory
-
                 if (Directory.Exists(sourcePath))
                 {
                     // Working with directory
@@ -101,15 +98,9 @@ namespace Uplift.Packages
                     foreach (var file in FileSystemUtil.RecursivelyListFiles(sourcePath, true))
                     {
                         upbringFile.AddLocation(package, spec.Type, Path.Combine(destination, file));
-                    }
-                    
-                    
-                }
-
-                
+                    }             
+                }            
             }
-
-
 
             upbringFile.SaveFile();
 

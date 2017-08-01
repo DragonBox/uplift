@@ -93,11 +93,30 @@
 
 
 * Suite: Package nuking
-** TODO Describe nuking and follow through
-   - It pretty much should remove all the files and directories that
-     had been created during installation of package
-   - 1st idea: Snapshot dir structure, install, nuke, state == snapshot
-   - 2st idea: Snapshot, install, create file within structure, state == snapshot + file
+** Given
+*** A state of the directory structure
+  - The directory structure is in specific state, with specific folders and files
+  - This state is saved as a "snapshot", keeping track of the files and folders.
+*** Package D 
+  - With version 1.3.5 and shortname "package_c"
+  - With files D1, D2
+  - With MEDIA files Media/M1, Media/M2
+  - Installed after the snapshot
+*** Upfile defined as
+  - MediaPath to be Assets/Media 
+  - MediaPath with SkipPackageStructure set to TRUE
+** Scenario
+*** When launching Nuke procedure
+*** When no file has been added
+*** Expect
+ - The directory structure to be the exact same as what is descibed in the snapshot
+** Scenario
+*** When launching Nuke procedure
+*** When some files have been added
+  - added1 has been added under Assets/
+  - added2 has been added under Assets/Media
+*** Expect
+  - The directory structure to be the snapshot with the extra files
 
 * Suite: CLI Usage
 ** Given ANY SCENARIO

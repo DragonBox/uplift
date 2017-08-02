@@ -98,7 +98,7 @@
   - The directory structure is in specific state, with specific folders and files
   - This state is saved as a "snapshot", keeping track of the files and folders.
 *** Package D 
-  - With version 1.3.5 and shortname "package_c"
+  - With version 1.8.6 and shortname "package_d"
   - With files D1, D2
   - With MEDIA files Media/M1, Media/M2
   - Installed after the snapshot

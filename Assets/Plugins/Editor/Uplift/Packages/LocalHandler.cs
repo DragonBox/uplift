@@ -43,7 +43,7 @@ namespace Uplift.Packages
             // Note: Full package is ALWAYS copied to the upackages directory right now
             string localPackagePath = GetRepositoryInstallPath(package);
             upbringFile.AddPackage(package);
-            FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
+            Uplift.Common.FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
             upbringFile.AddLocation(package, InstallSpecType.Root, localPackagePath);
 
 
@@ -67,7 +67,7 @@ namespace Uplift.Packages
 
             foreach (InstallSpec spec in specArray)
             {
-                var sourcePath = FileSystemUtil.JoinPaths(td.Path, spec.Path);
+                var sourcePath = Uplift.Common.FileSystemUtil.JoinPaths(td.Path, spec.Path);
                 PathConfiguration PH = UpfileHandler.Instance().GetDestinationFor(spec);
 
                 var packageStructurePrefix =
@@ -93,9 +93,9 @@ namespace Uplift.Packages
                 if (Directory.Exists(sourcePath))
                 {
                     // Working with directory
-                    FileSystemUtil.CopyDirectory(sourcePath, destination);
+                    Uplift.Common.FileSystemUtil.CopyDirectory(sourcePath, destination);
 
-                    foreach (var file in FileSystemUtil.RecursivelyListFiles(sourcePath, true))
+                    foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
                     {
                         upbringFile.AddLocation(package, spec.Type, Path.Combine(destination, file));
                     }             

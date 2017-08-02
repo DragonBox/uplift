@@ -9,7 +9,7 @@ namespace Uplift.Extensions
         public static string MakePathOSFriendly(this string path)
         {
             if (string.IsNullOrEmpty(path)) { return path; }
-            return FileSystemUtil.JoinPaths(path.Split('/', '\\'));
+            return Uplift.Common.FileSystemUtil.JoinPaths(path.Split('/', '\\'));
         }
     }
 }

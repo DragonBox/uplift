@@ -72,7 +72,16 @@ namespace Uplift
                     if (raw.Configuration.MediaPath != null) { raw.Configuration.MediaPath.Location = raw.Configuration.MediaPath.Location.MakePathOSFriendly(); }
                     if (raw.Configuration.PluginPath != null) { raw.Configuration.PluginPath.Location = raw.Configuration.PluginPath.Location.MakePathOSFriendly(); }
                     if (raw.Configuration.RepositoryPath != null) { raw.Configuration.RepositoryPath.Location = raw.Configuration.RepositoryPath.Location.MakePathOSFriendly(); }
-                }                
+                }
+                if(raw.Repositories != null) {
+                    foreach(Repository repo in raw.Repositories)
+                    {
+                        if(repo is FileRepository)
+                        {
+                            (repo as FileRepository).Path = (repo as FileRepository).Path.MakePathOSFriendly();
+                        }
+                    }
+                } 
 
                 return raw;
             }

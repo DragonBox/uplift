@@ -74,7 +74,7 @@ namespace Uplift.Schemas
                 loopCounter++;
 
                 // We're recursively listing the directories we're keeping so that we can extract empty directories.
-                var recursiveDirPaths = FileSystemUtil.RecursivelyDirPaths(dirPaths).Distinct().ToList();
+                var recursiveDirPaths = Uplift.Common.FileSystemUtil.RecursivelyDirPaths(dirPaths).Distinct().ToList();
 
                 foreach (var p in recursiveDirPaths)
                 {

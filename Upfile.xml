@@ -41,6 +41,8 @@
     <MediaPath Location="Assets/UPackages" SkipPackageStructure="true" />
     <!-- Path where plugin files are unpacked                                 -->
     <PluginPath Location="Assets/Plugins"/>
+    <!-- Path where editor plugin files are unpacked                                 -->
+    <EditorPluginPath Location="Assets/Editor/Plugins"/>
   </Configuration>
   <!-- SAMPLE REPOSITORIES BLOCK
 
@@ -58,6 +60,7 @@
     <Package Name="project_a" Version="1.0.0"/>
     <Package Name="project_b" Version="1.0" />
     <Package Name="project_c" Version="2.0" />
+    <Package Name="project_d" Version="4.5" />
   </Dependencies>
 
   <!-- SAMPLE DEPENDENCIES BLOCK

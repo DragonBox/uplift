@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uplift", "uplift.csproj", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uplift.Editor.Plugins", "uplift.Editor.Plugins.csproj", "{F8513CB3-5DDE-F981-3AC2-CC40F269419F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpliftTesting", "UpliftTesting\UpliftTesting.csproj", "{D1ECEEE4-FCD2-42AD-A0CC-24F7A72DEC73}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uplift.Editor", "uplift.Editor.csproj", "{E553C971-22F2-40F1-7641-E5E5AA192CB1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +21,10 @@ Global
 		{F8513CB3-5DDE-F981-3AC2-CC40F269419F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8513CB3-5DDE-F981-3AC2-CC40F269419F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8513CB3-5DDE-F981-3AC2-CC40F269419F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D1ECEEE4-FCD2-42AD-A0CC-24F7A72DEC73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D1ECEEE4-FCD2-42AD-A0CC-24F7A72DEC73}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D1ECEEE4-FCD2-42AD-A0CC-24F7A72DEC73}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D1ECEEE4-FCD2-42AD-A0CC-24F7A72DEC73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E553C971-22F2-40F1-7641-E5E5AA192CB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E553C971-22F2-40F1-7641-E5E5AA192CB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E553C971-22F2-40F1-7641-E5E5AA192CB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E553C971-22F2-40F1-7641-E5E5AA192CB1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

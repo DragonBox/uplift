@@ -171,6 +171,9 @@ namespace Uplift.Schemas {
         Media,
         
         /// <remarks/>
+        EditorPlugin,
+        
+        /// <remarks/>
         Plugin,
         
         /// <remarks/>
@@ -491,6 +494,8 @@ namespace Uplift.Schemas {
         
         private PathConfiguration pluginPathField;
         
+        private PathConfiguration editorPluginPathField;
+        
         /// <remarks/>
         public PathConfiguration RepositoryPath {
             get {
@@ -548,6 +553,16 @@ namespace Uplift.Schemas {
             }
             set {
                 this.pluginPathField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PathConfiguration EditorPluginPath {
+            get {
+                return this.editorPluginPathField;
+            }
+            set {
+                this.editorPluginPathField = value;
             }
         }
     }

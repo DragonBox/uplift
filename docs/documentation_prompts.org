@@ -1,0 +1,13 @@
+* .meta file handling
+** GUIDs
+*** When they are created
+*** How they are created
+    - Based on path and content
+    - Different across different computers (i.e. not recreatable)
+*** How they are handled
+    - Not changed when moving
+*** Impact on Uplift and overall workflow
+*** Not fully researched - effect of directory .meta files
+** Dealing with GUID fragility
+   - Source controlling .meta
+   - Future: Possible tool for tracking GUID changes (for example, when replacing assets)

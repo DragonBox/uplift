@@ -8,6 +8,7 @@ using SharpCompress.Archives;
 using SharpCompress.Archives.Tar;
 using Uplift.Extensions;
 using UnityEngine;
+using UnityEditor;
 using Uplift.Common;
 
 namespace Uplift.Schemas {
@@ -47,7 +48,6 @@ namespace Uplift.Schemas {
                     {
                         if (entry.IsDirectory) continue;
 
-                        Debug.Log(entry.Key + " " + entry.GetType());
                         if (entry.Key.EndsWith("asset"))
                         {
                             if (assetMS != null)
@@ -62,12 +62,18 @@ namespace Uplift.Schemas {
                             // not sure what do do with that right now
                             // maybe copy it as .meta ? I tried and it causes problems when the editor is in text mode.
                             // Not even sure what the file contain yet. Convert it using Unity?
-                            Debug.Log("METADATA: " + entry.Key + " " + entry.Size);
                             /*
                             metaMS = new MemoryStream();
                             entry.WriteTo(metaMS);
                             metaMS.Position = 0;
                             */
+                            continue;
+                        }
+                        if (entry.Key.EndsWith("meta"))
+                        {
+                            metaMS = new MemoryStream();
+                            entry.WriteTo(metaMS);
+                            metaMS.Position = 0;
                             continue;
                         }
                         if (entry.Key.EndsWith("pathname"))

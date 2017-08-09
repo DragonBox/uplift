@@ -1,12 +1,8 @@
 fileFormatVersion: 2
-guid: thisistheguidfortheREADMEbelieveme
-timeCreated: 1494857274
+guid: 01f4a9e52c116ff4ab7fe9d9d51a015b
+timeCreated: 1502283633
 licenseType: Free
-MonoImporter:
-  serializedVersion: 2
-  defaultReferences: []
-  executionOrder: 0
-  icon: {instanceID: 0}
+TextScriptImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 

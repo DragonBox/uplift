@@ -11,3 +11,5 @@
 ** Dealing with GUID fragility
    - Source controlling .meta
    - Future: Possible tool for tracking GUID changes (for example, when replacing assets)
+* Location of the global overrides
+  - %HOME%/.Upfile.xml

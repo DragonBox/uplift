@@ -15,6 +15,7 @@ namespace Uplift
     {
         private const bool debugMode = true;
         public const string upfilePath = "Upfile.xml";
+        public const string globalOverridePath = ".Upfile.xml";
         protected Upfile Upfile;
 
         protected static UpfileHandler instance;
@@ -57,6 +58,47 @@ namespace Uplift
             Upfile = LoadFile();
         }
 
+        public virtual void LoadOverrides(ref Upfile upfile) {
+            string homePath = (Environment.OSVersion.Platform == PlatformID.Unix ||
+                               Environment.OSVersion.Platform == PlatformID.MacOSX)
+                ? Environment.GetEnvironmentVariable("HOME")
+                : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
+
+            string overrideFilePath = Path.Combine(homePath, globalOverridePath);
+
+            // If we don't have override file, ignore
+            if (!File.Exists(overrideFilePath)) {
+                return;
+            }
+
+            XmlSerializer serializer = new XmlSerializer(typeof(UpfileOverride));
+
+            using(FileStream fs = new FileStream(overrideFilePath, FileMode.Open)) {
+
+                try {
+                    UpfileOverride upOverride = serializer.Deserialize(fs) as UpfileOverride;
+
+                    if(upfile.Repositories == null) {
+                        upfile.Repositories = upOverride.Repositories;
+                    } else {
+                        int repositoriesSize = upfile.Repositories.Length + upOverride.Repositories.Length;
+
+                        Repository[] newRepositoryArray = new Repository[repositoriesSize];
+                        Array.Copy(upfile.Repositories, newRepositoryArray, upfile.Repositories.Length);
+                        Array.Copy(upOverride.Repositories, 0, newRepositoryArray, upOverride.Repositories.Length, upfile.Repositories.Length);
+
+                        upfile.Repositories = newRepositoryArray;
+                    }
+                } catch (InvalidOperationException) {
+                    Debug.Log("Upfile.xml Global Override is not well formed");
+                }
+            }
+
+
+
+
+        }
+
         public virtual Upfile LoadFile()
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
@@ -73,6 +115,9 @@ namespace Uplift
                     if (raw.Configuration.PluginPath != null) { raw.Configuration.PluginPath.Location = raw.Configuration.PluginPath.Location.MakePathOSFriendly(); }
                     if (raw.Configuration.RepositoryPath != null) { raw.Configuration.RepositoryPath.Location = raw.Configuration.RepositoryPath.Location.MakePathOSFriendly(); }
                 }
+
+                LoadOverrides(ref raw);
+
                 if(raw.Repositories != null) {
                     foreach(Repository repo in raw.Repositories)
                     {
@@ -81,7 +126,7 @@ namespace Uplift
                             (repo as FileRepository).Path = (repo as FileRepository).Path.MakePathOSFriendly();
                         }
                     }
-                } 
+                }
 
                 return raw;
             }

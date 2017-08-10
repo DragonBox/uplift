@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2015
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uplift.Plugins", "uplift.Plugins.csproj", "{2AD78F44-D4A4-5C1A-5173-DCA3AE953EAE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uplift", "uplift.csproj", "{6CA00F9E-220A-0A88-D132-876297BFE065}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uplift.Editor.Plugins", "uplift.Editor.Plugins.csproj", "{F8513CB3-5DDE-F981-3AC2-CC40F269419F}"
@@ -13,10 +11,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2AD78F44-D4A4-5C1A-5173-DCA3AE953EAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2AD78F44-D4A4-5C1A-5173-DCA3AE953EAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2AD78F44-D4A4-5C1A-5173-DCA3AE953EAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2AD78F44-D4A4-5C1A-5173-DCA3AE953EAE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6CA00F9E-220A-0A88-D132-876297BFE065}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6CA00F9E-220A-0A88-D132-876297BFE065}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CA00F9E-220A-0A88-D132-876297BFE065}.Release|Any CPU.ActiveCfg = Release|Any CPU

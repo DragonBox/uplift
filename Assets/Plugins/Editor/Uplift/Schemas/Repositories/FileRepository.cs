@@ -57,7 +57,7 @@ namespace Uplift.Schemas {
                             string existing_path = AssetDatabase.GUIDToAssetPath(entry.Key.Replace("/asset", ""));
                             if(!string.IsNullOrEmpty(existing_path))
                             {
-                                Debug.Log("GUID recognized by Unity, pointing towards " + existing_path);
+                                // Do something with the GUID
                             }
                             assetMS = new MemoryStream();
                             entry.WriteTo(assetMS);
@@ -66,15 +66,7 @@ namespace Uplift.Schemas {
                         }
                         if (entry.Key.EndsWith("metaData"))
                         {
-                            // not sure what do do with that right now
-                            // maybe copy it as .meta ? I tried and it causes problems when the editor is in text mode.
-                            // Not even sure what the file contain yet. Convert it using Unity?
-                            /*
-                            metaMS = new MemoryStream();
-                            entry.WriteTo(metaMS);
-                            metaMS.Position = 0;
-                            */
-                            continue;
+                            throw new NotSupportedException("The package has been packed by a Unity version prior to Unity5, and we do not support this. Contact the package maintainer for updated version.");
                         }
                         if (entry.Key.EndsWith("meta"))
                         {

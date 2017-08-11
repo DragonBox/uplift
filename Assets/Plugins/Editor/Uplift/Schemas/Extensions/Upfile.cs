@@ -9,7 +9,8 @@ namespace Uplift.Schemas
         {
             foreach(PathConfiguration path in PathConfigurations())
             {
-                path.Location = FileSystemUtil.MakePathOSFriendly(path.Location);
+                if (!(path == null))
+                    path.Location = FileSystemUtil.MakePathOSFriendly(path.Location);
             }
         }
 

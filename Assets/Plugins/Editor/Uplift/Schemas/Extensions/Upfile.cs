@@ -20,6 +20,7 @@ namespace Uplift.Schemas
             yield return Configuration.DocsPath;
             yield return Configuration.EditorPluginPath;
             yield return Configuration.ExamplesPath;
+            yield return Configuration.GizmoPath;
             yield return Configuration.MediaPath;
             yield return Configuration.PluginPath;
             yield return Configuration.RepositoryPath;

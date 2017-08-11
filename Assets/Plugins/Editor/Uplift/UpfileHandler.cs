@@ -63,28 +63,21 @@ namespace Uplift
 
             using (FileStream fs = new FileStream(upfilePath, FileMode.Open))
             {
-                Upfile raw =  serializer.Deserialize(fs) as Upfile;
-                if(raw.Configuration != null)
-                {
-                    if (raw.Configuration.BaseInstallPath != null) { raw.Configuration.BaseInstallPath.Location = raw.Configuration.BaseInstallPath.Location.MakePathOSFriendly(); }
-                    if (raw.Configuration.DocsPath != null) { raw.Configuration.DocsPath.Location = raw.Configuration.DocsPath.Location.MakePathOSFriendly(); }
-                    if (raw.Configuration.ExamplesPath != null) { raw.Configuration.ExamplesPath.Location = raw.Configuration.ExamplesPath.Location.MakePathOSFriendly(); }
-                    if (raw.Configuration.MediaPath != null) { raw.Configuration.MediaPath.Location = raw.Configuration.MediaPath.Location.MakePathOSFriendly(); }
-                    if (raw.Configuration.PluginPath != null) { raw.Configuration.PluginPath.Location = raw.Configuration.PluginPath.Location.MakePathOSFriendly(); }
-                    if (raw.Configuration.EditorPluginPath != null) { raw.Configuration.EditorPluginPath.Location = raw.Configuration.EditorPluginPath.Location.MakePathOSFriendly(); }
-                    if (raw.Configuration.RepositoryPath != null) { raw.Configuration.RepositoryPath.Location = raw.Configuration.RepositoryPath.Location.MakePathOSFriendly(); }
-                }
-                if(raw.Repositories != null) {
-                    foreach(Repository repo in raw.Repositories)
+                Upfile upfile =  serializer.Deserialize(fs) as Upfile;
+
+                upfile.MakePathConfigurationsOSFriendly();
+
+                if(upfile.Repositories != null) {
+                    foreach(Repository repo in upfile.Repositories)
                     {
                         if(repo is FileRepository)
                         {
-                            (repo as FileRepository).Path = (repo as FileRepository).Path.MakePathOSFriendly();
+                            (repo as FileRepository).Path = FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
                         }
                     }
                 } 
 
-                return raw;
+                return upfile;
             }
         }
 

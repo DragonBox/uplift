@@ -53,6 +53,7 @@
       <xs:enumeration value="Plugin"/>
       <xs:enumeration value="Docs"/>
       <xs:enumeration value="Examples"/>
+      <xs:enumeration value="Gizmo"/>
     </xs:restriction>
   </xs:simpleType>
   

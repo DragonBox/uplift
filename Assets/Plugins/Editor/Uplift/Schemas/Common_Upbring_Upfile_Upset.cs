@@ -170,6 +170,9 @@ namespace Uplift.Schemas {
         
         /// <remarks/>
         Examples,
+        
+        /// <remarks/>
+        Gizmo,
     }
     
     /// <remarks/>
@@ -481,6 +484,8 @@ namespace Uplift.Schemas {
         
         private PathConfiguration mediaPathField;
         
+        private PathConfiguration gizmoPathField;
+        
         private PathConfiguration pluginPathField;
         
         private PathConfiguration editorPluginPathField;
@@ -532,6 +537,16 @@ namespace Uplift.Schemas {
             }
             set {
                 this.mediaPathField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PathConfiguration GizmoPath {
+            get {
+                return this.gizmoPathField;
+            }
+            set {
+                this.gizmoPathField = value;
             }
         }
         

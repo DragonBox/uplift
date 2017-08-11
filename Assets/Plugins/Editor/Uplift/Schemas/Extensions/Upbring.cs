@@ -78,41 +78,16 @@ namespace Uplift.Schemas
 
         internal void AddLocation(Upset package, InstallSpecType kind, string path)
         {
-
-            InstalledPackage internalPackage = null;
-            
-            foreach (InstalledPackage t in InstalledPackage)
-            {
-                if (t.Name == package.PackageName)
-                {
-                    internalPackage = t;
-                    break;
-                }
-            }
-
-            // No package has been found
-            if(internalPackage == null)
-            {
-                return;
-            }
-
-            // 0 is better than null :)
-            if (internalPackage.Install == null)
-            {
-                internalPackage.Install = new InstallSpec[0];
-            }
+            InstalledPackage internalPackage;
+            if (!SetupInternalPackage(package, out internalPackage)) return;
             // Note: not catching in case of internalPackage not found
             // as it is valid error throwing condition
-
-
 
             // Check if path doesn't exist and return if it does
             if (internalPackage.Install.Any(spec => spec is InstallSpecPath && spec.Type == kind && (spec as InstallSpecPath).Path == path))
             {
                 return;
             }
-
-
 
             // Create new spec
             InstallSpec newSpec = new InstallSpecPath {Type = kind, Path = path};
@@ -128,7 +103,55 @@ namespace Uplift.Schemas
 
         internal void AddGUID(Upset package, InstallSpecType kind, string guid)
         {
-            throw new NotImplementedException();
+            InstalledPackage internalPackage;
+            if (!SetupInternalPackage(package, out internalPackage)) return;
+            // Note: not catching in case of internalPackage not found
+            // as it is valid error throwing condition
+
+            // Check if guid doesn't exist and return if it does
+            if (internalPackage.Install.Any(spec => spec is InstallSpecGUID && spec.Type == kind && (spec as InstallSpecGUID).Guid == guid))
+            {
+                return;
+            }
+
+            // Create new spec
+            InstallSpec newSpec = new InstallSpecGUID { Type = kind, Guid = guid };
+
+
+            InstallSpec[] newArray = new InstallSpec[internalPackage.Install.Length + 1];
+            internalPackage.Install.CopyTo(newArray, 0);
+
+            newArray[newArray.Length - 1] = newSpec;
+
+            internalPackage.Install = newArray;
+        }
+
+        private bool SetupInternalPackage(Upset package, out InstalledPackage internalPackage)
+        {
+            internalPackage = null;
+
+            foreach (InstalledPackage t in InstalledPackage)
+            {
+                if (t.Name == package.PackageName)
+                {
+                    internalPackage = t;
+                    break;
+                }
+            }
+
+            // No package has been found
+            if (internalPackage == null)
+            {
+                return false;
+            }
+
+            // 0 is better than null :)
+            if (internalPackage.Install == null)
+            {
+                internalPackage.Install = new InstallSpec[0];
+            }
+
+            return true;
         }
     }
 }

@@ -47,7 +47,6 @@ namespace Uplift.Schemas
 
                         if (!string.IsNullOrEmpty(dirName))
                         {
-
                             dirPaths.Add(dirName);
                         }
                     }
@@ -55,7 +54,35 @@ namespace Uplift.Schemas
                 else if(spec is InstallSpecGUID)
                 {
                     InstallSpecGUID specGuid = spec as InstallSpecGUID;
-                    throw new NotSupportedException();
+                    string guidPath = AssetDatabase.GUIDToAssetPath(specGuid.Guid);
+                    if (specGuid.Type == InstallSpecType.Root)
+                    {
+                        // Removing Root package
+                        Directory.Delete(guidPath, true);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            File.Delete(guidPath);
+                            File.Delete(guidPath + ".meta"); // Removing meta files as well.
+                        }
+                        catch (FileNotFoundException)
+                        {
+                            Debug.Log("Warning, tracked file not found: " + guidPath);
+                        }
+                        catch (DirectoryNotFoundException)
+                        {
+                            Debug.Log("Warning, tracked directory not found: " + guidPath);
+                        }
+
+                        string dirName = Path.GetDirectoryName(guidPath);
+
+                        if (!string.IsNullOrEmpty(dirName))
+                        {
+                            dirPaths.Add(dirName);
+                        }
+                    }
                 }          
             }
 

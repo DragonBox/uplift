@@ -160,7 +160,7 @@ namespace Uplift.Schemas {
                     Upset upset = serializer.Deserialize(file) as Upset;
                     if(upset.Configuration != null && upset.Configuration.Length != 0)
                     {
-                        foreach(InstallSpec spec in upset.Configuration)
+                        foreach(InstallSpecPath spec in upset.Configuration)
                         {
                             spec.Path = spec.Path.MakePathOSFriendly();
                         }

@@ -41,6 +41,8 @@
     <MediaPath Location="Assets/UPackages" SkipPackageStructure="true" />
     <!-- Path where plugin files are unpacked                                 -->
     <PluginPath Location="Assets/Plugins"/>
+    <!-- Path where editor plugin files are unpacked                                 -->
+    <EditorPluginPath Location="Assets/Editor/Plugins"/>
   </Configuration>
   <!-- SAMPLE REPOSITORIES BLOCK
 

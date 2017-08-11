@@ -84,13 +84,9 @@ namespace Uplift.Common
             {
                 if (element.EndsWith(".meta")) continue;
 
-                /* -- PROPOSITION --
-                We may want to do something like this if the meta file is already present : */
-                if (File.Exists(element+".meta"))
+                if (!File.Exists(element+".meta"))
                 {
-                    MetaFile meta = MetaFile.FromFile(element + ".meta");
-                    // Do something with the GUID
-                    // Fetch the AssetDatabase for path for example
+                    Debug.LogWarning("File " + element + " does not have an associated meta file");
                 }
                 if (Directory.Exists(element))
                 {

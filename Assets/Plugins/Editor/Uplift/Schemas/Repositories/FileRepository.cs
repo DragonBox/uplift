@@ -8,6 +8,7 @@ using SharpCompress.Archives;
 using SharpCompress.Archives.Tar;
 using Uplift.Extensions;
 using UnityEngine;
+using UnityEditor;
 using Uplift.Common;
 
 namespace Uplift.Schemas {
@@ -23,7 +24,9 @@ namespace Uplift.Schemas {
 
             if (Directory.Exists(sourcePath))
             {
-                Uplift.Common.FileSystemUtil.CopyDirectory(sourcePath, td.Path);
+
+                Uplift.Common.FileSystemUtil.CopyDirectoryWithMeta(sourcePath, td.Path);
+                
             }
             else if (IsUnityPackage(sourcePath))
             {
@@ -47,11 +50,15 @@ namespace Uplift.Schemas {
                     {
                         if (entry.IsDirectory) continue;
 
-                        Debug.Log(entry.Key + " " + entry.GetType());
                         if (entry.Key.EndsWith("asset"))
                         {
                             if (assetMS != null)
                                 throw new InvalidOperationException("Unexpected state: assetMS not null");
+                            string existing_path = AssetDatabase.GUIDToAssetPath(entry.Key.Replace("/asset", ""));
+                            if(!string.IsNullOrEmpty(existing_path))
+                            {
+                                // Do something with the GUID
+                            }
                             assetMS = new MemoryStream();
                             entry.WriteTo(assetMS);
                             assetMS.Position = 0;
@@ -59,15 +66,13 @@ namespace Uplift.Schemas {
                         }
                         if (entry.Key.EndsWith("metaData"))
                         {
-                            // not sure what do do with that right now
-                            // maybe copy it as .meta ? I tried and it causes problems when the editor is in text mode.
-                            // Not even sure what the file contain yet. Convert it using Unity?
-                            Debug.Log("METADATA: " + entry.Key + " " + entry.Size);
-                            /*
+                            throw new NotSupportedException("The package has been packed by a Unity version prior to Unity5, and we do not support this. Contact the package maintainer for updated version.");
+                        }
+                        if (entry.Key.EndsWith("meta"))
+                        {
                             metaMS = new MemoryStream();
                             entry.WriteTo(metaMS);
                             metaMS.Position = 0;
-                            */
                             continue;
                         }
                         if (entry.Key.EndsWith("pathname"))
@@ -155,7 +160,7 @@ namespace Uplift.Schemas {
                     Upset upset = serializer.Deserialize(file) as Upset;
                     if(upset.Configuration != null && upset.Configuration.Length != 0)
                     {
-                        foreach(InstallSpec spec in upset.Configuration)
+                        foreach(InstallSpecPath spec in upset.Configuration)
                         {
                             spec.Path = spec.Path.MakePathOSFriendly();
                         }

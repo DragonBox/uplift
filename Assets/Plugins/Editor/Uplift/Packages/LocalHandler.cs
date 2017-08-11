@@ -12,8 +12,6 @@ namespace Uplift.Packages
         {
             Upbring upbring = Upbring.FromXml();
            
-            
-
             foreach (InstalledPackage package in upbring.InstalledPackage)
             {
                 package.Nuke();
@@ -47,12 +45,12 @@ namespace Uplift.Packages
             upbringFile.AddLocation(package, InstallSpecType.Root, localPackagePath);
 
 
-            InstallSpec[] specArray;
+            InstallSpecPath[] specArray;
             if (package.Configuration == null)
             {
                 // If there is no Configuration present we assume
                 // that the whole package is wrapped in "InstallSpecType.Base"
-                InstallSpec wrapSpec = new InstallSpec
+                InstallSpecPath wrapSpec = new InstallSpecPath
                 {
                     Path = "",
                     Type = InstallSpecType.Base
@@ -65,7 +63,7 @@ namespace Uplift.Packages
                 specArray = package.Configuration;
             }
 
-            foreach (InstallSpec spec in specArray)
+            foreach (InstallSpecPath spec in specArray)
             {
                 var sourcePath = Uplift.Common.FileSystemUtil.JoinPaths(td.Path, spec.Path);
                 PathConfiguration PH = UpfileHandler.Instance().GetDestinationFor(spec);
@@ -84,8 +82,16 @@ namespace Uplift.Packages
                         Directory.CreateDirectory(destination);
                     }
                     File.Copy(sourcePath, destination);
-                    
-                    upbringFile.AddLocation(package, spec.Type, destination);
+                    FileSystemUtil.TryCopyMeta(sourcePath, destination);
+
+                    if (destination.StartsWith("Assets"))
+                    {
+                        TryUpringAddGUID(upbringFile, sourcePath, package, spec.Type, destination);
+                    }
+                    else
+                    {
+                        upbringFile.AddLocation(package, spec.Type, destination);
+                    }
 
                 }
 
@@ -93,18 +99,41 @@ namespace Uplift.Packages
                 if (Directory.Exists(sourcePath))
                 {
                     // Working with directory
-                    Uplift.Common.FileSystemUtil.CopyDirectory(sourcePath, destination);
+                    Uplift.Common.FileSystemUtil.CopyDirectoryWithMeta(sourcePath, destination);
 
-                    foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
+                    if (destination.StartsWith("Assets"))
                     {
-                        upbringFile.AddLocation(package, spec.Type, Path.Combine(destination, file));
-                    }             
+                        foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
+                        {
+                            TryUpringAddGUID(upbringFile, file, package, spec.Type, destination);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
+                        {
+                            upbringFile.AddLocation(package, spec.Type, Path.Combine(destination, file));
+                        }
+                    }
                 }            
             }
 
             upbringFile.SaveFile();
 
             td.Dispose();
+        }
+
+        private static void TryUpringAddGUID(Upbring upbring, string file, Upset package, InstallSpecType type, string destination)
+        {
+            if (file.EndsWith(".meta")) return;
+            string metaPath = Path.Combine(destination, file + ".meta");
+            if (!File.Exists(metaPath))
+            {
+                upbring.AddLocation(package, type, Path.Combine(destination, file));
+                return;
+            }
+            MetaFile meta = MetaFile.FromFile(metaPath);
+            upbring.AddGUID(package, type, meta.Guid);
         }
 
         public static void UpdatePackage(Upset package, TemporaryDirectory td)

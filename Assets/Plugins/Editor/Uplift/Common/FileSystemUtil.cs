@@ -55,7 +55,7 @@ namespace Uplift.Common
 			CopyDirectory(src, dst, new string [] {});
 		}
 
-		public static void CopyDirectory(string src,string dst,string[] ignorePatterns) {
+		public static void CopyDirectory(string src,string dst, string[] ignorePatterns) {
 			string[] files;
 
 			if(dst[dst.Length-1]!=Path.DirectorySeparatorChar)
@@ -72,7 +72,46 @@ namespace Uplift.Common
 			}
 		}
 
-		public static void SaveTxtInFile(string txt,string fileName) {
+        public static void CopyDirectoryWithMeta(string src, string dst)
+        {
+            string[] files;
+
+            if (dst[dst.Length - 1] != Path.DirectorySeparatorChar)
+                dst += Path.DirectorySeparatorChar;
+            if (!Directory.Exists(dst)) Directory.CreateDirectory(dst);
+            files = Directory.GetFileSystemEntries(src);
+            foreach (string element in files)
+            {
+                if (element.EndsWith(".meta")) continue;
+
+                if (!File.Exists(element+".meta"))
+                {
+                    Debug.LogWarning("File " + element + " does not have an associated meta file");
+                }
+                if (Directory.Exists(element))
+                {
+                    string dir_dest = dst + Path.GetFileName(element);
+                    CopyDirectoryWithMeta(element, dir_dest);
+                    TryCopyMeta(element, dir_dest);
+                }
+                else
+                {
+                    string file_dest = dst + Path.GetFileName(element);
+                    File.Copy(element, file_dest , true);
+                    TryCopyMeta(element, file_dest);
+                }                    
+            }
+        }
+
+        public static void TryCopyMeta(string src, string dst)
+        {
+            if (File.Exists(src + ".meta"))
+            {
+                File.Copy(src + ".meta", dst + ".meta", true);
+            }
+        }
+
+        public static void SaveTxtInFile(string txt,string fileName) {
 			using (StreamWriter sw = new StreamWriter(fileName))
 			{
 				sw.Write(txt);

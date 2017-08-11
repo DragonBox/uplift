@@ -49,6 +49,7 @@
       <xs:enumeration value="Root"/>
       <xs:enumeration value="Base"/>
       <xs:enumeration value="Media"/>
+      <xs:enumeration value="EditorPlugin"/>
       <xs:enumeration value="Plugin"/>
       <xs:enumeration value="Docs"/>
       <xs:enumeration value="Examples"/>
@@ -64,14 +65,26 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="InstallSpec">
+  <xs:complexType name="InstallSpec" abstract="true">
     <xs:simpleContent>
       <xs:extension base="xs:string">
         <xs:attribute name="Type" use="required" type="InstallSpecType"/>
-        <xs:attribute name="Path" use="required" />
         <xs:attribute name="Platform" use="optional" type="PlatformType"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
-
+  <xs:complexType name="InstallSpecPath">
+    <xs:simpleContent>
+      <xs:extension base="InstallSpec">
+        <xs:attribute name="Path" use="required" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="InstallSpecGUID">
+    <xs:simpleContent>
+      <xs:extension base="InstallSpec">
+        <xs:attribute name="Guid" use="required" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 </xs:schema>

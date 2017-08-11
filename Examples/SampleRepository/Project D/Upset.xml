@@ -1,0 +1,13 @@
+<Upset>
+  <UnityVersion>
+    <MinVersion>0.0.0</MinVersion>
+  </UnityVersion>
+  <PackageName>project_d</PackageName>
+  <PackageVersion>4.5.6</PackageVersion>
+  <PackageLicense>
+    Other
+  </PackageLicense>
+  <Configuration>
+    <Spec Type="EditorPlugin" Path="" />
+  </Configuration>
+</Upset>

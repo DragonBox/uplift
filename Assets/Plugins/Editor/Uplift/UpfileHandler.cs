@@ -71,6 +71,7 @@ namespace Uplift
                     if (raw.Configuration.ExamplesPath != null) { raw.Configuration.ExamplesPath.Location = raw.Configuration.ExamplesPath.Location.MakePathOSFriendly(); }
                     if (raw.Configuration.MediaPath != null) { raw.Configuration.MediaPath.Location = raw.Configuration.MediaPath.Location.MakePathOSFriendly(); }
                     if (raw.Configuration.PluginPath != null) { raw.Configuration.PluginPath.Location = raw.Configuration.PluginPath.Location.MakePathOSFriendly(); }
+                    if (raw.Configuration.EditorPluginPath != null) { raw.Configuration.EditorPluginPath.Location = raw.Configuration.EditorPluginPath.Location.MakePathOSFriendly(); }
                     if (raw.Configuration.RepositoryPath != null) { raw.Configuration.RepositoryPath.Location = raw.Configuration.RepositoryPath.Location.MakePathOSFriendly(); }
                 }
                 if(raw.Repositories != null) {
@@ -201,7 +202,18 @@ namespace Uplift
                     PH.Location = Path.Combine(PH.Location, platformAsString);
                     break;
 
-                case(InstallSpecType.Media):
+                case (InstallSpecType.EditorPlugin):
+                    // TODO: Make additional check for platform
+                    PH = new PathConfiguration()
+                    {
+                        Location = Upfile.Configuration.EditorPluginPath.Location,
+                        SkipPackageStructure = true // Plugins always skip package structure.
+
+                    };
+
+                    break;
+
+                case (InstallSpecType.Media):
                     PH = Upfile.Configuration.MediaPath;
                     break;
 

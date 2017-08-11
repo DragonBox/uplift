@@ -162,7 +162,7 @@ namespace Uplift.Schemas {
                     {
                         foreach(InstallSpecPath spec in upset.Configuration)
                         {
-                            spec.Path = spec.Path.MakePathOSFriendly();
+                            spec.Path = FileSystemUtil.MakePathOSFriendly(spec.Path);
                         }
                     }
                     upset.MetaInformation.dirName = directoryName;

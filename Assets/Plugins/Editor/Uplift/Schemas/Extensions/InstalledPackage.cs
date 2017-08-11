@@ -16,42 +16,47 @@ namespace Uplift.Schemas
             
             foreach (InstallSpec spec in Install)
             {
-                if (spec.Type == InstallSpecType.Root)
+                if(spec is InstallSpecPath)
                 {
-                    // Removing Root package
-                    Directory.Delete(spec.Path, true);
+                    InstallSpecPath specPath = spec as InstallSpecPath;
+                    if (specPath.Type == InstallSpecType.Root)
+                    {
+                        // Removing Root package
+                        Directory.Delete(specPath.Path, true);
+                    }
+                    else
+                    {
+                        var filePath = specPath.Path;
+
+                        try
+                        {
+                            File.Delete(filePath);
+                            File.Delete(filePath + ".meta"); // Removing meta files as well.
+                        }
+                        catch (FileNotFoundException)
+                        {
+                            Debug.Log("Warning, tracked file not found: " + filePath);
+                        }
+                        catch (DirectoryNotFoundException)
+                        {
+                            Debug.Log("Warning, tracked directory not found: " + filePath);
+                        }
+
+
+                        string dirName = Path.GetDirectoryName(specPath.Path);
+
+                        if (!string.IsNullOrEmpty(dirName))
+                        {
+
+                            dirPaths.Add(dirName);
+                        }
+                    }
                 }
-                else
+                else if(spec is InstallSpecGUID)
                 {
-                    var filePath = spec.Path;
-
-                    try
-                    {
-                        File.Delete(filePath);
-                        File.Delete(filePath + ".meta"); // Removing meta files as well.
-                    }
-                    catch (FileNotFoundException)
-                    {
-                        Debug.Log("Warning, tracked file not found: " + filePath);
-                    }
-                    catch (DirectoryNotFoundException)
-                    {
-                        Debug.Log("Warning, tracked directory not found: " + filePath);
-                    }
-
-
-                    string dirName = Path.GetDirectoryName(spec.Path);
-
-                    if (!string.IsNullOrEmpty(dirName))
-                    {
-
-                        dirPaths.Add(dirName);
-                    }
-                    
-                    
-
-                }
-                
+                    InstallSpecGUID specGuid = spec as InstallSpecGUID;
+                    throw new NotSupportedException();
+                }          
             }
 
             // An itchy bit.

@@ -47,12 +47,12 @@ namespace Uplift.Packages
             upbringFile.AddLocation(package, InstallSpecType.Root, localPackagePath);
 
 
-            InstallSpec[] specArray;
+            InstallSpecPath[] specArray;
             if (package.Configuration == null)
             {
                 // If there is no Configuration present we assume
                 // that the whole package is wrapped in "InstallSpecType.Base"
-                InstallSpec wrapSpec = new InstallSpec
+                InstallSpecPath wrapSpec = new InstallSpecPath
                 {
                     Path = "",
                     Type = InstallSpecType.Base
@@ -65,7 +65,7 @@ namespace Uplift.Packages
                 specArray = package.Configuration;
             }
 
-            foreach (InstallSpec spec in specArray)
+            foreach (InstallSpecPath spec in specArray)
             {
                 var sourcePath = Uplift.Common.FileSystemUtil.JoinPaths(td.Path, spec.Path);
                 PathConfiguration PH = UpfileHandler.Instance().GetDestinationFor(spec);

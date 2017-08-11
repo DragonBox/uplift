@@ -84,15 +84,15 @@ namespace Uplift.Schemas {
     }
     
     /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(InstallSpecGUID))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(InstallSpecPath))]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class InstallSpec {
+    public abstract partial class InstallSpec {
         
         private InstallSpecType typeField;
-        
-        private string pathField;
         
         private PlatformType platformField;
         
@@ -108,17 +108,6 @@ namespace Uplift.Schemas {
             }
             set {
                 this.typeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string Path {
-            get {
-                return this.pathField;
-            }
-            set {
-                this.pathField = value;
             }
         }
         
@@ -572,6 +561,48 @@ namespace Uplift.Schemas {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class InstallSpecGUID : InstallSpec {
+        
+        private string guidField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string Guid {
+            get {
+                return this.guidField;
+            }
+            set {
+                this.guidField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class InstallSpecPath : InstallSpec {
+        
+        private string pathField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string Path {
+            get {
+                return this.pathField;
+            }
+            set {
+                this.pathField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlRootAttribute(Namespace="", IsNullable=false)]
     public partial class Upfile {
         
@@ -646,7 +677,7 @@ namespace Uplift.Schemas {
         
         private DependencyDefinition[] dependenciesField;
         
-        private InstallSpec[] configurationField;
+        private InstallSpecPath[] configurationField;
         
         /// <remarks/>
         public VersionSpec UnityVersion {
@@ -701,7 +732,7 @@ namespace Uplift.Schemas {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Spec", IsNullable=false)]
-        public InstallSpec[] Configuration {
+        public InstallSpecPath[] Configuration {
             get {
                 return this.configurationField;
             }

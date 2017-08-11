@@ -17,7 +17,7 @@
 
   <xs:complexType name="InstallConfiguration">
     <xs:sequence>
-      <xs:element type="InstallSpec" name="Spec" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element type="InstallSpecPath" name="Spec" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 

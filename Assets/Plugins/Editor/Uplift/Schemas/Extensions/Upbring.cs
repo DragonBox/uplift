@@ -107,7 +107,7 @@ namespace Uplift.Schemas
 
 
             // Check if path doesn't exist and return if it does
-            if (internalPackage.Install.Any(spec => spec.Type == kind && spec.Path == path))
+            if (internalPackage.Install.Any(spec => spec is InstallSpecPath && spec.Type == kind && (spec as InstallSpecPath).Path == path))
             {
                 return;
             }
@@ -115,7 +115,7 @@ namespace Uplift.Schemas
 
 
             // Create new spec
-            InstallSpec newSpec = new InstallSpec {Type = kind,Path = path};
+            InstallSpec newSpec = new InstallSpecPath {Type = kind, Path = path};
             
 
             InstallSpec[] newArray = new InstallSpec[internalPackage.Install.Length + 1];

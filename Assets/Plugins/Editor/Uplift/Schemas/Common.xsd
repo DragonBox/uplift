@@ -65,13 +65,21 @@
   </xs:simpleType>
 
   <xs:complexType name="InstallSpec">
-    <xs:simpleContent>
-      <xs:extension base="xs:string">
-        <xs:attribute name="Type" use="required" type="InstallSpecType"/>
-        <xs:attribute name="Path" use="required" />
-        <xs:attribute name="Platform" use="optional" type="PlatformType"/>
-      </xs:extension>
-    </xs:simpleContent>
+    <xs:choice>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="Type" use="required" type="InstallSpecType"/>
+          <xs:attribute name="Path" use="required" />
+          <xs:attribute name="Platform" use="optional" type="PlatformType"/>
+        </xs:extension>
+      </xs:simpleContent>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="Type" use="required" type="InstallSpecType"/>
+          <xs:attribute name="GUID" use="required" />
+          <xs:attribute name="Platform" use="optional" type="PlatformType"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:choice>
   </xs:complexType>
-
 </xs:schema>

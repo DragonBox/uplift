@@ -124,9 +124,11 @@ namespace Uplift.Schemas
             newArray[newArray.Length - 1] = newSpec;
 
             internalPackage.Install = newArray;
-
         }
 
-
+        internal void AddGUID(Upset package, InstallSpecType kind, string guid)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

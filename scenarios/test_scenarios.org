@@ -118,6 +118,29 @@
 *** Expect
   - The directory structure to be the snapshot with the extra files
 
+* Suite: Meta files 
+** Given
+*** A repository R
+*** Package A
+  - Exploded folder type
+  - With files A1, A2, A3
+  - No .meta files
+*** Package B
+  - Exploded folder type
+  - With files B1, B2, B3
+  - .meta files are present
+*** Package C
+  - .unitypackage type
+  - With files C1, C2, C3
+  - .meta files are present (NOTE: unitypackages cannot be created without .meta files)
+*** Upfile stating dependencies are Packages A, B and C
+** Scenario
+*** When Installing Dependencies
+*** Expect
+  - .meta files have been created for Package A (and are tracked?)
+  - .meta files for packages B and C have been imported correctly
+
+
 * Suite: CLI Usage
 ** Given ANY SCENARIO
 ** Expect

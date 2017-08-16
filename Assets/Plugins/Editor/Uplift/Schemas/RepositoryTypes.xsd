@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    attributeFormDefault="unqualified" elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    >
+
+  <!-- Make multiple repository types -->
+  <xs:complexType name="WebRepository">
+    <xs:simpleContent>
+      <xs:extension base="Repository">
+        <xs:attribute type="xs:anyURI" name="Url" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="GitRepository">
+    <xs:simpleContent>
+      <xs:extension base="Repository">
+        <xs:attribute type="xs:anyURI" name="Url" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="FileRepository">
+    <xs:simpleContent>
+      <xs:extension base="Repository">
+        <xs:attribute type="xs:string" name="Path" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="Repository">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="ExtractPath" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="RepositoriesList">
+    <xs:choice minOccurs="1" maxOccurs="unbounded">
+      <xs:element type="FileRepository" name="FileRepository" />
+      <xs:element type="WebRepository" name="WebRepository"/>
+      <xs:element type="GitRepository" name="GitRepository"/>
+    </xs:choice>
+  </xs:complexType>
+</xs:schema>

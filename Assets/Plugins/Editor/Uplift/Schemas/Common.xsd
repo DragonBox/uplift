@@ -26,18 +26,30 @@
       <xs:element type="xs:string" name="MinVersion" maxOccurs="1"/>
     </xs:choice>
   </xs:complexType>
-    <xs:complexType name="DependenciesList">
+
+  <xs:complexType name="SkipInstallSpec">
+    <xs:attribute type="InstallSpecType" name="Type"/>
+  </xs:complexType>
+  
+  <xs:complexType name="SkipInstallList">
+    <xs:sequence>
+      <xs:element type="SkipInstallSpec" name="Skip" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DependenciesList">
     <xs:sequence>
       <xs:element type="DependencyDefinition" name="Package" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="DependencyDefinition">
-
-    <xs:choice>
-      <xs:element type="VersionSpec" name="Version" minOccurs="0"/>
-    </xs:choice>
-
+    <xs:sequence>
+      <xs:choice>
+        <xs:element type="VersionSpec" name="Version" minOccurs="0"/>
+      </xs:choice>
+      <xs:element type="SkipInstallList" name="SkipInstall" minOccurs="0" />
+    </xs:sequence>
     <xs:attribute type="xs:string" name="Name" use="required"/>
     <xs:attribute type="xs:string" name="Version" use="optional"/>
     <xs:attribute type="xs:string" name="Repository" use="optional"/>

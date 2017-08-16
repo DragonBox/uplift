@@ -1,0 +1,12 @@
+<Upset>
+  <PackageName>project_skipinstall</PackageName>
+  <PackageVersion>1.2.3</PackageVersion>
+  <PackageLicense>
+    Other
+  </PackageLicense>
+  <Configuration>
+    <Spec Type="Base" Path="Base"/>
+    <Spec Type="Examples" Path="Examples"/>
+    <Spec Type="Plugin" Path="Plugin"/>
+  </Configuration>
+</Upset>

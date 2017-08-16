@@ -93,7 +93,7 @@ namespace UpliftTesting.UnitTesting
             InstalledPackage package_A = new InstalledPackage()
             {
                 Name = "packageA",
-                Install = new InstallSpec[] { new InstallSpec() { Path = "foo", Type = InstallSpecType.Base } }
+                Install = new InstallSpec[] { new InstallSpecPath() { Path = "foo", Type = InstallSpecType.Base } }
             };
             upbring.InstalledPackage = new InstalledPackage[] { package_A };
             upbring.AddLocation(new Upset()
@@ -111,7 +111,7 @@ namespace UpliftTesting.UnitTesting
             InstalledPackage package_A = new InstalledPackage()
             {
                 Name = "packageA",
-                Install = new InstallSpec[] { new InstallSpec() { Path = "foo", Type = InstallSpecType.Base } }
+                Install = new InstallSpec[] { new InstallSpecPath() { Path = "foo", Type = InstallSpecType.Base } }
             };
             upbring.InstalledPackage = new InstalledPackage[] { package_A };
             upbring.AddLocation(new Upset()

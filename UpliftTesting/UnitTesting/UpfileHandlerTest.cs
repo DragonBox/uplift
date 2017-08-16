@@ -120,7 +120,7 @@ namespace UpliftTesting.UnitTesting
         {
             Upset dummy_package = new Upset()
             {
-                Configuration = new InstallSpec[0],
+                Configuration = new InstallSpecPath[0],
                 Dependencies = new DependencyDefinition[0],
                 PackageLicense = "foo",
                 PackageName = "bar",
@@ -149,7 +149,7 @@ namespace UpliftTesting.UnitTesting
             PathConfiguration dummy_path = new Mock<PathConfiguration>().Object;
             Upfile dummy = new Upfile() { Configuration = new Configuration() { BaseInstallPath = dummy_path } };
             (ufh as UpfileHandlerExposer).SetUpfile(dummy);
-            InstallSpec spec = new InstallSpec() { Type = InstallSpecType.Base };
+            InstallSpec spec = new InstallSpecPath() { Type = InstallSpecType.Base };
             Assert.AreEqual(dummy_path, ufh.GetDestinationFor(spec));
         }
 
@@ -159,7 +159,7 @@ namespace UpliftTesting.UnitTesting
             PathConfiguration dummy_path = new Mock<PathConfiguration>().Object;
             Upfile dummy = new Upfile() { Configuration = new Configuration() { DocsPath = dummy_path } };
             (ufh as UpfileHandlerExposer).SetUpfile(dummy);
-            InstallSpec spec = new InstallSpec() { Type = InstallSpecType.Docs };
+            InstallSpec spec = new InstallSpecPath() { Type = InstallSpecType.Docs };
             Assert.AreEqual(dummy_path, ufh.GetDestinationFor(spec));
         }
 
@@ -169,7 +169,7 @@ namespace UpliftTesting.UnitTesting
             PathConfiguration dummy_path = new Mock<PathConfiguration>().Object;
             Upfile dummy = new Upfile() { Configuration = new Configuration() { ExamplesPath = dummy_path } };
             (ufh as UpfileHandlerExposer).SetUpfile(dummy);
-            InstallSpec spec = new InstallSpec() { Type = InstallSpecType.Examples };
+            InstallSpec spec = new InstallSpecPath() { Type = InstallSpecType.Examples };
             Assert.AreEqual(dummy_path, ufh.GetDestinationFor(spec));
         }
 
@@ -179,7 +179,7 @@ namespace UpliftTesting.UnitTesting
             PathConfiguration dummy_path = new Mock<PathConfiguration>().Object;
             Upfile dummy = new Upfile() { Configuration = new Configuration() { MediaPath = dummy_path } };
             (ufh as UpfileHandlerExposer).SetUpfile(dummy);
-            InstallSpec spec = new InstallSpec() { Type = InstallSpecType.Media };
+            InstallSpec spec = new InstallSpecPath() { Type = InstallSpecType.Media };
             Assert.AreEqual(dummy_path, ufh.GetDestinationFor(spec));
         }
 
@@ -189,7 +189,7 @@ namespace UpliftTesting.UnitTesting
             PathConfiguration dummy_path = new Mock<PathConfiguration>().Object;
             Upfile dummy = new Upfile() { Configuration = new Configuration() { BaseInstallPath = dummy_path } };
             (ufh as UpfileHandlerExposer).SetUpfile(dummy);
-            InstallSpec spec = new InstallSpec() { };
+            InstallSpec spec = new InstallSpecPath() { };
             Assert.AreEqual(dummy_path, ufh.GetDestinationFor(spec));
         }
 
@@ -198,7 +198,7 @@ namespace UpliftTesting.UnitTesting
         {
             Upfile dummy = new Upfile() { Configuration = new Configuration() { PluginPath = new PathConfiguration() { Location = "foo", } } };
             (ufh as UpfileHandlerExposer).SetUpfile(dummy);
-            InstallSpec spec = new InstallSpec() {
+            InstallSpec spec = new InstallSpecPath() {
                 Platform = PlatformType.All,
                 Type = InstallSpecType.Plugin
             };
@@ -211,7 +211,7 @@ namespace UpliftTesting.UnitTesting
         {
             Upfile dummy = new Upfile() { Configuration = new Configuration() { PluginPath = new PathConfiguration() { Location = "foo", } } };
             (ufh as UpfileHandlerExposer).SetUpfile(dummy);
-            InstallSpec spec = new InstallSpec()
+            InstallSpec spec = new InstallSpecPath()
             {
                 Platform = PlatformType.iOS,
                 Type = InstallSpecType.Plugin

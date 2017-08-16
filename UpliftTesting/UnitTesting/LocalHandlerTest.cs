@@ -52,7 +52,7 @@ namespace UpliftTesting.UnitTesting
                     Name = "packageA",
                     Install = new InstallSpec[]
                     {
-                        new InstallSpec()
+                        new InstallSpecPath()
                         {
                             Type = InstallSpecType.Base,
                             Path = installed_path

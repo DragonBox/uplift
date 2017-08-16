@@ -24,7 +24,7 @@ namespace UpliftTesting.UnitTesting
 
             ip.Install = new InstallSpec[]
             {
-                new InstallSpec()
+                new InstallSpecPath()
                 {
                     Type = InstallSpecType.Root,
                     Path = installed_path
@@ -54,7 +54,7 @@ namespace UpliftTesting.UnitTesting
 
                 ip.Install = new InstallSpec[]
                 {
-                new InstallSpec()
+                new InstallSpecPath()
                 {
                     Type = InstallSpecType.Media,
                     Path = installed_path
@@ -90,7 +90,7 @@ namespace UpliftTesting.UnitTesting
 
                 ip.Install = new InstallSpec[]
                 {
-                new InstallSpec()
+                new InstallSpecPath()
                 {
                     Type = InstallSpecType.Media,
                     Path = installed_path
@@ -120,7 +120,7 @@ namespace UpliftTesting.UnitTesting
 
             ip.Install = new InstallSpec[]
             {
-                new InstallSpec()
+                new InstallSpecPath()
                 {
                     Type = InstallSpecType.Media,
                     Path = installed_path

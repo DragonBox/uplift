@@ -1,5 +1,4 @@
 using Uplift.Packages;
-using Uplift.Schemas;
 
 namespace Uplift.Common
 {
@@ -11,19 +10,19 @@ namespace Uplift.Common
         }
 
         public static void InstallDependencies() {
-            Upfile.Instance().InstallDependencies();
+            UpliftManager.Instance().InstallDependencies();
         }
 
         public static void UpdatePackage() {
             string packageName = LastArgument();
 
             PackageRepo pr = PackageList.Instance().GetLatestPackage(packageName);
-            LocalHandler.UpdatePackage(pr);
+            UpliftManager.Instance().UpdatePackage(pr);
         }
 
         public static void NukePackage() {
             string packageName = LastArgument();
-            LocalHandler.NukePackage(packageName);
+            UpliftManager.Instance().NukePackage(packageName);
         }
     }
 

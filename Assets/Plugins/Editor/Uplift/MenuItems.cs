@@ -56,7 +56,7 @@ namespace Uplift
         [MenuItem("Uplift/Install Dependencies", false, 20)]
         private static void InstallDependencies()
         {
-            Upfile.Instance().InstallDependencies();
+            UpliftManager.Instance().InstallDependencies();
             AssetDatabase.Refresh();
         }
 
@@ -80,18 +80,19 @@ namespace Uplift
         private static void NukePackages()
         {
             Debug.LogWarning("Nuking all packages!");
-            LocalHandler.NukeAllPackages();
+            UpliftManager.Instance().NukeAllPackages();
             AssetDatabase.Refresh();
         }
 
         [MenuItem("Uplift/Debug/Install -> Nuke Loop %g", false, 10)]
         private static void RefreshPackages()
         {
+            var manager = UpliftManager.Instance();
             Debug.ClearDeveloperConsole();
             Debug.Log("Doing full Install -> Nuke Loop");
-            Upfile.Instance().InstallDependencies();
+            manager.InstallDependencies();
             AssetDatabase.Refresh();
-            LocalHandler.NukeAllPackages();
+            manager.NukeAllPackages();
             AssetDatabase.Refresh();
         }
 

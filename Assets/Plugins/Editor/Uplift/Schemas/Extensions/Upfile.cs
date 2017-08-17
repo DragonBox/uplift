@@ -79,26 +79,6 @@ namespace Uplift.Schemas
             pList.LoadPackages(Repositories, true);
         }
 
-        public void InstallDependencies()
-        {
-            //FIXME: We should check for all repositories, not the first one
-            //FileRepository rt = (FileRepository) Upfile.Repositories[0];
-
-            PackageHandler pHandler = new PackageHandler();
-
-            foreach (DependencyDefinition packageDefinition in Dependencies)
-            {
-                PackageRepo result = pHandler.FindPackageAndRepository(packageDefinition);
-                if (result.Repository != null)
-                {
-                    using (TemporaryDirectory td = result.Repository.DownloadPackage(result.Package))
-                    {
-                        LocalHandler.InstallPackage(result.Package, td);
-                    }
-                }
-            }
-        }
-
         //FIXME: Prepare proper version checker
         public virtual void CheckUnityVersion()
         {

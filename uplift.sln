@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2015
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uplift.Editor.Plugins", "uplift.Editor.Plugins.csproj", "{F8513CB3-5DDE-F981-3AC2-CC40F269419F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpliftTesting", "UpliftTesting\UpliftTesting.csproj", "{B9E7540B-FF92-40E0-95DC-EFB52587BBA4}"

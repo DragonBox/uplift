@@ -10,20 +10,19 @@ namespace Uplift.Common
         }
 
         public static void InstallDependencies() {
-            UpfileHandler handler = UpfileHandler.Instance();
-            handler.InstallDependencies();
+            UpliftManager.Instance().InstallDependencies();
         }
 
         public static void UpdatePackage() {
             string packageName = LastArgument();
 
             PackageRepo pr = PackageList.Instance().GetLatestPackage(packageName);
-            LocalHandler.UpdatePackage(pr);
+            UpliftManager.Instance().UpdatePackage(pr);
         }
 
         public static void NukePackage() {
             string packageName = LastArgument();
-            LocalHandler.NukePackage(packageName);
+            UpliftManager.Instance().NukePackage(packageName);
         }
     }
 

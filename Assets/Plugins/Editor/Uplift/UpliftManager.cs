@@ -1,17 +1,61 @@
-using System.IO;
-using System.Linq;
-using UnityEngine;
+﻿using System.IO;
 using Uplift.Common;
+using Uplift.Packages;
 using Uplift.Schemas;
 
-namespace Uplift.Packages
+namespace Uplift
 {
-    internal class LocalHandler
+    class UpliftManager
     {
-        public static void NukeAllPackages()
+        // --- SINGLETON DECLARATION ---
+        protected static UpliftManager instance;
+
+        internal UpliftManager() {
+            upfile = Upfile.Instance();
+        }
+
+        public static UpliftManager Instance()
         {
-            Upbring upbring = Upbring.FromXml();
-           
+            if (instance == null)
+            {
+                InitializeInstance();
+            }
+
+            return instance;
+        }
+
+        internal static void InitializeInstance()
+        {
+            instance = new UpliftManager();
+        }
+
+        // --- CLASS DECLARATION ---
+        protected Upfile upfile;
+
+        public void InstallDependencies()
+        {
+            //FIXME: We should check for all repositories, not the first one
+            //FileRepository rt = (FileRepository) Upfile.Repositories[0];
+
+            PackageHandler pHandler = new PackageHandler();
+
+            foreach (DependencyDefinition packageDefinition in upfile.Dependencies)
+            {
+                PackageRepo result = pHandler.FindPackageAndRepository(packageDefinition);
+                if (result.Repository != null)
+                {
+                    using (TemporaryDirectory td = result.Repository.DownloadPackage(result.Package))
+                    {
+                        InstallPackage(result.Package, td);
+                    }
+                }
+            }
+        }
+
+        public void NukeAllPackages()
+        {
+            Upbring upbring = Upbring.Instance();
+
             foreach (InstalledPackage package in upbring.InstalledPackage)
             {
                 package.Nuke();
@@ -21,28 +65,26 @@ namespace Uplift.Packages
             Upbring.RemoveFile();
         }
 
-        public static string GetPackageDirectory(Upset package)
+        public string GetPackageDirectory(Upset package)
         {
             return package.PackageName + "~" + package.PackageVersion;
         }
 
-        public static string GetRepositoryInstallPath(Upset package)
+        public string GetRepositoryInstallPath(Upset package)
         {
-            var UH = UpfileHandler.Instance();
-
-            return Path.Combine(UH.GetPackagesRootPath(), GetPackageDirectory(package));
+            return Path.Combine(upfile.GetPackagesRootPath(), GetPackageDirectory(package));
         }
 
         //FIXME: This is super unsafe right now, as we can copy down into the FS.
         // This should be contained using kinds of destinations.
-        public static void InstallPackage(Upset package, TemporaryDirectory td)
+        public void InstallPackage(Upset package, TemporaryDirectory td)
         {
-            Upbring upbringFile = Upbring.FromXml();
+            Upbring upbring = Upbring.Instance();
             // Note: Full package is ALWAYS copied to the upackages directory right now
             string localPackagePath = GetRepositoryInstallPath(package);
-            upbringFile.AddPackage(package);
-            Uplift.Common.FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
-            upbringFile.AddLocation(package, InstallSpecType.Root, localPackagePath);
+            upbring.AddPackage(package);
+            FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
+            upbring.AddLocation(package, InstallSpecType.Root, localPackagePath);
 
 
             InstallSpecPath[] specArray;
@@ -56,7 +98,7 @@ namespace Uplift.Packages
                     Type = InstallSpecType.Base
                 };
 
-                specArray = new[] {wrapSpec};
+                specArray = new[] { wrapSpec };
             }
             else
             {
@@ -66,13 +108,13 @@ namespace Uplift.Packages
             foreach (InstallSpecPath spec in specArray)
             {
                 var sourcePath = Uplift.Common.FileSystemUtil.JoinPaths(td.Path, spec.Path);
-                PathConfiguration PH = UpfileHandler.Instance().GetDestinationFor(spec);
+                PathConfiguration PH = upfile.GetDestinationFor(spec);
 
                 var packageStructurePrefix =
                     PH.SkipPackageStructure ? "" : GetPackageDirectory(package);
-                
+
                 var destination = Path.Combine(PH.Location, packageStructurePrefix);
-                
+
                 // Working with single file
                 if (File.Exists(sourcePath))
                 {
@@ -86,11 +128,11 @@ namespace Uplift.Packages
 
                     if (destination.StartsWith("Assets"))
                     {
-                        TryUpringAddGUID(upbringFile, sourcePath, package, spec.Type, destination);
+                        TryUpringAddGUID(upbring, sourcePath, package, spec.Type, destination);
                     }
                     else
                     {
-                        upbringFile.AddLocation(package, spec.Type, destination);
+                        upbring.AddLocation(package, spec.Type, destination);
                     }
 
                 }
@@ -105,25 +147,25 @@ namespace Uplift.Packages
                     {
                         foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
                         {
-                            TryUpringAddGUID(upbringFile, file, package, spec.Type, destination);
+                            TryUpringAddGUID(upbring, file, package, spec.Type, destination);
                         }
                     }
                     else
                     {
                         foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
                         {
-                            upbringFile.AddLocation(package, spec.Type, Path.Combine(destination, file));
+                            upbring.AddLocation(package, spec.Type, Path.Combine(destination, file));
                         }
                     }
-                }            
+                }
             }
 
-            upbringFile.SaveFile();
+            upbring.SaveFile();
 
             td.Dispose();
         }
 
-        private static void TryUpringAddGUID(Upbring upbring, string file, Upset package, InstallSpecType type, string destination)
+        private void TryUpringAddGUID(Upbring upbring, string file, Upset package, InstallSpecType type, string destination)
         {
             if (file.EndsWith(".meta")) return;
             string metaPath = Path.Combine(destination, file + ".meta");
@@ -136,9 +178,9 @@ namespace Uplift.Packages
             upbring.AddGUID(package, type, meta.Guid);
         }
 
-        public static void UpdatePackage(Upset package, TemporaryDirectory td)
+        public void UpdatePackage(Upset package, TemporaryDirectory td)
         {
-            Upbring upbring = Upbring.FromXml();
+            Upbring upbring = Upbring.Instance();
 
             // Nuking previous version
             InstalledPackage installedPackage = upbring.GetInstalledPackage(package.PackageName);
@@ -147,9 +189,9 @@ namespace Uplift.Packages
             InstallPackage(package, td);
         }
 
-        public static void UpdatePackage(PackageRepo packageRepo)
+        public void UpdatePackage(PackageRepo packageRepo)
         {
-            using(TemporaryDirectory td = packageRepo.Repository.DownloadPackage(packageRepo.Package))
+            using (TemporaryDirectory td = packageRepo.Repository.DownloadPackage(packageRepo.Package))
             {
                 UpdatePackage(packageRepo.Package, td);
             }
@@ -157,9 +199,9 @@ namespace Uplift.Packages
 
         // What's the difference between Nuke and Uninstall?
         // Nuke doesn't care for dependencies (if present)
-        public static void NukePackage(string packageName)
+        public void NukePackage(string packageName)
         {
-            Upbring upbring = Upbring.FromXml();
+            Upbring upbring = Upbring.Instance();
             InstalledPackage package = upbring.GetInstalledPackage(packageName);
             package.Nuke();
         }

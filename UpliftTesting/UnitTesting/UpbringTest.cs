@@ -169,7 +169,7 @@ namespace UpliftTesting.UnitTesting
                     serializer.Serialize(fs, test);
                 }
 
-                Assert.That(Upbring.FromXml().InstalledPackage.Any(p =>
+                Assert.That(Upbring.Instance().InstalledPackage.Any(p =>
                 p.Name == package_A.Name &&
                 p.Version == package_A.Version
                 ));
@@ -198,7 +198,7 @@ namespace UpliftTesting.UnitTesting
                 };
                 (ufh as UpfileHandlerExposer).SetUpfile(dummy);
 
-                CollectionAssert.IsEmpty(Upbring.FromXml().InstalledPackage);
+                CollectionAssert.IsEmpty(Upbring.Instance().InstalledPackage);
             }
             finally
             {

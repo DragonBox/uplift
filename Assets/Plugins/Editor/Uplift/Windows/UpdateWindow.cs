@@ -15,8 +15,8 @@ namespace Uplift.Windows
 
             const string packageFormat = "{0} ({1})";
 
-
-            Upbring upbring = Upbring.FromXml();
+            UpliftManager manager = UpliftManager.Instance();
+            Upbring upbring = Upbring.Instance();
 
             PackageList packageList = PackageList.Instance();
 
@@ -33,7 +33,7 @@ namespace Uplift.Windows
                     if (GUILayout.Button("Update"))
                     {
                         Debug.Log(string.Format("Updating package {0} with version {1}", package.Name, latestPackageRepo.Package.PackageVersion));
-                        LocalHandler.UpdatePackage(latestPackageRepo);
+                        manager.UpdatePackage(latestPackageRepo);
 
                         AssetDatabase.Refresh();
 
@@ -45,7 +45,7 @@ namespace Uplift.Windows
                     if (GUILayout.Button("Reinstall"))
                     {
                         Debug.Log(string.Format("Reinstalling package {0} ({1})", package.Name, latestPackageRepo.Package.PackageVersion));
-                        LocalHandler.UpdatePackage(latestPackageRepo);
+                        manager.UpdatePackage(latestPackageRepo);
 
                         AssetDatabase.Refresh();
 
@@ -55,9 +55,6 @@ namespace Uplift.Windows
 
 
                 EditorGUILayout.EndHorizontal();
-
-
-
             }
 
             EditorGUILayout.Space();
@@ -70,7 +67,7 @@ namespace Uplift.Windows
                     if (package.Version != latestPackageRepo.Package.PackageVersion)
                     {
                         Debug.Log(string.Format("Updating package {0} with version {1}", package.Name, latestPackageRepo.Package.PackageVersion));
-                        LocalHandler.UpdatePackage(latestPackageRepo);
+                        manager.UpdatePackage(latestPackageRepo);
 
                         AssetDatabase.Refresh();
 
@@ -87,8 +84,6 @@ namespace Uplift.Windows
                 AssetDatabase.Refresh();
                 Repaint();
             }
-
-
         }
     }
 }

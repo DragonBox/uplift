@@ -16,7 +16,7 @@ namespace Uplift.Windows
             const string packageFormat = "{0} ({1})";
 
 
-            Upbring upbring = Upbring.FromXml();
+            Upbring upbring = Upbring.Instance();
 
             PackageList packageList = PackageList.Instance();
 

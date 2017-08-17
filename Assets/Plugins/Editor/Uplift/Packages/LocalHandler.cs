@@ -10,7 +10,7 @@ namespace Uplift.Packages
     {
         public static void NukeAllPackages()
         {
-            Upbring upbring = Upbring.FromXml();
+            Upbring upbring = Upbring.Instance();
            
             foreach (InstalledPackage package in upbring.InstalledPackage)
             {
@@ -37,7 +37,7 @@ namespace Uplift.Packages
         // This should be contained using kinds of destinations.
         public static void InstallPackage(Upset package, TemporaryDirectory td)
         {
-            Upbring upbringFile = Upbring.FromXml();
+            Upbring upbringFile = Upbring.Instance();
             // Note: Full package is ALWAYS copied to the upackages directory right now
             string localPackagePath = GetRepositoryInstallPath(package);
             upbringFile.AddPackage(package);
@@ -138,7 +138,7 @@ namespace Uplift.Packages
 
         public static void UpdatePackage(Upset package, TemporaryDirectory td)
         {
-            Upbring upbring = Upbring.FromXml();
+            Upbring upbring = Upbring.Instance();
 
             // Nuking previous version
             InstalledPackage installedPackage = upbring.GetInstalledPackage(package.PackageName);
@@ -159,7 +159,7 @@ namespace Uplift.Packages
         // Nuke doesn't care for dependencies (if present)
         public static void NukePackage(string packageName)
         {
-            Upbring upbring = Upbring.FromXml();
+            Upbring upbring = Upbring.Instance();
             InstalledPackage package = upbring.GetInstalledPackage(packageName);
             package.Nuke();
         }

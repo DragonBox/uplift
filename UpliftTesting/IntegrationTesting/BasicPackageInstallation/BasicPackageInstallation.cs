@@ -80,7 +80,7 @@ namespace UpliftTesting.IntegrationTesting
             Assert.IsTrue(File.Exists("UPackages/package_a~1.0.0/Upset.xml"), "Upset file did not get copied to UPackages/package_a~1.0.0");
 
             // Upbring validity
-            Upbring upbring = Upbring.FromXml();
+            Upbring upbring = Upbring.Instance();
             Assert.IsNotEmpty(upbring.InstalledPackage, "Upbring file did not registered the installation");
             Assert.That(upbring.InstalledPackage.Any(p =>
             p.Name == "package_a" &&

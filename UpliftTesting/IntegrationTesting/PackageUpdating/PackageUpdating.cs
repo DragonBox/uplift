@@ -62,7 +62,7 @@ namespace UpliftTesting.IntegrationTesting
         public void WhenUpdating()
         {
             Cli.InstallDependencies();
-            Upbring upbring = Upbring.FromXml();
+            Upbring upbring = Upbring.Instance();
 
             // -- 1.0.0 UNINSTALLATION --
             // Directories absence

@@ -8,9 +8,24 @@ namespace Uplift.Schemas
 {
     public partial class Upbring
     {
+        // --- SINGLETON DECLARATION ---
+        protected static Upbring instance;
 
-        private static readonly string upbringFileName = "Upbring.xml";
-        protected static string upbringPath
+        internal Upbring() { }
+
+        public static Upbring Instance()
+        {
+            if (instance == null)
+            {
+                instance = LoadXml();
+            }
+
+            return instance;
+        }
+
+        // --- CLASS DECLARATION ---
+        protected static readonly string upbringFileName = "Upbring.xml";
+        protected static string UpbringPath
         {
             get
             {
@@ -18,15 +33,16 @@ namespace Uplift.Schemas
                 return Path.Combine(repoPath, upbringFileName);
             }
         }
-        public static Upbring FromXml()
+
+        protected static Upbring LoadXml()
         {
-            if (!File.Exists(upbringPath))
+            if (!File.Exists(UpbringPath))
             {
                 Upbring newUpbring = new Upbring {InstalledPackage = new InstalledPackage[0]};
                 return newUpbring;
             }
             XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
-            using(FileStream fs = new FileStream(upbringPath, FileMode.Open)) {
+            using(FileStream fs = new FileStream(UpbringPath, FileMode.Open)) {
                 return serializer.Deserialize(fs) as Upbring;
             }
         }
@@ -34,7 +50,7 @@ namespace Uplift.Schemas
         public void SaveFile()
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
-            using(FileStream fs = new FileStream(upbringPath, FileMode.Create)) {
+            using(FileStream fs = new FileStream(UpbringPath, FileMode.Create)) {
                 using(StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8)) {
                     serializer.Serialize(sw, this);
                 }
@@ -43,7 +59,7 @@ namespace Uplift.Schemas
 
         public static void RemoveFile()
         {
-            File.Delete(upbringPath);
+            File.Delete(UpbringPath);
         }
         public void RemovePackage()
         {

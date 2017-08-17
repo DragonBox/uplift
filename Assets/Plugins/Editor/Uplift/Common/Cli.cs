@@ -1,4 +1,5 @@
 using Uplift.Packages;
+using Uplift.Schemas;
 
 namespace Uplift.Common
 {
@@ -10,8 +11,7 @@ namespace Uplift.Common
         }
 
         public static void InstallDependencies() {
-            UpfileHandler handler = UpfileHandler.Instance();
-            handler.InstallDependencies();
+            Upfile.Instance().InstallDependencies();
         }
 
         public static void UpdatePackage() {

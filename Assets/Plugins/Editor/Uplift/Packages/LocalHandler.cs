@@ -28,9 +28,7 @@ namespace Uplift.Packages
 
         public static string GetRepositoryInstallPath(Upset package)
         {
-            var UH = UpfileHandler.Instance();
-
-            return Path.Combine(UH.GetPackagesRootPath(), GetPackageDirectory(package));
+            return Path.Combine(Upfile.Instance().GetPackagesRootPath(), GetPackageDirectory(package));
         }
 
         //FIXME: This is super unsafe right now, as we can copy down into the FS.
@@ -66,7 +64,7 @@ namespace Uplift.Packages
             foreach (InstallSpecPath spec in specArray)
             {
                 var sourcePath = Uplift.Common.FileSystemUtil.JoinPaths(td.Path, spec.Path);
-                PathConfiguration PH = UpfileHandler.Instance().GetDestinationFor(spec);
+                PathConfiguration PH = Upfile.Instance().GetDestinationFor(spec);
 
                 var packageStructurePrefix =
                     PH.SkipPackageStructure ? "" : GetPackageDirectory(package);

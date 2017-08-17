@@ -17,10 +17,15 @@ namespace Uplift.Schemas
         {
             if (instance == null)
             {
-                instance = LoadXml();
+                InitializeInstance();
             }
 
             return instance;
+        }
+
+        internal static void InitializeInstance()
+        {
+            instance = LoadXml();
         }
 
         // --- CLASS DECLARATION ---
@@ -29,12 +34,17 @@ namespace Uplift.Schemas
         {
             get
             {
-                string repoPath = UpfileHandler.Instance().GetPackagesRootPath();
+                string repoPath = Upfile.Instance().GetPackagesRootPath();
                 return Path.Combine(repoPath, upbringFileName);
             }
         }
 
-        protected static Upbring LoadXml()
+        public static bool CheckForUpbring()
+        {
+            return File.Exists(UpbringPath);
+        }
+
+        internal static Upbring LoadXml()
         {
             if (!File.Exists(UpbringPath))
             {
@@ -74,6 +84,11 @@ namespace Uplift.Schemas
 
         internal void AddPackage(Upset package)
         {
+            if(InstalledPackage == null)
+            {
+                InstalledPackage = new InstalledPackage[0];
+            }
+
             InstalledPackage newPackage = new InstalledPackage
             {
                 Name = package.PackageName,

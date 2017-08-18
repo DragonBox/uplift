@@ -12,17 +12,14 @@ namespace UpliftTesting.IntegrationTesting
     [TestFixture]
     class BasicPackageInstallation
     {
-        private UpfileHandler uph;
+        private Upfile upfile;
         private string upfile_path;
 
         [OneTimeSetUp]
         protected void Given()
         {
-            // Turn off logging
-            TestingProperties.SetLogging(false);
-
             // Upfile Setup
-            UpfileHandlerExposer.ResetSingleton();
+            UpfileExposer.ClearInstance();
             upfile_path = Helper.GetLocalXMLFile(new string[]
                 {
                     "IntegrationTesting",
@@ -30,24 +27,22 @@ namespace UpliftTesting.IntegrationTesting
                     "Upfile.xml"
                 });
 
-            uph = UpfileHandlerExposer.Instance();
-            (uph as UpfileHandlerExposer).test_upfile_path = upfile_path;
             try
             {
-                uph.Initialize();
+                UpfileExposer.SetInstance(UpfileExposer.LoadTestXml(upfile_path));
             }
             catch (FileNotFoundException)
             {
                 Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
-                throw new InvalidOperationException("The test setup is not correct. Please run this test from UpliftTesting/TestResults");
             }
+            upfile = UpfileExposer.TestingInstance();
         }
 
         [OneTimeTearDown]
         protected void CleanUp()
         {
-            // Clean the UpfileHandler
-            UpfileHandlerExposer.ResetSingleton();
+            // Clean the Upfile
+            UpfileExposer.ClearInstance();
 
             // Remove (hopefully) installed files
             Directory.Delete("Assets", true);
@@ -57,6 +52,7 @@ namespace UpliftTesting.IntegrationTesting
         [Test]
         public void WhenInstalling()
         {
+
             Cli.InstallDependencies();
 
             // Directories existence

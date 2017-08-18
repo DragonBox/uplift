@@ -12,17 +12,17 @@ namespace UpliftTesting.IntegrationTesting
     [TestFixture]
     class PackageUpdating
     {
-        private UpfileHandler uph;
+        private UpliftManager manager;
+        private Upfile upfile;
         private string upfile_path;
 
         [OneTimeSetUp]
         protected void Given()
         {
-            // Turn off logging
-            TestingProperties.SetLogging(false);
+            manager = UpliftManager.Instance();
 
             // Upfile Setup
-            UpfileHandlerExposer.ResetSingleton();
+            UpfileExposer.ClearInstance();
             upfile_path = Helper.GetLocalXMLFile(new string[]
                 {
                     "IntegrationTesting",
@@ -30,28 +30,26 @@ namespace UpliftTesting.IntegrationTesting
                     "Upfile.xml"
                 });
 
-            uph = UpfileHandlerExposer.Instance();
-            (uph as UpfileHandlerExposer).test_upfile_path = upfile_path;
             try
             {
-                uph.Initialize();
+                UpfileExposer.SetInstance(UpfileExposer.LoadTestXml(upfile_path));
             }
             catch (FileNotFoundException)
             {
                 Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
-                Assert.IsTrue(false, "The test could not run correctly. See console message.");
             }
+            upfile = UpfileExposer.TestingInstance();
 
-            (uph as UpfileHandlerExposer).GetUpfile().Dependencies[0].Version = "1.0.0";
-            Cli.InstallDependencies();
-            (uph as UpfileHandlerExposer).GetUpfile().Dependencies[0].Version = "1.0.1";
+            upfile.Dependencies[0].Version = "1.0.0";
+            manager.InstallDependencies();
+            upfile.Dependencies[0].Version = "1.0.1";
         }
 
         [OneTimeTearDown]
         protected void CleanUp()
         {
             // Clean the UpfileHandler
-            UpfileHandlerExposer.ResetSingleton();
+            UpfileExposer.ClearInstance();
 
             // Remove (hopefully) installed files
             Directory.Delete("Assets", true);
@@ -61,7 +59,7 @@ namespace UpliftTesting.IntegrationTesting
         [Test]
         public void WhenUpdating()
         {
-            Cli.InstallDependencies();
+            manager.InstallDependencies();
             Upbring upbring = Upbring.Instance();
 
             // -- 1.0.0 UNINSTALLATION --

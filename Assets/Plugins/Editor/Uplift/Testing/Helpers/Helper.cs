@@ -7,7 +7,7 @@ namespace Uplit.Testing.Helpers
     {
         public static string GetLocalFilePath(string[] path)
         {
-            return string.Join(Path.DirectorySeparatorChar.ToString(), path);
+            return Path.GetFullPath(string.Join(Path.DirectorySeparatorChar.ToString(), path));
         }
     }
 }

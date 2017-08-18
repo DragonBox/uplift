@@ -1,0 +1,9 @@
+<Upset>
+  <PackageName>package_c</PackageName>
+  <PackageVersion>1.3.5</PackageVersion>
+  <Configuration>
+    <Spec Type="Media" Path="Media" />
+    <Spec Type="Examples" Path="Example" />
+    <Spec Type="Base" Path= "" />
+  </Configuration>
+</Upset>

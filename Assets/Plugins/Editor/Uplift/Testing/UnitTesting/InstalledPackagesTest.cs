@@ -19,8 +19,6 @@ namespace Uplit.Testing.Unit
         [Test]
         public void NukeRootInstallTest()
         {
-            throw new NotSupportedException("Nuking from tests is not currently supported");
-
             InstalledPackage ip = new InstalledPackage();
             string installed_path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             Directory.CreateDirectory(installed_path);
@@ -45,8 +43,6 @@ namespace Uplit.Testing.Unit
         [Test]
         public void NukeOtherInstallSimpleFileTest()
         {
-            throw new NotSupportedException("Nuking from tests is not currently supported");
-
             InstalledPackage ip = new InstalledPackage();
             string installed_dir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             string installed_path = Path.Combine(installed_dir, "target.file");
@@ -83,8 +79,6 @@ namespace Uplit.Testing.Unit
         [Test]
         public void NukeOtherInstallComplexTest()
         {
-            throw new NotSupportedException("Nuking from tests is not currently supported");
-
             InstalledPackage ip = new InstalledPackage();
             string installed_dir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             string installed_path = Path.Combine(installed_dir, "target.file");
@@ -121,8 +115,6 @@ namespace Uplit.Testing.Unit
         [Test]
         public void NukeOtherInstallWhenAbsentTest()
         {
-            throw new NotSupportedException("Nuking from tests is not currently supported");
-
             InstalledPackage ip = new InstalledPackage();
             string installed_path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             string installed_path_meta = installed_path + ".meta";

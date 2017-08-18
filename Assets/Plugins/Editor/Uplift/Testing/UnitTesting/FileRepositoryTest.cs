@@ -6,6 +6,7 @@ using System.Xml.Serialization;
 using Uplift.Common;
 using System.Linq;
 using System.Reflection;
+using Uplit.Testing.Helpers;
 
 namespace Uplit.Testing.Unit
 {
@@ -122,8 +123,8 @@ namespace Uplit.Testing.Unit
                 };
                 string package_name = "bar-baz.unitypackage";
                 test_package.MetaInformation.dirName = package_name;
-                DirectoryInfo current = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent;
-                string package_path = Path.Combine(Path.Combine(current.FullName, "Data"), "testpackage.unitypackage");
+                string package_path = Helper.GetLocalFilePath(new string[] { "TestData", "FileRepositoryTest", "testpackage.unitypackage" });
+                UnityEngine.Debug.Log(package_path);
                 File.Copy(package_path, Path.Combine(fr_path, package_name));
                 TemporaryDirectory result = fr.DownloadPackage(test_package);
                 Assert.IsTrue(Directory.Exists(result.Path));

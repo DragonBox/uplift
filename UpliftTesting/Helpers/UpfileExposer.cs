@@ -9,11 +9,6 @@ namespace UpliftTesting.Helpers
     {
         public static UpfileExposer TestingInstance()
         {
-            if(!(instance is UpfileExposer))
-            {
-                ClearInstance();
-            }
-
             if (instance == null)
             {
                 InitializeTestingInstance();
@@ -35,6 +30,7 @@ namespace UpliftTesting.Helpers
         internal static void SetInstance(Upfile upfile)
         {
             instance = upfile;
+            instance.LoadPackageList();
         }
 
         internal static Upfile LoadTestXml(string path)

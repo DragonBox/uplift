@@ -1,11 +1,8 @@
-﻿using Uplift.Common;
-using Uplift.Schemas;
+﻿using Uplift.Schemas;
 using NUnit.Framework;
-using Moq;
 using System.IO;
 using System.Xml.Serialization;
 using Uplift;
-using System;
 using System.Linq;
 using UpliftTesting.Helpers;
 
@@ -167,6 +164,7 @@ namespace UpliftTesting.UnitTesting
                 {
                     serializer.Serialize(fs, test);
                 }
+                Upbring.InitializeInstance();
 
                 Assert.That(Upbring.Instance().InstalledPackage.Any(p =>
                 p.Name == package_A.Name &&
@@ -192,9 +190,14 @@ namespace UpliftTesting.UnitTesting
 
                 Upfile dummy = new Upfile()
                 {
-                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } }
+                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } },
+                    Dependencies = new DependencyDefinition[0],
+                    Repositories = new Repository[0],
+                    UnityVersion = "foo"
                 };
                 UpfileExposer.SetInstance(dummy);
+
+                Upbring.InitializeInstance();
 
                 CollectionAssert.IsEmpty(Upbring.Instance().InstalledPackage);
             }
@@ -218,7 +221,10 @@ namespace UpliftTesting.UnitTesting
 
                 Upfile dummy = new Upfile()
                 {
-                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } }
+                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } },
+                    Dependencies = new DependencyDefinition[0],
+                    Repositories = new Repository[0],
+                    UnityVersion = "foo"
                 };
                 UpfileExposer.SetInstance(dummy);
 
@@ -259,7 +265,10 @@ namespace UpliftTesting.UnitTesting
 
                 Upfile dummy = new Upfile()
                 {
-                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } }
+                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } },
+                    Dependencies = new DependencyDefinition[0],
+                    Repositories = new Repository[0],
+                    UnityVersion = "foo"
                 };
                 UpfileExposer.SetInstance(dummy);
 

@@ -77,7 +77,7 @@ namespace UpliftTesting.IntegrationTesting
                 Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
                 Assert.IsTrue(false, "The test could not run correctly. See console message.");
             }
-            upfile = UpfileExposer.TestingInstance();
+            upfile = Upfile.Instance();
         }
 
         [SetUp]
@@ -108,13 +108,14 @@ namespace UpliftTesting.IntegrationTesting
             UpfileExposer.ClearInstance();
 
             // Remove (hopefully) installed files
-            Directory.Delete("Assets", true);
-            Directory.Delete("UPackages", true);
+            if (Directory.Exists("Assets")) Directory.Delete("Assets", true);
+            if (Directory.Exists("UPackages")) Directory.Delete("UPackages", true);
         }
 
         [Test]
         public void WhenNoFileIsAdded()
         {
+            throw new NotSupportedException("Nuking from tests is not currently supported");
             manager.NukePackage("package_d");
             
             CollectionAssert.AreEquivalent(original_snapshot, GetSnapshot());
@@ -123,6 +124,7 @@ namespace UpliftTesting.IntegrationTesting
         [Test]
         public void WhenFilesAreAdded()
         {
+            throw new NotSupportedException("Nuking from tests is not currently supported");
             string[] extra_files = new string[]
             {
                 "Assets\\scriptC.cs",

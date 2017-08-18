@@ -38,7 +38,7 @@ namespace UpliftTesting.IntegrationTesting
             {
                 Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
             }
-            upfile = UpfileExposer.TestingInstance();
+            upfile = Upfile.Instance();
 
             upfile.Dependencies[0].Version = "1.0.0";
             manager.InstallDependencies();
@@ -59,6 +59,8 @@ namespace UpliftTesting.IntegrationTesting
         [Test]
         public void WhenUpdating()
         {
+            throw new NotSupportedException("Nuking from tests is not currently supported");
+
             manager.InstallDependencies();
             Upbring upbring = Upbring.Instance();
 

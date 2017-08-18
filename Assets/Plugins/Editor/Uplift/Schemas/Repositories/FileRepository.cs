@@ -25,7 +25,7 @@ namespace Uplift.Schemas {
             if (Directory.Exists(sourcePath))
             {
 
-                Uplift.Common.FileSystemUtil.CopyDirectoryWithMeta(sourcePath, td.Path);
+                FileSystemUtil.CopyDirectoryWithMeta(sourcePath, td.Path);
                 
             }
             else if (IsUnityPackage(sourcePath))
@@ -54,11 +54,7 @@ namespace Uplift.Schemas {
                         {
                             if (assetMS != null)
                                 throw new InvalidOperationException("Unexpected state: assetMS not null");
-                            string existing_path = AssetDatabase.GUIDToAssetPath(entry.Key.Replace("/asset", ""));
-                            if(!string.IsNullOrEmpty(existing_path))
-                            {
-                                // Do something with the GUID
-                            }
+                            
                             assetMS = new MemoryStream();
                             entry.WriteTo(assetMS);
                             assetMS.Position = 0;

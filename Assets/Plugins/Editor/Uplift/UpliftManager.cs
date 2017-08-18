@@ -11,7 +11,7 @@ namespace Uplift
         protected static UpliftManager instance;
 
         internal UpliftManager() {
-            upfile = Upfile.Instance();
+
         }
 
         public static UpliftManager Instance()
@@ -36,6 +36,7 @@ namespace Uplift
         {
             //FIXME: We should check for all repositories, not the first one
             //FileRepository rt = (FileRepository) Upfile.Repositories[0];
+            upfile = Upfile.Instance();
 
             PackageHandler pHandler = new PackageHandler();
 
@@ -85,7 +86,6 @@ namespace Uplift
             upbring.AddPackage(package);
             FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
             upbring.AddLocation(package, InstallSpecType.Root, localPackagePath);
-
 
             InstallSpecPath[] specArray;
             if (package.Configuration == null)

@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2015
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uplift.Editor.Plugins", "uplift.Editor.Plugins.csproj", "{F8513CB3-5DDE-F981-3AC2-CC40F269419F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpliftTesting", "UpliftTesting\UpliftTesting.csproj", "{B9E7540B-FF92-40E0-95DC-EFB52587BBA4}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,10 +13,6 @@ Global
 		{F8513CB3-5DDE-F981-3AC2-CC40F269419F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8513CB3-5DDE-F981-3AC2-CC40F269419F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8513CB3-5DDE-F981-3AC2-CC40F269419F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B9E7540B-FF92-40E0-95DC-EFB52587BBA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B9E7540B-FF92-40E0-95DC-EFB52587BBA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B9E7540B-FF92-40E0-95DC-EFB52587BBA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B9E7540B-FF92-40E0-95DC-EFB52587BBA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-suite type="TestSuite" id="1164" name="uplift" fullname="uplift" runstate="Runnable" testcasecount="64" result="Passed" start-time="2017-08-21 10:31:58Z" end-time="2017-08-21 10:32:03Z" duration="4.510024" total="64" passed="62" failed="0" inconclusive="0" skipped="2" asserts="212">
+  <test-suite type="Assembly" id="1241" name="Assembly-CSharp-Editor-firstpass.dll" fullname="C:/Users/Paul/Documents/Work/uplift/Library/ScriptAssemblies/Assembly-CSharp-Editor-firstpass.dll" runstate="Runnable" testcasecount="64" result="Passed" start-time="2017-08-21 10:31:58Z" end-time="2017-08-21 10:32:03Z" duration="4.467238" total="64" passed="62" failed="0" inconclusive="0" skipped="2" asserts="212">
+    <properties>
+      <property name="_PID" value="13008" />
+      <property name="_APPDOMAIN" value="Unity Child Domain" />
+    </properties>
+    <test-suite type="TestSuite" id="1242" name="Uplift" fullname="Uplift" runstate="Runnable" testcasecount="64" result="Passed" start-time="2017-08-21 10:31:58Z" end-time="2017-08-21 10:32:03Z" duration="4.455932" total="64" passed="62" failed="0" inconclusive="0" skipped="2" asserts="212">
+      <test-suite type="TestSuite" id="1243" name="Testing" fullname="Uplift.Testing" runstate="Runnable" testcasecount="64" result="Passed" start-time="2017-08-21 10:31:58Z" end-time="2017-08-21 10:32:03Z" duration="4.445411" total="64" passed="62" failed="0" inconclusive="0" skipped="2" asserts="212">
+        <test-suite type="TestSuite" id="1244" name="Integration" fullname="Uplift.Testing.Integration" runstate="Runnable" testcasecount="7" result="Passed" start-time="2017-08-21 10:31:58Z" end-time="2017-08-21 10:32:01Z" duration="2.631566" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="117">
+          <test-suite type="TestFixture" id="1165" name="BasicPackageInstallation" fullname="Uplift.Testing.Integration.BasicPackageInstallation" classname="Uplift.Testing.Integration.BasicPackageInstallation" runstate="Runnable" testcasecount="1" result="Passed" start-time="2017-08-21 10:31:58Z" end-time="2017-08-21 10:31:58Z" duration="0.127879" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="22">
+            <test-case id="1166" name="WhenInstalling" fullname="Uplift.Testing.Integration.BasicPackageInstallation.WhenInstalling" methodname="WhenInstalling" classname="Uplift.Testing.Integration.BasicPackageInstallation" runstate="Runnable" seed="1831450281" result="Passed" start-time="2017-08-21 10:31:58Z" end-time="2017-08-21 10:31:58Z" duration="0.097758" asserts="22">
+              <output><![CDATA[Loaded packages, count: 1
+File ..\TestData\BasicPackageInstallation\PackageRepo\Package A\A1.cs does not have an associated meta file
+File ..\TestData\BasicPackageInstallation\PackageRepo\Package A\A2.cs does not have an associated meta file
+File ..\TestData\BasicPackageInstallation\PackageRepo\Package A\A3.cs does not have an associated meta file
+File ..\TestData\BasicPackageInstallation\PackageRepo\Package A\Upset.xml does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp5a9175.tmp\A1.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp5a9175.tmp\A2.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp5a9175.tmp\A3.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp5a9175.tmp\Upset.xml does not have an associated meta file
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1167" name="CustomizedFileLocation" fullname="Uplift.Testing.Integration.CustomizedFileLocation" classname="Uplift.Testing.Integration.CustomizedFileLocation" runstate="Runnable" testcasecount="3" result="Passed" start-time="2017-08-21 10:31:58Z" end-time="2017-08-21 10:32:00Z" duration="2.053885" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="77">
+            <test-case id="1170" name="WhenUpfileModifiedAndSkip" fullname="Uplift.Testing.Integration.CustomizedFileLocation.WhenUpfileModifiedAndSkip" methodname="WhenUpfileModifiedAndSkip" classname="Uplift.Testing.Integration.CustomizedFileLocation" runstate="Runnable" seed="156081406" result="Passed" start-time="2017-08-21 10:31:58Z" end-time="2017-08-21 10:31:58Z" duration="0.151024" asserts="25">
+              <output><![CDATA[Loaded packages, count: 1
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedSkip\Package C\C1.cs does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedSkip\Package C\C2.cs does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedSkip\Package C\Example does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedSkip\Package C\Example\Adv does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedSkip\Package C\Example\Adv\E3.txt does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedSkip\Package C\Example\E1.txt does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedSkip\Package C\Example\E2.txt does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedSkip\Package C\Media does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedSkip\Package C\Media\M1.txt does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedSkip\Package C\Media\M2.txt does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedSkip\Package C\Upset.xml does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\Media\M1.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\Media\M2.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\Example\Adv does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\Example\Adv\E3.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\Example\E1.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\Example\E2.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\C1.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\C2.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\Example does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\Example\Adv does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\Example\Adv\E3.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\Example\E1.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\Example\E2.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\Media does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\Media\M1.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\Media\M2.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp669ac48c.tmp\Upset.xml does not have an associated meta file
+]]></output>
+            </test-case>
+            <test-case id="1169" name="WhenUpfileModifiedNoSkip" fullname="Uplift.Testing.Integration.CustomizedFileLocation.WhenUpfileModifiedNoSkip" methodname="WhenUpfileModifiedNoSkip" classname="Uplift.Testing.Integration.CustomizedFileLocation" runstate="Runnable" seed="482937557" result="Passed" start-time="2017-08-21 10:31:58Z" end-time="2017-08-21 10:31:59Z" duration="0.262825" asserts="27">
+              <output><![CDATA[Loaded packages, count: 1
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedNoSkip\Package C\C1.cs does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedNoSkip\Package C\C2.cs does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedNoSkip\Package C\Example does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedNoSkip\Package C\Example\Adv does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedNoSkip\Package C\Example\Adv\E3.txt does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedNoSkip\Package C\Example\E1.txt does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedNoSkip\Package C\Example\E2.txt does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedNoSkip\Package C\Media does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedNoSkip\Package C\Media\M1.txt does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedNoSkip\Package C\Media\M2.txt does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoModifiedNoSkip\Package C\Upset.xml does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\Media\M1.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\Media\M2.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\Example\Adv does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\Example\Adv\E3.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\Example\E1.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\Example\E2.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\C1.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\C2.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\Example does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\Example\Adv does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\Example\Adv\E3.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\Example\E1.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\Example\E2.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\Media does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\Media\M1.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\Media\M2.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp359ead07.tmp\Upset.xml does not have an associated meta file
+Request error (error): 
+Error performing Asset Store search: Failed to open connection to localhost:9312: Connection refused... ConnectRetries exceed...]]></output>
+            </test-case>
+            <test-case id="1168" name="WhenUpfileNotModified" fullname="Uplift.Testing.Integration.CustomizedFileLocation.WhenUpfileNotModified" methodname="WhenUpfileNotModified" classname="Uplift.Testing.Integration.CustomizedFileLocation" runstate="Runnable" seed="1037169293" result="Passed" start-time="2017-08-21 10:31:59Z" end-time="2017-08-21 10:31:59Z" duration="0.156892" asserts="25">
+              <output><![CDATA[Loaded packages, count: 1
+File ..\TestData\CustomizedFileLocation\PackageRepoNotModified\Package C\C1.cs does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoNotModified\Package C\C2.cs does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoNotModified\Package C\Example does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoNotModified\Package C\Example\Adv does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoNotModified\Package C\Example\Adv\E3.txt does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoNotModified\Package C\Example\E1.txt does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoNotModified\Package C\Example\E2.txt does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoNotModified\Package C\Media does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoNotModified\Package C\Media\M1.txt does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoNotModified\Package C\Media\M2.txt does not have an associated meta file
+File ..\TestData\CustomizedFileLocation\PackageRepoNotModified\Package C\Upset.xml does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp5b3104dd.tmp\C1.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp5b3104dd.tmp\C2.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp5b3104dd.tmp\Example does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp5b3104dd.tmp\Example\Adv does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp5b3104dd.tmp\Example\Adv\E3.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp5b3104dd.tmp\Example\E1.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp5b3104dd.tmp\Example\E2.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp5b3104dd.tmp\Media does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp5b3104dd.tmp\Media\M1.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp5b3104dd.tmp\Media\M2.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp5b3104dd.tmp\Upset.xml does not have an associated meta file
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1171" name="PackageNuking" fullname="Uplift.Testing.Integration.PackageNuking" classname="Uplift.Testing.Integration.PackageNuking" runstate="Runnable" testcasecount="2" result="Passed" start-time="2017-08-21 10:32:00Z" end-time="2017-08-21 10:32:01Z" duration="0.239157" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="2">
+            <output><![CDATA[Loaded packages, count: 2
+File ..\TestData\PackageNuking\PackageRepo\Filler Package\bar.txt does not have an associated meta file
+File ..\TestData\PackageNuking\PackageRepo\Filler Package\foo.cs does not have an associated meta file
+File ..\TestData\PackageNuking\PackageRepo\Filler Package\Upset.xml does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp3361ab6c.tmp\bar.txt does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp3361ab6c.tmp\foo.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp3361ab6c.tmp\Upset.xml does not have an associated meta file
+Loaded packages, count: 2
+]]></output>
+            <test-case id="1173" name="WhenFilesAreAdded" fullname="Uplift.Testing.Integration.PackageNuking.WhenFilesAreAdded" methodname="WhenFilesAreAdded" classname="Uplift.Testing.Integration.PackageNuking" runstate="Runnable" seed="1534568517" result="Passed" start-time="2017-08-21 10:32:00Z" end-time="2017-08-21 10:32:00Z" duration="0.098725" asserts="1">
+              <output><![CDATA[File ..\TestData\PackageNuking\PackageRepo\Package D\D1.cs does not have an associated meta file
+File ..\TestData\PackageNuking\PackageRepo\Package D\D2.cs does not have an associated meta file
+File ..\TestData\PackageNuking\PackageRepo\Package D\Upset.xml does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp30de2921.tmp\D1.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp30de2921.tmp\D2.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp30de2921.tmp\Upset.xml does not have an associated meta file
+]]></output>
+            </test-case>
+            <test-case id="1172" name="WhenNoFileIsAdded" fullname="Uplift.Testing.Integration.PackageNuking.WhenNoFileIsAdded" methodname="WhenNoFileIsAdded" classname="Uplift.Testing.Integration.PackageNuking" runstate="Runnable" seed="1116043421" result="Passed" start-time="2017-08-21 10:32:00Z" end-time="2017-08-21 10:32:00Z" duration="0.034883" asserts="1">
+              <output><![CDATA[File ..\TestData\PackageNuking\PackageRepo\Package D\D1.cs does not have an associated meta file
+File ..\TestData\PackageNuking\PackageRepo\Package D\D2.cs does not have an associated meta file
+File ..\TestData\PackageNuking\PackageRepo\Package D\Upset.xml does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp4e91632.tmp\D1.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp4e91632.tmp\D2.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp4e91632.tmp\Upset.xml does not have an associated meta file
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1174" name="PackageUpdating" fullname="Uplift.Testing.Integration.PackageUpdating" classname="Uplift.Testing.Integration.PackageUpdating" runstate="Runnable" testcasecount="1" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.171831" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="16">
+            <output><![CDATA[Loaded packages, count: 2
+File ..\TestData\PackageUpdating\PackageRepo\Package A recent\A1.cs does not have an associated meta file
+File ..\TestData\PackageUpdating\PackageRepo\Package A recent\A2.cs does not have an associated meta file
+File ..\TestData\PackageUpdating\PackageRepo\Package A recent\A3.cs does not have an associated meta file
+File ..\TestData\PackageUpdating\PackageRepo\Package A recent\Upset.xml does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp6b294949.tmp\A1.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp6b294949.tmp\A2.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp6b294949.tmp\A3.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp6b294949.tmp\Upset.xml does not have an associated meta file
+]]></output>
+            <test-case id="1175" name="WhenUpdating" fullname="Uplift.Testing.Integration.PackageUpdating.WhenUpdating" methodname="WhenUpdating" classname="Uplift.Testing.Integration.PackageUpdating" runstate="Runnable" seed="1157712737" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.053888" asserts="16">
+              <output><![CDATA[File ..\TestData\PackageUpdating\PackageRepo\Package A recent\A1.cs does not have an associated meta file
+File ..\TestData\PackageUpdating\PackageRepo\Package A recent\A2.cs does not have an associated meta file
+File ..\TestData\PackageUpdating\PackageRepo\Package A recent\A3.cs does not have an associated meta file
+File ..\TestData\PackageUpdating\PackageRepo\Package A recent\Upset.xml does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp68a5c6fe.tmp\A1.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp68a5c6fe.tmp\A2.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp68a5c6fe.tmp\A3.cs does not have an associated meta file
+File C:\Users\Paul\AppData\Local\Temp\tmp68a5c6fe.tmp\Upset.xml does not have an associated meta file
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+        <test-suite type="TestSuite" id="1245" name="Unit" fullname="Uplift.Testing.Unit" runstate="Runnable" testcasecount="57" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:02Z" duration="1.786354" total="57" passed="55" failed="0" inconclusive="0" skipped="2" asserts="95">
+          <test-suite type="TestFixture" id="1176" name="FileRepositoryTest" fullname="Uplift.Testing.Unit.FileRepositoryTest" classname="Uplift.Testing.Unit.FileRepositoryTest" runstate="Runnable" testcasecount="5" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.293581" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="15">
+            <test-case id="1181" name="DownloadPackageFromBadFormatTest" fullname="Uplift.Testing.Unit.FileRepositoryTest.DownloadPackageFromBadFormatTest" methodname="DownloadPackageFromBadFormatTest" classname="Uplift.Testing.Unit.FileRepositoryTest" runstate="Runnable" seed="1459856118" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.016343" asserts="2" />
+            <test-case id="1179" name="DownloadPackageFromDirectoryTest" fullname="Uplift.Testing.Unit.FileRepositoryTest.DownloadPackageFromDirectoryTest" methodname="DownloadPackageFromDirectoryTest" classname="Uplift.Testing.Unit.FileRepositoryTest" runstate="Runnable" seed="1880215608" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.015314" asserts="2" />
+            <test-case id="1180" name="DownloadPackageFromUnityPackageTest" fullname="Uplift.Testing.Unit.FileRepositoryTest.DownloadPackageFromUnityPackageTest" methodname="DownloadPackageFromUnityPackageTest" classname="Uplift.Testing.Unit.FileRepositoryTest" runstate="Runnable" seed="37594306" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.149726" asserts="4" />
+            <test-case id="1178" name="ListPackagesFromDirectoriesTest" fullname="Uplift.Testing.Unit.FileRepositoryTest.ListPackagesFromDirectoriesTest" methodname="ListPackagesFromDirectoriesTest" classname="Uplift.Testing.Unit.FileRepositoryTest" runstate="Runnable" seed="1116171527" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.022707" asserts="4" />
+            <test-case id="1177" name="ListPackagesFromUnityPackagesTest" fullname="Uplift.Testing.Unit.FileRepositoryTest.ListPackagesFromUnityPackagesTest" methodname="ListPackagesFromUnityPackagesTest" classname="Uplift.Testing.Unit.FileRepositoryTest" runstate="Runnable" seed="318045569" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.049134" asserts="3" />
+          </test-suite>
+          <test-suite type="TestFixture" id="1182" name="FileSystemUtilsTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" testcasecount="20" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.412872" total="20" passed="18" failed="0" inconclusive="0" skipped="2" asserts="19">
+            <test-case id="1200" name="CopyAndIgnoreDirectoryTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.CopyAndIgnoreDirectoryTest" methodname="CopyAndIgnoreDirectoryTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="456099410" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.007423" asserts="2" />
+            <test-case id="1199" name="CopyDirectoryRecursivelyTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.CopyDirectoryRecursivelyTest" methodname="CopyDirectoryRecursivelyTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="26282825" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.007433" asserts="1" />
+            <test-case id="1197" name="CopyDirectoryTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.CopyDirectoryTest" methodname="CopyDirectoryTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="800811981" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.004851" asserts="1" />
+            <test-case id="1198" name="CopyToExitstingDirectoryTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.CopyToExitstingDirectoryTest" methodname="CopyToExitstingDirectoryTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="811420761" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.005005" asserts="1" />
+            <test-case id="1184" name="EnsureMissingParentExistsTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.EnsureMissingParentExistsTest" methodname="EnsureMissingParentExistsTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="1444708256" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.005052" asserts="1" />
+            <test-case id="1185" name="EnsurePresentParentExistsTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.EnsurePresentParentExistsTest" methodname="EnsurePresentParentExistsTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="1445521602" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.032732" asserts="1" />
+            <test-case id="1186" name="GetAbsolutePathTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.GetAbsolutePathTest" methodname="GetAbsolutePathTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="2069003169" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.004704" asserts="1" />
+            <test-case id="1187" name="GetAbsolutePathTestFail" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.GetAbsolutePathTestFail" methodname="GetAbsolutePathTestFail" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="846501197" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.004021" asserts="1" />
+            <test-case id="1195" name="GetFilesEmptyTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.GetFilesEmptyTest" methodname="GetFilesEmptyTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="1033820410" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.005599" asserts="1" />
+            <test-case id="1196" name="GetFilesFromNonExistentDirectoryTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.GetFilesFromNonExistentDirectoryTest" methodname="GetFilesFromNonExistentDirectoryTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="943102633" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.004067" asserts="1" />
+            <test-case id="1194" name="GetFilesRecursivelyTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.GetFilesRecursivelyTest" methodname="GetFilesRecursivelyTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="1793791218" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.022767" asserts="1" />
+            <test-case id="1193" name="GetFilesTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.GetFilesTest" methodname="GetFilesTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="1189848164" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.016041" asserts="1" />
+            <test-case id="1183" name="JoinPathsTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.JoinPathsTest" methodname="JoinPathsTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="144769925" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.003661" asserts="1" />
+            <test-case id="1189" name="ReadTxtInFileTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.ReadTxtInFileTest" methodname="ReadTxtInFileTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="144557109" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.006247" asserts="1" />
+            <test-case id="1191" name="RecursivelyDirPathsTestLinux" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.RecursivelyDirPathsTestLinux" methodname="RecursivelyDirPathsTestLinux" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Skipped" seed="1987992691" result="Skipped" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.000673" asserts="0">
+              <properties>
+                <property name="_SKIPREASON" value="Only supported on Linux" />
+              </properties>
+              <reason>
+                <message><![CDATA[Only supported on Linux]]></message>
+              </reason>
+            </test-case>
+            <test-case id="1192" name="RecursivelyDirPathsTestMac" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.RecursivelyDirPathsTestMac" methodname="RecursivelyDirPathsTestMac" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Skipped" seed="832954271" result="Skipped" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.000011" asserts="0">
+              <properties>
+                <property name="_SKIPREASON" value="Not supported on Win,Linux" />
+              </properties>
+              <reason>
+                <message><![CDATA[Not supported on Win,Linux]]></message>
+              </reason>
+            </test-case>
+            <test-case id="1190" name="RecursivelyDirPathsTestWindows" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.RecursivelyDirPathsTestWindows" methodname="RecursivelyDirPathsTestWindows" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="897992410" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.007458" asserts="1" />
+            <test-case id="1202" name="RecursivelyListFilesRelativeTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.RecursivelyListFilesRelativeTest" methodname="RecursivelyListFilesRelativeTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="395539945" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.053964" asserts="1" />
+            <test-case id="1201" name="RecursivelyListFilesTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.RecursivelyListFilesTest" methodname="RecursivelyListFilesTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="1554007972" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.011837" asserts="1" />
+            <test-case id="1188" name="SaveTxtInFileTest" fullname="Uplift.Testing.Unit.FileSystemUtilsTest.SaveTxtInFileTest" methodname="SaveTxtInFileTest" classname="Uplift.Testing.Unit.FileSystemUtilsTest" runstate="Runnable" seed="1351624146" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.006207" asserts="1" />
+          </test-suite>
+          <test-suite type="TestFixture" id="1203" name="InstalledPackagesTest" fullname="Uplift.Testing.Unit.InstalledPackagesTest" classname="Uplift.Testing.Unit.InstalledPackagesTest" runstate="Runnable" testcasecount="4" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:02Z" duration="0.109828" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="10">
+            <test-case id="1206" name="NukeOtherInstallComplexTest" fullname="Uplift.Testing.Unit.InstalledPackagesTest.NukeOtherInstallComplexTest" methodname="NukeOtherInstallComplexTest" classname="Uplift.Testing.Unit.InstalledPackagesTest" runstate="Runnable" seed="345768457" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:01Z" duration="0.013242" asserts="4" />
+            <test-case id="1205" name="NukeOtherInstallSimpleFileTest" fullname="Uplift.Testing.Unit.InstalledPackagesTest.NukeOtherInstallSimpleFileTest" methodname="NukeOtherInstallSimpleFileTest" classname="Uplift.Testing.Unit.InstalledPackagesTest" runstate="Runnable" seed="381028276" result="Passed" start-time="2017-08-21 10:32:01Z" end-time="2017-08-21 10:32:02Z" duration="0.041760" asserts="4" />
+            <test-case id="1207" name="NukeOtherInstallWhenAbsentTest" fullname="Uplift.Testing.Unit.InstalledPackagesTest.NukeOtherInstallWhenAbsentTest" methodname="NukeOtherInstallWhenAbsentTest" classname="Uplift.Testing.Unit.InstalledPackagesTest" runstate="Runnable" seed="1205408230" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.008811" asserts="1" />
+            <test-case id="1204" name="NukeRootInstallTest" fullname="Uplift.Testing.Unit.InstalledPackagesTest.NukeRootInstallTest" methodname="NukeRootInstallTest" classname="Uplift.Testing.Unit.InstalledPackagesTest" runstate="Runnable" seed="1226142368" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.005424" asserts="1" />
+          </test-suite>
+          <test-suite type="TestFixture" id="1208" name="LatestSelectionStrategyTest" fullname="Uplift.Testing.Unit.LatestSelectionStrategyTest" classname="Uplift.Testing.Unit.LatestSelectionStrategyTest" runstate="Runnable" testcasecount="1" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.114523" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="1">
+            <test-case id="1209" name="FilterTest" fullname="Uplift.Testing.Unit.LatestSelectionStrategyTest.FilterTest" methodname="FilterTest" classname="Uplift.Testing.Unit.LatestSelectionStrategyTest" runstate="Runnable" seed="224663483" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.109892" asserts="1" />
+          </test-suite>
+          <test-suite type="TestFixture" id="1210" name="PackageHandlerTest" fullname="Uplift.Testing.Unit.PackageHandlerTest" classname="Uplift.Testing.Unit.PackageHandlerTest" runstate="Runnable" testcasecount="9" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.256499" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="24">
+            <test-case id="1211" name="FindCandidateForDefinitionTest" fullname="Uplift.Testing.Unit.PackageHandlerTest.FindCandidateForDefinitionTest" methodname="FindCandidateForDefinitionTest" classname="Uplift.Testing.Unit.PackageHandlerTest" runstate="Runnable" seed="2104858450" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.046311" asserts="3" />
+            <test-case id="1212" name="FindPackageAndRepositoryTest" fullname="Uplift.Testing.Unit.PackageHandlerTest.FindPackageAndRepositoryTest" methodname="FindPackageAndRepositoryTest" classname="Uplift.Testing.Unit.PackageHandlerTest" runstate="Runnable" seed="265548144" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.011031" asserts="1" />
+            <test-case id="1213" name="FindPackageAndRepositoryTestFail" fullname="Uplift.Testing.Unit.PackageHandlerTest.FindPackageAndRepositoryTestFail" methodname="FindPackageAndRepositoryTestFail" classname="Uplift.Testing.Unit.PackageHandlerTest" runstate="Runnable" seed="179650705" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.010358" asserts="1" />
+            <test-case id="1219" name="PackageDependencyVersionComparison" fullname="Uplift.Testing.Unit.PackageHandlerTest.PackageDependencyVersionComparison" methodname="PackageDependencyVersionComparison" classname="Uplift.Testing.Unit.PackageHandlerTest" runstate="Runnable" seed="1338376962" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.011006" asserts="1" />
+            <test-case id="1215" name="SelectCandidatesMultipleStrategies" fullname="Uplift.Testing.Unit.PackageHandlerTest.SelectCandidatesMultipleStrategies" methodname="SelectCandidatesMultipleStrategies" classname="Uplift.Testing.Unit.PackageHandlerTest" runstate="Runnable" seed="287886257" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.035464" asserts="3" />
+            <test-case id="1214" name="SelectCandidatesSingleStrategy" fullname="Uplift.Testing.Unit.PackageHandlerTest.SelectCandidatesSingleStrategy" methodname="SelectCandidatesSingleStrategy" classname="Uplift.Testing.Unit.PackageHandlerTest" runstate="Runnable" seed="302495216" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.011814" asserts="3" />
+            <test-case id="1218" name="VersionComparisonTest" fullname="Uplift.Testing.Unit.PackageHandlerTest.VersionComparisonTest" methodname="VersionComparisonTest" classname="Uplift.Testing.Unit.PackageHandlerTest" runstate="Runnable" seed="358255395" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.010523" asserts="7" />
+            <test-case id="1217" name="VersionParsingFailureTest" fullname="Uplift.Testing.Unit.PackageHandlerTest.VersionParsingFailureTest" methodname="VersionParsingFailureTest" classname="Uplift.Testing.Unit.PackageHandlerTest" runstate="Runnable" seed="306097485" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.010135" asserts="1" />
+            <test-case id="1216" name="VersionStringParsingTest" fullname="Uplift.Testing.Unit.PackageHandlerTest.VersionStringParsingTest" methodname="VersionStringParsingTest" classname="Uplift.Testing.Unit.PackageHandlerTest" runstate="Runnable" seed="1585605006" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.010039" asserts="4" />
+          </test-suite>
+          <test-suite type="TestFixture" id="1220" name="PackageListTest" fullname="Uplift.Testing.Unit.PackageListTest" classname="Uplift.Testing.Unit.PackageListTest" runstate="Runnable" testcasecount="7" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.208004" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="14">
+            <test-case id="1222" name="GetEmptyPackagesTest" fullname="Uplift.Testing.Unit.PackageListTest.GetEmptyPackagesTest" methodname="GetEmptyPackagesTest" classname="Uplift.Testing.Unit.PackageListTest" runstate="Runnable" seed="1590302176" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.017285" asserts="1" />
+            <test-case id="1227" name="GetLatestPackageTest" fullname="Uplift.Testing.Unit.PackageListTest.GetLatestPackageTest" methodname="GetLatestPackageTest" classname="Uplift.Testing.Unit.PackageListTest" runstate="Runnable" seed="1755367809" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.016228" asserts="1" />
+            <test-case id="1226" name="LoadPackagesForceRefreshTest" fullname="Uplift.Testing.Unit.PackageListTest.LoadPackagesForceRefreshTest" methodname="LoadPackagesForceRefreshTest" classname="Uplift.Testing.Unit.PackageListTest" runstate="Runnable" seed="1203544847" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.016984" asserts="4" />
+            <test-case id="1225" name="LoadPackagesMultipleRepoTest" fullname="Uplift.Testing.Unit.PackageListTest.LoadPackagesMultipleRepoTest" methodname="LoadPackagesMultipleRepoTest" classname="Uplift.Testing.Unit.PackageListTest" runstate="Runnable" seed="637552517" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.014726" asserts="4" />
+            <test-case id="1223" name="LoadPackagesSingleRepoTest" fullname="Uplift.Testing.Unit.PackageListTest.LoadPackagesSingleRepoTest" methodname="LoadPackagesSingleRepoTest" classname="Uplift.Testing.Unit.PackageListTest" runstate="Runnable" seed="1130260650" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.015660" asserts="1" />
+            <test-case id="1221" name="PackageListUniqueInstanceTest" fullname="Uplift.Testing.Unit.PackageListTest.PackageListUniqueInstanceTest" methodname="PackageListUniqueInstanceTest" classname="Uplift.Testing.Unit.PackageListTest" runstate="Runnable" seed="1208897800" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.014022" asserts="1" />
+            <test-case id="1224" name="RefreshPackagesTest" fullname="Uplift.Testing.Unit.PackageListTest.RefreshPackagesTest" methodname="RefreshPackagesTest" classname="Uplift.Testing.Unit.PackageListTest" runstate="Runnable" seed="996566932" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.014519" asserts="2" />
+          </test-suite>
+          <test-suite type="TestFixture" id="1228" name="UpbringTest" fullname="Uplift.Testing.Unit.UpbringTest" classname="Uplift.Testing.Unit.UpbringTest" runstate="Runnable" testcasecount="11" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.282771" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="12">
+            <test-case id="1231" name="AddExistingPackageTest" fullname="Uplift.Testing.Unit.UpbringTest.AddExistingPackageTest" methodname="AddExistingPackageTest" classname="Uplift.Testing.Unit.UpbringTest" runstate="Runnable" seed="1604104648" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.010780" asserts="1" />
+            <test-case id="1235" name="AddLocationNoMatchingPackage" fullname="Uplift.Testing.Unit.UpbringTest.AddLocationNoMatchingPackage" methodname="AddLocationNoMatchingPackage" classname="Uplift.Testing.Unit.UpbringTest" runstate="Runnable" seed="105945442" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.010380" asserts="1" />
+            <test-case id="1233" name="AddLocationWhenAnotherTest" fullname="Uplift.Testing.Unit.UpbringTest.AddLocationWhenAnotherTest" methodname="AddLocationWhenAnotherTest" classname="Uplift.Testing.Unit.UpbringTest" runstate="Runnable" seed="917412340" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.010566" asserts="1" />
+            <test-case id="1234" name="AddLocationWhenExistingTest" fullname="Uplift.Testing.Unit.UpbringTest.AddLocationWhenExistingTest" methodname="AddLocationWhenExistingTest" classname="Uplift.Testing.Unit.UpbringTest" runstate="Runnable" seed="1309873856" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.010530" asserts="1" />
+            <test-case id="1232" name="AddLocationWhenNoneTest" fullname="Uplift.Testing.Unit.UpbringTest.AddLocationWhenNoneTest" methodname="AddLocationWhenNoneTest" classname="Uplift.Testing.Unit.UpbringTest" runstate="Runnable" seed="457650809" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.010793" asserts="1" />
+            <test-case id="1230" name="AddPackageTest" fullname="Uplift.Testing.Unit.UpbringTest.AddPackageTest" methodname="AddPackageTest" classname="Uplift.Testing.Unit.UpbringTest" runstate="Runnable" seed="2081245471" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.010335" asserts="2" />
+            <test-case id="1237" name="FromXmlWhenAbsentTest" fullname="Uplift.Testing.Unit.UpbringTest.FromXmlWhenAbsentTest" methodname="FromXmlWhenAbsentTest" classname="Uplift.Testing.Unit.UpbringTest" runstate="Runnable" seed="987762297" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.013862" asserts="1" />
+            <test-case id="1236" name="FromXmlWhenPresentTest" fullname="Uplift.Testing.Unit.UpbringTest.FromXmlWhenPresentTest" methodname="FromXmlWhenPresentTest" classname="Uplift.Testing.Unit.UpbringTest" runstate="Runnable" seed="645788185" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.031739" asserts="1" />
+            <test-case id="1229" name="GetInstalledPackageTest" fullname="Uplift.Testing.Unit.UpbringTest.GetInstalledPackageTest" methodname="GetInstalledPackageTest" classname="Uplift.Testing.Unit.UpbringTest" runstate="Runnable" seed="1540358870" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.010440" asserts="1" />
+            <test-case id="1239" name="RemoveFileTest" fullname="Uplift.Testing.Unit.UpbringTest.RemoveFileTest" methodname="RemoveFileTest" classname="Uplift.Testing.Unit.UpbringTest" runstate="Runnable" seed="2006930824" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.013140" asserts="1" />
+            <test-case id="1238" name="SaveFileTest" fullname="Uplift.Testing.Unit.UpbringTest.SaveFileTest" methodname="SaveFileTest" classname="Uplift.Testing.Unit.UpbringTest" runstate="Runnable" seed="1062441825" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.014989" asserts="1" />
+          </test-suite>
+          <test-suite type="TestFixture" id="1240" name="UpfileTest" fullname="Uplift.Testing.Unit.UpfileTest" classname="Uplift.Testing.Unit.UpfileTest" runstate="Runnable" testcasecount="0" result="Passed" start-time="2017-08-21 10:32:02Z" end-time="2017-08-21 10:32:02Z" duration="0.000194" total="0" passed="0" failed="0" inconclusive="0" skipped="0" asserts="0" />
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-suite>

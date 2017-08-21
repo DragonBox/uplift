@@ -5,7 +5,7 @@
     <BaseInstallPath Location="Assets/UPackages" />
   </Configuration>
   <Repositories>
-    <FileRepository Path="../IntegrationTesting/PackageUpdating/PackageRepo" />
+    <FileRepository Path="../TestData/PackageUpdating/PackageRepo" />
   </Repositories>
   <Dependencies>
     <Package Name="package_a" Version="1.0.1"/>

@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 using Uplift;
 using Uplift.Schemas;
 
-namespace Uplit.Testing.Unit
+namespace Uplift.Testing.Unit
 {
     [TestFixture]
     class InstalledPackagesTest

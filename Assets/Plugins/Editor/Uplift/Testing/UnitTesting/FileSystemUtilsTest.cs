@@ -4,7 +4,7 @@ using NUnit.Framework;
 using Uplift.Common;
 using System.Collections.Generic;
 
-namespace Uplit.Testing.Unit
+namespace Uplift.Testing.Unit
 {
     [TestFixture]
     public class FileSystemUtilsTest

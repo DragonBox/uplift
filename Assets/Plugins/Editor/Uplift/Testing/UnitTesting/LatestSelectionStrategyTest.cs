@@ -5,7 +5,7 @@ using Moq;
 using Uplift.Common;
 using System;
 
-namespace Uplit.Testing.Unit
+namespace Uplift.Testing.Unit
 {
     [TestFixture]
     public class LatestSelectionStrategyTest

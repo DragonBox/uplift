@@ -3,11 +3,11 @@ using Uplift.Schemas;
 using Uplift.Common;
 using NUnit.Framework;
 using System;
-using Uplit.Testing.Helpers;
+using Uplift.Testing.Helpers;
 using System.IO;
 using System.Linq;
 
-namespace Uplit.Testing.Integration
+namespace Uplift.Testing.Integration
 {
     [TestFixture]
     class CustomizedFileLocation
@@ -15,11 +15,15 @@ namespace Uplit.Testing.Integration
         private UpliftManager manager;
         private Upfile upfile;
         private string upfile_path;
+        private string pwd;
 
         [OneTimeSetUp]
         protected void Init()
         {
+            UpliftManagerExposer.ClearAllInstances();
+
             manager = UpliftManager.Instance();
+            pwd = Directory.GetCurrentDirectory();
         }
 
         [SetUp]
@@ -27,15 +31,17 @@ namespace Uplit.Testing.Integration
         {
             // Upfile Cleanup
             UpfileExposer.ClearInstance();
+
+            // Move to test running directory
+            Helper.InitializeRunDirectory();
+            Directory.SetCurrentDirectory(Helper.testRunDirectoryName);
         }
 
         [TearDown]
         protected void AfterEach()
         {
             // Remove (hopefully) installed files
-            //if (Directory.Exists("Assets")) { Directory.Delete("Assets", true); }
-            //if (Directory.Exists("UPackages")) { Directory.Delete("UPackages", true); }
-            //if (Directory.Exists("Examples")) { Directory.Delete("Examples", true); }
+            Directory.SetCurrentDirectory(pwd);
         }
 
         [OneTimeTearDown]
@@ -43,6 +49,7 @@ namespace Uplit.Testing.Integration
         {
             // Clean the Upfile
             UpfileExposer.ClearInstance();
+            Helper.ClearRunDirectory();
         }
 
         [Test]
@@ -51,6 +58,7 @@ namespace Uplit.Testing.Integration
             // Upfile Setup
             upfile_path = Helper.GetLocalFilePath(new string[]
                 {
+                    "..",
                     "TestData",
                     "CustomizedFileLocation",
                     "Upfile_NotModified.xml"
@@ -107,6 +115,7 @@ namespace Uplit.Testing.Integration
             // Upfile Setup
             upfile_path = Helper.GetLocalFilePath(new string[]
                 {
+                    "..",
                     "TestData",
                     "CustomizedFileLocation",
                     "Upfile_Modified_NoSkip.xml"
@@ -165,6 +174,7 @@ namespace Uplit.Testing.Integration
             // Upfile Setup
             upfile_path = Helper.GetLocalFilePath(new string[]
                 {
+                    "..",
                     "TestData",
                     "CustomizedFileLocation",
                     "Upfile_Modified_Skip.xml"

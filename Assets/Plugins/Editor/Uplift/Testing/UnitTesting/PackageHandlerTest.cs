@@ -3,11 +3,11 @@ using NUnit.Framework;
 using Moq;
 using Uplift.Schemas;
 using Uplift.Packages;
-using Uplit.Testing.Helpers;
+using Uplift.Testing.Helpers;
 using Uplift.Common;
 using Uplift.Strategies;
 
-namespace Uplit.Testing.Unit
+namespace Uplift.Testing.Unit
 {
     [TestFixture]
     public class PackageHandlerTest

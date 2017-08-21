@@ -6,9 +6,9 @@ using System.Xml.Serialization;
 using Uplift.Common;
 using System.Linq;
 using System.Reflection;
-using Uplit.Testing.Helpers;
+using Uplift.Testing.Helpers;
 
-namespace Uplit.Testing.Unit
+namespace Uplift.Testing.Unit
 {
     [TestFixture]
     class FileRepositoryTest

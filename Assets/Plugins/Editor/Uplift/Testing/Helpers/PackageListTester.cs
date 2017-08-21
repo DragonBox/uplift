@@ -3,7 +3,7 @@ using Uplift.Common;
 using Uplift.Packages;
 using Uplift.Schemas;
 
-namespace Uplit.Testing.Helpers
+namespace Uplift.Testing.Helpers
 {
     public class PackageListTester : PackageList
     {

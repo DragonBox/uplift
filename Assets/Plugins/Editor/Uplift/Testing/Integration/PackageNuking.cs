@@ -2,14 +2,14 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using Uplit.Testing.Helpers;
+using Uplift.Testing.Helpers;
 using System.IO;
 using System.Linq;
 using Uplift.Packages;
 using Uplift.Schemas;
 using Uplift.Common;
 
-namespace Uplit.Testing.Integration
+namespace Uplift.Testing.Integration
 {
     [TestFixture]
     class PackageNuking
@@ -18,71 +18,88 @@ namespace Uplit.Testing.Integration
         private Upfile upfile;
         private string upfile_path;
         private string[] original_snapshot;
+        private string pwd;
 
         [OneTimeSetUp]
         protected void Given()
         {
+            UpliftManagerExposer.ClearAllInstances();
+
             manager = UpliftManager.Instance();
-
-            // Upfile Setup for filler package
-            UpfileExposer.ClearInstance();
-            upfile_path = Helper.GetLocalFilePath(new string[]
-                {
-                    "TestData",
-                    "PackageNuking",
-                    "Init_Upfile.xml"
-                });
+            pwd = Directory.GetCurrentDirectory();
+            Helper.InitializeRunDirectory();
 
             try
             {
-                UpfileExposer.SetInstance(UpfileExposer.LoadTestXml(upfile_path));
-            }
-            catch (FileNotFoundException)
-            {
-                Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
-                Assert.IsTrue(false, "The test could not run correctly. See console message.");
-            }
-            upfile = UpfileExposer.TestingInstance();
+                Directory.SetCurrentDirectory(Helper.testRunDirectoryName);
 
-            // Creating original state
-            Directory.CreateDirectory("Assets");
-            Directory.CreateDirectory("Assets/Media");
-
-            File.Create("Assets/scriptA.cs").Dispose();
-            File.Create("Assets/scriptB.cs").Dispose();
-            File.Create("Assets/Media/mediaA.txt").Dispose();
-            File.Create("Assets/Media/mediaB.txt").Dispose();
-
-            // Install Filler Package
-            manager.InstallDependencies();
-
-            // Save the snapshot
-            original_snapshot = GetSnapshot();
-
-            // Proper Upfile Setup
-            UpfileExposer.ClearInstance();
-            upfile_path = Helper.GetLocalFilePath(new string[]
+                // Upfile Setup for filler package
+                upfile_path = Helper.GetLocalFilePath(new string[]
+                    {
+                        "..",
+                        "TestData",
+                        "PackageNuking",
+                        "Init_Upfile.xml"
+                    });
+                try
                 {
-                    "TestData",
-                    "PackageNuking",
-                    "Upfile.xml"
-                });
+                    UpfileExposer.SetInstance(UpfileExposer.LoadTestXml(upfile_path));
+                }
+                catch (FileNotFoundException)
+                {
+                    Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
+                    Assert.IsTrue(false, "The test could not run correctly. See console message.");
+                }
+                upfile = UpfileExposer.TestingInstance();
 
-            try
-            {
-                UpfileExposer.SetInstance(UpfileExposer.LoadTestXml(upfile_path));
+                // Creating original state
+                Directory.CreateDirectory("Assets");
+                Directory.CreateDirectory("Assets/Media");
+
+                File.Create("Assets/scriptA.cs").Dispose();
+                File.Create("Assets/scriptB.cs").Dispose();
+                File.Create("Assets/Media/mediaA.txt").Dispose();
+                File.Create("Assets/Media/mediaB.txt").Dispose();
+
+                // Install Filler Package
+                manager.InstallDependencies();
+
+                // Save the snapshot
+                original_snapshot = GetSnapshot();
+
+                // Proper Upfile Setup
+                UpfileExposer.ClearInstance();
+                upfile_path = Helper.GetLocalFilePath(new string[]
+                    {
+                        "..",
+                        "TestData",
+                        "PackageNuking",
+                        "Upfile.xml"
+                    });
+
+                try
+                {
+                    UpfileExposer.SetInstance(UpfileExposer.LoadTestXml(upfile_path));
+                }
+                catch (FileNotFoundException)
+                {
+                    Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
+                    Assert.IsTrue(false, "The test could not run correctly. See console message.");
+                }
+                upfile = Upfile.Instance();
             }
-            catch (FileNotFoundException)
+            finally
             {
-                Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
-                Assert.IsTrue(false, "The test could not run correctly. See console message.");
+                Directory.SetCurrentDirectory(pwd);
             }
-            upfile = Upfile.Instance();
         }
 
         [SetUp]
         protected void BeforeEach()
         {
+            // Move to test running directory
+            Directory.SetCurrentDirectory(Helper.testRunDirectoryName);
+
             //Install Package D
             manager.InstallDependencies();
         }
@@ -99,17 +116,16 @@ namespace Uplit.Testing.Integration
                     File.Delete(file);
                 }
             }
+
+            Directory.SetCurrentDirectory(pwd);
         }
 
         [OneTimeTearDown]
         protected void CleanUp()
         {
-            // Clean the UpfileHandler
+            // Clean the Upfile
             UpfileExposer.ClearInstance();
-
-            // Remove (hopefully) installed files
-            //if (Directory.Exists("Assets")) Directory.Delete("Assets", true);
-            //if (Directory.Exists("UPackages")) Directory.Delete("UPackages", true);
+            Helper.ClearRunDirectory();
         }
 
         [Test]

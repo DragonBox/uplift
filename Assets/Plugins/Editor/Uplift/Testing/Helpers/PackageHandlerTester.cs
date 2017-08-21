@@ -2,7 +2,7 @@
 using Uplift.Schemas;
 using Uplift.Packages;
 
-namespace Uplit.Testing.Helpers
+namespace Uplift.Testing.Helpers
 {
 	// Some protected methods of the Package Handler need to be tested
 	// This class offers public wrappers for the methods that need testing

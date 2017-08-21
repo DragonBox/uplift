@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 using Uplift.Common;
 using Uplift.Schemas;
 
-namespace Uplit.Testing.Helpers
+namespace Uplift.Testing.Helpers
 {
     public class UpfileExposer : Upfile
     {

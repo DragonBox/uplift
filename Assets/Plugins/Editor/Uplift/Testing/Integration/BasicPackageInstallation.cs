@@ -3,11 +3,11 @@ using Uplift.Schemas;
 using Uplift.Common;
 using NUnit.Framework;
 using System;
-using Uplit.Testing.Helpers;
+using Uplift.Testing.Helpers;
 using System.IO;
 using System.Linq;
 
-namespace Uplit.Testing.Integration
+namespace Uplift.Testing.Integration
 {
     [TestFixture]
     class BasicPackageInstallation
@@ -15,20 +15,52 @@ namespace Uplit.Testing.Integration
         private UpliftManager manager;
         private Upfile upfile;
         private string upfile_path;
+        private string pwd;
 
         [OneTimeSetUp]
         protected void Given()
         {
-            manager = UpliftManager.Instance();
+            UpliftManagerExposer.ClearAllInstances();
 
-            // Upfile Setup
+            manager = UpliftManager.Instance();
+            pwd = Directory.GetCurrentDirectory();
+        }
+
+        [SetUp]
+        protected void BeforeEach()
+        {
+            // Upfile Cleanup
             UpfileExposer.ClearInstance();
+
+            // Move to test running directory
+            Helper.InitializeRunDirectory();
+            Directory.SetCurrentDirectory(Helper.testRunDirectoryName);
+        }
+
+        [TearDown]
+        protected void AfterEach()
+        {
+            Directory.SetCurrentDirectory(pwd);
+        }
+
+        [OneTimeTearDown]
+        protected void CleanUp()
+        {
+            // Remove (hopefully) installed files
+            UpfileExposer.ClearInstance();
+            Helper.ClearRunDirectory();
+        }
+
+        [Test]
+        public void WhenInstalling()
+        {
             upfile_path = Helper.GetLocalFilePath(new string[]
-                {
-                    "TestData",
-                    "BasicPackageInstallation",
-                    "Upfile.xml"
-                });
+            {
+                "..",
+                "TestData",
+                "BasicPackageInstallation",
+                "Upfile.xml"
+            });
 
             try
             {
@@ -36,25 +68,10 @@ namespace Uplit.Testing.Integration
             }
             catch (FileNotFoundException)
             {
-                Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
+                UnityEngine.Debug.LogError("The Upfile.xml uses the current path to register the repositories.");
             }
             upfile = Upfile.Instance();
-        }
 
-        [OneTimeTearDown]
-        protected void CleanUp()
-        {
-            // Clean the Upfile
-            UpfileExposer.ClearInstance();
-
-            // Remove (hopefully) installed files
-            //Directory.Delete("Assets", true);
-            //Directory.Delete("UPackages", true);
-        }
-
-        [Test]
-        public void WhenInstalling()
-        {
             manager.InstallDependencies();
 
             // Directories existence
@@ -95,7 +112,7 @@ namespace Uplit.Testing.Integration
             i is InstallSpecPath &&
             (i as InstallSpecPath).Path == string.Join(separator, new string[] { "Assets", "UPackages", "package_a~1.0.0", "A1.cs" }) &&
             i.Type == InstallSpecType.Base
-            ), "Base installation of A1.cs did not get registered");                
+            ), "Base installation of A1.cs did not get registered");
             Assert.That(upbring.InstalledPackage[0].Install.Any(i =>
             i is InstallSpecPath &&
             (i as InstallSpecPath).Path == string.Join(separator, new string[] { "Assets", "UPackages", "package_a~1.0.0", "A2.cs" }) &&

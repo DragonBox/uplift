@@ -4,10 +4,10 @@ using NUnit.Framework;
 using Moq;
 using Uplift.Schemas;
 using Uplift.Common;
-using Uplit.Testing.Helpers;
+using Uplift.Testing.Helpers;
 using System.Collections.Generic;
 
-namespace Uplit.Testing.Unit
+namespace Uplift.Testing.Unit
 {
     [TestFixture]
     public class PackageListTest

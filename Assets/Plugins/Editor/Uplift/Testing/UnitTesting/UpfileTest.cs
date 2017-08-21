@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using Uplift.Schemas;
 
-namespace Uplit.Testing.Unit
+namespace Uplift.Testing.Unit
 {
     [TestFixture]
     public class UpfileTest

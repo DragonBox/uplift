@@ -6,7 +6,7 @@
     <MediaPath        Location="Assets/Media" SkipPackageStructure="true" />
   </Configuration>
   <Repositories>
-    <FileRepository Path="../IntegrationTesting/PackageNuking/PackageRepo" />
+    <FileRepository Path="../TestData/PackageNuking/PackageRepo" />
   </Repositories>
   <Dependencies>
     <Package Name="package_d" Version="1.8.6"/>

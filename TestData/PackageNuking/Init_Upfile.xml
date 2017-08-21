@@ -5,7 +5,7 @@
     <BaseInstallPath  Location="Assets/UPackages" />
   </Configuration>
   <Repositories>
-    <FileRepository Path="../IntegrationTesting/PackageNuking/PackageRepo" />
+    <FileRepository Path="../TestData/PackageNuking/PackageRepo" />
   </Repositories>
   <Dependencies>
     <Package Name="filler_package" Version="0.0.0"/>

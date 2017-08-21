@@ -4,9 +4,9 @@ using System.IO;
 using System.Xml.Serialization;
 using Uplift;
 using System.Linq;
-using Uplit.Testing.Helpers;
+using Uplift.Testing.Helpers;
 
-namespace Uplit.Testing.Unit
+namespace Uplift.Testing.Unit
 {
     [TestFixture]
     class UpbringTest

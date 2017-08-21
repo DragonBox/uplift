@@ -1,8 +1,0 @@
-<Upset>
-  <PackageName>package_d</PackageName>
-  <PackageVersion>1.8.6</PackageVersion>
-  <Configuration>
-    <Spec Type="Media" Path="Media" />
-    <Spec Type="Base" Path= "" />
-  </Configuration>
-</Upset>

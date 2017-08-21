@@ -3,11 +3,11 @@ using Uplift.Schemas;
 using Uplift.Common;
 using NUnit.Framework;
 using System;
-using Uplit.Testing.Helpers;
+using Uplift.Testing.Helpers;
 using System.IO;
 using System.Linq;
 
-namespace Uplit.Testing.Integration
+namespace Uplift.Testing.Integration
 {
     [TestFixture]
     class PackageUpdating
@@ -15,34 +15,61 @@ namespace Uplit.Testing.Integration
         private UpliftManager manager;
         private Upfile upfile;
         private string upfile_path;
+        private string pwd;
 
         [OneTimeSetUp]
         protected void Given()
         {
-            manager = UpliftManager.Instance();
+            UpliftManagerExposer.ClearAllInstances();
 
-            // Upfile Setup
-            UpfileExposer.ClearInstance();
-            upfile_path = Helper.GetLocalFilePath(new string[]
-                {
-                    "TestData",
-                    "PackageUpdating",
-                    "Upfile.xml"
-                });
+            manager = UpliftManager.Instance();
+            pwd = Directory.GetCurrentDirectory();
+            Helper.InitializeRunDirectory();
 
             try
             {
-                UpfileExposer.SetInstance(UpfileExposer.LoadTestXml(upfile_path));
-            }
-            catch (FileNotFoundException)
-            {
-                Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
-            }
-            upfile = Upfile.Instance();
+                Directory.SetCurrentDirectory(Helper.testRunDirectoryName);
 
-            upfile.Dependencies[0].Version = "1.0.0";
-            manager.InstallDependencies();
-            upfile.Dependencies[0].Version = "1.0.1";
+                // Upfile Setup
+                upfile_path = Helper.GetLocalFilePath(new string[]
+                    {
+                    "..",
+                    "TestData",
+                    "PackageUpdating",
+                    "Upfile.xml"
+                    });
+
+                try
+                {
+                    UpfileExposer.SetInstance(UpfileExposer.LoadTestXml(upfile_path));
+                }
+                catch (FileNotFoundException)
+                {
+                    Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
+                }
+                upfile = Upfile.Instance();
+
+                upfile.Dependencies[0].Version = "1.0.0";
+                manager.InstallDependencies();
+                upfile.Dependencies[0].Version = "1.0.1";
+            }
+            finally
+            {
+                Directory.SetCurrentDirectory(pwd);
+            }
+        }
+
+        [SetUp]
+        protected void BeforeEach()
+        {
+            // Move to test running directory
+            Directory.SetCurrentDirectory(Helper.testRunDirectoryName);
+        }
+
+        [TearDown]
+        protected void AfterEach()
+        {
+            Directory.SetCurrentDirectory(pwd);
         }
 
         [OneTimeTearDown]
@@ -51,9 +78,7 @@ namespace Uplit.Testing.Integration
             // Clean the UpfileHandler
             UpfileExposer.ClearInstance();
 
-            // Remove (hopefully) installed files
-            //Directory.Delete("Assets", true);
-            //Directory.Delete("UPackages", true);
+            Helper.ClearRunDirectory();
         }
 
         [Test]

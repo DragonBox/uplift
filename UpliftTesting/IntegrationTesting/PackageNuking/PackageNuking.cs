@@ -6,24 +6,26 @@ using UpliftTesting.Helpers;
 using System.IO;
 using System.Linq;
 using Uplift.Packages;
+using Uplift.Schemas;
+using Uplift.Common;
 
 namespace UpliftTesting.IntegrationTesting
 {
     [TestFixture]
     class PackageNuking
     {
-        private UpfileHandler uph;
+        private UpliftManager manager;
+        private Upfile upfile;
         private string upfile_path;
         private string[] original_snapshot;
 
         [OneTimeSetUp]
         protected void Given()
         {
-            // Turn off logging
-            TestingProperties.SetLogging(false);
+            manager = UpliftManager.Instance();
 
             // Upfile Setup for filler package
-            UpfileHandlerExposer.ResetSingleton();
+            UpfileExposer.ClearInstance();
             upfile_path = Helper.GetLocalXMLFile(new string[]
                 {
                     "IntegrationTesting",
@@ -31,17 +33,16 @@ namespace UpliftTesting.IntegrationTesting
                     "Init_Upfile.xml"
                 });
 
-            uph = UpfileHandlerExposer.Instance();
-            (uph as UpfileHandlerExposer).test_upfile_path = upfile_path;
             try
             {
-                uph.Initialize();
+                UpfileExposer.SetInstance(UpfileExposer.LoadTestXml(upfile_path));
             }
             catch (FileNotFoundException)
             {
                 Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
-                throw new InvalidOperationException("The test setup is not correct. Please run this test from UpliftTesting/TestResults");
+                Assert.IsTrue(false, "The test could not run correctly. See console message.");
             }
+            upfile = UpfileExposer.TestingInstance();
 
             // Creating original state
             Directory.CreateDirectory("Assets");
@@ -53,13 +54,13 @@ namespace UpliftTesting.IntegrationTesting
             File.Create("Assets/Media/mediaB.txt").Dispose();
 
             // Install Filler Package
-            uph.InstallDependencies();
+            manager.InstallDependencies();
 
             // Save the snapshot
             original_snapshot = GetSnapshot();
 
             // Proper Upfile Setup
-            UpfileHandlerExposer.ResetSingleton();
+            UpfileExposer.ClearInstance();
             upfile_path = Helper.GetLocalXMLFile(new string[]
                 {
                     "IntegrationTesting",
@@ -67,24 +68,23 @@ namespace UpliftTesting.IntegrationTesting
                     "Upfile.xml"
                 });
 
-            uph = UpfileHandlerExposer.Instance();
-            (uph as UpfileHandlerExposer).test_upfile_path = upfile_path;
             try
             {
-                uph.Initialize();
+                UpfileExposer.SetInstance(UpfileExposer.LoadTestXml(upfile_path));
             }
             catch (FileNotFoundException)
             {
                 Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
-                throw new InvalidOperationException("The test setup is not correct. Please run this test from UpliftTesting/TestResults");
+                Assert.IsTrue(false, "The test could not run correctly. See console message.");
             }
+            upfile = Upfile.Instance();
         }
 
         [SetUp]
         protected void BeforeEach()
         {
             //Install Package D
-            uph.InstallDependencies();
+            manager.InstallDependencies();
         }
 
         [TearDown]
@@ -105,17 +105,18 @@ namespace UpliftTesting.IntegrationTesting
         protected void CleanUp()
         {
             // Clean the UpfileHandler
-            UpfileHandlerExposer.ResetSingleton();
+            UpfileExposer.ClearInstance();
 
             // Remove (hopefully) installed files
-            Directory.Delete("Assets", true);
-            Directory.Delete("UPackages", true);
+            if (Directory.Exists("Assets")) Directory.Delete("Assets", true);
+            if (Directory.Exists("UPackages")) Directory.Delete("UPackages", true);
         }
 
         [Test]
         public void WhenNoFileIsAdded()
         {
-            LocalHandler.NukePackage("package_d");
+            throw new NotSupportedException("Nuking from tests is not currently supported");
+            manager.NukePackage("package_d");
             
             CollectionAssert.AreEquivalent(original_snapshot, GetSnapshot());
         }
@@ -123,6 +124,7 @@ namespace UpliftTesting.IntegrationTesting
         [Test]
         public void WhenFilesAreAdded()
         {
+            throw new NotSupportedException("Nuking from tests is not currently supported");
             string[] extra_files = new string[]
             {
                 "Assets\\scriptC.cs",
@@ -135,7 +137,7 @@ namespace UpliftTesting.IntegrationTesting
                 File.Create(file).Dispose();
             }
 
-            LocalHandler.NukePackage("package_d");
+            manager.NukePackage("package_d");
 
             string[] expected = new string[original_snapshot.Length + extra_files.Length];
             Array.Copy(original_snapshot, expected, original_snapshot.Length);

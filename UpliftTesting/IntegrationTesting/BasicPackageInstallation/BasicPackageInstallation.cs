@@ -12,17 +12,17 @@ namespace UpliftTesting.IntegrationTesting
     [TestFixture]
     class BasicPackageInstallation
     {
-        private UpfileHandler uph;
+        private UpliftManager manager;
+        private Upfile upfile;
         private string upfile_path;
 
         [OneTimeSetUp]
         protected void Given()
         {
-            // Turn off logging
-            TestingProperties.SetLogging(false);
+            manager = UpliftManager.Instance();
 
             // Upfile Setup
-            UpfileHandlerExposer.ResetSingleton();
+            UpfileExposer.ClearInstance();
             upfile_path = Helper.GetLocalXMLFile(new string[]
                 {
                     "IntegrationTesting",
@@ -30,24 +30,22 @@ namespace UpliftTesting.IntegrationTesting
                     "Upfile.xml"
                 });
 
-            uph = UpfileHandlerExposer.Instance();
-            (uph as UpfileHandlerExposer).test_upfile_path = upfile_path;
             try
             {
-                uph.Initialize();
+                UpfileExposer.SetInstance(UpfileExposer.LoadTestXml(upfile_path));
             }
             catch (FileNotFoundException)
             {
                 Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
-                throw new InvalidOperationException("The test setup is not correct. Please run this test from UpliftTesting/TestResults");
             }
+            upfile = Upfile.Instance();
         }
 
         [OneTimeTearDown]
         protected void CleanUp()
         {
-            // Clean the UpfileHandler
-            UpfileHandlerExposer.ResetSingleton();
+            // Clean the Upfile
+            UpfileExposer.ClearInstance();
 
             // Remove (hopefully) installed files
             Directory.Delete("Assets", true);
@@ -57,7 +55,7 @@ namespace UpliftTesting.IntegrationTesting
         [Test]
         public void WhenInstalling()
         {
-            Cli.InstallDependencies();
+            manager.InstallDependencies();
 
             // Directories existence
             Assert.IsTrue(Directory.Exists("UPackages"), "Directory UPackages does not exist");
@@ -80,31 +78,36 @@ namespace UpliftTesting.IntegrationTesting
             Assert.IsTrue(File.Exists("UPackages/package_a~1.0.0/Upset.xml"), "Upset file did not get copied to UPackages/package_a~1.0.0");
 
             // Upbring validity
-            Upbring upbring = Upbring.FromXml();
+            Upbring upbring = Upbring.Instance();
             Assert.IsNotEmpty(upbring.InstalledPackage, "Upbring file did not registered the installation");
             Assert.That(upbring.InstalledPackage.Any(p =>
             p.Name == "package_a" &&
             p.Version == "1.0.0"
             ), "Upbring did not register an installation with the proper package Name and Version");
             Assert.IsNotEmpty(upbring.InstalledPackage[0].Install, "Upbring file did not register file dependencies");
-            Assert.That(upbring.InstalledPackage[0].Install.Any(i => 
-            i.Path == Path.Combine("UPackages", "package_a~1.0.0") &&
+            Assert.That(upbring.InstalledPackage[0].Install.Any(i =>
+            i is InstallSpecPath &&
+            (i as InstallSpecPath).Path == Path.Combine("UPackages", "package_a~1.0.0") &&
             i.Type == InstallSpecType.Root
             ), "Root installation did not get registered");
             Assert.That(upbring.InstalledPackage[0].Install.Any(i =>
-            i.Path == Path.Combine(new string[] { "Assets", "UPackages", "package_a~1.0.0", "A1.cs" }) &&
+            i is InstallSpecPath &&
+            (i as InstallSpecPath).Path == Path.Combine(new string[] { "Assets", "UPackages", "package_a~1.0.0", "A1.cs" }) &&
             i.Type == InstallSpecType.Base
             ), "Base installation of A1.cs did not get registered");                
             Assert.That(upbring.InstalledPackage[0].Install.Any(i =>
-            i.Path == Path.Combine(new string[] { "Assets", "UPackages", "package_a~1.0.0", "A2.cs" }) &&
+            i is InstallSpecPath &&
+            (i as InstallSpecPath).Path == Path.Combine(new string[] { "Assets", "UPackages", "package_a~1.0.0", "A2.cs" }) &&
             i.Type == InstallSpecType.Base
             ), "Base installation of A2.cs did not get registered");
             Assert.That(upbring.InstalledPackage[0].Install.Any(i =>
-            i.Path == Path.Combine(new string[] { "Assets", "UPackages", "package_a~1.0.0", "A3.cs" }) &&
+            i is InstallSpecPath &&
+            (i as InstallSpecPath).Path == Path.Combine(new string[] { "Assets", "UPackages", "package_a~1.0.0", "A3.cs" }) &&
             i.Type == InstallSpecType.Base
             ), "Base installation of A3.cs did not get registered");
             Assert.That(upbring.InstalledPackage[0].Install.Any(i =>
-            i.Path == Path.Combine(new string[] { "Assets", "UPackages", "package_a~1.0.0", "Upset.xml" }) &&
+            i is InstallSpecPath &&
+            (i as InstallSpecPath).Path == Path.Combine(new string[] { "Assets", "UPackages", "package_a~1.0.0", "Upset.xml" }) &&
             i.Type == InstallSpecType.Base
             ), "Base installation of Upset.xml did not get registered");
         }

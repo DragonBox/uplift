@@ -1,39 +1,70 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<test-run id="2" testcasecount="82" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="122" engine-version="3.7.0.0" clr-version="4.0.30319.42000" start-time="2017-08-02 08:34:56Z" end-time="2017-08-02 08:35:03Z" duration="6.831839">
+<test-run id="2" testcasecount="66" result="Failed" total="7" passed="4" failed="3" inconclusive="0" skipped="0" asserts="99" engine-version="3.7.0.0" clr-version="4.0.30319.42000" start-time="2017-08-18 12:20:13Z" end-time="2017-08-18 12:20:18Z" duration="5.459317">
   <command-line><![CDATA[..\packages\NUnit.ConsoleRunner.3.7.0\tools\nunit3-console.exe  ..\bin\Debug\UpliftTesting.dll --result=IntegrationTest.xml --where "test =~ /IntegrationTesting/"]]></command-line>
   <filter>
     <test re="1">IntegrationTesting</test>
   </filter>
-  <test-suite type="Assembly" id="0-1096" name="UpliftTesting.dll" fullname="C:\Users\Paul\Documents\Work\uplift\UpliftTesting\bin\Debug\UpliftTesting.dll" runstate="Runnable" testcasecount="82" result="Passed" start-time="2017-08-02 08:34:59Z" end-time="2017-08-02 08:35:03Z" duration="3.656481" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="122">
-    <environment framework-version="3.5.0.0" clr-version="4.0.30319.42000" os-version="Microsoft Windows NT 10.0.15063.0" platform="Win32NT" cwd="C:\Users\Paul\Documents\Work\uplift\UpliftTesting\TestResults" machine-name="PC_PAUL" user="Paul" user-domain="PC_PAUL" culture="fr-FR" uiculture="fr-FR" os-architecture="x64" />
+  <test-suite type="Assembly" id="0-1080" name="UpliftTesting.dll" fullname="C:\Users\Paul\Documents\Work\uplift\UpliftTesting\bin\Debug\UpliftTesting.dll" runstate="Runnable" testcasecount="66" result="Failed" site="Child" start-time="2017-08-18 12:20:15Z" end-time="2017-08-18 12:20:18Z" duration="3.055631" total="7" passed="4" failed="3" warnings="0" inconclusive="0" skipped="0" asserts="99">
+    <environment framework-version="3.7.1.0" clr-version="4.0.30319.42000" os-version="Microsoft Windows NT 10.0.15063.0" platform="Win32NT" cwd="C:\Users\Paul\Documents\Work\uplift\UpliftTesting\TestResults" machine-name="PC_PAUL" user="Paul" user-domain="PC_PAUL" culture="fr-FR" uiculture="fr-FR" os-architecture="x64" />
     <settings>
       <setting name="DisposeRunners" value="True" />
       <setting name="WorkDirectory" value="C:\Users\Paul\Documents\Work\uplift\UpliftTesting\TestResults" />
       <setting name="ImageRuntimeVersion" value="4.0.30319" />
-      <setting name="ImageTargetFrameworkName" value=".NETFramework,Version=v4.5" />
+      <setting name="ImageTargetFrameworkName" value=".NETFramework,Version=v4.5.2" />
       <setting name="ImageRequiresX86" value="False" />
       <setting name="ImageRequiresDefaultAppDomainAssemblyResolver" value="False" />
+      <setting name="NumberOfTestWorkers" value="8" />
     </settings>
     <properties>
-      <property name="_PID" value="14696" />
+      <property name="_PID" value="16380" />
       <property name="_APPDOMAIN" value="domain-" />
     </properties>
-    <test-suite type="TestSuite" id="0-1097" name="UpliftTesting" fullname="UpliftTesting" runstate="Runnable" testcasecount="82" result="Passed" start-time="2017-08-02 08:35:00Z" end-time="2017-08-02 08:35:03Z" duration="3.445320" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="122">
-      <test-suite type="TestSuite" id="0-1099" name="IntegrationTesting" fullname="UpliftTesting.IntegrationTesting" runstate="Runnable" testcasecount="7" result="Passed" start-time="2017-08-02 08:35:00Z" end-time="2017-08-02 08:35:03Z" duration="3.392225" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="122">
-        <test-suite type="TestFixture" id="0-1089" name="BasicPackageInstallation" fullname="UpliftTesting.IntegrationTesting.BasicPackageInstallation" classname="UpliftTesting.IntegrationTesting.BasicPackageInstallation" runstate="Runnable" testcasecount="1" result="Passed" start-time="2017-08-02 08:35:00Z" end-time="2017-08-02 08:35:01Z" duration="1.837381" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="22">
-          <test-case id="0-1090" name="WhenInstalling" fullname="UpliftTesting.IntegrationTesting.BasicPackageInstallation.WhenInstalling" methodname="WhenInstalling" classname="UpliftTesting.IntegrationTesting.BasicPackageInstallation" runstate="Runnable" seed="357926590" result="Passed" start-time="2017-08-02 08:35:01Z" end-time="2017-08-02 08:35:01Z" duration="0.360355" asserts="22" />
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="SetUpFixture" id="0-1000" name="UpliftTesting" fullname="UpliftTesting.TestSetup" classname="UpliftTesting.TestSetup" runstate="Runnable" testcasecount="66" result="Failed" site="Child" start-time="2017-08-18 12:20:15Z" end-time="2017-08-18 12:20:18Z" duration="2.989895" total="7" passed="4" failed="3" warnings="0" inconclusive="0" skipped="0" asserts="99">
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="0-1083" name="IntegrationTesting" fullname="UpliftTesting.IntegrationTesting" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2017-08-18 12:20:15Z" end-time="2017-08-18 12:20:18Z" duration="2.957630" total="7" passed="4" failed="3" warnings="0" inconclusive="0" skipped="0" asserts="99">
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestFixture" id="0-1069" name="BasicPackageInstallation" fullname="UpliftTesting.IntegrationTesting.BasicPackageInstallation" classname="UpliftTesting.IntegrationTesting.BasicPackageInstallation" runstate="Runnable" testcasecount="1" result="Passed" start-time="2017-08-18 12:20:15Z" end-time="2017-08-18 12:20:17Z" duration="1.802218" total="1" passed="1" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="22">
+          <test-case id="0-1070" name="WhenInstalling" fullname="UpliftTesting.IntegrationTesting.BasicPackageInstallation.WhenInstalling" methodname="WhenInstalling" classname="UpliftTesting.IntegrationTesting.BasicPackageInstallation" runstate="Runnable" seed="2048175268" result="Passed" start-time="2017-08-18 12:20:17Z" end-time="2017-08-18 12:20:17Z" duration="0.372199" asserts="22" />
         </test-suite>
-        <test-suite type="TestFixture" id="0-1085" name="CustomizedFileLocation" fullname="UpliftTesting.IntegrationTesting.CustomizedFileLocation" classname="UpliftTesting.IntegrationTesting.CustomizedFileLocation" runstate="Runnable" testcasecount="3" result="Passed" start-time="2017-08-02 08:35:01Z" end-time="2017-08-02 08:35:02Z" duration="0.702424" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="77">
-          <test-case id="0-1088" name="WhenUpfileModifiedAndSkip" fullname="UpliftTesting.IntegrationTesting.CustomizedFileLocation.WhenUpfileModifiedAndSkip" methodname="WhenUpfileModifiedAndSkip" classname="UpliftTesting.IntegrationTesting.CustomizedFileLocation" runstate="Runnable" seed="2130222723" result="Passed" start-time="2017-08-02 08:35:01Z" end-time="2017-08-02 08:35:02Z" duration="0.192976" asserts="25" />
-          <test-case id="0-1087" name="WhenUpfileModifiedNoSkip" fullname="UpliftTesting.IntegrationTesting.CustomizedFileLocation.WhenUpfileModifiedNoSkip" methodname="WhenUpfileModifiedNoSkip" classname="UpliftTesting.IntegrationTesting.CustomizedFileLocation" runstate="Runnable" seed="1997209878" result="Passed" start-time="2017-08-02 08:35:02Z" end-time="2017-08-02 08:35:02Z" duration="0.218253" asserts="27" />
-          <test-case id="0-1086" name="WhenUpfileNotModified" fullname="UpliftTesting.IntegrationTesting.CustomizedFileLocation.WhenUpfileNotModified" methodname="WhenUpfileNotModified" classname="UpliftTesting.IntegrationTesting.CustomizedFileLocation" runstate="Runnable" seed="1293594598" result="Passed" start-time="2017-08-02 08:35:02Z" end-time="2017-08-02 08:35:02Z" duration="0.178005" asserts="25" />
+        <test-suite type="TestFixture" id="0-1071" name="CustomizedFileLocation" fullname="UpliftTesting.IntegrationTesting.CustomizedFileLocation" classname="UpliftTesting.IntegrationTesting.CustomizedFileLocation" runstate="Runnable" testcasecount="3" result="Passed" start-time="2017-08-18 12:20:17Z" end-time="2017-08-18 12:20:18Z" duration="0.663068" total="3" passed="3" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="77">
+          <test-case id="0-1074" name="WhenUpfileModifiedAndSkip" fullname="UpliftTesting.IntegrationTesting.CustomizedFileLocation.WhenUpfileModifiedAndSkip" methodname="WhenUpfileModifiedAndSkip" classname="UpliftTesting.IntegrationTesting.CustomizedFileLocation" runstate="Runnable" seed="787439721" result="Passed" start-time="2017-08-18 12:20:17Z" end-time="2017-08-18 12:20:17Z" duration="0.226649" asserts="25" />
+          <test-case id="0-1073" name="WhenUpfileModifiedNoSkip" fullname="UpliftTesting.IntegrationTesting.CustomizedFileLocation.WhenUpfileModifiedNoSkip" methodname="WhenUpfileModifiedNoSkip" classname="UpliftTesting.IntegrationTesting.CustomizedFileLocation" runstate="Runnable" seed="1003727414" result="Passed" start-time="2017-08-18 12:20:17Z" end-time="2017-08-18 12:20:18Z" duration="0.235118" asserts="27" />
+          <test-case id="0-1072" name="WhenUpfileNotModified" fullname="UpliftTesting.IntegrationTesting.CustomizedFileLocation.WhenUpfileNotModified" methodname="WhenUpfileNotModified" classname="UpliftTesting.IntegrationTesting.CustomizedFileLocation" runstate="Runnable" seed="1038108322" result="Passed" start-time="2017-08-18 12:20:18Z" end-time="2017-08-18 12:20:18Z" duration="0.191697" asserts="25" />
         </test-suite>
-        <test-suite type="TestFixture" id="0-1091" name="PackageNuking" fullname="UpliftTesting.IntegrationTesting.PackageNuking" classname="UpliftTesting.IntegrationTesting.PackageNuking" runstate="Runnable" testcasecount="2" result="Passed" start-time="2017-08-02 08:35:02Z" end-time="2017-08-02 08:35:03Z" duration="0.467970" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="2">
-          <test-case id="0-1093" name="WhenFilesAreAdded" fullname="UpliftTesting.IntegrationTesting.PackageNuking.WhenFilesAreAdded" methodname="WhenFilesAreAdded" classname="UpliftTesting.IntegrationTesting.PackageNuking" runstate="Runnable" seed="391033355" result="Passed" start-time="2017-08-02 08:35:02Z" end-time="2017-08-02 08:35:02Z" duration="0.168181" asserts="1" />
-          <test-case id="0-1092" name="WhenNoFileIsAdded" fullname="UpliftTesting.IntegrationTesting.PackageNuking.WhenNoFileIsAdded" methodname="WhenNoFileIsAdded" classname="UpliftTesting.IntegrationTesting.PackageNuking" runstate="Runnable" seed="1825155147" result="Passed" start-time="2017-08-02 08:35:02Z" end-time="2017-08-02 08:35:03Z" duration="0.124952" asserts="1" />
+        <test-suite type="TestFixture" id="0-1075" name="PackageNuking" fullname="UpliftTesting.IntegrationTesting.PackageNuking" classname="UpliftTesting.IntegrationTesting.PackageNuking" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2017-08-18 12:20:18Z" end-time="2017-08-18 12:20:18Z" duration="0.380771" total="2" passed="0" failed="2" warnings="0" inconclusive="0" skipped="0" asserts="0">
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-case id="0-1077" name="WhenFilesAreAdded" fullname="UpliftTesting.IntegrationTesting.PackageNuking.WhenFilesAreAdded" methodname="WhenFilesAreAdded" classname="UpliftTesting.IntegrationTesting.PackageNuking" runstate="Runnable" seed="1280579697" result="Failed" label="Error" start-time="2017-08-18 12:20:18Z" end-time="2017-08-18 12:20:18Z" duration="0.138026" asserts="0">
+            <failure>
+              <message><![CDATA[System.NotSupportedException : Nuking from tests is not currently supported]]></message>
+              <stack-trace><![CDATA[   à UpliftTesting.IntegrationTesting.PackageNuking.WhenFilesAreAdded() dans C:\Users\Paul\Documents\Work\uplift\UpliftTesting\IntegrationTesting\PackageNuking\PackageNuking.cs:ligne 127]]></stack-trace>
+            </failure>
+          </test-case>
+          <test-case id="0-1076" name="WhenNoFileIsAdded" fullname="UpliftTesting.IntegrationTesting.PackageNuking.WhenNoFileIsAdded" methodname="WhenNoFileIsAdded" classname="UpliftTesting.IntegrationTesting.PackageNuking" runstate="Runnable" seed="389553559" result="Failed" label="Error" start-time="2017-08-18 12:20:18Z" end-time="2017-08-18 12:20:18Z" duration="0.118757" asserts="0">
+            <failure>
+              <message><![CDATA[System.NotSupportedException : Nuking from tests is not currently supported]]></message>
+              <stack-trace><![CDATA[   à UpliftTesting.IntegrationTesting.PackageNuking.WhenNoFileIsAdded() dans C:\Users\Paul\Documents\Work\uplift\UpliftTesting\IntegrationTesting\PackageNuking\PackageNuking.cs:ligne 118]]></stack-trace>
+            </failure>
+          </test-case>
         </test-suite>
-        <test-suite type="TestFixture" id="0-1094" name="PackageUpdating" fullname="UpliftTesting.IntegrationTesting.PackageUpdating" classname="UpliftTesting.IntegrationTesting.PackageUpdating" runstate="Runnable" testcasecount="1" result="Passed" start-time="2017-08-02 08:35:03Z" end-time="2017-08-02 08:35:03Z" duration="0.220081" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="21">
-          <test-case id="0-1095" name="WhenUpdating" fullname="UpliftTesting.IntegrationTesting.PackageUpdating.WhenUpdating" methodname="WhenUpdating" classname="UpliftTesting.IntegrationTesting.PackageUpdating" runstate="Runnable" seed="490699632" result="Passed" start-time="2017-08-02 08:35:03Z" end-time="2017-08-02 08:35:03Z" duration="0.111621" asserts="21" />
+        <test-suite type="TestFixture" id="0-1078" name="PackageUpdating" fullname="UpliftTesting.IntegrationTesting.PackageUpdating" classname="UpliftTesting.IntegrationTesting.PackageUpdating" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2017-08-18 12:20:18Z" end-time="2017-08-18 12:20:18Z" duration="0.095527" total="1" passed="0" failed="1" warnings="0" inconclusive="0" skipped="0" asserts="0">
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-case id="0-1079" name="WhenUpdating" fullname="UpliftTesting.IntegrationTesting.PackageUpdating.WhenUpdating" methodname="WhenUpdating" classname="UpliftTesting.IntegrationTesting.PackageUpdating" runstate="Runnable" seed="315104738" result="Failed" label="Error" start-time="2017-08-18 12:20:18Z" end-time="2017-08-18 12:20:18Z" duration="0.003164" asserts="0">
+            <failure>
+              <message><![CDATA[System.NotSupportedException : Nuking from tests is not currently supported]]></message>
+              <stack-trace><![CDATA[   à UpliftTesting.IntegrationTesting.PackageUpdating.WhenUpdating() dans C:\Users\Paul\Documents\Work\uplift\UpliftTesting\IntegrationTesting\PackageUpdating\PackageUpdating.cs:ligne 62]]></stack-trace>
+            </failure>
+          </test-case>
         </test-suite>
       </test-suite>
     </test-suite>

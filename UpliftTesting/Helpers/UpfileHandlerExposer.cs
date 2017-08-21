@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml.Serialization;
 using Uplift;
+using Uplift.Common;
 using Uplift.Extensions;
 using Uplift.Schemas;
 
@@ -52,18 +53,22 @@ namespace UpliftTesting.Helpers
 
             using (FileStream fs = new FileStream(test_upfile_path, FileMode.Open))
             {
-                Upfile raw = serializer.Deserialize(fs) as Upfile;
-                if (raw.Configuration != null)
+                Upfile upfile = serializer.Deserialize(fs) as Upfile;
+
+                upfile.MakePathConfigurationsOSFriendly();
+
+                if (upfile.Repositories != null)
                 {
-                    if (raw.Configuration.BaseInstallPath != null) { raw.Configuration.BaseInstallPath.Location = raw.Configuration.BaseInstallPath.Location.MakePathOSFriendly(); }
-                    if (raw.Configuration.DocsPath != null) { raw.Configuration.DocsPath.Location = raw.Configuration.DocsPath.Location.MakePathOSFriendly(); }
-                    if (raw.Configuration.ExamplesPath != null) { raw.Configuration.ExamplesPath.Location = raw.Configuration.ExamplesPath.Location.MakePathOSFriendly(); }
-                    if (raw.Configuration.MediaPath != null) { raw.Configuration.MediaPath.Location = raw.Configuration.MediaPath.Location.MakePathOSFriendly(); }
-                    if (raw.Configuration.PluginPath != null) { raw.Configuration.PluginPath.Location = raw.Configuration.PluginPath.Location.MakePathOSFriendly(); }
-                    if (raw.Configuration.RepositoryPath != null) { raw.Configuration.RepositoryPath.Location = raw.Configuration.RepositoryPath.Location.MakePathOSFriendly(); }
+                    foreach (Repository repo in upfile.Repositories)
+                    {
+                        if (repo is FileRepository)
+                        {
+                            (repo as FileRepository).Path = FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
+                        }
+                    }
                 }
 
-                return raw;
+                return upfile;
             }
         }
 

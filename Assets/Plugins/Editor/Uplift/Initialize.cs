@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using Uplift.Schemas;
 
 namespace Uplift
 {
@@ -8,9 +9,7 @@ namespace Uplift
     {
         static Initialize()
         {
-            // Make sure we initialize UpfileHandler
-            UpfileHandler.Instance();
+            Upfile.Instance();
         }
-
     }
 }

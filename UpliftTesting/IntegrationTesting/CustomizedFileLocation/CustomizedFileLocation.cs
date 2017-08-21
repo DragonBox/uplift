@@ -12,21 +12,21 @@ namespace UpliftTesting.IntegrationTesting
     [TestFixture]
     class CustomizedFileLocation
     {
-        private UpfileHandler uph;
+        private UpliftManager manager;
+        private Upfile upfile;
         private string upfile_path;
 
         [OneTimeSetUp]
-        protected void Given()
+        protected void Init()
         {
-            // Turn off logging
-            TestingProperties.SetLogging(false);
+            manager = UpliftManager.Instance();
         }
 
         [SetUp]
         protected void BeforeEach()
         {
             // Upfile Cleanup
-            UpfileHandlerExposer.ResetSingleton();
+            UpfileExposer.ClearInstance();
         }
 
         [TearDown]
@@ -41,8 +41,8 @@ namespace UpliftTesting.IntegrationTesting
         [OneTimeTearDown]
         protected void CleanUp()
         {
-            // Clean the UpfileHandler
-            UpfileHandlerExposer.ResetSingleton();
+            // Clean the Upfile
+            UpfileExposer.ClearInstance();
         }
 
         [Test]
@@ -56,20 +56,18 @@ namespace UpliftTesting.IntegrationTesting
                     "Upfile_NotModified.xml"
                 });
 
-            uph = UpfileHandlerExposer.Instance();
-            (uph as UpfileHandlerExposer).test_upfile_path = upfile_path;
-
             try
             {
-                uph.Initialize();
+                UpfileExposer.SetInstance(UpfileExposer.LoadTestXml(upfile_path));
             }
             catch (FileNotFoundException)
             {
                 Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
                 Assert.IsTrue(false, "The test could not run correctly. See console message.");
             }
+            upfile = Upfile.Instance();
 
-            Cli.InstallDependencies();
+            manager.InstallDependencies();
 
             // Directories existence
             Assert.IsTrue(Directory.Exists("UPackages"), "Directory UPackages does not exist");
@@ -114,20 +112,18 @@ namespace UpliftTesting.IntegrationTesting
                     "Upfile_Modified_NoSkip.xml"
                 });
 
-            uph = UpfileHandlerExposer.Instance();
-            (uph as UpfileHandlerExposer).test_upfile_path = upfile_path;
-
             try
             {
-                uph.Initialize();
+                UpfileExposer.SetInstance(UpfileExposer.LoadTestXml(upfile_path));
             }
             catch (FileNotFoundException)
             {
                 Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
                 Assert.IsTrue(false, "The test could not run correctly. See console message.");
             }
-            
-            Cli.InstallDependencies();
+            upfile = Upfile.Instance();
+
+            manager.InstallDependencies();
 
             // Directories existence
             Assert.IsTrue(Directory.Exists("UPackages"), "Directory UPackages does not exist");
@@ -174,20 +170,18 @@ namespace UpliftTesting.IntegrationTesting
                     "Upfile_Modified_Skip.xml"
                 });
 
-            uph = UpfileHandlerExposer.Instance();
-            (uph as UpfileHandlerExposer).test_upfile_path = upfile_path;
-
             try
             {
-                uph.Initialize();
+                UpfileExposer.SetInstance(UpfileExposer.LoadTestXml(upfile_path));
             }
             catch (FileNotFoundException)
             {
                 Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
                 Assert.IsTrue(false, "The test could not run correctly. See console message.");
             }
+            upfile = Upfile.Instance();
 
-            Cli.InstallDependencies();
+            manager.InstallDependencies();
 
             // Directories existence
             Assert.IsTrue(Directory.Exists("UPackages"), "Directory UPackages does not exist");

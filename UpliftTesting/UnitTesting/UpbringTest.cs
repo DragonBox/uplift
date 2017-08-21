@@ -1,11 +1,8 @@
-﻿using Uplift.Common;
-using Uplift.Schemas;
+﻿using Uplift.Schemas;
 using NUnit.Framework;
-using Moq;
 using System.IO;
 using System.Xml.Serialization;
 using Uplift;
-using System;
 using System.Linq;
 using UpliftTesting.Helpers;
 
@@ -30,7 +27,7 @@ namespace UpliftTesting.UnitTesting
         {
             upbring = new Upbring();
             temp_dir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            UpfileHandlerExposer.ResetSingleton();
+            UpfileExposer.ClearInstance();
         }
 
         [Test]
@@ -93,7 +90,7 @@ namespace UpliftTesting.UnitTesting
             InstalledPackage package_A = new InstalledPackage()
             {
                 Name = "packageA",
-                Install = new InstallSpec[] { new InstallSpec() { Path = "foo", Type = InstallSpecType.Base } }
+                Install = new InstallSpec[] { new InstallSpecPath() { Path = "foo", Type = InstallSpecType.Base } }
             };
             upbring.InstalledPackage = new InstalledPackage[] { package_A };
             upbring.AddLocation(new Upset()
@@ -111,7 +108,7 @@ namespace UpliftTesting.UnitTesting
             InstalledPackage package_A = new InstalledPackage()
             {
                 Name = "packageA",
-                Install = new InstallSpec[] { new InstallSpec() { Path = "foo", Type = InstallSpecType.Base } }
+                Install = new InstallSpec[] { new InstallSpecPath() { Path = "foo", Type = InstallSpecType.Base } }
             };
             upbring.InstalledPackage = new InstalledPackage[] { package_A };
             upbring.AddLocation(new Upset()
@@ -151,7 +148,6 @@ namespace UpliftTesting.UnitTesting
                 string repo_path = Path.Combine(temp_dir, Path.GetRandomFileName());
                 Directory.CreateDirectory(repo_path);
 
-                UpfileHandler ufh = UpfileHandlerExposer.Instance();
                 Upfile dummy = new Upfile()
                 {
                     Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } },
@@ -159,7 +155,7 @@ namespace UpliftTesting.UnitTesting
                     Repositories = new Repository[0],
                     UnityVersion = "foo"
                 };
-                (ufh as UpfileHandlerExposer).SetUpfile(dummy);
+                UpfileExposer.SetInstance(dummy);
 
                 InstalledPackage package_A = new InstalledPackage() { Name = "packageA", Install = new InstallSpec[0], Version = "0.0.0" };
                 Upbring test = new Upbring() { InstalledPackage = new InstalledPackage[] { package_A } };
@@ -168,8 +164,9 @@ namespace UpliftTesting.UnitTesting
                 {
                     serializer.Serialize(fs, test);
                 }
+                Upbring.InitializeInstance();
 
-                Assert.That(Upbring.FromXml().InstalledPackage.Any(p =>
+                Assert.That(Upbring.Instance().InstalledPackage.Any(p =>
                 p.Name == package_A.Name &&
                 p.Version == package_A.Version
                 ));
@@ -191,14 +188,18 @@ namespace UpliftTesting.UnitTesting
                 string repo_path = Path.Combine(temp_dir, Path.GetRandomFileName());
                 Directory.CreateDirectory(repo_path);
 
-                UpfileHandler ufh = UpfileHandlerExposer.Instance();
                 Upfile dummy = new Upfile()
                 {
-                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } }
+                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } },
+                    Dependencies = new DependencyDefinition[0],
+                    Repositories = new Repository[0],
+                    UnityVersion = "foo"
                 };
-                (ufh as UpfileHandlerExposer).SetUpfile(dummy);
+                UpfileExposer.SetInstance(dummy);
 
-                CollectionAssert.IsEmpty(Upbring.FromXml().InstalledPackage);
+                Upbring.InitializeInstance();
+
+                CollectionAssert.IsEmpty(Upbring.Instance().InstalledPackage);
             }
             finally
             {
@@ -218,12 +219,14 @@ namespace UpliftTesting.UnitTesting
                 string repo_path = Path.Combine(temp_dir, Path.GetRandomFileName());
                 Directory.CreateDirectory(repo_path);
 
-                UpfileHandler ufh = UpfileHandlerExposer.Instance();
                 Upfile dummy = new Upfile()
                 {
-                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } }
+                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } },
+                    Dependencies = new DependencyDefinition[0],
+                    Repositories = new Repository[0],
+                    UnityVersion = "foo"
                 };
-                (ufh as UpfileHandlerExposer).SetUpfile(dummy);
+                UpfileExposer.SetInstance(dummy);
 
                 InstalledPackage package_A = new InstalledPackage() { Name = "packageA", Install = new InstallSpec[0], Version = "0.0.0" };
                 Upbring test = new Upbring() { InstalledPackage = new InstalledPackage[] { package_A } };
@@ -260,12 +263,14 @@ namespace UpliftTesting.UnitTesting
                 string repo_path = Path.Combine(temp_dir, Path.GetRandomFileName());
                 Directory.CreateDirectory(repo_path);
 
-                UpfileHandler ufh = UpfileHandlerExposer.Instance();
                 Upfile dummy = new Upfile()
                 {
-                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } }
+                    Configuration = new Configuration() { RepositoryPath = new PathConfiguration() { Location = repo_path } },
+                    Dependencies = new DependencyDefinition[0],
+                    Repositories = new Repository[0],
+                    UnityVersion = "foo"
                 };
-                (ufh as UpfileHandlerExposer).SetUpfile(dummy);
+                UpfileExposer.SetInstance(dummy);
 
                 string upbring_path = Path.Combine(repo_path, "Upbring.xml");
                 File.Create(upbring_path).Dispose();                

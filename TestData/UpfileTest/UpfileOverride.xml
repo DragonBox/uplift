@@ -1,0 +1,5 @@
+<UpfileOverride>
+  <Repositories>
+    <FileRepository Path="Path/To/Another/Repository"/>
+  </Repositories>
+</UpfileOverride>

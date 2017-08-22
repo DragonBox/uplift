@@ -65,9 +65,7 @@ namespace Uplift.Schemas
                     foreach (Repository repo in upfile.Repositories)
                     {
                         if (repo is FileRepository)
-                        {
                             (repo as FileRepository).Path = FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
-                        }
                     }
                 }
 
@@ -105,6 +103,12 @@ namespace Uplift.Schemas
                 {
                     UpfileOverride upOverride = serializer.Deserialize(fs) as UpfileOverride;
 
+                    foreach (Repository repo in upOverride.Repositories)
+                    {
+                        if (repo is FileRepository)
+                            (repo as FileRepository).Path = FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
+                    }
+
                     if (Repositories == null)
                     {
                         Repositories = upOverride.Repositories;
@@ -114,7 +118,7 @@ namespace Uplift.Schemas
 
                         Repository[] newRepositoryArray = new Repository[repositoriesSize];
                         Array.Copy(Repositories, newRepositoryArray, Repositories.Length);
-                        Array.Copy(upOverride.Repositories, 0, newRepositoryArray, upOverride.Repositories.Length, Repositories.Length);
+                        Array.Copy(upOverride.Repositories, 0, newRepositoryArray, Repositories.Length, upOverride.Repositories.Length);
 
                         Repositories = newRepositoryArray;
                     }

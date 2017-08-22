@@ -58,10 +58,9 @@ namespace Uplift.Testing.Helpers
             }
         }
 
-        public override void CheckUnityVersion()
+        public override void LoadOverrides()
         {
-            // Do nothing.
-            // We don't want to call any Unity method
+            return;
         }
     }
 }

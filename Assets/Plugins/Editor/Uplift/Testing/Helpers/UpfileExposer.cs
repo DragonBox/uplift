@@ -58,6 +58,11 @@ namespace Uplift.Testing.Helpers
             }
         }
 
+        internal void LoadTestOverrides(string path)
+        {
+            LoadOverrides(path);
+        }
+
         public override void CheckUnityVersion()
         {
             // Do nothing.

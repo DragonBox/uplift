@@ -61,8 +61,6 @@ namespace Uplift.Windows
 
                         EditorGUILayout.LabelField(string.Format("- Latest version is: {0} (from {1})", latest_version, latestPackageRepo.Repository.ToString()));
                         
-
-                        EditorGUILayout.BeginHorizontal();
                         GUI.enabled = installed && installed_version != latest_version;
                         if (GUILayout.Button("Update to " + latest_version))
                         {
@@ -73,19 +71,9 @@ namespace Uplift.Windows
 
                             Repaint();
                         }
-                        GUI.enabled = installed;
-                        if (GUILayout.Button("Nuke"))
-                        {
-                            Debug.Log("Nuking package " + name);
-                            manager.NukePackage(name);
-
-                            AssetDatabase.Refresh();
-
-                            Repaint();
-                        }
                         GUI.enabled = true;
-                        EditorGUILayout.EndHorizontal();
                     }
+
                     EditorGUILayout.Space();
                 }
 

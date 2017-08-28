@@ -8,5 +8,6 @@
     <Spec Type="Base" Path="Base"/>
     <Spec Type="Examples" Path="Examples"/>
     <Spec Type="Plugin" Path="Plugin"/>
+    <Spec Type="Docs" Path="Documentation"/>
   </Configuration>
 </Upset>

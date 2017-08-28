@@ -111,7 +111,12 @@ namespace Uplift
                 if (dependencyDefinition.SkipInstall != null && dependencyDefinition.SkipInstall.Any(skip => skip.Type == spec.Type)) continue;
 
                 var sourcePath = Uplift.Common.FileSystemUtil.JoinPaths(td.Path, spec.Path);
+                
                 PathConfiguration PH = upfile.GetDestinationFor(spec);
+                if (dependencyDefinition.OverrideDestination != null && dependencyDefinition.OverrideDestination.Any(over => over.Type == spec.Type))
+                {
+                    PH.Location = Uplift.Common.FileSystemUtil.MakePathOSFriendly(dependencyDefinition.OverrideDestination.First(over => over.Type == spec.Type).Location);
+                }
 
                 var packageStructurePrefix =
                     PH.SkipPackageStructure ? "" : GetPackageDirectory(package);

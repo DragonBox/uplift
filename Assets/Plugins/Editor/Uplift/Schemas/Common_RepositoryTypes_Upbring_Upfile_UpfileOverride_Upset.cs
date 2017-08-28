@@ -195,11 +195,11 @@ namespace Uplift.Schemas {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class SkipInstallSpec {
+    public partial class OverrideDestinationSpec {
         
         private InstallSpecType typeField;
         
-        private bool typeFieldSpecified;
+        private string locationField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
@@ -213,13 +213,34 @@ namespace Uplift.Schemas {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool TypeSpecified {
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string Location {
             get {
-                return this.typeFieldSpecified;
+                return this.locationField;
             }
             set {
-                this.typeFieldSpecified = value;
+                this.locationField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SkipInstallSpec {
+        
+        private InstallSpecType typeField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public InstallSpecType Type {
+            get {
+                return this.typeField;
+            }
+            set {
+                this.typeField = value;
             }
         }
     }
@@ -292,6 +313,8 @@ namespace Uplift.Schemas {
         
         private SkipInstallSpec[] skipInstallField;
         
+        private OverrideDestinationSpec[] overrideDestinationField;
+        
         private string nameField;
         
         private string versionField;
@@ -317,6 +340,17 @@ namespace Uplift.Schemas {
             }
             set {
                 this.skipInstallField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("Override", IsNullable=false)]
+        public OverrideDestinationSpec[] OverrideDestination {
+            get {
+                return this.overrideDestinationField;
+            }
+            set {
+                this.overrideDestinationField = value;
             }
         }
         

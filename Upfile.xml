@@ -64,8 +64,11 @@
     <Package Name="test_package_folder" Version="7.7" />
     <Package Name="project_skipinstall" Version="1.0.0">
       <SkipInstall>
-        <Skip type="Examples" />
+        <Skip Type="Examples" />
       </SkipInstall>
+      <OverrideDestination>
+        <Override Type="Docs" Location="Assets/Documentation" />
+      </OverrideDestination>
     </Package>
   </Dependencies>
 

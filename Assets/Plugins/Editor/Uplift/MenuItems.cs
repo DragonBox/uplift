@@ -19,19 +19,26 @@ namespace Uplift
 
         }
 
-        [MenuItem("Uplift/Refresh Upfile", false, -15)]
+        [MenuItem("Uplift/Refresh Upfile", false, 0)]
         private static void RefreshUpfile()
         {
             Upfile.InitializeInstance();
         }
 
-        [MenuItem("Uplift/Generate Upfile", true, 0)]
+
+        [MenuItem("Uplift/Show Update Window", false, 1)]
+        private static void ShowUpdateWindow()
+        {
+            EditorWindow.GetWindow(typeof(UpdateUtility));
+        }
+
+        [MenuItem("Uplift/Generate Upfile", true, 101)]
         private static bool CheckForUpfile()
         {
             return !Upfile.CheckForUpfile();
         }
 
-        [MenuItem("Uplift/Generate Upfile", false, 0)]
+        [MenuItem("Uplift/Generate Upfile", false, 101)]
         private static void GenerateUpfile()
         {
 
@@ -47,27 +54,20 @@ namespace Uplift
             
         }
 
-        [MenuItem("Uplift/Check Dependencies", false, 20)]
+        [MenuItem("Uplift/Check Dependencies", false, 102)]
         private static void CheckDependencies()
         {
             Debug.Log("Do nothing right now");
         }
 
-        [MenuItem("Uplift/Install Dependencies", false, 20)]
+        [MenuItem("Uplift/Install Dependencies", false, 103)]
         private static void InstallDependencies()
         {
             UpliftManager.Instance().InstallDependencies();
             AssetDatabase.Refresh();
         }
 
-
-        [MenuItem("Uplift/Show Update Window", false, 30)]
-        private static void ShowUpdateWindow()
-        {
-            EditorWindow.GetWindow(typeof(UpdateUtility));
-        }
-
-        [MenuItem("Uplift/Debug/List Packages", false, 50)]
+        [MenuItem("Uplift/Debug/List Packages", false, 151)]
         private static void ListPackages()
         {
             foreach(Upset package in Upfile.Instance().ListPackages())
@@ -76,7 +76,7 @@ namespace Uplift
             }
         }
 
-        [MenuItem("Uplift/Debug/Nuke All Packages", false, 50)]
+        [MenuItem("Uplift/Debug/Nuke All Packages", false, 152)]
         private static void NukePackages()
         {
             Debug.LogWarning("Nuking all packages!");
@@ -84,7 +84,7 @@ namespace Uplift
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Uplift/Debug/Install -> Nuke Loop %g", false, 10)]
+        [MenuItem("Uplift/Debug/Install -> Nuke Loop %g", false, 153)]
         private static void RefreshPackages()
         {
             var manager = UpliftManager.Instance();

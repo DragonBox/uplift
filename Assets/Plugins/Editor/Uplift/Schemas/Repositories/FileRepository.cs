@@ -17,6 +17,11 @@ namespace Uplift.Schemas {
 
         private const string formatPattern = "{0}{1}{2}";
 
+        public override string ToString()
+        {
+            return "FileRepository " + this.Path;
+        }
+
         public override TemporaryDirectory DownloadPackage(Upset package) {
             TemporaryDirectory td = new TemporaryDirectory();
 

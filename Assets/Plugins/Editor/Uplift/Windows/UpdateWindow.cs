@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using Uplift.Common;
@@ -13,76 +14,113 @@ namespace Uplift.Windows
         {
             titleContent.text = "Update Utility";
 
-            const string packageFormat = "{0} ({1})";
-
             UpliftManager manager = UpliftManager.Instance();
             Upbring upbring = Upbring.Instance();
-
+            Upfile upfile = Upfile.Instance();
             PackageList packageList = PackageList.Instance();
+            PackageRepo[] packageRepos = packageList.GetAllPackages();
 
+            DependencyDefinition[] dependencies = upfile.Dependencies;
+            bool any_installed =
+                        upbring.InstalledPackage != null &&
+                        upbring.InstalledPackage.Length != 0;
 
-            foreach (InstalledPackage package in upbring.InstalledPackage)
+            if (dependencies.Length == 0)
             {
-                PackageRepo latestPackageRepo = packageList.GetLatestPackage(package.Name);
-
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField(string.Format(packageFormat, package.Name, package.Version), "Latest: " + latestPackageRepo.Package.PackageVersion);
-
-                if (package.Version != latestPackageRepo.Package.PackageVersion)
-                {
-                    if (GUILayout.Button("Update"))
-                    {
-                        Debug.Log(string.Format("Updating package {0} with version {1}", package.Name, latestPackageRepo.Package.PackageVersion));
-                        manager.UpdatePackage(latestPackageRepo);
-
-                        AssetDatabase.Refresh();
-
-                        Repaint();
-                    }
-                }
-                else
-                {
-                    if (GUILayout.Button("Reinstall"))
-                    {
-                        Debug.Log(string.Format("Reinstalling package {0} ({1})", package.Name, latestPackageRepo.Package.PackageVersion));
-                        manager.UpdatePackage(latestPackageRepo);
-
-                        AssetDatabase.Refresh();
-
-                        Repaint();
-                    }
-                }
-
-
-                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.HelpBox("It seems that you didn't specify any dependency in the Upfile. Try refreshing it if you did.", MessageType.Warning);
             }
-
-            EditorGUILayout.Space();
-
-            if (GUILayout.Button("Update Everything"))
+            else
             {
-                foreach (InstalledPackage package in upbring.InstalledPackage)
+                foreach(DependencyDefinition dependency in dependencies)
                 {
-                    PackageRepo latestPackageRepo = packageList.GetLatestPackage(package.Name);
-                    if (package.Version != latestPackageRepo.Package.PackageVersion)
+                    string name = dependency.Name;
+                    EditorGUILayout.LabelField(name + ":", EditorStyles.boldLabel);
+                    bool installable = packageRepos.Any(pr => pr.Package.PackageName == name);
+                    bool installed =
+                        any_installed &&
+                        upbring.InstalledPackage.Any(ip => ip.Name == name);
+                    string installed_version = installed ? upbring.GetInstalledPackage(name).Version : "";
+
+                    if (installed)
                     {
-                        Debug.Log(string.Format("Updating package {0} with version {1}", package.Name, latestPackageRepo.Package.PackageVersion));
-                        manager.UpdatePackage(latestPackageRepo);
-
-                        AssetDatabase.Refresh();
-
-                        Repaint();
+                        EditorGUILayout.LabelField("- Installed version is " + installed_version);
                     }
+                    else
+                    {
+                        EditorGUILayout.LabelField("- Not yet installed");
+                    }
+
+                    if (!installable)
+                    {
+                        EditorGUILayout.HelpBox("No repository contains this package. Try specifying one whith this package in.", MessageType.Warning);
+                    }
+                    else
+                    {
+                        PackageRepo latestPackageRepo = packageList.GetLatestPackage(name);
+                        string latest_version = latestPackageRepo.Package.PackageVersion;
+
+                        EditorGUILayout.LabelField(string.Format("- Latest version is: {0} (from {1})", latest_version, latestPackageRepo.Repository.ToString()));
+                        
+
+                        EditorGUILayout.BeginHorizontal();
+                        GUI.enabled = installed && installed_version != latest_version;
+                        if (GUILayout.Button("Update to " + latest_version))
+                        {
+                            Debug.Log(string.Format("Updating package {0} (to {1})", name, latest_version));
+                            manager.UpdatePackage(latestPackageRepo);
+
+                            AssetDatabase.Refresh();
+
+                            Repaint();
+                        }
+                        GUI.enabled = installed;
+                        if (GUILayout.Button("Nuke"))
+                        {
+                            Debug.Log("Nuking package " + name);
+                            manager.NukePackage(name);
+
+                            AssetDatabase.Refresh();
+
+                            Repaint();
+                        }
+                        GUI.enabled = true;
+                        EditorGUILayout.EndHorizontal();
+                    }
+                    EditorGUILayout.Space();
                 }
-            }
 
-            EditorGUILayout.Space();
+                if (GUILayout.Button("Install all dependencies"))
+                {
+                    manager.InstallDependencies();
 
-            if (GUILayout.Button("Refresh"))
-            {
-                PackageList.Instance().RefreshPackages();
-                AssetDatabase.Refresh();
-                Repaint();
+                    AssetDatabase.Refresh();
+
+                    Repaint();
+                }
+                GUI.enabled = any_installed;
+                if (GUILayout.Button("Update all installed packages"))
+                {
+                    foreach(InstalledPackage package in upbring.InstalledPackage)
+                    {
+                        PackageRepo latestPackageRepo = packageList.GetLatestPackage(package.Name);
+                        if (package.Version != latestPackageRepo.Package.PackageVersion)
+                        {
+                            Debug.Log(string.Format("Updating package {0} (to {1})", package.Name, latestPackageRepo.Package.PackageVersion));
+                            manager.UpdatePackage(latestPackageRepo);
+                        }
+                    }
+
+                    AssetDatabase.Refresh();
+
+                    Repaint();
+                }
+                GUI.enabled = true;
+                if (GUILayout.Button("Refresh Upfile"))
+                {
+                    Upfile.Instance();
+
+                    Repaint();
+                }
             }
         }
     }

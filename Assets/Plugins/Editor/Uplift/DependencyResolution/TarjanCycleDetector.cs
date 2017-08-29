@@ -18,7 +18,7 @@ namespace Uplift.DependencyResolution
             stack = new Stack<DependencyNode>();
             index = 0;
 
-            foreach(DependencyNode node in graph.nodes)
+            foreach(DependencyNode node in graph.nodeList)
             {
                 if (node.Index < 0)
                 {

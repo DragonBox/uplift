@@ -62,6 +62,14 @@
     <Package Name="project_c" Version="2.0" />
     <Package Name="project_meta" Version="0.0" />
     <Package Name="test_package_folder" Version="7.7" />
+    <Package Name="project_skipinstall" Version="1.0.0">
+      <SkipInstall>
+        <Skip Type="Examples" />
+      </SkipInstall>
+      <OverrideDestination>
+        <Override Type="Docs" Location="Assets/Documentation" />
+      </OverrideDestination>
+    </Package>
   </Dependencies>
 
   <!-- SAMPLE DEPENDENCIES BLOCK

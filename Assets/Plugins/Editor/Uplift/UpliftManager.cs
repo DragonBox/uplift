@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using Uplift.Common;
 using Uplift.Packages;
 using Uplift.Schemas;
@@ -47,7 +48,7 @@ namespace Uplift
                 {
                     using (TemporaryDirectory td = result.Repository.DownloadPackage(result.Package))
                     {
-                        InstallPackage(result.Package, td);
+                        InstallPackage(result.Package, td, packageDefinition);
                     }
                 }
             }
@@ -79,7 +80,7 @@ namespace Uplift
 
         //FIXME: This is super unsafe right now, as we can copy down into the FS.
         // This should be contained using kinds of destinations.
-        public void InstallPackage(Upset package, TemporaryDirectory td)
+        public void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition)
         {
             Upbring upbring = Upbring.Instance();
             // Note: Full package is ALWAYS copied to the upackages directory right now
@@ -108,8 +109,15 @@ namespace Uplift
 
             foreach (InstallSpecPath spec in specArray)
             {
+                if (dependencyDefinition.SkipInstall != null && dependencyDefinition.SkipInstall.Any(skip => skip.Type == spec.Type)) continue;
+
                 var sourcePath = Uplift.Common.FileSystemUtil.JoinPaths(td.Path, spec.Path);
+                
                 PathConfiguration PH = upfile.GetDestinationFor(spec);
+                if (dependencyDefinition.OverrideDestination != null && dependencyDefinition.OverrideDestination.Any(over => over.Type == spec.Type))
+                {
+                    PH.Location = Uplift.Common.FileSystemUtil.MakePathOSFriendly(dependencyDefinition.OverrideDestination.First(over => over.Type == spec.Type).Location);
+                }
 
                 var packageStructurePrefix =
                     PH.SkipPackageStructure ? "" : GetPackageDirectory(package);
@@ -187,7 +195,8 @@ namespace Uplift
             InstalledPackage installedPackage = upbring.GetInstalledPackage(package.PackageName);
             installedPackage.Nuke();
 
-            InstallPackage(package, td);
+            DependencyDefinition definition = Upfile.Instance().Dependencies.First(dep => dep.Name == package.PackageName);
+            InstallPackage(package, td, definition);
         }
 
         public void UpdatePackage(PackageRepo packageRepo)

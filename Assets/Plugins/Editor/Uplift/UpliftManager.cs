@@ -35,7 +35,15 @@ namespace Uplift
 
         public void InstallDependencies()
         {
-            InstallDependencies(new NoTransitiveDependenciesSolver());
+            TransitiveDependencySolver dependencySolver = new TransitiveDependencySolver();
+            dependencySolver.CheckConflict += CheckVersionConflict;
+            InstallDependencies(dependencySolver);
+        }
+
+        private void CheckVersionConflict(ref DependencyNode existing, DependencyNode compared)
+        {
+            if (existing.Version != compared.Version)
+                UnityEngine.Debug.LogWarning(string.Format("Existing dependency for {0} is {1}, but another package depends on {2}", compared.Name, existing.Version, compared.Version));
         }
 
         public void InstallDependencies(IDependencySolver dependencySolver)

@@ -4,7 +4,7 @@ namespace Uplift.DependencyResolution
 {
     public class DependencyHelper
     {
-        public delegate bool ConflictChecker(ref DependencyNode existing, DependencyNode compared);
+        public delegate void ConflictChecker(ref DependencyNode existing, DependencyNode compared);
     }
 
     [System.Serializable]

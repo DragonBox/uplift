@@ -7,4 +7,7 @@
   <PackageLicense>
     Other
   </PackageLicense>
+  <Dependencies>
+    <Package Name="project_c" Version="4.0" />
+  </Dependencies>
 </Upset>

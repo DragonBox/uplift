@@ -1,0 +1,10 @@
+<Upset>
+  <UnityVersion>
+    <MinVersion>0.0.0</MinVersion>
+  </UnityVersion>
+  <PackageName>project_c</PackageName>
+  <PackageVersion>4.5.6</PackageVersion>
+  <PackageLicense>
+    Other
+  </PackageLicense>
+</Upset>

@@ -2,6 +2,7 @@
 using Uplift.Common;
 using Uplift.Packages;
 using Uplift.Schemas;
+using Uplift.DependencyResolution;
 
 namespace Uplift
 {
@@ -34,13 +35,19 @@ namespace Uplift
 
         public void InstallDependencies()
         {
+            InstallDependencies(new NoTransitiveDependenciesSolver());
+        }
+
+        public void InstallDependencies(IDependencySolver dependencySolver)
+        {            
             //FIXME: We should check for all repositories, not the first one
             //FileRepository rt = (FileRepository) Upfile.Repositories[0];
             upfile = Upfile.Instance();
 
             PackageHandler pHandler = new PackageHandler();
 
-            foreach (DependencyDefinition packageDefinition in upfile.Dependencies)
+            DependencyDefinition[] dependencies = dependencySolver.SolveDependencies(upfile.Dependencies);
+            foreach (DependencyDefinition packageDefinition in dependencies)
             {
                 PackageRepo result = pHandler.FindPackageAndRepository(packageDefinition);
                 if (result.Repository != null)

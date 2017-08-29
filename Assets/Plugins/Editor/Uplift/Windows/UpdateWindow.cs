@@ -11,7 +11,7 @@ namespace Uplift.Windows
     {
 
        protected void OnGUI()
-        {
+       {
             titleContent.text = "Update Utility";
 
             UpliftManager manager = UpliftManager.Instance();

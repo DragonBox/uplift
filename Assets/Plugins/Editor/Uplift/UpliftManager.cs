@@ -60,6 +60,7 @@ namespace Uplift
             foreach (InstalledPackage package in upbring.InstalledPackage)
             {
                 package.Nuke();
+                upbring.RemovePackage(package);
             }
 
             //TODO: Remove file when Upbring properly removes everything
@@ -204,6 +205,8 @@ namespace Uplift
             Upbring upbring = Upbring.Instance();
             InstalledPackage package = upbring.GetInstalledPackage(packageName);
             package.Nuke();
+            upbring.RemovePackage(package);
+            upbring.SaveFile();
         }
     }
 }

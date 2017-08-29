@@ -184,5 +184,12 @@ namespace Uplift.Schemas
 
             return true;
         }
+
+        public void RemovePackage(InstalledPackage package)
+        {
+            if(!(InstalledPackage.Any(ip => ip == package))) return;
+            InstalledPackage[] temp = InstalledPackage.Where(ip => ip != package).ToArray();
+            InstalledPackage = temp;
+        }
     }
 }

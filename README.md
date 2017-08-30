@@ -24,20 +24,22 @@ Whether you create packages or consume packages, the first thing that you want t
 
 The only thing that you will want to do is specify an __Upfile.xml__ at the root of your project. To make things easier, you can generate a blank one using the menu: `Uplift > Generate Upfile`.
 
-Once you have created it, you will have to fill it in. The first thing that you will want to do is to head to the `Configuration` section. In it you can specify where will Uplift store and install the files the packages uses.
+__NOTE__: You can add and remove any kind of information from the Upfile at any point, just make sure you call `Uplift > Refresh Upfile` when you do so your modifications are taken into account!
 
-__Example:__ if you want to unpack the Examples outside of the Assets folder and rather to a folder called 'Examples', you can specify:
-```xml
-<ExamplesPath Location="Examples" />
-```
-
-Once you are satisfied with the configuration, you will need to specify where you want to get your packages from, in the `Repositories` section. You can put there a list of repositories from which you will fetch your packages.
+Once you have created the file, you will have to fill it in. The first thing that you will want to do is to specify where you want to get your packages from, in the `Repositories` section. You can put there a list of repositories from which you will fetch your packages.
 
 __Example:__ if you want to fetch packages from a folder on your computer, you can add the following line to the Repositories:
 ```xml
 <FileRepository Path="Path/To/Wherever/My/Packages/Are" />
 ```
 Replacing the value of the attribute `Path` by an actual path.
+
+Once all of your repositories have been specify, you can head to the `Configuration` section. In it you can specify where will Uplift store and install the files fetched from the `Repositories`.
+
+__Example:__ if you want to unpack the Examples outside of the Assets folder and rather to a folder called 'Examples', you can specify:
+```xml
+<ExamplesPath Location="Examples" />
+```
 
 You can then add all the dependencies of your project in the `Dependencies` section of the Upfile.
 

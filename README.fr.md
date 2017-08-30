@@ -24,24 +24,26 @@ Que vous souhaitiez créer des packages ou en utiliser, la première chose à fa
 
 La seule chose que vous allez avoir à faire est de spécifier un fichier __Upfile.xml__ à la racine de votre projet. Vous pouvez utiliser le menu `Upflit > Generate Upfile` pour générer un fichier type.
 
-Une fois que vous l'avez créé, il va vous falloir le remplir. La première étape va être de commencer la partie `Configuration` du fichier. Vous pouvez y spécifier l'endroit où vous souhaitez que Upfile installe les packages.
+__NOTE__: Vous pouvez ajouter ou retirer des informations du Upfile à n'importe quel moment, assurez vous néanmoins d'aller dans `Uplift > Refresh Upfile` si vous le faites afin de prendre en compte vos modifications!
+
+Une fois le fichier créé, il va vous falloir le remplir. La première étape va être d'indiquer depuis quelle(s) source(s) les packages seront obtenus, dans la section `Repositories` du fichier Upfile. Vous pouvez y indiquer une liste de répertoires depuis lesquels vous obtiendrez vos packages.
+
+__Exemple:__ si vous voulez obtenir des paquets depuis un dossier spécifique de votre machine, vous pouvez ajouter la ligne suivante au Repositories:
+```xml
+<FileRepository Path="Chemin/Vers/Mon/Dossier" />
+```
+En remplaçant la valeur de l'attribut `Path` par le chemin voulu.
+
+Après avoir renseigné les sources, vous pourrez éventuellement compléter la partie `Configuration` du fichier. Vous pouvez y spécifier l'endroit où vous souhaitez que Uplift installe les packages obtenus depuis les `Repertories`.
 
 __Exemple:__ si vous voulez dépaquetter les Exemples des packages que vous utilisez dans un dossier 'Exemples', plutôt que dans les Assets de Unity, vous pouvez indiquer:
 ```xml
 <ExamplesPath Location="Exemples" />
 ```
 
-Une fois que vous avez fini de configurer les différents chemins d'installation, vous allez devoir indiquer depuis quelle(s) source(s) les packages seront obtenus, dans la section `Repositories` du fichier Upfile. Vous pouvez y indiquer une liste de répertoires depuis lesquels vous obtiendrez vos packages.
-
-__Example:__ si vous voulez obtenir des paquets depuis un dossier spécifique de votre machine, vous pouvez ajouter la ligne suivante au Repositories:
-```xml
-<FileRepository Path="Chemin/Vers/Mon/Dossier" />
-```
-En remplaçant la valeur de l'attribut `Path` par le chemin voulu.
-
 Vous pouvez ensuite ajoutez tous les paquets dont votre projet dépend à la section `Dependencies` du Upfile.
 
-__Example:__ si vous voulez spécifier que votre projet dépend de la version `1.8` d'un package nommé `foo`, vous pouvez ajouter la ligne suivante au Dependencies:
+__Exemple:__ si vous voulez spécifier que votre projet dépend de la version `1.8` d'un package nommé `foo`, vous pouvez ajouter la ligne suivante au Dependencies:
 ```xml
 <Package Name="foo" Version="1.8" />
 ```

@@ -28,7 +28,11 @@ namespace Uplift.Schemas
         internal static void InitializeInstance()
         {
             instance = null;
-            if (!CheckForUpfile()) return;
+            if (!CheckForUpfile())
+            {
+                Debug.Log("No Upfile in this project");
+                return;
+            }
 
             instance = LoadXml();
             instance.CheckUnityVersion();
@@ -69,6 +73,7 @@ namespace Uplift.Schemas
                     }
                 }
 
+                Debug.Log("Upfile was successfully loaded");
                 return upfile;
             }
         }
@@ -88,11 +93,7 @@ namespace Uplift.Schemas
         internal virtual void LoadOverrides(string path)
         {
             // If we don't have override file, ignore
-            if (!File.Exists(path))
-            {
-                Debug.Log("No override file");
-                return;
-            }
+            if (!File.Exists(path)) return;
 
             XmlSerializer serializer = new XmlSerializer(typeof(UpfileOverride));
 
@@ -125,7 +126,7 @@ namespace Uplift.Schemas
                 }
                 catch (InvalidOperationException)
                 {
-                    Debug.Log("Upfile.xml Global Override is not well formed");
+                    Debug.LogError(string.Format("Global Override file at {0} is not well formed", path));
                 }
             }
         }
@@ -150,10 +151,6 @@ namespace Uplift.Schemas
             {
                 Debug.LogError(string.Format("Upfile.xml Unity Version ({0}) targets a higher version of Unity than you are currently using ({1})",
                     UnityVersion, environmentVersion));
-            }
-            else
-            {
-                Debug.Log("Upfile: Version check successful");
             }
         }
 

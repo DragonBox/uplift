@@ -86,7 +86,7 @@ namespace Uplift.Common
 
                 if (!File.Exists(element+".meta"))
                 {
-                    Debug.LogWarning("File " + element + " does not have an associated meta file");
+                    // Do nothing right now, but we may want to not support this in the future
                 }
                 if (Directory.Exists(element))
                 {

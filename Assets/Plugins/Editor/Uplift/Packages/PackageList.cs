@@ -71,7 +71,6 @@ namespace Uplift.Packages
                 Packages.Add(pr);
 
             }
-            Debug.Log("Loaded packages, count: " + Packages.Count.ToString());
         }
 
         public PackageRepo[] GetAllPackages()

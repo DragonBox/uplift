@@ -14,5 +14,8 @@
     <GizmoPath          Location="Assets/Gizmos"            />
   </Configuration>
   <Dependencies>
+    <Package Name="TestPackage.MetaFilesPackageTest" Version="0.0.1" />
+    <Package Name="TestPackage.NoMetaFilesPackageTest" Version="0.0.1" />
+    <Package Name="TestPackage.UnityPackageTest" Version="0.0.1" />
   </Dependencies>
 </Upfile>

@@ -181,9 +181,38 @@ namespace Uplift.Schemas {
                     continue;
                 }
                 // assume unityPackage doesn't contain an upset file for now. In the future we can support it
-                Upset upset = InferUpsetFromUnityPackage(FileName);
+                Upset upset = LoadUpsetOrInfer(FileName);
                 if (upset == null) continue;
                 upsetList.Add(upset);
+            }
+        }
+
+        private static Upset LoadUpsetOrInfer(string packagePath)
+        {
+            string upsetPath = packagePath.Replace(".unitypackage", ".Upset.xml");
+
+            if (File.Exists(upsetPath))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(Upset));
+
+                using (FileStream file = new FileStream(upsetPath, FileMode.Open))
+                {
+                    Upset upset = serializer.Deserialize(file) as Upset;
+                    if (upset.Configuration != null && upset.Configuration.Length != 0)
+                    {
+                        foreach (InstallSpecPath spec in upset.Configuration)
+                        {
+                            spec.Path = FileSystemUtil.MakePathOSFriendly(spec.Path);
+                        }
+                    }
+                    upset.MetaInformation.dirName = packagePath.Split(System.IO.Path.DirectorySeparatorChar).Last();
+
+                    return upset;
+                }
+            }
+            else
+            {
+                return InferUpsetFromUnityPackage(packagePath);
             }
         }
 

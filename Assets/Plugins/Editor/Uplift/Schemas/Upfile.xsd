@@ -40,7 +40,6 @@
       <xs:element name="BaseInstallPath" type="PathConfiguration" />
       <xs:element name="MediaPath" type="PathConfiguration" />
       <xs:element name="GizmoPath" type="PathConfiguration"/>
-
       <xs:element name="PluginPath" type="PathConfiguration"/>
       <xs:element name="EditorPluginPath" type="PathConfiguration"/>
 

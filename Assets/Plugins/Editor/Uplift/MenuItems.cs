@@ -110,5 +110,13 @@ namespace Uplift
             UpliftManager.Instance().NukeAllPackages();
             AssetDatabase.Refresh();
         }
+
+        [MenuItem("Uplift/Export Package", false, 250)]
+        private static void ExportPackageWindow()
+        {
+            ExporterWindow window = EditorWindow.GetWindow(typeof(ExporterWindow), true) as ExporterWindow;
+            window.Init();
+            window.Show();
+        }
     }
 }

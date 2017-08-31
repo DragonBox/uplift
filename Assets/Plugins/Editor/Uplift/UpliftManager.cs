@@ -31,10 +31,12 @@ namespace Uplift
         {
             instance = new UpliftManager();
             instance.upfile = Upfile.Instance();
+            instance.versionParser = new VersionParser();
         }
 
         // --- CLASS DECLARATION ---
         protected Upfile upfile;
+        protected VersionParser versionParser;
 
         public void InstallDependencies()
         {
@@ -45,20 +47,27 @@ namespace Uplift
 
         private void CheckVersionConflict(ref DependencyNode existing, DependencyNode compared)
         {
-            if (existing.Version != compared.Version)
-                UnityEngine.Debug.LogWarning(string.Format("Existing dependency for {0} is {1}, but another package depends on {2}", compared.Name, existing.Version, compared.Version));
+            if (versionParser.GreaterThan(compared.Version, existing.Version))
+            {
+                UnityEngine.Debug.LogWarning(string.Format("Existing dependency for {0} is version {1}, but another package depends on a greater version {2}. Upgrading dependency definition.", compared.Name, existing.Version, compared.Version));
+                existing.Version = compared.Version;
+            }
+            else
+            {
+                UnityEngine.Debug.Log(string.Format("Existing dependency for {0} is version {1}, but another package depends on a lower version {2}. Ignoring the latter.", compared.Name, existing.Version, compared.Version));
+            }
         }
 
         public void InstallDependencies(IDependencySolver dependencySolver)
         {            
             //FIXME: We should check for all repositories, not the first one
             //FileRepository rt = (FileRepository) Upfile.Repositories[0];
-            PackageHandler pHandler = new PackageHandler();
+            PackageList pList = PackageList.Instance();
 
             DependencyDefinition[] dependencies = dependencySolver.SolveDependencies(upfile.Dependencies);
             foreach (DependencyDefinition packageDefinition in dependencies)
             {
-                PackageRepo result = pHandler.FindPackageAndRepository(packageDefinition);
+                PackageRepo result = pList.FindPackageAndRepository(packageDefinition);
                 if (result.Repository != null)
                 {
                     using (TemporaryDirectory td = result.Repository.DownloadPackage(result.Package))

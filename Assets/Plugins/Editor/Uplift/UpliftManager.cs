@@ -4,6 +4,7 @@ using Uplift.Common;
 using Uplift.Packages;
 using Uplift.Schemas;
 using Uplift.DependencyResolution;
+using System.Text.RegularExpressions;
 
 namespace Uplift
 {
@@ -197,8 +198,24 @@ namespace Uplift
                 upbring.AddLocation(package, type, Path.Combine(destination, file));
                 return;
             }
-            MetaFile meta = MetaFile.FromFile(metaPath);
-            upbring.AddGUID(package, type, meta.Guid);
+            string guid = LoadGUID(metaPath);
+            upbring.AddGUID(package, type, guid);
+        }
+
+        private string LoadGUID(string path)
+        {
+            const string guidMatcherRegexp = @"guid: (?<guid>\w+)";
+            using (StreamReader sr = new StreamReader(path))
+            {
+                string line;
+                while((line = sr.ReadLine()) != null)
+                {
+                    Match matchObject = Regex.Match(line, guidMatcherRegexp);
+                    if (matchObject.Success) return matchObject.Groups["guid"].ToString();
+                }
+            }
+
+            throw new InvalidDataException(string.Format("File {0} does not contain guid information", path));
         }
 
         public void UpdatePackage(Upset package, TemporaryDirectory td)

@@ -29,6 +29,7 @@ namespace Uplift
         internal static void InitializeInstance()
         {
             instance = new UpliftManager();
+            instance.upfile = Upfile.Instance();
         }
 
         // --- CLASS DECLARATION ---
@@ -51,8 +52,6 @@ namespace Uplift
         {            
             //FIXME: We should check for all repositories, not the first one
             //FileRepository rt = (FileRepository) Upfile.Repositories[0];
-            upfile = Upfile.Instance();
-
             PackageHandler pHandler = new PackageHandler();
 
             DependencyDefinition[] dependencies = dependencySolver.SolveDependencies(upfile.Dependencies);
@@ -204,11 +203,7 @@ namespace Uplift
 
         public void UpdatePackage(Upset package, TemporaryDirectory td)
         {
-            Upbring upbring = Upbring.Instance();
-
-            // Nuking previous version
-            InstalledPackage installedPackage = upbring.GetInstalledPackage(package.PackageName);
-            installedPackage.Nuke();
+            NukePackage(package.PackageName);
 
             DependencyDefinition definition = Upfile.Instance().Dependencies.First(dep => dep.Name == package.PackageName);
             InstallPackage(package, td, definition);

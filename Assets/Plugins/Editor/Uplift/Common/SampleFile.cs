@@ -37,11 +37,11 @@ namespace Uplift.Common
     -->
 
     <!-- Path where downloaded, raw, packages are unpacked -->
-    <RepositoryPath  Location=""UPackages""                     />
+    <RepositoryPath Location=""UPackages""                     />
     <!-- Path where documentation are unpacked             -->
-    <DocsPath Location = ""UPackages/Docs""                     />
-    <!--Path where examples are unpacked                  -->
-    <ExamplesPath Location = ""UPackages/Examples""             />
+    <DocsPath Location=""UPackages/Docs""                     />
+    <!-- Path where examples are unpacked                  -->
+    <ExamplesPath Location=""UPackages/Examples""             />
 
     <!--
         Project configuration part.
@@ -51,30 +51,30 @@ namespace Uplift.Common
     -->
 
     <!-- Path where ""usable"" files are unpacked                               -->
-    <BaseInstallPath Location = ""Assets/UPackages""            />
-    <!--Path where media  files are unpacked                                 -->
-    <MediaPath Location = ""Assets/UPackages""                  />
-    <!--Path where plugin files are unpacked                                 -->
-    <PluginPath Location = ""Assets/Plugins""                   />
+    <BaseInstallPath Location=""Assets/UPackages""            />
+    <!-- Path where media files are unpacked                                 -->
+    <MediaPath Location=""Assets/UPackages""                  />
+    <!-- Path where plugin files are unpacked                                 -->
+    <PluginPath Location=""Assets/Plugins""                   />
 
   </Configuration>
 
-  <!--SAMPLE REPOSITORIES BLOCK
+  <!-- SAMPLE REPOSITORIES BLOCK
 
   <Repositories>
-    <FileRepository Path = ""Path/To/Some/File/Repository""/>
-    <WebRepository  Url= ""Url/To/Some/Web/Repository""/>
-    <GitRepository  Url= ""Url/To/Some/Git/Repository""/>
+    <FileRepository Path=""Path/To/Some/File/Repository""/>
+    <WebRepository  Url=""Url/To/Some/Web/Repository""/>
+    <GitRepository  Url=""Url/To/Some/Git/Repository""/>
   </Repositories>
 
   -->
 
-  <!--SAMPLE DEPENDENCIES BLOCK
+  <!-- SAMPLE DEPENDENCIES BLOCK
 
   <Dependencies>
-    <Package Name = ""SomePackage"" Repository= ""Optional.Repository"" Version= ""Optional.Version.Spec""/>
-    <Package Name= ""PackageA"">
-      <MajorVersionMin> 3 </MajorVersionMin>
+    <Package Name=""SomePackage"" Repository=""Optional.Repository"" Version=""Optional.Version.Spec""/>
+    <Package Name=""PackageA"">
+      <MajorVersionMin>3</MajorVersionMin>
     </Package>
   </Dependencies>
 

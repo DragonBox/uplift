@@ -22,7 +22,7 @@ task :build do
         managed_path = File.join(unity.path, 'Editor', 'Data', 'Managed')
         mcs_exe = File.join(unity.path, 'Editor', 'Data', 'MonoBleedingEdge', 'bin', 'mcs')
     else
-        return
+        raise RuntimeError, "This task does not work on Linux"
     end
     
     references = [

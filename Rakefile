@@ -17,24 +17,29 @@ task :build do
     # This task is designed to build DLL with Unity version 5.6+
     if U3d::Helper.mac?
         managed_path = File.join(unity.path, 'Contents', 'Managed')
-        mcs_exe = File.join(unity.path, 'Contents', 'MonoBleedingEdge', 'bin', 'mcs')
+        mcs_exe = File.join(unity.path, 'Contents', 'MonoBleedingEdge', 'bin', 'mcs').shellescape
     elsif U3d::Helper.windows?
         managed_path = File.join(unity.path, 'Editor', 'Data', 'Managed')
-        mcs_exe = File.join(unity.path, 'Editor', 'Data', 'MonoBleedingEdge', 'bin', 'mcs')
+        mcs_exe = "\"#{File.join(unity.path, 'Editor', 'Data', 'MonoBleedingEdge', 'bin', 'mcs')}\""
     else
         raise RuntimeError, "This task does not work on Linux"
     end
-    
+
     references = [
         File.join(managed_path, 'UnityEditor.dll'),
         File.join(managed_path, 'UnityEngine.dll'),
         File.join('Assets', 'Plugins', 'Editor', 'SharpCompress.dll')
     ]
 
-    reference_string = references.map { |dep| dep.shellescape }.join(',')
+    if U3d::Helper.mac?
+        reference_string = references.map { |dep| dep.shellescape }.join(',')
+    elsif U3d::Helper.windows?
+        reference_string = references.map { |dep| / / =~ dep ? "\"#{dep}\"" : dep }.join(',')
+    end
+
     files = Dir[ File.join('Assets', 'Plugins', 'Editor', 'Uplift', '**', '*.cs') ].reject { |p| File.directory? p }.reject { |p| /Testing/ =~ p }.join(' ')
     
     Dir.mkdir 'target' unless Dir.exist? 'target'
 
-    sh "#{mcs_exe.shellescape} -r:#{reference_string} -target:library -sdk:2 -out:target/Uplift.dll #{files}"
+    sh "#{mcs_exe} -r:#{reference_string} -target:library -sdk:2 -out:target/Uplift.dll #{files}"
 end

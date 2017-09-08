@@ -36,5 +36,9 @@ namespace Uplift.Testing.Helpers
                 Directory.SetCurrentDirectory(currentPath);
             }
         }
+
+        public static string PathCombine(params string[] values) {
+            return string.Join (Path.DirectorySeparatorChar.ToString (), values);
+        }
     }
 }

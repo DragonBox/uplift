@@ -75,12 +75,7 @@ namespace Uplift.Testing.Unit
         [Test]
         public void LoadXmlPresent()
         {
-            string upfilePath = string.Join(Path.DirectorySeparatorChar.ToString(), new string[]
-            {
-                "TestData",
-                "UpfileTest",
-                "Upfile.xml"
-            });
+            string upfilePath = Helper.PathCombine("TestData", "UpfileTest", "Upfile.xml");
 
             Upfile parsed = Upfile.LoadXml(upfilePath);
             Assert.IsTrue(parsed.Dependencies.Any(dep => string.Equals(dep.Name, "test_package")), "No correct dependency found");
@@ -90,13 +85,7 @@ namespace Uplift.Testing.Unit
         [Test]
         public void LoadXmlAbsent()
         {
-            string upfilePath = string.Join(Path.DirectorySeparatorChar.ToString(), new string[]
-            {
-                "TestData",
-                "UpfileTest",
-                "NoUpfileInIt",
-                "Upfile.xml"
-            });
+            string upfilePath = Helper.PathCombine("TestData", "UpfileTest", "NoUpfileInIt", "Upfile.xml");
 
             bool caught = false;
             try
@@ -113,18 +102,8 @@ namespace Uplift.Testing.Unit
         [Test]
         public void LoadPresentOverrideTest()
         {
-            string upfilePath = string.Join(Path.DirectorySeparatorChar.ToString(), new string[]
-            {
-                "TestData",
-                "UpfileTest",
-                "Upfile.xml"
-            });
-            string upfileOverridePath = string.Join(Path.DirectorySeparatorChar.ToString(), new string[]
-            {
-                "TestData",
-                "UpfileTest",
-                "UpfileOverride.xml"
-            });
+            string upfilePath = Helper.PathCombine ("TestData", "UpfileTest", "Upfile.xml");
+            string upfileOverridePath = Helper.PathCombine ("TestData", "UpfileTest", "UpfileOverride.xml");
             Upfile upfile = Upfile.LoadXml(upfilePath);
             upfile.LoadOverrides(upfileOverridePath);
 
@@ -135,19 +114,8 @@ namespace Uplift.Testing.Unit
         [Test]
         public void LoadAbsentOverrideTest()
         {
-            string upfilePath = string.Join(Path.DirectorySeparatorChar.ToString(), new string[]
-            {
-                "TestData",
-                "UpfileTest",
-                "Upfile.xml"
-            });
-            string upfileOverridePath = string.Join(Path.DirectorySeparatorChar.ToString(), new string[]
-            {
-                "TestData",
-                "UpfileTest",
-                "NoUpfileInIt",
-                "UpfileOverride.xml"
-            });
+            string upfilePath = Helper.PathCombine ("TestData", "UpfileTest", "Upfile.xml");
+            string upfileOverridePath = Helper.PathCombine ("TestData", "UpfileTest", "NoUpfileInIt", "UpfileOverride.xml");
             Upfile upfile = Upfile.LoadXml(upfilePath);
             upfile.LoadOverrides(upfileOverridePath);
 

@@ -42,7 +42,7 @@ namespace Uplift.Testing.Integration
                 catch (FileNotFoundException)
                 {
                     Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
-                    Assert.IsTrue(false, "The test could not run correctly. See console message.");
+                    Assert.Fail("The test could not run correctly. See console message.");
                 }
                 upfile = UpfileExposer.TestingInstance();
                 manager = UpliftManager.Instance();

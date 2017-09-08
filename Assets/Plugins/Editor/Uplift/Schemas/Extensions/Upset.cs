@@ -11,14 +11,14 @@ namespace Uplift.Schemas
 
         public Meta MetaInformation;
 
-        // int has 32 bits
-        // Sign  | Major      | Minor   | Build   | Revision
-        // x     | xxxxxxxxxx | xxxxxxx | xxxxxxx | xxxxxxx
-        // 1 bit | 10 bits    | 7 bits  | 7 bits  | 7 bits
         public int PackageVersionAsNumber()
         {
-            VersionStruct version = VersionParser.ParseIncompleteVersion(PackageVersion);
-            return 0;
+            VersionStruct version =  VersionParser.ParseVersion(PackageVersion);
+            int result = version.Major * 1000000;
+            if (version.Minor != null) result += ((int)version.Minor) * 1000;
+            if (version.Patch != null) result += (int)version.Patch;
+            return result;
         }
+
     }
 }

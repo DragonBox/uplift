@@ -1,238 +1,124 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using UnityEngine;
 using Uplift.Schemas;
 
 namespace Uplift.Common
 {
     public class VersionParser
     {
-        public enum Comparison { NA = 0, LOWER = 1, SAME = 2, HIGHER = 3 };
-        public enum UnityRelease { ALPHA = 0, BETA = 1, RELEASE = 2, PATCH = 3 };
-        readonly static string[] releases = { "a", "b", "f", "p", "xa", "xb", "xf", "xp" };
-
-        public struct CompareResult
+        public static IVersionRequirement ParseRequirement(string requirement)
         {
-            public Comparison Major, Minor, Build, Release, Revision;
-        }
-
-        public struct VersionStruct
-        {
-            public int Major, Minor, Build, Revision;
-            public UnityRelease Release;
-        }
-
-        public bool GreaterThan(string compared, string existing)
-        {
-            return IsComparisonGreater(CompareVersions(compared, existing));
-        }
-
-        public bool GreaterThan(Upset package, DependencyDefinition definition)
-        {
-            return IsComparisonGreater(CompareVersions(package, definition));
-        }
-
-        internal bool IsComparisonGreater(CompareResult compareResult)
-        {
-            // Package matches version definition if
-            // 1. Major version HIGHER, or
-            // 2. Major version SAME AND Minor version HIGHER, or
-            // 3. Major version SAME, Minor version SAME, Build version HIGHER or SAME
-            return (compareResult.Major == Comparison.HIGHER) ||
-                (compareResult.Major == Comparison.SAME && compareResult.Minor == Comparison.HIGHER) ||
-                (compareResult.Major == Comparison.SAME && compareResult.Minor == Comparison.SAME && compareResult.Build == Comparison.HIGHER) ||
-                (compareResult.Major == Comparison.SAME && compareResult.Minor == Comparison.SAME && compareResult.Build == Comparison.SAME &&
-                    compareResult.Release == Comparison.HIGHER) ||
-                (compareResult.Major == Comparison.SAME && compareResult.Minor == Comparison.SAME && compareResult.Build == Comparison.SAME &&
-                    compareResult.Release == Comparison.SAME && compareResult.Revision >= Comparison.SAME);
-        }
-
-        public CompareResult CompareVersions(VersionStruct packageVersion, VersionStruct dependencyVersion)
-        {
-            CompareResult result = new CompareResult();
-
-            // Major version comparison
-            if (packageVersion.Major < dependencyVersion.Major)
+            if (string.IsNullOrEmpty(requirement))
             {
-                result.Major = Comparison.LOWER;
-                return result;
+                return new NoRequirement();
             }
-            else if (packageVersion.Major > dependencyVersion.Major)
+            else if (requirement.EndsWith("!"))
             {
-                result.Major = Comparison.HIGHER;
-                return result;
+                return new ExactVersionRequirement(requirement.TrimEnd('!'));
             }
-            else if (packageVersion.Major == dependencyVersion.Major)
+            else if (requirement.EndsWith("+"))
             {
-                result.Major = Comparison.SAME;
+                return new MinimalVersionRequirement(requirement.TrimEnd('+'));
+            }
+            else if (requirement.EndsWith(".*"))
+            {
+                return new BoundedVersionRequirement(requirement.TrimEnd('*').TrimEnd('.'));
             }
             else
             {
-                result.Major = Comparison.NA;
-                return result;
+                return new LoseVersionRequirement(requirement);
             }
+        }
 
-            // Minor version comparison
-            if (packageVersion.Minor < dependencyVersion.Minor)
+        public static VersionStruct ParseVersion(string version)
+        {
+            const string matcher = @"(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)";
+            Match matchObject = Regex.Match(version, matcher);
+            VersionStruct result = new VersionStruct
             {
-                result.Minor = Comparison.LOWER;
-                return result;
-            }
-            else if (packageVersion.Minor > dependencyVersion.Minor)
+                Major = 0,
+                Minor = 0,
+                Patch = 0,
+                Optional = null
+            };
+            try
             {
-                result.Minor = Comparison.HIGHER;
-                return result;
+                result.Major = int.Parse(matchObject.Groups["major"].ToString());
+                result.Minor = int.Parse(matchObject.Groups["minor"].ToString());
+                result.Patch = int.Parse(matchObject.Groups["patch"].ToString());
             }
-            else if (packageVersion.Minor == dependencyVersion.Minor)
+            catch (FormatException e)
             {
-                result.Minor = Comparison.SAME;
+                Debug.LogWarning(string.Format("Version {0} does not respect the MAJOR.MINOR.PATCH structure ({1}).", version, e));
+                return ParseIncompleteVersion(version);
             }
-            else
-            {
-                result.Minor = Comparison.NA;
-                return result;
-            }
+            return result;
+        }
 
-            // Build version comparison
-            if (packageVersion.Build < dependencyVersion.Build)
+        public static VersionStruct ParseIncompleteVersion(string version)
+        {
+            VersionStruct result = new VersionStruct
             {
-                result.Build = Comparison.LOWER;
-                return result;
-            }
-            else if (packageVersion.Build > dependencyVersion.Build)
-            {
-                result.Build = Comparison.HIGHER;
-                return result;
-            }
-            else if (packageVersion.Build == dependencyVersion.Build)
-            {
-                result.Build = Comparison.SAME;
-            }
-            else
-            {
-                result.Build = Comparison.NA;
-                return result;
-            }
+                Major = 0,
+                Minor = null,
+                Patch = null,
+                Optional = null
+            };
 
-            // Release strength comparison
-            if (packageVersion.Release < dependencyVersion.Release)
+            string rest = "";
+            result.Major = ParseBeginning(version, ref rest);
+            if(rest != "")
             {
-                result.Release = Comparison.LOWER;
-                return result;
-            }
-            else if (packageVersion.Release > dependencyVersion.Release)
-            {
-                result.Release = Comparison.HIGHER;
-                return result;
-            }
-            else if (packageVersion.Release == dependencyVersion.Release)
-            {
-                result.Release = Comparison.SAME;
-            }
-            else
-            {
-                result.Release = Comparison.NA;
-                return result;
-            }
-
-            // Revision version comparison
-            if (packageVersion.Revision < dependencyVersion.Revision)
-            {
-                result.Revision = Comparison.LOWER;
-                return result;
-            }
-            else if (packageVersion.Revision > dependencyVersion.Revision)
-            {
-                result.Revision = Comparison.HIGHER;
-                return result;
-            }
-            else if (packageVersion.Revision == dependencyVersion.Revision)
-            {
-                result.Revision = Comparison.SAME;
-            }
-            else
-            {
-                result.Revision = Comparison.NA;
-                return result;
+                string temp = rest;
+                result.Minor = ParseBeginning(temp, ref rest);
+                if(rest != "")
+                {
+                    temp = rest;
+                    result.Patch = ParseBeginning(temp, ref rest);
+                    if (rest != "")
+                    {
+                        temp = rest;
+                        result.Optional = ParseBeginning(temp, ref rest);
+                    }
+                }
             }
 
             return result;
         }
 
-        public CompareResult CompareVersions(Upset package, DependencyDefinition dependencyDefinition)
+        private static int ParseBeginning(string input, ref string rest)
         {
-            VersionStruct packageVersion = ParseVersion(package);
-            VersionStruct dependencyVersion = ParseVersion(dependencyDefinition);
-
-            return CompareVersions(packageVersion, dependencyVersion);
+            const string matcher = @"(?<item>\d+)\.?(?<identifier>[a-zA-Z]+)?\.?(?<rest>\w+)?";
+            Match matchObject = Regex.Match(input, matcher);
+            int item = 0;
+            try { item = int.Parse(matchObject.Groups["item"].ToString()); }
+            catch (FormatException) { return 0; }
+            try
+            {
+                string identifier = matchObject.Groups["identifier"].ToString();
+                if (!string.IsNullOrEmpty(identifier)) Debug.LogWarning(string.Format("Uplift does not support non-numeric identifiers such as {0}", identifier));
+            }
+            catch (FormatException) { }
+            try
+            { rest = matchObject.Groups["rest"].ToString(); }
+            catch (FormatException) { }
+            return item;
         }
 
-        public CompareResult CompareVersions(string a, string b)
+        public static VersionStruct ParseUnityVersion(string version)
         {
-            VersionStruct versionA = ParseVersion(a);
-            VersionStruct versionB = ParseVersion(b);
-
-            return CompareVersions(versionA, versionB);
-        }
-
-        public VersionStruct ParseVersion(DependencyDefinition dependencyDefinition)
-        {
-            return ParseVersion(dependencyDefinition.Version);
-        }
-
-        public VersionStruct ParseVersion(Upset package)
-        {
-            return ParseVersion(package.PackageVersion);
-        }
-
-        public static VersionStruct ParseVersion(string versionString)
-        {
-            const string versionMatcherRegexp = @"(?<major>\d+)(\.(?<minor>\d+))?(\.(?<build>\d+))?(((?<release>\w)|\.)(?<revision>\d+))?";
-
-            Match matchObject = Regex.Match(versionString, versionMatcherRegexp);
-
+            const string matcher = @"(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\w(?<build>\d+)";
+            Match matchObject = Regex.Match(version, matcher);
             VersionStruct result = new VersionStruct
             {
-                Major = ExtractVersion(matchObject, "major"),
-                Minor = ExtractVersion(matchObject, "minor"),
-                Build = ExtractVersion(matchObject, "build"),
-                Release = ExtractRelease(matchObject),
-                Revision = ExtractVersion(matchObject, "revision")
+                Major = int.Parse(matchObject.Groups["major"].ToString()),
+                Minor = int.Parse(matchObject.Groups["minor"].ToString()),
+                Patch = int.Parse(matchObject.Groups["patch"].ToString()),
+                Optional = int.Parse(matchObject.Groups["build"].ToString())
             };
 
             return result;
-        }
-
-        protected static int ExtractVersion(Match match, string groupName)
-        {
-            try
-            {
-                return int.Parse(match.Groups[groupName].ToString());
-            }
-            catch (FormatException)
-            {
-                return 0;
-            }
-        }
-
-        protected static UnityRelease ExtractRelease(Match match)
-        {
-            try
-            {
-                string release = match.Groups["release"].ToString();
-                for(int i = 0; i < releases.Length; i++)
-                {
-                    if(releases[i] == release)
-                    {
-                        return (UnityRelease)(i % 4);
-                    }
-                }
-
-                return UnityRelease.ALPHA;
-            }
-            catch (FormatException)
-            {
-                return UnityRelease.ALPHA;
-            }
         }
     }
 }

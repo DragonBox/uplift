@@ -45,8 +45,9 @@ namespace Uplift.DependencyResolution
                 result[i] = new DependencyDefinition()
                 {
                     Name = current.Name,
-                    Version = current.Version,
-                    Repository = current.Repository
+                    Version = current.Requirement.ToString(),
+                    Repository = current.Repository,
+                    Requirement = current.Requirement
                 };
             }
 

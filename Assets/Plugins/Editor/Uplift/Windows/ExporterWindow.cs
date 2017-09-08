@@ -67,9 +67,7 @@ namespace Uplift.Windows
                     // Create Upset file for the package
                     Upset file = new Upset()
                     {
-                        UnityVersion = new VersionSpec() {
-                            Item = Application.unityVersion
-                        },
+                        UnityVersion = Application.unityVersion,
                         PackageName = pInfo.name,
                         PackageLicense = pInfo.license,
                         PackageVersion = pInfo.version

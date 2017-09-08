@@ -31,31 +31,32 @@ namespace Uplift
         {
             instance = new UpliftManager();
             instance.upfile = Upfile.Instance();
-            instance.versionParser = new VersionParser();
         }
 
         // --- CLASS DECLARATION ---
         protected Upfile upfile;
-        protected VersionParser versionParser;
 
         public void InstallDependencies()
         {
             TransitiveDependencySolver dependencySolver = new TransitiveDependencySolver();
-            dependencySolver.CheckConflict += CheckVersionConflict;
+            dependencySolver.CheckConflict += SolveVersionConflict;
             InstallDependencies(dependencySolver);
         }
 
-        private void CheckVersionConflict(ref DependencyNode existing, DependencyNode compared)
+        private void SolveVersionConflict(ref DependencyNode existing, DependencyNode compared)
         {
-            if (versionParser.GreaterThan(compared.Version, existing.Version))
+            IVersionRequirement restricted;
+            try
             {
-                UnityEngine.Debug.LogWarning(string.Format("Existing dependency for {0} is version {1}, but another package depends on a greater version {2}. Upgrading dependency definition.", compared.Name, existing.Version, compared.Version));
-                existing.Version = compared.Version;
+                restricted = existing.Requirement.RestrictTo(compared.Requirement);
             }
-            else
+            catch (IncompatibleRequirementException e)
             {
-                UnityEngine.Debug.Log(string.Format("Existing dependency for {0} is version {1}, but another package depends on a lower version {2}. Ignoring the latter.", compared.Name, existing.Version, compared.Version));
+                UnityEngine.Debug.Log("Unsolvable version conflict in the dependency graph");
+                throw e;
             }
+
+            existing.Requirement = restricted;
         }
 
         public void InstallDependencies(IDependencySolver dependencySolver)

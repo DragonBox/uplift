@@ -6,7 +6,7 @@
   <xs:element name="Upset" type="Upset"/>
   <xs:complexType name="Upset">
     <xs:sequence>
-      <xs:element type="VersionSpec" name="UnityVersion" />
+      <xs:element type="xs:string" name="UnityVersion" />
       <xs:element type="xs:string" name="PackageName" />
       <xs:element type="xs:string" name="PackageVersion" />
       <xs:element type="xs:string" name="PackageLicense" />

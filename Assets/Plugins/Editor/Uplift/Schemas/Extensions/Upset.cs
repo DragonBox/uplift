@@ -17,11 +17,8 @@ namespace Uplift.Schemas
         // 1 bit | 10 bits    | 7 bits  | 7 bits  | 7 bits
         public int PackageVersionAsNumber()
         {
-            VersionParser.VersionStruct version = VersionParser.ParseVersion(PackageVersion);
-            return ((version.Major & 2047) << 21) +
-                ((version.Minor & 255) << 14) +
-                ((version.Build & 255) << 7) +
-                (version.Revision & 255);
+            VersionStruct version = VersionParser.ParseIncompleteVersion(PackageVersion);
+            return 0;
         }
     }
 }

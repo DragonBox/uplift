@@ -234,9 +234,7 @@ namespace Uplift.Schemas {
             upset.PackageLicense = PackageLicense;
             upset.PackageName = PackageName;
             upset.PackageVersion = PackageVersion;
-            upset.UnityVersion = new VersionSpec();
-            upset.UnityVersion.ItemElementName = ItemChoiceType.MinVersion;
-            upset.UnityVersion.Item = MinUnityVersion;
+            upset.UnityVersion = MinUnityVersion;
             upset.MetaInformation.dirName = FileName.Split(System.IO.Path.DirectorySeparatorChar).Last();
 
             // we need to move things around here

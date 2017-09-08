@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using Uplift.Schemas;
+using Uplift.Common;
 
 namespace Uplift.DependencyResolution
 {
     public class DependencyNode
     {
-        protected string version;
+        protected IVersionRequirement requirement;
         protected string repository;
         protected string name;
         protected List<DependencyNode> dependencies;
@@ -17,7 +17,7 @@ namespace Uplift.DependencyResolution
         public DependencyNode(string name, string version, string repository, List<DependencyNode> dependencies)
         {
             this.name = name;
-            this.version = version;
+            this.requirement = VersionParser.ParseRequirement(version);
             this.repository = repository;
             this.dependencies = dependencies;
 
@@ -25,15 +25,15 @@ namespace Uplift.DependencyResolution
             lowlink = -1;
         }
 
-        public string Version
+        public IVersionRequirement Requirement
         {
             get
             {
-                return version;
+                return requirement;
             }
             set
             {
-                version = value;
+                requirement = value;
             }
         }
 

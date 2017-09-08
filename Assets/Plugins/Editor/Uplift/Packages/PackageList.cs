@@ -111,7 +111,7 @@ namespace Uplift.Packages
             }
             else
             {
-                Debug.LogWarning("Package: " + packageDefinition.Name + " not found");
+                Debug.LogWarning("No package " + packageDefinition.Name + " matching requirements was found");
                 return blankResult;
             }
         }
@@ -122,10 +122,10 @@ namespace Uplift.Packages
             return (
                 // From All the available packages
                 from packageRepo in GetAllPackages()
-                // Select the ones that match the definition name
+                    // Select the ones that match the definition name
                 where packageRepo.Package.PackageName == packageDefinition.Name
                 // And the version definition
-                where packageDefinition.Version == null ? true : versionParser.GreaterThan(packageRepo.Package, packageDefinition)
+                where packageDefinition.Requirement.IsMetBy(packageRepo.Package.PackageVersion)
                 // And use found package
                 select packageRepo
             // As an array

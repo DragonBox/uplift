@@ -33,11 +33,6 @@
   </xs:complexType>
   <xs:complexType name="Configuration">
     <xs:sequence>
-      <!--
-          <SetupPath Type="[InstallSpecType]" Location="[LocalPath]" Default="[]">
-      -->
-
-
       <xs:element name="RepositoryPath" type="PathConfiguration" />
       <xs:element name="DocsPath" type="PathConfiguration"/>
       <xs:element name="ExamplesPath" type="PathConfiguration" />

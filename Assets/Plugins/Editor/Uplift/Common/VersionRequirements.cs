@@ -273,7 +273,7 @@ namespace Uplift.Common
     #region Exception
     public class IncompatibleRequirementException : Exception
     {
-        public IncompatibleRequirementException() : base() { }
+        public IncompatibleRequirementException() : base("Incompatible requirements were identified") { }
         public IncompatibleRequirementException(string message) : base(message) { }
         public IncompatibleRequirementException(IVersionRequirement a, IVersionRequirement b)
             : this(string.Format("Requirements {0} and {1} are not compatible", a.ToString(), b.ToString())) { }

@@ -148,7 +148,7 @@ namespace Uplift.Schemas
             string environmentVersion = Application.unityVersion;
             if(VersionParser.ParseUnityVersion(environmentVersion) < VersionParser.ParseUnityVersion(UnityVersion))
             {
-                Debug.LogError(string.Format("Uplift: Upfile.xml Unity Version ({0}) doesn't match Unity's one  ({1}).",
+                Debug.LogError(string.Format("Upfile.xml Unity Version ({0}) targets a higher version of Unity than you are currently using ({1})",
                     UnityVersion, environmentVersion));
             }
             else

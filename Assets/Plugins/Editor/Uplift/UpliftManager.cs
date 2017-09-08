@@ -52,7 +52,7 @@ namespace Uplift
             }
             catch (IncompatibleRequirementException e)
             {
-                UnityEngine.Debug.Log("Unsolvable version conflict in the dependency graph");
+                UnityEngine.Debug.LogError("Unsolvable version conflict in the dependency graph");
                 throw e;
             }
 

@@ -108,7 +108,7 @@ namespace Uplift.Common
 
         public static VersionStruct ParseUnityVersion(string version)
         {
-            const string matcher = @"(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\w(?<build>\d+)";
+            const string matcher = @"(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\w+(?<build>\d+)\w*";
             Match matchObject = Regex.Match(version, matcher);
             VersionStruct result = new VersionStruct
             {

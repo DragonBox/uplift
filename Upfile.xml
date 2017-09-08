@@ -49,8 +49,15 @@
     <WebRepository  Url="Url/To/Some/Web/Repository"/>
     <GitRepository  Url="Url/To/Some/Git/Repository"/>
   </Repositories>
-
   -->
+
+  <Repositories>
+    <FileRepository Path="Examples/SampleRepository"/>
+  </Repositories>
+  <Dependencies>
+    <Package Name="project_meta" Version="0.0" />
+  </Dependencies>
+
   <!-- SAMPLE DEPENDENCIES BLOCK
 
   <Dependencies>

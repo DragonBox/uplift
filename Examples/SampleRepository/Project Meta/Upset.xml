@@ -1,7 +1,5 @@
 <Upset>
-  <UnityVersion>
-    <MinVersion>0.0.0</MinVersion>
-  </UnityVersion>
+  <UnityVersion>0.0.0</UnityVersion>
   <PackageName>project_meta</PackageName>
   <PackageVersion>0.0.1</PackageVersion>
 </Upset>

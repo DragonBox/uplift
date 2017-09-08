@@ -250,66 +250,7 @@ namespace Uplift.Schemas {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class VersionSpec {
-        
-        private string itemField;
-        
-        private ItemChoiceType itemElementNameField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ExactVersion", typeof(string))]
-        [System.Xml.Serialization.XmlElementAttribute("MajorVersionMax", typeof(string))]
-        [System.Xml.Serialization.XmlElementAttribute("MajorVersionMin", typeof(string))]
-        [System.Xml.Serialization.XmlElementAttribute("MinVersion", typeof(string))]
-        [System.Xml.Serialization.XmlChoiceIdentifierAttribute("ItemElementName")]
-        public string Item {
-            get {
-                return this.itemField;
-            }
-            set {
-                this.itemField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public ItemChoiceType ItemElementName {
-            get {
-                return this.itemElementNameField;
-            }
-            set {
-                this.itemElementNameField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(IncludeInSchema=false)]
-    public enum ItemChoiceType {
-        
-        /// <remarks/>
-        ExactVersion,
-        
-        /// <remarks/>
-        MajorVersionMax,
-        
-        /// <remarks/>
-        MajorVersionMin,
-        
-        /// <remarks/>
-        MinVersion,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "0.0.0.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class DependencyDefinition {
-        
-        private VersionSpec itemField;
         
         private SkipInstallSpec[] skipInstallField;
         
@@ -320,17 +261,6 @@ namespace Uplift.Schemas {
         private string versionField;
         
         private string repositoryField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Version")]
-        public VersionSpec Item {
-            get {
-                return this.itemField;
-            }
-            set {
-                this.itemField = value;
-            }
-        }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Skip", IsNullable=false)]
@@ -787,7 +717,7 @@ namespace Uplift.Schemas {
     [System.Xml.Serialization.XmlRootAttribute(Namespace="", IsNullable=false)]
     public partial class Upset {
         
-        private VersionSpec unityVersionField;
+        private string unityVersionField;
         
         private string packageNameField;
         
@@ -800,7 +730,7 @@ namespace Uplift.Schemas {
         private InstallSpecPath[] configurationField;
         
         /// <remarks/>
-        public VersionSpec UnityVersion {
+        public string UnityVersion {
             get {
                 return this.unityVersionField;
             }

@@ -1,4 +1,4 @@
-using Uplift.Packages;
+using Uplift.Common;
 
 namespace Uplift.Schemas
 {
@@ -13,8 +13,11 @@ namespace Uplift.Schemas
 
         public int PackageVersionAsNumber()
         {
-            PackageHandler.VersionStruct version =  PackageHandler.ParseVersion(PackageVersion);
-            return version.Major * 1000000 + version.Minor * 1000 + version.Version;
+            VersionStruct version =  VersionParser.ParseVersion(PackageVersion);
+            int result = version.Major * 1000000;
+            if (version.Minor != null) result += ((int)version.Minor) * 1000;
+            if (version.Patch != null) result += (int)version.Patch;
+            return result;
         }
 
     }

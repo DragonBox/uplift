@@ -39,26 +39,36 @@ namespace Uplift
         public void InstallDependencies()
         {
             TransitiveDependencySolver dependencySolver = new TransitiveDependencySolver();
-            dependencySolver.CheckConflict += CheckVersionConflict;
+            dependencySolver.CheckConflict += SolveVersionConflict;
             InstallDependencies(dependencySolver);
         }
 
-        private void CheckVersionConflict(ref DependencyNode existing, DependencyNode compared)
+        private void SolveVersionConflict(ref DependencyNode existing, DependencyNode compared)
         {
-            if (existing.Version != compared.Version)
-                UnityEngine.Debug.LogWarning(string.Format("Existing dependency for {0} is {1}, but another package depends on {2}", compared.Name, existing.Version, compared.Version));
+            IVersionRequirement restricted;
+            try
+            {
+                restricted = existing.Requirement.RestrictTo(compared.Requirement);
+            }
+            catch (IncompatibleRequirementException e)
+            {
+                UnityEngine.Debug.LogError("Unsolvable version conflict in the dependency graph");
+                throw e;
+            }
+
+            existing.Requirement = restricted;
         }
 
         public void InstallDependencies(IDependencySolver dependencySolver)
         {            
             //FIXME: We should check for all repositories, not the first one
             //FileRepository rt = (FileRepository) Upfile.Repositories[0];
-            PackageHandler pHandler = new PackageHandler();
+            PackageList pList = PackageList.Instance();
 
             DependencyDefinition[] dependencies = dependencySolver.SolveDependencies(upfile.Dependencies);
             foreach (DependencyDefinition packageDefinition in dependencies)
             {
-                PackageRepo result = pHandler.FindPackageAndRepository(packageDefinition);
+                PackageRepo result = pList.FindPackageAndRepository(packageDefinition);
                 if (result.Repository != null)
                 {
                     using (TemporaryDirectory td = result.Repository.DownloadPackage(result.Package))

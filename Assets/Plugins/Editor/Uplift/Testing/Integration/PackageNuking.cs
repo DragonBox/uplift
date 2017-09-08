@@ -143,10 +143,10 @@ namespace Uplift.Testing.Integration
         {
             string[] extra_files = new string[]
             {
-                "Assets\\scriptC.cs",
-                "Assets\\scriptD.cs",
-                "Assets\\Media\\mediaC.txt",
-                "Assets\\Media\\mediaD.txt"
+                Helper.PathCombine("Assets", "scriptC.cs"),
+                Helper.PathCombine("Assets", "scriptD.cs"),
+                Helper.PathCombine("Assets","Media","mediaC.txt"),
+                Helper.PathCombine("Assets","Media","mediaD.txt")
             };
             foreach (string file in extra_files)
             {

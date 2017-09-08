@@ -9,17 +9,35 @@ namespace Uplift.Common
     public class SampleFile
     {
         internal static readonly string upfile = @"<Upfile>
-  <UnityVersion>{0}</UnityVersion>
+  <UnityVersion>{0}</UnityVersion>   
+  <!-- SAMPLE REPOSITORIES BLOCK
 
-  <!--
-      Important note:
+  <Repositories>
+    <FileRepository Path=""Path/To/Some/File/Repository"" />
+  </Repositories>
 
-      We're not tracing Location settings.
-      This means, that if you change those in settings while already
-      having packages/other stuff installed then you need to cleanup
-      previous locations manually at your own discretion.
   -->
+
+  <Repositories>
+  </Repositories>
+    
   <Configuration>
+    <!--
+        Important note:
+
+        We're not tracing Location settings for anything unpacked outside of Assets.
+        This means, that if you change those in settings while already
+        having packages/other stuff installed then you need to cleanup
+        previous locations manually at your own discretion.
+    -->
+    <!--
+        Path Flags:
+
+        SkipPackageStructure (true|false):
+          Don't create package subdirectories
+          (in form of PackageName~1.0.0)
+    -->
+  
     <!--
         Repository configuration part.
 
@@ -27,21 +45,12 @@ namespace Uplift.Common
         i.e. should be put out of the Assets/ path in your project.
     -->
 
-    <!--
-        Path Flags:
-
-        SkipPackageStructure (true|false):
-                                           Don't create package subdirectories
-                                           (in form of PackageName~1.0.0)
-
-    -->
-
-    <!-- Path where downloaded, raw, packages are unpacked -->
-    <RepositoryPath Location=""UPackages""                     />
-    <!-- Path where documentation are unpacked             -->
-    <DocsPath Location=""UPackages/Docs""                     />
-    <!-- Path where examples are unpacked                  -->
-    <ExamplesPath Location=""UPackages/Examples""             />
+    <!-- Path where downloaded, raw, packages are unpacked        -->
+    <RepositoryPath  Location=""UPackages""                         />
+    <!-- Path where documentation are unpacked                    -->
+    <DocsPath        Location=""UPackages/Docs""                    />
+    <!-- Path where examples are unpacked                         -->
+    <ExamplesPath    Location=""UPackages/Examples""                />
 
     <!--
         Project configuration part.
@@ -50,36 +59,32 @@ namespace Uplift.Common
         i.e.be in Assets path.
     -->
 
-    <!-- Path where ""usable"" files are unpacked                               -->
-    <BaseInstallPath Location=""Assets/UPackages""            />
-    <!-- Path where media files are unpacked                                 -->
-    <MediaPath Location=""Assets/UPackages""                  />
-    <!-- Path where plugin files are unpacked                                 -->
-    <PluginPath Location=""Assets/Plugins""                   />
+    <!-- Path where ""usable"" files are unpacked                   -->
+    <BaseInstallPath    Location=""Assets/UPackages""               />
+    <!-- Path where media  files are unpacked                     -->
+    <MediaPath          Location=""Assets/UPackages""               />
+    <!-- Path where plugin files are unpacked                     -->
+    <PluginPath         Location=""Assets/Plugins""                 />
+    <!-- Path where editor plugin files are unpacked              -->
+    <EditorPluginPath   Location=""Assets/Editor/Plugins""          />
+    <!-- Path where gizmos are unpacked                           -->
+    <GizmoPath          Location=""Assets/Gizmos""                  />
 
   </Configuration>
 
-  <!-- SAMPLE REPOSITORIES BLOCK
-
-  <Repositories>
-    <FileRepository Path=""Path/To/Some/File/Repository""/>
-    <WebRepository  Url=""Url/To/Some/Web/Repository""/>
-    <GitRepository  Url=""Url/To/Some/Git/Repository""/>
-  </Repositories>
-
-  -->
+  <Dependencies>
+  </Dependencies>
 
   <!-- SAMPLE DEPENDENCIES BLOCK
 
   <Dependencies>
-    <Package Name=""SomePackage"" Repository=""Optional.Repository"" Version=""Optional.Version.Spec""/>
+    <Package Name=""SomePackage"" Repository=""Optional.Repository"" Version=""Optional.Version.Spec"" />
     <Package Name=""PackageA"">
       <MajorVersionMin>3</MajorVersionMin>
     </Package>
   </Dependencies>
 
   -->
-
 </Upfile>";
 
         public static void CreateSampleUpfile()

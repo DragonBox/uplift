@@ -79,7 +79,7 @@ namespace Uplift.Testing.Unit
 
             Upfile parsed = Upfile.LoadXml(upfilePath);
             Assert.IsTrue(parsed.Dependencies.Any(dep => string.Equals(dep.Name, "test_package")), "No correct dependency found");
-            Assert.IsTrue(parsed.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, "Path\\To\\Some\\Repository")), "No correct repository found");
+            Assert.IsTrue(parsed.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, Helper.PathCombine("Path", "To", "Some", "Repository"))), "No correct repository found");
         }
 
         [Test]
@@ -107,8 +107,8 @@ namespace Uplift.Testing.Unit
             Upfile upfile = Upfile.LoadXml(upfilePath);
             upfile.LoadOverrides(upfileOverridePath);
 
-            Assert.IsTrue(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, "Path\\To\\Some\\Repository")), "Original repository not found");
-            Assert.IsTrue(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, "Path\\To\\Another\\Repository")), "Override repository not found");
+            Assert.IsTrue(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, Helper.PathCombine("Path","To","Some","Repository"))), "Original repository not found");
+            Assert.IsTrue(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, Helper.PathCombine("Path","To","Another","Repository"))), "Override repository not found");
         }
 
         [Test]
@@ -119,8 +119,8 @@ namespace Uplift.Testing.Unit
             Upfile upfile = Upfile.LoadXml(upfilePath);
             upfile.LoadOverrides(upfileOverridePath);
 
-            Assert.IsTrue(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, "Path\\To\\Some\\Repository")), "Original repository not found");
-            Assert.IsFalse(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, "Path\\To\\Another\\Repository")), "Loaded absent file");
+            Assert.IsTrue(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, Helper.PathCombine("Path","To","Some","Repository"))), "Original repository not found");
+            Assert.IsFalse(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, Helper.PathCombine("Path","To","Another","Repository"))), "Loaded absent file");
         }
 
         [Test]

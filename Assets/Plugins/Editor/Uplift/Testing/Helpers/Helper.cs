@@ -22,5 +22,19 @@ namespace Uplift.Testing.Helpers
         {
             return Path.GetFullPath(string.Join(Path.DirectorySeparatorChar.ToString(), path));
         }
+
+        public static T SetCurrentDirectory<T>(string NewCurrentDirectory, Func<T> block)
+        {
+            string currentPath = Directory.GetCurrentDirectory();
+            try
+            {
+                Directory.SetCurrentDirectory(NewCurrentDirectory);
+                return block();
+            }
+            finally
+            {
+                Directory.SetCurrentDirectory(currentPath);
+            }
+        }
     }
 }

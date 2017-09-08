@@ -57,7 +57,7 @@
     <FileRepository Path="Examples/SampleRepository"/>
   </Repositories>
   <Dependencies>
-    <Package Name="project_meta" Version="1+" />
+    <Package Name="project_meta" Version="0.0" />
   </Dependencies>
 
   <!-- SAMPLE DEPENDENCIES BLOCK

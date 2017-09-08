@@ -72,7 +72,7 @@ namespace Uplift.Common
             {
                 string temp = rest;
                 result.Minor = ParseBeginning(temp, ref rest);
-                if(rest != "")
+                if (rest != "")
                 {
                     temp = rest;
                     result.Patch = ParseBeginning(temp, ref rest);
@@ -89,7 +89,7 @@ namespace Uplift.Common
 
         private static int ParseBeginning(string input, ref string rest)
         {
-            const string matcher = @"(?<item>\d+)\.?(?<identifier>[a-zA-Z]+)?\.?(?<rest>\w+)?";
+            const string matcher = @"(?<item>\d+)\.?(?<identifier>[a-zA-Z]+)?\.?(?<rest>[\w\.]+)?";
             Match matchObject = Regex.Match(input, matcher);
             int item = 0;
             try { item = int.Parse(matchObject.Groups["item"].ToString()); }

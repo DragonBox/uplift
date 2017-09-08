@@ -22,7 +22,6 @@ namespace Uplift.Testing.Integration
         {
             UpliftManagerExposer.ClearAllInstances();
 
-            manager = UpliftManager.Instance();
             pwd = Directory.GetCurrentDirectory();
         }
 
@@ -31,6 +30,7 @@ namespace Uplift.Testing.Integration
         {
             // Upfile Cleanup
             UpfileExposer.ClearInstance();
+            UpliftManagerExposer.ClearAllInstances ();
 
             // Move to test running directory
             Helper.InitializeRunDirectory();
@@ -74,6 +74,7 @@ namespace Uplift.Testing.Integration
                 Assert.IsTrue(false, "The test could not run correctly. See console message.");
             }
             upfile = Upfile.Instance();
+            manager = UpliftManager.Instance();
 
             manager.InstallDependencies();
 
@@ -131,6 +132,7 @@ namespace Uplift.Testing.Integration
                 Assert.IsTrue(false, "The test could not run correctly. See console message.");
             }
             upfile = Upfile.Instance();
+            manager = UpliftManager.Instance();
 
             manager.InstallDependencies();
 
@@ -190,6 +192,7 @@ namespace Uplift.Testing.Integration
                 Assert.IsTrue(false, "The test could not run correctly. See console message.");
             }
             upfile = Upfile.Instance();
+            manager = UpliftManager.Instance();
 
             manager.InstallDependencies();
 

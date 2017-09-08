@@ -25,7 +25,6 @@ namespace Uplift.Testing.Integration
         {
             UpliftManagerExposer.ClearAllInstances();
 
-            manager = UpliftManager.Instance();
             pwd = Directory.GetCurrentDirectory();
             Helper.InitializeRunDirectory();
 
@@ -51,6 +50,7 @@ namespace Uplift.Testing.Integration
                     Assert.IsTrue(false, "The test could not run correctly. See console message.");
                 }
                 upfile = UpfileExposer.TestingInstance();
+                manager = UpliftManager.Instance();
 
                 // Creating original state
                 Directory.CreateDirectory("Assets");
@@ -68,6 +68,7 @@ namespace Uplift.Testing.Integration
                 original_snapshot = GetSnapshot();
 
                 // Proper Upfile Setup
+                UpliftManagerExposer.ClearAllInstances();
                 UpfileExposer.ClearInstance();
                 upfile_path = Helper.GetLocalFilePath(new string[]
                     {
@@ -87,6 +88,7 @@ namespace Uplift.Testing.Integration
                     Assert.IsTrue(false, "The test could not run correctly. See console message.");
                 }
                 upfile = Upfile.Instance();
+                manager = UpliftManager.Instance();
             }
             finally
             {

@@ -22,7 +22,6 @@ namespace Uplift.Testing.Integration
         {
             UpliftManagerExposer.ClearAllInstances();
 
-            manager = UpliftManager.Instance();
             pwd = Directory.GetCurrentDirectory();
         }
 
@@ -71,6 +70,7 @@ namespace Uplift.Testing.Integration
                 UnityEngine.Debug.LogError("The Upfile.xml uses the current path to register the repositories.");
             }
             upfile = Upfile.Instance();
+            manager = UpliftManager.Instance();
 
             manager.InstallDependencies();
 

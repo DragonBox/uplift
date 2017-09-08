@@ -22,7 +22,6 @@ namespace Uplift.Testing.Integration
         {
             UpliftManagerExposer.ClearAllInstances();
 
-            manager = UpliftManager.Instance();
             pwd = Directory.GetCurrentDirectory();
             Helper.InitializeRunDirectory();
 
@@ -48,6 +47,7 @@ namespace Uplift.Testing.Integration
                     Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
                 }
                 upfile = Upfile.Instance();
+                manager = UpliftManager.Instance();
 
                 upfile.Dependencies[0].Version = "1.0.0";
                 manager.InstallDependencies();

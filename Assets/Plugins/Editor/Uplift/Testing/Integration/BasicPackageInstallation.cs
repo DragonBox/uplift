@@ -53,13 +53,7 @@ namespace Uplift.Testing.Integration
         [Test]
         public void WhenInstalling()
         {
-            upfile_path = Helper.GetLocalFilePath(new string[]
-            {
-                "..",
-                "TestData",
-                "BasicPackageInstallation",
-                "Upfile.xml"
-            });
+            upfile_path = Helper.GetLocalFilePath ("..", "TestData", "BasicPackageInstallation", "Upfile.xml");
 
             try
             {

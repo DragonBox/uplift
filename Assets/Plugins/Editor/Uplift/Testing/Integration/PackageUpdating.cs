@@ -30,13 +30,7 @@ namespace Uplift.Testing.Integration
                 Directory.SetCurrentDirectory(Helper.testRunDirectoryName);
 
                 // Upfile Setup
-                upfile_path = Helper.GetLocalFilePath(new string[]
-                    {
-                    "..",
-                    "TestData",
-                    "PackageUpdating",
-                    "Upfile.xml"
-                    });
+                upfile_path = Helper.GetLocalFilePath("..", "TestData", "PackageUpdating", "Upfile.xml");
 
                 try
                 {

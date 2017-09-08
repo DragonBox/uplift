@@ -56,13 +56,7 @@ namespace Uplift.Testing.Integration
         public void WhenUpfileNotModified()
         {
             // Upfile Setup
-            upfile_path = Helper.GetLocalFilePath(new string[]
-                {
-                    "..",
-                    "TestData",
-                    "CustomizedFileLocation",
-                    "Upfile_NotModified.xml"
-                });
+            upfile_path = Helper.GetLocalFilePath("..", "TestData", "CustomizedFileLocation", "Upfile_NotModified.xml");
 
             try
             {
@@ -114,13 +108,7 @@ namespace Uplift.Testing.Integration
         public void WhenUpfileModifiedNoSkip()
         {
             // Upfile Setup
-            upfile_path = Helper.GetLocalFilePath(new string[]
-                {
-                    "..",
-                    "TestData",
-                    "CustomizedFileLocation",
-                    "Upfile_Modified_NoSkip.xml"
-                });
+            upfile_path = Helper.GetLocalFilePath("..", "TestData", "CustomizedFileLocation", "Upfile_Modified_NoSkip.xml");
 
             try
             {
@@ -174,13 +162,7 @@ namespace Uplift.Testing.Integration
         public void WhenUpfileModifiedAndSkip()
         {
             // Upfile Setup
-            upfile_path = Helper.GetLocalFilePath(new string[]
-                {
-                    "..",
-                    "TestData",
-                    "CustomizedFileLocation",
-                    "Upfile_Modified_Skip.xml"
-                });
+            upfile_path = Helper.GetLocalFilePath("..", "TestData", "CustomizedFileLocation",  "Upfile_Modified_Skip.xml");
 
             try
             {

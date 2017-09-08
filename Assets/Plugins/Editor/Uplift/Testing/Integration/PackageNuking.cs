@@ -33,13 +33,8 @@ namespace Uplift.Testing.Integration
                 Directory.SetCurrentDirectory(Helper.testRunDirectoryName);
 
                 // Upfile Setup for filler package
-                upfile_path = Helper.GetLocalFilePath(new string[]
-                    {
-                        "..",
-                        "TestData",
-                        "PackageNuking",
-                        "Init_Upfile.xml"
-                    });
+                upfile_path = Helper.GetLocalFilePath("..", "TestData", "PackageNuking", "Init_Upfile.xml");
+
                 try
                 {
                     UpfileExposer.SetInstance(UpfileExposer.LoadTestXml(upfile_path));
@@ -70,13 +65,7 @@ namespace Uplift.Testing.Integration
                 // Proper Upfile Setup
                 UpliftManagerExposer.ClearAllInstances();
                 UpfileExposer.ClearInstance();
-                upfile_path = Helper.GetLocalFilePath(new string[]
-                    {
-                        "..",
-                        "TestData",
-                        "PackageNuking",
-                        "Upfile.xml"
-                    });
+                upfile_path = Helper.GetLocalFilePath("..", "TestData", "PackageNuking", "Upfile.xml");
 
                 try
                 {

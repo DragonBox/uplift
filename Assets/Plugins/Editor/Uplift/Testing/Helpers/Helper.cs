@@ -18,7 +18,7 @@ namespace Uplift.Testing.Helpers
             Directory.Delete(testRunDirectoryName, true);
         }
 
-        public static string GetLocalFilePath(string[] path)
+        public static string GetLocalFilePath(params string[] path)
         {
             return Path.GetFullPath(string.Join(Path.DirectorySeparatorChar.ToString(), path));
         }

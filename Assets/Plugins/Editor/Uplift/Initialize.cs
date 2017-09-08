@@ -9,6 +9,7 @@ namespace Uplift
     {
         static Initialize()
         {
+            Debug.Log("Upfile loading...");
             Upfile.Instance();
         }
     }

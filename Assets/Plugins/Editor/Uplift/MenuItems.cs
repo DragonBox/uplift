@@ -23,6 +23,7 @@ namespace Uplift
         private static void RefreshUpfile()
         {
             Upfile.InitializeInstance();
+            Debug.Log("Upfile refreshed");
         }
 
 
@@ -87,6 +88,7 @@ namespace Uplift
         [MenuItem("Uplift/Install Dependencies", false, 103)]
         private static void InstallDependencies()
         {
+            Debug.Log("Installing Upfile dependencies");
             UpliftManager.Instance().InstallDependencies();
             AssetDatabase.Refresh();
         }

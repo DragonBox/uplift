@@ -33,18 +33,6 @@ namespace Uplift
             EditorWindow.GetWindow(typeof(UpdateUtility));
         }
 
-        [MenuItem("Uplift/Generate Upfile", true, 101)]
-        private static bool CheckForUpfile()
-        {
-            return !Upfile.CheckForUpfile();
-        }
-
-        [MenuItem("Uplift/Generate Upfile", false, 101)]
-        private static void GenerateUpfile()
-        {
-            SampleFile.CreateSampleUpfile();
-        }
-
         [MenuItem("Uplift/Check Dependencies", false, 102)]
         private static void CheckDependencies()
         {

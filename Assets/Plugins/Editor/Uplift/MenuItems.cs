@@ -14,8 +14,6 @@ namespace Uplift
 {
     public class MenuItems : MonoBehaviour
     {
-        private static string[] _sampleUpliftLocation = {"Assets", "Plugins", "Editor", "Uplift", "Schemas", "Upfile.Sample.xml"};
-        
         static MenuItems()
         {
 
@@ -43,17 +41,7 @@ namespace Uplift
         [MenuItem("Uplift/Generate Upfile", false, 101)]
         private static void GenerateUpfile()
         {
-
-            XmlDocument sampleFile = new XmlDocument();
-
-            sampleFile.Load(string.Join(Path.DirectorySeparatorChar.ToString(), _sampleUpliftLocation));
-
-            XmlNode versionNode = sampleFile.SelectSingleNode("/Upfile/UnityVersion");
-            
-            versionNode.InnerText = Application.unityVersion.ToString();
-
-            sampleFile.Save("Upfile.xml");
-            
+            SampleFile.CreateSampleUpfile();
         }
 
         [MenuItem("Uplift/Check Dependencies", false, 102)]

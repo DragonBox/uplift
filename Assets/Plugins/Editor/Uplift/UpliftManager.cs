@@ -245,23 +245,21 @@ namespace Uplift
             InstallPackage(package, td, definition);
         }
 
-        public void UpdatePackage(PackageRepo latest)
+        public void UpdatePackage(PackageRepo newer)
         {
-            InstalledPackage installed = Upbring.Instance().InstalledPackage.First(ip => ip.Name == latest.Package.PackageName);
-            // If installed version is greater or equal to latest and meets the requirement, do nothing
-            if (!VersionParser.GreaterThan(latest.Package.PackageVersion, installed.Version))
+            InstalledPackage installed = Upbring.Instance().InstalledPackage.First(ip => ip.Name == newer.Package.PackageName);
+            // If latest version is greater than the one installed, update to it
+            if (VersionParser.GreaterThan(newer.Package.PackageVersion, installed.Version))
             {
-                UnityEngine.Debug.Log(string.Format("Latest version of {0} is already installed ({1})", installed.Name, installed.Version));
-                return;
+                using (TemporaryDirectory td = newer.Repository.DownloadPackage(newer.Package))
+                {
+                    UpdatePackage(newer.Package, td);
+                }
             }
             else
             {
-                //NukePackage(installed.Name);
-
-                using (TemporaryDirectory td = latest.Repository.DownloadPackage(latest.Package))
-                {
-                    UpdatePackage(latest.Package, td);
-                }
+                UnityEngine.Debug.Log(string.Format("Latest version of {0} is already installed ({1})", installed.Name, installed.Version));
+                return;
             }
         }
 

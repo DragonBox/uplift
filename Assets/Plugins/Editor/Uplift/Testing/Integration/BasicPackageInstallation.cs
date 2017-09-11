@@ -13,7 +13,6 @@ namespace Uplift.Testing.Integration
     class BasicPackageInstallation
     {
         private UpliftManager manager;
-        private Upfile upfile;
         private string upfile_path;
         private string pwd;
 
@@ -63,7 +62,7 @@ namespace Uplift.Testing.Integration
             {
                 UnityEngine.Debug.LogError("The Upfile.xml uses the current path to register the repositories.");
             }
-            upfile = Upfile.Instance();
+            Upfile.Instance();
             manager = UpliftManager.Instance();
 
             manager.InstallDependencies();

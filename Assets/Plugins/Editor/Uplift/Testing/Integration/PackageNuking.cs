@@ -15,7 +15,6 @@ namespace Uplift.Testing.Integration
     class PackageNuking
     {
         private UpliftManager manager;
-        private Upfile upfile;
         private string upfile_path;
         private string[] original_snapshot;
         private string pwd;
@@ -44,7 +43,7 @@ namespace Uplift.Testing.Integration
                     Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
                     Assert.Fail("The test could not run correctly. See console message.");
                 }
-                upfile = UpfileExposer.TestingInstance();
+                UpfileExposer.TestingInstance();
                 manager = UpliftManager.Instance();
 
                 // Creating original state
@@ -76,7 +75,7 @@ namespace Uplift.Testing.Integration
                     Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
                     Assert.IsTrue(false, "The test could not run correctly. See console message.");
                 }
-                upfile = Upfile.Instance();
+                Upfile.Instance();
                 manager = UpliftManager.Instance();
             }
             finally

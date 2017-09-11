@@ -113,18 +113,27 @@ task :build => [:chdir] do
         File.join('Assets', 'Plugins', 'Editor', 'SharpCompress.dll')
     ]
 
+    # build a library under target
+    uplift_dll = File.join('target', 'Uplift.dll')
+    unity.build_library(references: references, files: files, sdk_level: 2, out: uplift_dll)
+
+    # prepare a Unity package
     packing_dir = 'Build'
     editor_dir = File.join('Assets', 'Plugins', 'Editor')
-    uplift_dir = File.join('Assets', 'Plugins', 'Editor', 'Uplift')
 
-
-    unity.build_library(references: references, files: files, sdk_level: 2, out: File.join(packing_dir, uplift_dir, 'Uplift.dll'))
-
-    other_files = Dir[File.join(editor_dir, 'SharpCompress.dll*')]
-    other_files.each do |file|
+    # copy packaged dependencies from current project into packing dir
+    U3d::Utils.ensure_dir (File.join(packing_dir, editor_dir))
+    Dir[File.join(editor_dir, 'SharpCompress.dll*')].each do |file|
         FileUtils.cp(file, File.join(packing_dir, file))
     end
 
+    # copy built library into packing dir
+    uplift_dir = File.join('Assets', 'Plugins', 'Editor', 'Uplift')
+    uplift_packing_dir = File.join(packing_dir, uplift_dir)
+    U3d::Utils.ensure_dir(uplift_packing_dir)
+    FileUtils.cp(uplift_dll, uplift_packing_dir)
+
+    # export unity package
     dirs = [ editor_dir ]
     unitypackage = File.absolute_path(File.join('target', "Uplift.unitypackage"))
     Dir.chdir(packing_dir) do

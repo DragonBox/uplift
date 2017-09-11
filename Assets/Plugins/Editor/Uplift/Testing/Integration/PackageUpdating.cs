@@ -87,11 +87,11 @@ namespace Uplift.Testing.Integration
             Assert.IsFalse(Directory.Exists("Assets/UPackages/package_a~1.0.0"), "Package directory still exists under Assets/UPackages");
 
             // Upbring validity
-            Assert.That((upbring.InstalledPackage.Count(p =>
+            Assert.IsFalse((upbring.InstalledPackage.Any(p =>
             p.Name == "package_a" &&
             p.Version == "1.0.0"
-            )), Is.EqualTo(0), "Upbring did not properly forget the outdated installation");
-
+            )), "Upbring did not properly forget the outdated installation");
+            
             // -- 1.0.1 INSTALLATION --
             // Directories existence
             Assert.IsTrue(Directory.Exists("UPackages"), "Directory UPackages does not exist");

@@ -9,42 +9,93 @@ task :test => [:chdir] do
     sh "u3d run -- -runTests -projectPath #{pwd} -testResults #{pwd}/results.xml -testPlatform editmode"
 end
 
+# potential future extensions to move to U3d
+module U3d
+    class BuildPaths
+        def initialize(unity)
+            raise RuntimeError, "This function does not yet work on Linux" if U3d::Helper.linux?
+            @unity = unity
+        end
+
+        def managed(file)
+            file = File.join(managed_path, file)
+            raise "Managed file '#{file}' not found" unless File.exist? file
+            file
+        end
+
+        def managed_path
+            if U3d::Helper.mac?
+                # Note: the location of the managed files and mcs has changed between 5.3 and 5.6
+                # This method currently only support Unity version 5.6+
+                managed_path = File.join(@unity.path, 'Contents', 'Managed')
+            elsif U3d::Helper.windows?
+                managed_path = File.join(@unity.path, 'Editor', 'Data', 'Managed')
+            else
+                raise RuntimeError, "This function does not yet work on Linux"
+            end
+            managed_path
+        end
+        def mcs
+            if U3d::Helper.mac?
+                mcs_path = File.join(@unity.path, 'Contents', 'MonoBleedingEdge', 'bin', 'mcs')
+            elsif U3d::Helper.windows?
+                mcs_path = File.join(@unity.path, 'Editor', 'Data', 'MonoBleedingEdge', 'bin', 'mcs')
+            else
+                raise RuntimeError, "This function does not yet work on Linux"
+            end
+            mcs_path
+        end
+    end
+
+    class Installation
+        def paths
+            @paths ||= U3d::BuildPaths.new(self)
+        end
+
+        def build_library(references: [], files: [], sdk_level: 2, out: 'Output.dll')
+            target = File.dirname out
+            Dir.mkdir target unless Dir.exist? target
+
+            reference_string = references.map { |dep| dep.argescape }.join(',')
+
+            output_callback = proc do |line|
+                UI.command_output(line.rstrip)
+            end
+            # we will need a smarter command builder once we have optional parameters
+            command = "#{paths.mcs.argescape} -r:#{reference_string} -target:library -sdk:#{sdk_level} -out:#{out} #{files.join(' ')}"
+            U3dCore::CommandExecutor.execute_command(command: command, output_callback: output_callback)
+            U3dCore::UI.success "Library '#{out}' built!"
+        end
+    end
+
+    class UnityProject
+        class << self
+            def unity(dir: Dir.pwd)
+                require 'u3d/installer'
+                version = U3d::UnityProject.new(dir).editor_version
+                unity = U3d::Installer.create.installed.find { |u| u.version == version }
+                U3dCore::UI.user_error!("Missing unity version #{version}") unless unity
+                unity
+            end
+        end
+    end
+end
+
 desc 'Build the Uplift DLL'
 task :build => [:chdir] do
     require 'u3d'
-    require 'u3d/installer'
-    require 'u3d/unity_project'
-    UI = U3dCore::UI
+    require 'u3d/unity_project' # remove when updating to u3d 1.0.4
     
-    version = U3d::UnityProject.new(Dir.pwd).editor_version
-    unity = U3d::Installer.create.installed.find { |u| u.version == version }
-    U3dCore::UI.user_error!("Missing version #{version}") if unity.nil?
+    unity = U3d::UnityProject.unity
 
-    # Note: the location of the managed files and mcs has changed between 5.3 and 5.6
-    # This task is designed to build DLL with Unity version 5.6+
-    if U3d::Helper.mac?
-        managed_path = File.join(unity.path, 'Contents', 'Managed')
-        mcs_exe = File.join(unity.path, 'Contents', 'MonoBleedingEdge', 'bin', 'mcs')
-    elsif U3d::Helper.windows?
-        managed_path = File.join(unity.path, 'Editor', 'Data', 'Managed')
-        mcs_exe = File.join(unity.path, 'Editor', 'Data', 'MonoBleedingEdge', 'bin', 'mcs')
-    else
-        raise RuntimeError, "This task does not work on Linux"
-    end
+    # All under Uplift except Testing code
+    files = Dir[ File.join('Assets', 'Plugins', 'Editor', 'Uplift', '**', '*.cs') ].reject { |p| File.directory? p }.reject { |p| /Testing/ =~ p }
 
     references = [
-        File.join(managed_path, 'UnityEditor.dll'),
-        File.join(managed_path, 'UnityEngine.dll'),
+        unity.paths.managed('UnityEditor.dll'),
+        unity.paths.managed('UnityEngine.dll'),
         File.join('Assets', 'Plugins', 'Editor', 'SharpCompress.dll')
     ]
 
-    reference_string = references.map { |dep| dep.argescape }.join(',')
-
-    files = Dir[ File.join('Assets', 'Plugins', 'Editor', 'Uplift', '**', '*.cs') ].reject { |p| File.directory? p }.reject { |p| /Testing/ =~ p }.join(' ')
-    
-    Dir.mkdir 'target' unless Dir.exist? 'target'
-
-    dll = 'target/Uplift.dll'
-    sh "#{mcs_exe.argescape} -r:#{reference_string} -target:library -sdk:2 -out:#{dll} #{files}"
-    UI.success "DLL '#{dll}' built!"
+    unity.build_library(references: references, files: files, sdk_level: 2, out: "target/Uplift.dll")
 end

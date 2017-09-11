@@ -22,7 +22,6 @@ namespace Uplift.Testing.Integration
         {
             UpliftManagerExposer.ClearAllInstances();
 
-            manager = UpliftManager.Instance();
             pwd = Directory.GetCurrentDirectory();
             Helper.InitializeRunDirectory();
 
@@ -31,13 +30,7 @@ namespace Uplift.Testing.Integration
                 Directory.SetCurrentDirectory(Helper.testRunDirectoryName);
 
                 // Upfile Setup
-                upfile_path = Helper.GetLocalFilePath(new string[]
-                    {
-                    "..",
-                    "TestData",
-                    "PackageUpdating",
-                    "Upfile.xml"
-                    });
+                upfile_path = Helper.GetLocalFilePath("..", "TestData", "PackageUpdating", "Upfile.xml");
 
                 try
                 {
@@ -48,6 +41,7 @@ namespace Uplift.Testing.Integration
                     Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
                 }
                 upfile = Upfile.Instance();
+                manager = UpliftManager.Instance();
 
                 upfile.Dependencies[0].Version = "1.0.0";
                 manager.InstallDependencies();
@@ -93,11 +87,11 @@ namespace Uplift.Testing.Integration
             Assert.IsFalse(Directory.Exists("Assets/UPackages/package_a~1.0.0"), "Package directory still exists under Assets/UPackages");
 
             // Upbring validity
-            Assert.That((upbring.InstalledPackage.Count(p =>
+            Assert.IsFalse((upbring.InstalledPackage.Any(p =>
             p.Name == "package_a" &&
             p.Version == "1.0.0"
-            )), Is.EqualTo(0), "Upbring did not properly forget the outdated installation");
-
+            )), "Upbring did not properly forget the outdated installation");
+            
             // -- 1.0.1 INSTALLATION --
             // Directories existence
             Assert.IsTrue(Directory.Exists("UPackages"), "Directory UPackages does not exist");

@@ -13,7 +13,6 @@ namespace Uplift.Testing.Integration
     class CustomizedFileLocation
     {
         private UpliftManager manager;
-        private Upfile upfile;
         private string upfile_path;
         private string pwd;
 
@@ -22,7 +21,6 @@ namespace Uplift.Testing.Integration
         {
             UpliftManagerExposer.ClearAllInstances();
 
-            manager = UpliftManager.Instance();
             pwd = Directory.GetCurrentDirectory();
         }
 
@@ -31,6 +29,7 @@ namespace Uplift.Testing.Integration
         {
             // Upfile Cleanup
             UpfileExposer.ClearInstance();
+            UpliftManagerExposer.ClearAllInstances ();
 
             // Move to test running directory
             Helper.InitializeRunDirectory();
@@ -56,13 +55,7 @@ namespace Uplift.Testing.Integration
         public void WhenUpfileNotModified()
         {
             // Upfile Setup
-            upfile_path = Helper.GetLocalFilePath(new string[]
-                {
-                    "..",
-                    "TestData",
-                    "CustomizedFileLocation",
-                    "Upfile_NotModified.xml"
-                });
+            upfile_path = Helper.GetLocalFilePath("..", "TestData", "CustomizedFileLocation", "Upfile_NotModified.xml");
 
             try
             {
@@ -73,7 +66,8 @@ namespace Uplift.Testing.Integration
                 Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
                 Assert.IsTrue(false, "The test could not run correctly. See console message.");
             }
-            upfile = Upfile.Instance();
+            Upfile.Instance();
+            manager = UpliftManager.Instance();
 
             manager.InstallDependencies();
 
@@ -113,13 +107,7 @@ namespace Uplift.Testing.Integration
         public void WhenUpfileModifiedNoSkip()
         {
             // Upfile Setup
-            upfile_path = Helper.GetLocalFilePath(new string[]
-                {
-                    "..",
-                    "TestData",
-                    "CustomizedFileLocation",
-                    "Upfile_Modified_NoSkip.xml"
-                });
+            upfile_path = Helper.GetLocalFilePath("..", "TestData", "CustomizedFileLocation", "Upfile_Modified_NoSkip.xml");
 
             try
             {
@@ -130,7 +118,8 @@ namespace Uplift.Testing.Integration
                 Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
                 Assert.IsTrue(false, "The test could not run correctly. See console message.");
             }
-            upfile = Upfile.Instance();
+            Upfile.Instance();
+            manager = UpliftManager.Instance();
 
             manager.InstallDependencies();
 
@@ -172,13 +161,7 @@ namespace Uplift.Testing.Integration
         public void WhenUpfileModifiedAndSkip()
         {
             // Upfile Setup
-            upfile_path = Helper.GetLocalFilePath(new string[]
-                {
-                    "..",
-                    "TestData",
-                    "CustomizedFileLocation",
-                    "Upfile_Modified_Skip.xml"
-                });
+            upfile_path = Helper.GetLocalFilePath("..", "TestData", "CustomizedFileLocation",  "Upfile_Modified_Skip.xml");
 
             try
             {
@@ -189,7 +172,8 @@ namespace Uplift.Testing.Integration
                 Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
                 Assert.IsTrue(false, "The test could not run correctly. See console message.");
             }
-            upfile = Upfile.Instance();
+            Upfile.Instance();
+            manager = UpliftManager.Instance();
 
             manager.InstallDependencies();
 

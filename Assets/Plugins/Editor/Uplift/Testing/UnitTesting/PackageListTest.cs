@@ -146,7 +146,6 @@ namespace Uplift.Testing.Unit
                 Repository = repo_mock_B.Object
             };
 
-            Upset[] test = new Upset[] { package_dummy_A1.Object, package_dummy_A2.Object };
             repo_mock_A.Setup(repo => repo.ListPackages()).Returns(new Upset[] { package_dummy_A1.Object, package_dummy_A2.Object });
             repo_mock_B.Setup(repo => repo.ListPackages()).Returns(new Upset[] { package_dummy_B.Object });
 

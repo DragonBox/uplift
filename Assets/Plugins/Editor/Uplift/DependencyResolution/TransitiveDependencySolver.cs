@@ -14,7 +14,7 @@ namespace Uplift.DependencyResolution
             DependencyGraph dependencyGraph = GenerateGraph(dependencies);
             TarjanCycleDetector cycleDetector = new TarjanCycleDetector();
 
-            List<List<DependencyNode>> cycles = cycleDetector.DetectCycles(dependencyGraph);
+            cycleDetector.DetectCycles(dependencyGraph);
 
             // TODO: Save the current dependency tree so the whole tree doesn't have to be solved entirely later on
 

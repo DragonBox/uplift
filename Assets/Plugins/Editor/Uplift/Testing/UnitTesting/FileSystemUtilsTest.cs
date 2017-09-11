@@ -3,13 +3,13 @@ using System.IO;
 using NUnit.Framework;
 using Uplift.Common;
 using System.Collections.Generic;
+using Uplift.Testing.Helpers;
 
 namespace Uplift.Testing.Unit
 {
     [TestFixture]
     public class FileSystemUtilsTest
     {
-
         [Test]
         public void JoinPathsTest()
         {
@@ -55,20 +55,26 @@ namespace Uplift.Testing.Unit
         [Test]
         public void GetAbsolutePathTest()
         {
+            // Mono has a bug so that Path.GetFullPath(Path.GetTempPath())
+            // doesn't return the same as GetFullPath(".") if Current Directory is Path.GetTempPath()
+            string TempPathFullName = Helper.SetCurrentDirectory(Path.GetTempPath(),
+                () => { return Directory.GetCurrentDirectory(); } );
+
             string dirName = Path.GetRandomFileName();
-            string dirPath = Path.Combine(Path.GetTempPath(), dirName);
-            string currentPath = Directory.GetCurrentDirectory();
-            try
-            {
-                Directory.SetCurrentDirectory(Path.GetTempPath());
-                Directory.CreateDirectory(dirPath);
-                Assert.AreEqual(dirPath, FileSystemUtil.GetAbsolutePath(dirName));
-            }
-            finally
-            {
-                Directory.Delete(dirPath, true);
-                Directory.SetCurrentDirectory(currentPath);
-            }
+            string dirPath = Path.Combine(TempPathFullName, dirName);
+
+            Helper.SetCurrentDirectory<Object>(Path.GetTempPath(), () => {
+                try
+                {
+                    Directory.CreateDirectory(dirPath);
+                    Assert.AreEqual(dirPath, FileSystemUtil.GetAbsolutePath(dirName));
+                    return null;
+                }
+                finally
+                {
+                    Directory.Delete(dirPath, true);
+                }
+            } );
         }
 
         [Test]

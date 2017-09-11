@@ -75,28 +75,17 @@ namespace Uplift.Testing.Unit
         [Test]
         public void LoadXmlPresent()
         {
-            string upfilePath = string.Join(Path.DirectorySeparatorChar.ToString(), new string[]
-            {
-                "TestData",
-                "UpfileTest",
-                "Upfile.xml"
-            });
+            string upfilePath = Helper.PathCombine("TestData", "UpfileTest", "Upfile.xml");
 
             Upfile parsed = Upfile.LoadXml(upfilePath);
             Assert.IsTrue(parsed.Dependencies.Any(dep => string.Equals(dep.Name, "test_package")), "No correct dependency found");
-            Assert.IsTrue(parsed.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, "Path\\To\\Some\\Repository")), "No correct repository found");
+            Assert.IsTrue(parsed.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, Helper.PathCombine("Path", "To", "Some", "Repository"))), "No correct repository found");
         }
 
         [Test]
         public void LoadXmlAbsent()
         {
-            string upfilePath = string.Join(Path.DirectorySeparatorChar.ToString(), new string[]
-            {
-                "TestData",
-                "UpfileTest",
-                "NoUpfileInIt",
-                "Upfile.xml"
-            });
+            string upfilePath = Helper.PathCombine("TestData", "UpfileTest", "NoUpfileInIt", "Upfile.xml");
 
             bool caught = false;
             try
@@ -113,46 +102,25 @@ namespace Uplift.Testing.Unit
         [Test]
         public void LoadPresentOverrideTest()
         {
-            string upfilePath = string.Join(Path.DirectorySeparatorChar.ToString(), new string[]
-            {
-                "TestData",
-                "UpfileTest",
-                "Upfile.xml"
-            });
-            string upfileOverridePath = string.Join(Path.DirectorySeparatorChar.ToString(), new string[]
-            {
-                "TestData",
-                "UpfileTest",
-                "UpfileOverride.xml"
-            });
+            string upfilePath = Helper.PathCombine ("TestData", "UpfileTest", "Upfile.xml");
+            string upfileOverridePath = Helper.PathCombine ("TestData", "UpfileTest", "UpfileOverride.xml");
             Upfile upfile = Upfile.LoadXml(upfilePath);
             upfile.LoadOverrides(upfileOverridePath);
 
-            Assert.IsTrue(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, "Path\\To\\Some\\Repository")), "Original repository not found");
-            Assert.IsTrue(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, "Path\\To\\Another\\Repository")), "Override repository not found");
+            Assert.IsTrue(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, Helper.PathCombine("Path","To","Some","Repository"))), "Original repository not found");
+            Assert.IsTrue(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, Helper.PathCombine("Path","To","Another","Repository"))), "Override repository not found");
         }
 
         [Test]
         public void LoadAbsentOverrideTest()
         {
-            string upfilePath = string.Join(Path.DirectorySeparatorChar.ToString(), new string[]
-            {
-                "TestData",
-                "UpfileTest",
-                "Upfile.xml"
-            });
-            string upfileOverridePath = string.Join(Path.DirectorySeparatorChar.ToString(), new string[]
-            {
-                "TestData",
-                "UpfileTest",
-                "NoUpfileInIt",
-                "UpfileOverride.xml"
-            });
+            string upfilePath = Helper.PathCombine ("TestData", "UpfileTest", "Upfile.xml");
+            string upfileOverridePath = Helper.PathCombine ("TestData", "UpfileTest", "NoUpfileInIt", "UpfileOverride.xml");
             Upfile upfile = Upfile.LoadXml(upfilePath);
             upfile.LoadOverrides(upfileOverridePath);
 
-            Assert.IsTrue(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, "Path\\To\\Some\\Repository")), "Original repository not found");
-            Assert.IsFalse(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, "Path\\To\\Another\\Repository")), "Loaded absent file");
+            Assert.IsTrue(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, Helper.PathCombine("Path","To","Some","Repository"))), "Original repository not found");
+            Assert.IsFalse(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, Helper.PathCombine("Path","To","Another","Repository"))), "Loaded absent file");
         }
 
         [Test]

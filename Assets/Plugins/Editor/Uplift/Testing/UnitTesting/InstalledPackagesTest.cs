@@ -117,7 +117,6 @@ namespace Uplift.Testing.Unit
         {
             InstalledPackage ip = new InstalledPackage();
             string installed_path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            string installed_path_meta = installed_path + ".meta";
 
             ip.Install = new InstallSpec[]
             {

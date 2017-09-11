@@ -15,7 +15,6 @@ namespace Uplift.Testing.Integration
     class PackageNuking
     {
         private UpliftManager manager;
-        private Upfile upfile;
         private string upfile_path;
         private string[] original_snapshot;
         private string pwd;
@@ -25,7 +24,6 @@ namespace Uplift.Testing.Integration
         {
             UpliftManagerExposer.ClearAllInstances();
 
-            manager = UpliftManager.Instance();
             pwd = Directory.GetCurrentDirectory();
             Helper.InitializeRunDirectory();
 
@@ -34,13 +32,8 @@ namespace Uplift.Testing.Integration
                 Directory.SetCurrentDirectory(Helper.testRunDirectoryName);
 
                 // Upfile Setup for filler package
-                upfile_path = Helper.GetLocalFilePath(new string[]
-                    {
-                        "..",
-                        "TestData",
-                        "PackageNuking",
-                        "Init_Upfile.xml"
-                    });
+                upfile_path = Helper.GetLocalFilePath("..", "TestData", "PackageNuking", "Init_Upfile.xml");
+
                 try
                 {
                     UpfileExposer.SetInstance(UpfileExposer.LoadTestXml(upfile_path));
@@ -48,9 +41,10 @@ namespace Uplift.Testing.Integration
                 catch (FileNotFoundException)
                 {
                     Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
-                    Assert.IsTrue(false, "The test could not run correctly. See console message.");
+                    Assert.Fail("The test could not run correctly. See console message.");
                 }
-                upfile = UpfileExposer.TestingInstance();
+                UpfileExposer.TestingInstance();
+                manager = UpliftManager.Instance();
 
                 // Creating original state
                 Directory.CreateDirectory("Assets");
@@ -68,14 +62,9 @@ namespace Uplift.Testing.Integration
                 original_snapshot = GetSnapshot();
 
                 // Proper Upfile Setup
+                UpliftManagerExposer.ClearAllInstances();
                 UpfileExposer.ClearInstance();
-                upfile_path = Helper.GetLocalFilePath(new string[]
-                    {
-                        "..",
-                        "TestData",
-                        "PackageNuking",
-                        "Upfile.xml"
-                    });
+                upfile_path = Helper.GetLocalFilePath("..", "TestData", "PackageNuking", "Upfile.xml");
 
                 try
                 {
@@ -86,7 +75,8 @@ namespace Uplift.Testing.Integration
                     Console.WriteLine("Make sure you are running the test from UpliftTesting/TestResults. The Upfile.xml uses the current path to register the repositories.");
                     Assert.IsTrue(false, "The test could not run correctly. See console message.");
                 }
-                upfile = Upfile.Instance();
+                Upfile.Instance();
+                manager = UpliftManager.Instance();
             }
             finally
             {
@@ -141,10 +131,10 @@ namespace Uplift.Testing.Integration
         {
             string[] extra_files = new string[]
             {
-                "Assets\\scriptC.cs",
-                "Assets\\scriptD.cs",
-                "Assets\\Media\\mediaC.txt",
-                "Assets\\Media\\mediaD.txt"
+                Helper.PathCombine("Assets", "scriptC.cs"),
+                Helper.PathCombine("Assets", "scriptD.cs"),
+                Helper.PathCombine("Assets","Media","mediaC.txt"),
+                Helper.PathCombine("Assets","Media","mediaD.txt")
             };
             foreach (string file in extra_files)
             {

@@ -13,7 +13,6 @@ namespace Uplift.Testing.Integration
     class BasicPackageInstallation
     {
         private UpliftManager manager;
-        private Upfile upfile;
         private string upfile_path;
         private string pwd;
 
@@ -22,7 +21,6 @@ namespace Uplift.Testing.Integration
         {
             UpliftManagerExposer.ClearAllInstances();
 
-            manager = UpliftManager.Instance();
             pwd = Directory.GetCurrentDirectory();
         }
 
@@ -54,13 +52,7 @@ namespace Uplift.Testing.Integration
         [Test]
         public void WhenInstalling()
         {
-            upfile_path = Helper.GetLocalFilePath(new string[]
-            {
-                "..",
-                "TestData",
-                "BasicPackageInstallation",
-                "Upfile.xml"
-            });
+            upfile_path = Helper.GetLocalFilePath ("..", "TestData", "BasicPackageInstallation", "Upfile.xml");
 
             try
             {
@@ -70,7 +62,8 @@ namespace Uplift.Testing.Integration
             {
                 UnityEngine.Debug.LogError("The Upfile.xml uses the current path to register the repositories.");
             }
-            upfile = Upfile.Instance();
+            Upfile.Instance();
+            manager = UpliftManager.Instance();
 
             manager.InstallDependencies();
 

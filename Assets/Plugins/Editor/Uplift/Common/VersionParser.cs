@@ -120,5 +120,10 @@ namespace Uplift.Common
 
             return result;
         }
+
+        public static bool GreaterThan(string a, string b)
+        {
+            return ParseVersion(a) > ParseVersion(b);
+        }
     }
 }

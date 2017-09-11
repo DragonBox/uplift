@@ -123,7 +123,7 @@ namespace Uplift.Testing.Unit
                 };
                 string package_name = "bar-baz.unitypackage";
                 test_package.MetaInformation.dirName = package_name;
-                string package_path = Helper.GetLocalFilePath(new string[] { "TestData", "FileRepositoryTest", "testpackage.unitypackage" });
+                string package_path = Helper.GetLocalFilePath("TestData", "FileRepositoryTest", "testpackage.unitypackage");
                 UnityEngine.Debug.Log(package_path);
                 File.Copy(package_path, Path.Combine(fr_path, package_name));
                 TemporaryDirectory result = fr.DownloadPackage(test_package);

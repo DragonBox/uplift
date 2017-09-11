@@ -68,12 +68,20 @@ namespace Uplift
             DependencyDefinition[] dependencies = dependencySolver.SolveDependencies(upfile.Dependencies);
             foreach (DependencyDefinition packageDefinition in dependencies)
             {
+                
                 PackageRepo result = pList.FindPackageAndRepository(packageDefinition);
                 if (result.Repository != null)
                 {
-                    using (TemporaryDirectory td = result.Repository.DownloadPackage(result.Package))
+                    if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == packageDefinition.Name))
                     {
-                        InstallPackage(result.Package, td, packageDefinition);
+                        UpdatePackage(result);
+                    }
+                    else
+                    {
+                        using (TemporaryDirectory td = result.Repository.DownloadPackage(result.Package))
+                        {
+                            InstallPackage(result.Package, td, packageDefinition);
+                        }
                     }
                 }
             }
@@ -108,6 +116,7 @@ namespace Uplift
         public void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition)
         {
             Upbring upbring = Upbring.Instance();
+            
             // Note: Full package is ALWAYS copied to the upackages directory right now
             string localPackagePath = GetRepositoryInstallPath(package);
             upbring.AddPackage(package);
@@ -236,11 +245,21 @@ namespace Uplift
             InstallPackage(package, td, definition);
         }
 
-        public void UpdatePackage(PackageRepo packageRepo)
+        public void UpdatePackage(PackageRepo newer)
         {
-            using (TemporaryDirectory td = packageRepo.Repository.DownloadPackage(packageRepo.Package))
+            InstalledPackage installed = Upbring.Instance().InstalledPackage.First(ip => ip.Name == newer.Package.PackageName);
+            // If latest version is greater than the one installed, update to it
+            if (VersionParser.GreaterThan(newer.Package.PackageVersion, installed.Version))
             {
-                UpdatePackage(packageRepo.Package, td);
+                using (TemporaryDirectory td = newer.Repository.DownloadPackage(newer.Package))
+                {
+                    UpdatePackage(newer.Package, td);
+                }
+            }
+            else
+            {
+                UnityEngine.Debug.Log(string.Format("Latest version of {0} is already installed ({1})", installed.Name, installed.Version));
+                return;
             }
         }
 

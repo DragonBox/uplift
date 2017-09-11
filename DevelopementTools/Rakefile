@@ -6,7 +6,7 @@ end
 desc "Run the tests using u3d"
 task :test => [:chdir] do
     pwd = Dir.pwd
-    sh "u3d run -- -runTests -projectPath #{pwd} -testResults #{pwd}/results.xml -testPlatform editmode"
+    sh "u3d run -- -runTests -projectPath #{pwd} -testResults #{pwd}/results.xml -testPlatform editmode -batchmode"
 end
 
 # potential future extensions to move to U3d

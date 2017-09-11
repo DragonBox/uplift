@@ -3,18 +3,19 @@ task :chdir do
     Dir.chdir(File.join(rakefile_dir, '..'))
 end
 
+desc "Run the tests using u3d"
 task :test => [:chdir] do
     pwd = Dir.pwd
     sh "u3d run -- -runTests -projectPath #{pwd} -testResults #{pwd}/results.xml -testPlatform editmode"
 end
 
+desc 'Build the Uplift DLL'
 task :build => [:chdir] do
     require 'u3d'
     require 'u3d/installer'
     require 'u3d/unity_project'
-    require 'shellwords'
+    UI = U3dCore::UI
     
-
     version = U3d::UnityProject.new(Dir.pwd).editor_version
     unity = U3d::Installer.create.installed.find { |u| u.version == version }
     U3dCore::UI.user_error!("Missing version #{version}") if unity.nil?
@@ -23,10 +24,10 @@ task :build => [:chdir] do
     # This task is designed to build DLL with Unity version 5.6+
     if U3d::Helper.mac?
         managed_path = File.join(unity.path, 'Contents', 'Managed')
-        mcs_exe = File.join(unity.path, 'Contents', 'MonoBleedingEdge', 'bin', 'mcs').shellescape
+        mcs_exe = File.join(unity.path, 'Contents', 'MonoBleedingEdge', 'bin', 'mcs')
     elsif U3d::Helper.windows?
         managed_path = File.join(unity.path, 'Editor', 'Data', 'Managed')
-        mcs_exe = "\"#{File.join(unity.path, 'Editor', 'Data', 'MonoBleedingEdge', 'bin', 'mcs')}\""
+        mcs_exe = File.join(unity.path, 'Editor', 'Data', 'MonoBleedingEdge', 'bin', 'mcs')
     else
         raise RuntimeError, "This task does not work on Linux"
     end
@@ -37,15 +38,13 @@ task :build => [:chdir] do
         File.join('Assets', 'Plugins', 'Editor', 'SharpCompress.dll')
     ]
 
-    if U3d::Helper.mac?
-        reference_string = references.map { |dep| dep.shellescape }.join(',')
-    elsif U3d::Helper.windows?
-        reference_string = references.map { |dep| / / =~ dep ? "\"#{dep}\"" : dep }.join(',')
-    end
+    reference_string = references.map { |dep| dep.argescape }.join(',')
 
     files = Dir[ File.join('Assets', 'Plugins', 'Editor', 'Uplift', '**', '*.cs') ].reject { |p| File.directory? p }.reject { |p| /Testing/ =~ p }.join(' ')
     
     Dir.mkdir 'target' unless Dir.exist? 'target'
 
-    sh "#{mcs_exe} -r:#{reference_string} -target:library -sdk:2 -out:target/Uplift.dll #{files}"
+    dll = 'target/Uplift.dll'
+    sh "#{mcs_exe.argescape} -r:#{reference_string} -target:library -sdk:2 -out:#{dll} #{files}"
+    UI.success "DLL '#{dll}' built!"
 end

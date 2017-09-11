@@ -105,7 +105,7 @@ task :build => [:chdir] do
     unity = U3d::UnityProject.unity
 
     # All under Uplift except Testing code
-    files = Dir[ File.join('Assets', 'Plugins', 'Editor', 'Uplift', '**', '*.cs') ].reject { |p| File.directory? p }.reject { |p| /Testing/ =~ p }
+    files = Dir[ File.join('Assets', 'Plugins', 'Editor', 'Uplift', '**', '*.cs') ].reject { |p| /Testing/ =~ p }
 
     references = [
         unity.paths.managed('UnityEditor.dll'),
@@ -119,18 +119,19 @@ task :build => [:chdir] do
 
     # prepare a Unity package
     packing_dir = 'Build'
-    editor_dir = File.join('Assets', 'Plugins', 'Editor')
 
     # copy packaged dependencies from current project into packing dir
-    U3d::Utils.ensure_dir (File.join(packing_dir, editor_dir))
+    editor_dir = File.join('Assets', 'Plugins', 'Editor')
+    editor_packing_dir = File.join(packing_dir, editor_dir)
+    U3d::Utils.ensure_dir editor_packing_dir
     Dir[File.join(editor_dir, 'SharpCompress.dll*')].each do |file|
-        FileUtils.cp(file, File.join(packing_dir, file))
+        FileUtils.cp(file, editor_packing_dir)
     end
 
     # copy built library into packing dir
     uplift_dir = File.join('Assets', 'Plugins', 'Editor', 'Uplift')
     uplift_packing_dir = File.join(packing_dir, uplift_dir)
-    U3d::Utils.ensure_dir(uplift_packing_dir)
+    U3d::Utils.ensure_dir uplift_packing_dir
     FileUtils.cp(uplift_dll, uplift_packing_dir)
 
     # export unity package

@@ -54,7 +54,7 @@ module U3d
 
         def build_library(references: [], files: [], sdk_level: 2, out: 'Output.dll')
             target = File.dirname out
-            Dir.mkdir target unless Dir.exist? target
+            U3d::Utils.ensure_dir(target)
 
             reference_string = references.map { |dep| dep.argescape }.join(',')
 
@@ -65,6 +65,22 @@ module U3d
             command = "#{paths.mcs.argescape} -r:#{reference_string} -target:library -sdk:#{sdk_level} -out:#{out} #{files.join(' ')}"
             U3dCore::CommandExecutor.execute_command(command: command, output_callback: output_callback)
             U3dCore::UI.success "Library '#{out}' built!"
+        end
+
+        def export_package(dirs: [], dir: Dir.pwd, log_file: '/dev/stdout',  raw_logs: false, out: nil)
+            # FIXME there's a bit of duplication from the commands here. Revisit API
+            require 'u3d/unity_runner'
+            require 'u3d/log_analyzer'
+            up = U3d::UnityProject.new(dir)
+            run_args = [
+                '-logFile', log_file,
+                '-projectpath', up.path,
+                '-exportPackage', dirs, out,
+                '-batchmode', '-quit'
+            ].flatten
+            runner = Runner.new
+            runner.run(self, run_args, raw_logs: raw_logs)
+            U3dCore::UI.success "UnityPackage '#{out}' built!"
         end
     end
 
@@ -81,7 +97,7 @@ module U3d
     end
 end
 
-desc 'Build the Uplift DLL'
+desc 'Build the Uplift DLL and the unitypackage contain the DLL and its dependencies'
 task :build => [:chdir] do
     require 'u3d'
     require 'u3d/unity_project' # remove when updating to u3d 1.0.4
@@ -97,5 +113,21 @@ task :build => [:chdir] do
         File.join('Assets', 'Plugins', 'Editor', 'SharpCompress.dll')
     ]
 
-    unity.build_library(references: references, files: files, sdk_level: 2, out: "target/Uplift.dll")
+    packing_dir = 'Build'
+    editor_dir = File.join('Assets', 'Plugins', 'Editor')
+    uplift_dir = File.join('Assets', 'Plugins', 'Editor', 'Uplift')
+
+
+    unity.build_library(references: references, files: files, sdk_level: 2, out: File.join(packing_dir, uplift_dir, 'Uplift.dll'))
+
+    other_files = Dir[File.join(editor_dir, 'SharpCompress.dll*')]
+    other_files.each do |file|
+        FileUtils.cp(file, File.join(packing_dir, file))
+    end
+
+    dirs = [ editor_dir ]
+    unitypackage = File.absolute_path(File.join('target', "Uplift.unitypackage"))
+    Dir.chdir(packing_dir) do
+        unity.export_package(dirs: dirs, out: unitypackage)
+    end
 end

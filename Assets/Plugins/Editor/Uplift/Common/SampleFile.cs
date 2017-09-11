@@ -73,11 +73,9 @@ namespace Uplift.Common
   </Configuration>
 
   <Dependencies>
+
   </Dependencies>
 
-  <Dependencies>
-
-  </Dependencies>  
   <!-- SAMPLE DEPENDENCIES BLOCK
 
   <Dependencies>

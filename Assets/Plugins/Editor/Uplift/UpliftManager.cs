@@ -27,6 +27,14 @@ namespace Uplift
             return instance;
         }
 
+        public static void ResetInstances()
+        {
+            instance = null;
+            Upfile.ResetInstance();
+            Upbring.ResetInstance();
+            InitializeInstance();
+        }
+
         internal static void InitializeInstance()
         {
             instance = new UpliftManager();

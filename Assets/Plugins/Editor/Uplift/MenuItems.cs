@@ -22,7 +22,7 @@ namespace Uplift
         [MenuItem("Uplift/Refresh Upfile", false, 0)]
         private static void RefreshUpfile()
         {
-            Upfile.InitializeInstance();
+            UpliftManager.ResetInstances();
             Debug.Log("Upfile refreshed");
         }
 

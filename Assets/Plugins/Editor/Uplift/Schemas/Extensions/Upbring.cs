@@ -23,6 +23,12 @@ namespace Uplift.Schemas
             return instance;
         }
 
+        public static void ResetInstance()
+        {
+            instance = null;
+            InitializeInstance();
+        }
+
         internal static void InitializeInstance()
         {
             instance = LoadXml();

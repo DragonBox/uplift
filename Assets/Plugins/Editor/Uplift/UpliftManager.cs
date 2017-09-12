@@ -174,6 +174,9 @@ namespace Uplift
                     {
                         Directory.CreateDirectory(destination);
                     }
+                    if (Directory.Exists(destination)) { // we are copying a file into a directory
+                        destination = System.IO.Path.Combine(destination, System.IO.Path.GetFileName(sourcePath));
+                    }
                     File.Copy(sourcePath, destination);
                     FileSystemUtil.TryCopyMeta(sourcePath, destination);
 

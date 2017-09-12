@@ -1,3 +1,10 @@
+# FIXME Note:
+#
+# This is a temporary solution.
+# Eventually it should be transformed to native C# solution
+#
+# Please refrain from expanding this file unless really necessary
+
 task :chdir do
     rakefile_dir = File.dirname __FILE__
     Dir.chdir(File.join(rakefile_dir, '..'))

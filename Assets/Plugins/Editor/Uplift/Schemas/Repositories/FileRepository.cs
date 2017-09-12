@@ -88,14 +88,30 @@ namespace Uplift.Schemas {
                         }
                         if (assetPath != null)
                         {
+                            string AssetPath = System.IO.Path.Combine(td.Path, assetPath.Replace('/', System.IO.Path.DirectorySeparatorChar));
                             if (assetMS == null)
                             {
-                                // these are for directories inside the file
-                                Debug.Log("path not null " + assetPath + " but asset not yet read");
+                                // asset is a directory
+                                if (!Directory.Exists(AssetPath))
+                                {
+                                    Directory.CreateDirectory(AssetPath);
+                                }
+                                if (metaMS != null)
+                                {
+                                    string MetaPath = AssetPath + ".meta";
+                                    using (FileStream FS = new FileStream(MetaPath, FileMode.Create))
+                                    {
+                                        metaMS.CopyTo(FS);
+                                    }
+                                    metaMS.Dispose();
+                                    metaMS = null;
+                                } else {
+                                    // asset is a broken directory - missing meta
+                                    Debug.LogError("Directory at path " + assetPath + " doesn't have its meta.");
+                                }
                                 assetPath = null;
                                 continue;
                             }
-                            string AssetPath = td.Path + System.IO.Path.DirectorySeparatorChar + assetPath.Replace('/', System.IO.Path.DirectorySeparatorChar);
                             var AssetPathDir = new FileInfo(AssetPath).Directory.FullName;
                             if (!Directory.Exists(AssetPathDir))
                             {

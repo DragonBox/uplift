@@ -79,13 +79,7 @@ namespace Uplift.Schemas
             }
             XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
             using(FileStream fs = new FileStream(UpbringPath, FileMode.Open)) {
-                Upbring result = serializer.Deserialize(fs) as Upbring;
-                foreach (InstallSpec spec in result.InstallSpecs)
-                {
-                    if (!(spec is InstallSpecPath)) continue;
-                    (spec as InstallSpecPath).Path = FileSystemUtil.MakePathWindowsFriendly((spec as InstallSpecPath).Path);
-                }
-                return result;
+                return serializer.Deserialize(fs) as Upbring;
             }
         }
 
@@ -94,13 +88,7 @@ namespace Uplift.Schemas
             XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
             using(FileStream fs = new FileStream(UpbringPath, FileMode.Create)) {
                 using(StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8)) {
-                    Upbring duplicate = this;
-                    foreach (InstallSpec spec in duplicate.InstallSpecs)
-                    {
-                        if (!(spec is InstallSpecPath)) continue;
-                        (spec as InstallSpecPath).Path = FileSystemUtil.MakePathUnix((spec as InstallSpecPath).Path);
-                    }
-                    serializer.Serialize(sw, duplicate);
+                    serializer.Serialize(sw, this);
                 }
             }
         }
@@ -147,19 +135,20 @@ namespace Uplift.Schemas
 
         internal void AddLocation(Upset package, InstallSpecType kind, string path)
         {
+            string unixPath = FileSystemUtil.MakePathUnix(path);
             InstalledPackage internalPackage;
             if (!SetupInternalPackage(package, out internalPackage)) return;
             // Note: not catching in case of internalPackage not found
             // as it is valid error throwing condition
 
             // Check if path doesn't exist and return if it does
-            if (internalPackage.Install.Any(spec => spec is InstallSpecPath && spec.Type == kind && (spec as InstallSpecPath).Path == path))
+            if (internalPackage.Install.Any(spec => spec is InstallSpecPath && spec.Type == kind && (spec as InstallSpecPath).Path == unixPath))
             {
                 return;
             }
 
             // Create new spec
-            InstallSpec newSpec = new InstallSpecPath {Type = kind, Path = path};
+            InstallSpec newSpec = new InstallSpecPath {Type = kind, Path = unixPath};
             
 
             InstallSpec[] newArray = new InstallSpec[internalPackage.Install.Length + 1];

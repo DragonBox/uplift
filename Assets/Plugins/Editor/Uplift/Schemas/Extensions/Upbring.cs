@@ -72,14 +72,22 @@ namespace Uplift.Schemas
 
         internal static Upbring LoadXml()
         {
-            if (!File.Exists(UpbringPath))
+            try
             {
-                Upbring newUpbring = new Upbring {InstalledPackage = new InstalledPackage[0]};
-                return newUpbring;
+                if (!File.Exists(UpbringPath))
+                {
+                    Upbring newUpbring = new Upbring { InstalledPackage = new InstalledPackage[0] };
+                    return newUpbring;
+                }
+                XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
+                using (FileStream fs = new FileStream(UpbringPath, FileMode.Open))
+                {
+                    return serializer.Deserialize(fs) as Upbring;
+                }
             }
-            XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
-            using(FileStream fs = new FileStream(UpbringPath, FileMode.Open)) {
-                return serializer.Deserialize(fs) as Upbring;
+            catch(Exception e)
+            {
+                throw new ApplicationException("Uplift: Could not load Upbring", e);
             }
         }
 

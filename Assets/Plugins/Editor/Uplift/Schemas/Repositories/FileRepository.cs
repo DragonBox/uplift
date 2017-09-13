@@ -10,6 +10,7 @@ using Uplift.Extensions;
 using UnityEngine;
 using UnityEditor;
 using Uplift.Common;
+using System.Text.RegularExpressions;
 
 namespace Uplift.Schemas {
 
@@ -164,26 +165,33 @@ namespace Uplift.Schemas {
             foreach(string directoryPath in directories)
             {
                 string directoryName = directoryPath.Split(System.IO.Path.DirectorySeparatorChar).Last();
+                try
+                {
+                    // Don't look at me. System.IO.Path.Combine(string, string, string) doesn't work in Unity :(
+                    char SC = System.IO.Path.DirectorySeparatorChar;
+                    string upsetPath = Path + SC + directoryName + SC + UpsetFile;
 
-                // Don't look at me. System.IO.Path.Combine(string, string, string) doesn't work in Unity :(
-                char SC = System.IO.Path.DirectorySeparatorChar;
-                string upsetPath = Path + SC + directoryName + SC + UpsetFile;
+                    if (!File.Exists(upsetPath)) continue;
 
-                if (!File.Exists(upsetPath)) continue;
+                    XmlSerializer serializer = new XmlSerializer(typeof(Upset));
 
-                XmlSerializer serializer = new XmlSerializer(typeof(Upset));
-
-                using (FileStream file = new FileStream(upsetPath, FileMode.Open)) {
-                    Upset upset = serializer.Deserialize(file) as Upset;
-                    if(upset.Configuration != null && upset.Configuration.Length != 0)
+                    using (FileStream file = new FileStream(upsetPath, FileMode.Open))
                     {
-                        foreach(InstallSpecPath spec in upset.Configuration)
+                        Upset upset = serializer.Deserialize(file) as Upset;
+                        if (upset.Configuration != null && upset.Configuration.Length != 0)
                         {
-                            spec.Path = Uplift.Common.FileSystemUtil.MakePathOSFriendly(spec.Path);
+                            foreach (InstallSpecPath spec in upset.Configuration)
+                            {
+                                spec.Path = Uplift.Common.FileSystemUtil.MakePathOSFriendly(spec.Path);
+                            }
                         }
+                        upset.MetaInformation.dirName = directoryName;
+                        upsetList.Add(upset);
                     }
-                    upset.MetaInformation.dirName = directoryName;
-                    upsetList.Add(upset);
+                }
+                catch(Exception e)
+                {
+                    UnityEngine.Debug.LogErrorFormat("Could not load package at {0}, ignoring it ({1}):\n{2}", directoryName, e.Message, e.StackTrace);
                 }
             }
         }
@@ -193,19 +201,27 @@ namespace Uplift.Schemas {
 
             foreach(string FileName in files)
             {
-                if (!IsUnityPackage(FileName)) {
-                    continue;
+                try
+                {
+                    if (!IsUnityPackage(FileName))
+                    {
+                        continue;
+                    }
+                    // assume unityPackage doesn't contain an upset file for now. In the future we can support it
+                    Upset upset = TryLoadUpset(FileName);
+                    if (upset == null) continue;
+                    upsetList.Add(upset);
                 }
-                // assume unityPackage doesn't contain an upset file for now. In the future we can support it
-                Upset upset = LoadUpsetOrInfer(FileName);
-                if (upset == null) continue;
-                upsetList.Add(upset);
+                catch (Exception e)
+                {
+                    UnityEngine.Debug.LogErrorFormat("Could not load package at {0}, ignoring it ({1}):\n{2}", FileName, e.Message, e.StackTrace);
+                }
             }
         }
 
-        private static Upset LoadUpsetOrInfer(string packagePath)
+        private static Upset TryLoadUpset(string packagePath)
         {
-            string upsetPath = packagePath.Replace(".unitypackage", ".Upset.xml");
+            string upsetPath = Regex.Replace(packagePath, ".unitypackage", ".Upset.xml", RegexOptions.IgnoreCase);
 
             if (File.Exists(upsetPath))
             {
@@ -228,34 +244,10 @@ namespace Uplift.Schemas {
             }
             else
             {
-                return InferUpsetFromUnityPackage(packagePath);
+                Debug.LogWarning("Unity package found at " + packagePath + " has no matching Upset. It should be at " + upsetPath);
             }
-        }
 
-        private static Upset InferUpsetFromUnityPackage(string FileName)
-        {
-            string ShortFileName = System.IO.Path.GetFileNameWithoutExtension(FileName);
-            string[] split = ShortFileName.Split('-');
-            if (split.Length != 2)
-            {
-                Debug.LogWarning("Skipping file " + FileName + " as it doesn't follow the pattern 'PackageName-PackageVersion.unitypackage'");
-                return null;
-            }
-            string PackageName = split[0];
-            string PackageVersion = split[1];
-            string PackageLicense = "Unknown";
-            string MinUnityVersion = "0.0.0";
-
-            Upset upset = new Upset();
-            upset.PackageLicense = PackageLicense;
-            upset.PackageName = PackageName;
-            upset.PackageVersion = PackageVersion;
-            upset.UnityVersion = MinUnityVersion;
-            upset.MetaInformation.dirName = FileName.Split(System.IO.Path.DirectorySeparatorChar).Last();
-
-            // we need to move things around here
-            // upset.InstallSpecifications = new InstallSpec[0];
-            return upset;
+            return null;
         }
     }
 }

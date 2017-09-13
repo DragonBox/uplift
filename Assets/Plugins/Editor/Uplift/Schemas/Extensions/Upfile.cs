@@ -61,26 +61,33 @@ namespace Uplift.Schemas
 
         internal static Upfile LoadXml(string path)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
-
-            using (FileStream fs = new FileStream(path, FileMode.Open))
+            try
             {
-                Upfile upfile = serializer.Deserialize(fs) as Upfile;
+                XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
 
-                upfile.MakePathConfigurationsOSFriendly();
-                upfile.LoadOverrides();
-
-                if (upfile.Repositories != null)
+                using (FileStream fs = new FileStream(path, FileMode.Open))
                 {
-                    foreach (Repository repo in upfile.Repositories)
-                    {
-                        if (repo is FileRepository)
-                            (repo as FileRepository).Path = Uplift.Common.FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
-                    }
-                }
+                    Upfile upfile = serializer.Deserialize(fs) as Upfile;
 
-                Debug.Log("Upfile was successfully loaded");
-                return upfile;
+                    upfile.MakePathConfigurationsOSFriendly();
+                    upfile.LoadOverrides();
+
+                    if (upfile.Repositories != null)
+                    {
+                        foreach (Repository repo in upfile.Repositories)
+                        {
+                            if (repo is FileRepository)
+                                (repo as FileRepository).Path = Uplift.Common.FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
+                        }
+                    }
+
+                    Debug.Log("Upfile was successfully loaded");
+                    return upfile;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new ApplicationException("Uplift: Could not load Upfile", e);
             }
         }
 
@@ -93,7 +100,14 @@ namespace Uplift.Schemas
 
             string overrideFilePath = Path.Combine(homePath, globalOverridePath);
 
-            LoadOverrides(overrideFilePath);
+            try
+            {
+                LoadOverrides(overrideFilePath);
+            }
+            catch (Exception e)
+            {
+                throw new ApplicationException("Uplift: Could not load Upfile overrides from "+overrideFilePath, e);
+            }
         }
 
         internal virtual void LoadOverrides(string path)
@@ -184,7 +198,6 @@ namespace Uplift.Schemas
 
         public PathConfiguration GetDestinationFor(InstallSpec spec)
         {
-
             PathConfiguration PH;
 
             var specType = spec.Type;

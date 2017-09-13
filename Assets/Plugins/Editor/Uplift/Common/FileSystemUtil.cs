@@ -184,5 +184,17 @@ namespace Uplift.Common
             if (string.IsNullOrEmpty(path)) { return path; }
             return JoinPaths(path.Split('/', '\\'));
         }
+
+        public static string MakePathWindowsFriendly(string path)
+        {
+            if (string.IsNullOrEmpty(path)) { return path; }
+            return JoinPaths(path.Split('/'));
+        }
+
+        public static string MakePathUnix(string path)
+        {
+            if (string.IsNullOrEmpty(path)) { return path; }
+            return string.Join("/", path.Split('/', '\\'));
+        }
 	}
 }

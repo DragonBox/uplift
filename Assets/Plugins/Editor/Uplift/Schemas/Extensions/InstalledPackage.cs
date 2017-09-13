@@ -19,31 +19,30 @@ namespace Uplift.Schemas
                 if(spec is InstallSpecPath)
                 {
                     InstallSpecPath specPath = spec as InstallSpecPath;
+                    var friendlyPath = FileSystemUtil.MakePathWindowsFriendly(specPath.Path);
                     if (specPath.Type == InstallSpecType.Root)
                     {
                         // Removing Root package
-                        Directory.Delete(specPath.Path, true);
+                        Directory.Delete(friendlyPath, true);
                     }
                     else
                     {
-                        var filePath = specPath.Path;
-
                         try
                         {
-                            File.Delete(filePath);
-                            File.Delete(filePath + ".meta"); // Removing meta files as well.
+                            File.Delete(friendlyPath);
+                            File.Delete(friendlyPath + ".meta"); // Removing meta files as well.
                         }
                         catch (FileNotFoundException)
                         {
-                            Debug.Log("Warning, tracked file not found: " + filePath);
+                            Debug.Log("Warning, tracked file not found: " + friendlyPath);
                         }
                         catch (DirectoryNotFoundException)
                         {
-                            Debug.Log("Warning, tracked directory not found: " + filePath);
+                            Debug.Log("Warning, tracked directory not found: " + friendlyPath);
                         }
 
 
-                        string dirName = Path.GetDirectoryName(specPath.Path);
+                        string dirName = Path.GetDirectoryName(friendlyPath);
 
                         if (!string.IsNullOrEmpty(dirName))
                         {

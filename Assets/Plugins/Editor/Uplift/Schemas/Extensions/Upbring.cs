@@ -1,8 +1,10 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using Uplift.Packages;
+using Uplift.Common;
 
 namespace Uplift.Schemas
 {
@@ -42,6 +44,24 @@ namespace Uplift.Schemas
             {
                 string repoPath = Upfile.Instance().GetPackagesRootPath();
                 return Path.Combine(repoPath, upbringFileName);
+            }
+        }
+
+        internal IEnumerable<InstallSpec> InstallSpecs
+        {
+            get
+            {
+                if (InstalledPackage == null) yield break;
+                foreach(InstalledPackage ip in InstalledPackage)
+                {
+                    if (ip.Install != null)
+                    {
+                        foreach (InstallSpec spec in ip.Install)
+                        {
+                            yield return spec;
+                        }
+                    }
+                }
             }
         }
 
@@ -115,19 +135,20 @@ namespace Uplift.Schemas
 
         internal void AddLocation(Upset package, InstallSpecType kind, string path)
         {
+            string unixPath = FileSystemUtil.MakePathUnix(path);
             InstalledPackage internalPackage;
             if (!SetupInternalPackage(package, out internalPackage)) return;
             // Note: not catching in case of internalPackage not found
             // as it is valid error throwing condition
 
             // Check if path doesn't exist and return if it does
-            if (internalPackage.Install.Any(spec => spec is InstallSpecPath && spec.Type == kind && (spec as InstallSpecPath).Path == path))
+            if (internalPackage.Install.Any(spec => spec is InstallSpecPath && spec.Type == kind && (spec as InstallSpecPath).Path == unixPath))
             {
                 return;
             }
 
             // Create new spec
-            InstallSpec newSpec = new InstallSpecPath {Type = kind, Path = path};
+            InstallSpec newSpec = new InstallSpecPath {Type = kind, Path = unixPath};
             
 
             InstallSpec[] newArray = new InstallSpec[internalPackage.Install.Length + 1];

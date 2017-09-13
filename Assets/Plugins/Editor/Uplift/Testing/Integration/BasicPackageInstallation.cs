@@ -95,30 +95,30 @@ namespace Uplift.Testing.Integration
             p.Version == "1.0.0"
             ), "Upbring did not register an installation with the proper package Name and Version");
             Assert.IsNotEmpty(upbring.InstalledPackage[0].Install, "Upbring file did not register file dependencies");
-            string separator = Path.DirectorySeparatorChar.ToString();
+
             Assert.That(upbring.InstalledPackage[0].Install.Any(i =>
             i is InstallSpecPath &&
-            (i as InstallSpecPath).Path == Path.Combine("UPackages", "package_a~1.0.0") &&
+            (i as InstallSpecPath).Path == "UPackages/package_a~1.0.0" &&
             i.Type == InstallSpecType.Root
             ), "Root installation did not get registered");
             Assert.That(upbring.InstalledPackage[0].Install.Any(i =>
             i is InstallSpecPath &&
-            (i as InstallSpecPath).Path == string.Join(separator, new string[] { "Assets", "UPackages", "package_a~1.0.0", "A1.cs" }) &&
+            (i as InstallSpecPath).Path == "Assets/UPackages/package_a~1.0.0/A1.cs" &&
             i.Type == InstallSpecType.Base
             ), "Base installation of A1.cs did not get registered");
             Assert.That(upbring.InstalledPackage[0].Install.Any(i =>
             i is InstallSpecPath &&
-            (i as InstallSpecPath).Path == string.Join(separator, new string[] { "Assets", "UPackages", "package_a~1.0.0", "A2.cs" }) &&
+            (i as InstallSpecPath).Path == "Assets/UPackages/package_a~1.0.0/A2.cs" &&
             i.Type == InstallSpecType.Base
             ), "Base installation of A2.cs did not get registered");
             Assert.That(upbring.InstalledPackage[0].Install.Any(i =>
             i is InstallSpecPath &&
-            (i as InstallSpecPath).Path == string.Join(separator, new string[] { "Assets", "UPackages", "package_a~1.0.0", "A3.cs" }) &&
+            (i as InstallSpecPath).Path == "Assets/UPackages/package_a~1.0.0/A3.cs" &&
             i.Type == InstallSpecType.Base
             ), "Base installation of A3.cs did not get registered");
             Assert.That(upbring.InstalledPackage[0].Install.Any(i =>
             i is InstallSpecPath &&
-            (i as InstallSpecPath).Path == string.Join(separator, new string[] { "Assets", "UPackages", "package_a~1.0.0", "Upset.xml" }) &&
+            (i as InstallSpecPath).Path == "Assets/UPackages/package_a~1.0.0/Upset.xml" &&
             i.Type == InstallSpecType.Base
             ), "Base installation of Upset.xml did not get registered");
         }

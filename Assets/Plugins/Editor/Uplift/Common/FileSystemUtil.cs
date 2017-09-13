@@ -194,7 +194,7 @@ namespace Uplift.Common
         public static string MakePathUnix(string path)
         {
             if (string.IsNullOrEmpty(path)) { return path; }
-            return string.Join(Path.DirectorySeparatorChar.ToString(), path.Split('/', '\\'));
+            return string.Join("/", path.Split('/', '\\'));
         }
 	}
 }

@@ -80,7 +80,11 @@ namespace Uplift.Schemas
             XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
             using(FileStream fs = new FileStream(UpbringPath, FileMode.Open)) {
                 Upbring result = serializer.Deserialize(fs) as Upbring;
-                foreach (InstallSpec spec in result.InstallSpecs) spec.Value = FileSystemUtil.MakePathWindowsFriendly(spec.Value);
+                foreach (InstallSpec spec in result.InstallSpecs)
+                {
+                    if (!(spec is InstallSpecPath)) continue;
+                    (spec as InstallSpecPath).Path = FileSystemUtil.MakePathWindowsFriendly((spec as InstallSpecPath).Path);
+                }
                 return result;
             }
         }
@@ -91,7 +95,11 @@ namespace Uplift.Schemas
             using(FileStream fs = new FileStream(UpbringPath, FileMode.Create)) {
                 using(StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8)) {
                     Upbring duplicate = this;
-                    foreach (InstallSpec spec in duplicate.InstallSpecs) spec.Value = FileSystemUtil.MakePathUnix(spec.Value);
+                    foreach (InstallSpec spec in duplicate.InstallSpecs)
+                    {
+                        if (!(spec is InstallSpecPath)) continue;
+                        (spec as InstallSpecPath).Path = FileSystemUtil.MakePathUnix((spec as InstallSpecPath).Path);
+                    }
                     serializer.Serialize(sw, duplicate);
                 }
             }

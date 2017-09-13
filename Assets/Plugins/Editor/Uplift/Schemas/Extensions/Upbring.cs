@@ -1,8 +1,10 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using Uplift.Packages;
+using Uplift.Common;
 
 namespace Uplift.Schemas
 {
@@ -45,6 +47,24 @@ namespace Uplift.Schemas
             }
         }
 
+        internal IEnumerable<InstallSpec> InstallSpecs
+        {
+            get
+            {
+                if (InstalledPackage == null) yield break;
+                foreach(InstalledPackage ip in InstalledPackage)
+                {
+                    if (ip.Install != null)
+                    {
+                        foreach (InstallSpec spec in ip.Install)
+                        {
+                            yield return spec;
+                        }
+                    }
+                }
+            }
+        }
+
         public static bool CheckForUpbring()
         {
             return File.Exists(UpbringPath);
@@ -59,7 +79,9 @@ namespace Uplift.Schemas
             }
             XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
             using(FileStream fs = new FileStream(UpbringPath, FileMode.Open)) {
-                return serializer.Deserialize(fs) as Upbring;
+                Upbring result = serializer.Deserialize(fs) as Upbring;
+                foreach (InstallSpec spec in result.InstallSpecs) spec.Value = FileSystemUtil.MakePathWindowsFriendly(spec.Value);
+                return result;
             }
         }
 
@@ -68,7 +90,9 @@ namespace Uplift.Schemas
             XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
             using(FileStream fs = new FileStream(UpbringPath, FileMode.Create)) {
                 using(StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8)) {
-                    serializer.Serialize(sw, this);
+                    Upbring duplicate = this;
+                    foreach (InstallSpec spec in duplicate.InstallSpecs) spec.Value = FileSystemUtil.MakePathUnix(spec.Value);
+                    serializer.Serialize(sw, duplicate);
                 }
             }
         }

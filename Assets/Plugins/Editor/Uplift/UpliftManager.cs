@@ -128,7 +128,7 @@ namespace Uplift
             // Note: Full package is ALWAYS copied to the upackages directory right now
             string localPackagePath = GetRepositoryInstallPath(package);
             upbring.AddPackage(package);
-            FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
+            Uplift.Common.FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
             upbring.AddLocation(package, InstallSpecType.Root, localPackagePath);
 
             InstallSpecPath[] specArray;
@@ -178,7 +178,7 @@ namespace Uplift
                         destination = System.IO.Path.Combine(destination, System.IO.Path.GetFileName(sourcePath));
                     }
                     File.Copy(sourcePath, destination);
-                    FileSystemUtil.TryCopyMeta(sourcePath, destination);
+                    Uplift.Common.FileSystemUtil.TryCopyMeta(sourcePath, destination);
 
                     if (destination.StartsWith("Assets"))
                     {

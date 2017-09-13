@@ -135,7 +135,7 @@ namespace Uplift.Schemas
 
         internal void AddLocation(Upset package, InstallSpecType kind, string path)
         {
-            string unixPath = FileSystemUtil.MakePathUnix(path);
+            string unixPath = Uplift.Common.FileSystemUtil.MakePathUnix(path);
             InstalledPackage internalPackage;
             if (!SetupInternalPackage(package, out internalPackage)) return;
             // Note: not catching in case of internalPackage not found

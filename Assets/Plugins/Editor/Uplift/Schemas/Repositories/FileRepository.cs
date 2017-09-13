@@ -30,7 +30,7 @@ namespace Uplift.Schemas {
             if (Directory.Exists(sourcePath))
             {
 
-                FileSystemUtil.CopyDirectoryWithMeta(sourcePath, td.Path);
+                Uplift.Common.FileSystemUtil.CopyDirectoryWithMeta(sourcePath, td.Path);
                 
             }
             else if (IsUnityPackage(sourcePath))
@@ -179,7 +179,7 @@ namespace Uplift.Schemas {
                     {
                         foreach(InstallSpecPath spec in upset.Configuration)
                         {
-                            spec.Path = FileSystemUtil.MakePathOSFriendly(spec.Path);
+                            spec.Path = Uplift.Common.FileSystemUtil.MakePathOSFriendly(spec.Path);
                         }
                     }
                     upset.MetaInformation.dirName = directoryName;
@@ -218,7 +218,7 @@ namespace Uplift.Schemas {
                     {
                         foreach (InstallSpecPath spec in upset.Configuration)
                         {
-                            spec.Path = FileSystemUtil.MakePathOSFriendly(spec.Path);
+                            spec.Path = Uplift.Common.FileSystemUtil.MakePathOSFriendly(spec.Path);
                         }
                     }
                     upset.MetaInformation.dirName = packagePath.Split(System.IO.Path.DirectorySeparatorChar).Last();

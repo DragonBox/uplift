@@ -75,7 +75,7 @@ namespace Uplift.Schemas
                     foreach (Repository repo in upfile.Repositories)
                     {
                         if (repo is FileRepository)
-                            (repo as FileRepository).Path = FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
+                            (repo as FileRepository).Path = Uplift.Common.FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
                     }
                 }
 
@@ -113,7 +113,7 @@ namespace Uplift.Schemas
                     foreach (Repository repo in upOverride.Repositories)
                     {
                         if (repo is FileRepository)
-                            (repo as FileRepository).Path = FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
+                            (repo as FileRepository).Path = Uplift.Common.FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
                     }
 
                     if (Repositories == null)
@@ -165,7 +165,7 @@ namespace Uplift.Schemas
             foreach(PathConfiguration path in PathConfigurations())
             {
                 if (!(path == null))
-                    path.Location = FileSystemUtil.MakePathOSFriendly(path.Location);
+                    path.Location = Uplift.Common.FileSystemUtil.MakePathOSFriendly(path.Location);
             }
         }
 

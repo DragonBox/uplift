@@ -19,7 +19,7 @@ namespace Uplift.Schemas
                 if(spec is InstallSpecPath)
                 {
                     InstallSpecPath specPath = spec as InstallSpecPath;
-                    var friendlyPath = FileSystemUtil.MakePathWindowsFriendly(specPath.Path);
+                    var friendlyPath = Uplift.Common.FileSystemUtil.MakePathWindowsFriendly(specPath.Path);
                     if (specPath.Type == InstallSpecType.Root)
                     {
                         // Removing Root package

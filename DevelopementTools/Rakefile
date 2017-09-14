@@ -13,7 +13,7 @@ end
 desc "Run the tests using u3d"
 task :test => [:chdir] do
     pwd = Dir.pwd
-    sh "u3d run -- -runTests -projectPath #{pwd} -testResults #{pwd}/results.xml -testPlatform editmode -batchmode"
+    sh "u3d run -- -logFile u3d.log -runTests -projectPath #{pwd} -testResults #{pwd}/results.xml -testPlatform editmode -batchmode"
 end
 
 # potential future extensions to move to U3d
@@ -144,7 +144,8 @@ task :build => [:chdir] do
     # export unity package
     dirs = [ editor_dir ]
     unitypackage = File.absolute_path(File.join('target', "Uplift.unitypackage"))
+    pwd = Dir.pwd
     Dir.chdir(packing_dir) do
-        unity.export_package(dirs: dirs, out: unitypackage)
+        unity.export_package(dirs: dirs, out: unitypackage, log_file: "#{pwd}/u3d.log")
     end
 end

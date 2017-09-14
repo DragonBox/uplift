@@ -173,11 +173,11 @@ namespace Uplift.Schemas {
 
                     if (!File.Exists(upsetPath)) continue;
 
-                    XmlSerializer serializer = new XmlSerializer(typeof(Upset));
+                    StrictXmlDeserializer<Upset> deserializer = new StrictXmlDeserializer<Upset>();
 
                     using (FileStream file = new FileStream(upsetPath, FileMode.Open))
                     {
-                        Upset upset = serializer.Deserialize(file) as Upset;
+                        Upset upset = deserializer.Deserialize(file);
                         if (upset.Configuration != null && upset.Configuration.Length != 0)
                         {
                             foreach (InstallSpecPath spec in upset.Configuration)
@@ -225,11 +225,11 @@ namespace Uplift.Schemas {
 
             if (File.Exists(upsetPath))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(Upset));
+                StrictXmlDeserializer<Upset> deserializer = new StrictXmlDeserializer<Upset>();
 
                 using (FileStream file = new FileStream(upsetPath, FileMode.Open))
                 {
-                    Upset upset = serializer.Deserialize(file) as Upset;
+                    Upset upset = deserializer.Deserialize(file);
                     if (upset.Configuration != null && upset.Configuration.Length != 0)
                     {
                         foreach (InstallSpecPath spec in upset.Configuration)

@@ -63,11 +63,11 @@ namespace Uplift.Schemas
         {
             try
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
+                StrictXmlDeserializer<Upfile> deserializer = new StrictXmlDeserializer<Upfile>();
 
                 using (FileStream fs = new FileStream(path, FileMode.Open))
                 {
-                    Upfile upfile = serializer.Deserialize(fs) as Upfile;
+                    Upfile upfile = deserializer.Deserialize(fs);
 
                     upfile.MakePathConfigurationsOSFriendly();
                     upfile.LoadOverrides();
@@ -115,14 +115,14 @@ namespace Uplift.Schemas
             // If we don't have override file, ignore
             if (!File.Exists(path)) return;
 
-            XmlSerializer serializer = new XmlSerializer(typeof(UpfileOverride));
+            StrictXmlDeserializer<UpfileOverride> deserializer = new StrictXmlDeserializer<UpfileOverride>();
 
             using (FileStream fs = new FileStream(path, FileMode.Open))
             {
 
                 try
                 {
-                    UpfileOverride upOverride = serializer.Deserialize(fs) as UpfileOverride;
+                    UpfileOverride upOverride = deserializer.Deserialize(fs);
 
                     foreach (Repository repo in upOverride.Repositories)
                     {

@@ -79,10 +79,9 @@ namespace Uplift.Schemas
                     Upbring newUpbring = new Upbring { InstalledPackage = new InstalledPackage[0] };
                     return newUpbring;
                 }
-                XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
-                using (FileStream fs = new FileStream(UpbringPath, FileMode.Open))
-                {
-                    return serializer.Deserialize(fs) as Upbring;
+                StrictXmlDeserializer<Upbring> deserializer = new StrictXmlDeserializer<Upbring>();
+                using(FileStream fs = new FileStream(UpbringPath, FileMode.Open)) {
+                    return deserializer.Deserialize(fs);
                 }
             }
             catch(Exception e)

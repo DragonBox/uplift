@@ -35,11 +35,11 @@ namespace Uplift.Testing.Helpers
 
         internal static Upfile LoadTestXml(string path)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
+            StrictXmlDeserializer<Upfile> deserializer = new StrictXmlDeserializer<Upfile>();
 
             using (FileStream fs = new FileStream(path, FileMode.Open))
             {
-                Upfile upfile = serializer.Deserialize(fs) as Upfile;
+                Upfile upfile = deserializer.Deserialize(fs);
 
                 upfile.MakePathConfigurationsOSFriendly();
 

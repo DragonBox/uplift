@@ -79,10 +79,13 @@ namespace Uplift.Schemas
                     Upbring newUpbring = new Upbring { InstalledPackage = new InstalledPackage[0] };
                     return newUpbring;
                 }
-                StrictXmlDeserializer<Upbring> deserializer = new StrictXmlDeserializer<Upbring>();
-                using(FileStream fs = new FileStream(UpbringPath, FileMode.Open))
+                // No StrictXmlDeserialization for Upbring due to xsi attributes not being recognized
+                // for now, disabled, as we believe we generated properly
+                // StrictXmlDeserializer<Upbring> deserializer = new StrictXmlDeserializer<Upbring>();
+                XmlSerializer serializer = new XmlSerializer(typeof(Upbring));
+                using (FileStream fs = new FileStream(UpbringPath, FileMode.Open))
                 {
-                    return deserializer.Deserialize(fs);
+                    return serializer.Deserialize(fs) as Upbring;
                 }
             }
             catch(Exception e)

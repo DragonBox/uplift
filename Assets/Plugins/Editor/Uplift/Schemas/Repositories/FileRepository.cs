@@ -210,7 +210,7 @@ namespace Uplift.Schemas {
                     // assume unityPackage doesn't contain an upset file for now. In the future we can support it
                     Upset upset = TryLoadUpset(FileName);
                     if (upset == null) continue;
-					// Note: we allow not full unity version here. Maybe we should have a thin Unity version
+                    // Note: the spec may contain incomplete unity version here (e.g. 5.6). Maybe we should have a ParseThinUnityVersion
                     if (VersionParser.ParseIncompleteVersion(upset.UnityVersion) < Unity5) {
                         throw new NotSupportedException("The package has been packed by a Unity version prior to Unity5, and we do not support this. Contact the package maintainer for updated version.");
                     }

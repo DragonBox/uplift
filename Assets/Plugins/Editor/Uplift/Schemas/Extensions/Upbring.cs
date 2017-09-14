@@ -80,7 +80,8 @@ namespace Uplift.Schemas
                     return newUpbring;
                 }
                 StrictXmlDeserializer<Upbring> deserializer = new StrictXmlDeserializer<Upbring>();
-                using(FileStream fs = new FileStream(UpbringPath, FileMode.Open)) {
+                using(FileStream fs = new FileStream(UpbringPath, FileMode.Open))
+                {
                     return deserializer.Deserialize(fs);
                 }
             }

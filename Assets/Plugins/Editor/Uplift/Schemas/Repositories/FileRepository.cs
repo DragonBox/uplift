@@ -225,7 +225,7 @@ namespace Uplift.Schemas {
 
         private static Upset TryLoadUpset(string packagePath)
         {
-            string upsetPath = Regex.Replace(packagePath, ".unitypackage", ".Upset.xml", RegexOptions.IgnoreCase);
+            string upsetPath = Regex.Replace(packagePath, ".unitypackage$", ".Upset.xml", RegexOptions.IgnoreCase);
 
             if (File.Exists(upsetPath))
             {

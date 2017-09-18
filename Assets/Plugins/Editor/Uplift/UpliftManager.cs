@@ -74,6 +74,16 @@ namespace Uplift
             PackageList pList = PackageList.Instance();
 
             DependencyDefinition[] dependencies = dependencySolver.SolveDependencies(upfile.Dependencies);
+
+            // Remove installed dependencies that are no longer in the dependency tree
+            foreach(InstalledPackage ip in Upbring.Instance().InstalledPackage)
+            {
+                if (dependencies.Any(dep => dep.Name == ip.Name)) continue;
+
+                UnityEngine.Debug.Log("Removing unused dependency on " + ip.Name);
+                NukePackage(ip.Name);
+            }
+
             foreach (DependencyDefinition packageDefinition in dependencies)
             {
                 

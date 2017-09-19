@@ -46,6 +46,9 @@ namespace Uplift.Common
         public static bool operator <=(VersionStruct a, VersionStruct b) { return !(a > b); }
         public static bool operator >=(VersionStruct a, VersionStruct b) { return !(a < b); }
 
+        public static bool operator ==(VersionStruct a, VersionStruct b) { return a <= b && a >= b; }
+        public static bool operator !=(VersionStruct a, VersionStruct b) { return a < b || a > b; }
+
         private static bool TryCompareInt(int? a, int? b, ref bool result)
         {
             if (a != null)
@@ -142,6 +145,10 @@ namespace Uplift.Common
             {
                 if (minimal <= (other as LoseVersionRequirement).stub) return other;
             }
+            else if (other is BoundedVersionRequirement)
+            {
+                if (minimal <= (other as BoundedVersionRequirement).lowerBound) return other;
+            }
             else if (other is ExactVersionRequirement)
             {
                 if (minimal <= (other as ExactVersionRequirement).expected) return other;
@@ -220,9 +227,13 @@ namespace Uplift.Common
 
         public IVersionRequirement RestrictTo(IVersionRequirement other)
         {
-            if (other is NoRequirement || other is MinimalVersionRequirement || other is LoseVersionRequirement)
+            if (other is NoRequirement || other is MinimalVersionRequirement)
             {
                 return other.RestrictTo(this);
+            }
+            else if(other is LoseVersionRequirement)
+            {
+                if (IsMetBy((other as LoseVersionRequirement).stub)) return other;
             }
             else if(other is BoundedVersionRequirement)
             {
@@ -259,8 +270,15 @@ namespace Uplift.Common
 
         public IVersionRequirement RestrictTo(IVersionRequirement other)
         {
-            if (other is ExactVersionRequirement && Equals(other)) return this;
-            return other.RestrictTo(this);
+            if (other is ExactVersionRequirement)
+            {
+                if (IsMetBy((other as ExactVersionRequirement).expected)) return this;
+            }
+            else
+            {
+                return other.RestrictTo(this);
+            }
+            throw new IncompatibleRequirementException(this, other);
         }
 
         public override string ToString()

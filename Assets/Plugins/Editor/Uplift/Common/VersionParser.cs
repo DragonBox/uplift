@@ -27,8 +27,10 @@ namespace Uplift.Common
             }
             else
             {
-                return new LoseVersionRequirement(requirement);
+                if(ParseVersion(requirement) != new VersionStruct { Major = 0 })
+                    return new LoseVersionRequirement(requirement);
             }
+            throw new ArgumentException("Cannot parse requirement from " + requirement);
         }
 
         public static VersionStruct ParseVersion(string version)

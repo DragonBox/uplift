@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Uplift.Common;
+using Uplift.Schemas;
 
 namespace Uplift.DependencyResolution
 {
@@ -11,15 +12,27 @@ namespace Uplift.DependencyResolution
         protected List<DependencyNode> dependencies;
         protected int index;
         protected int lowlink;
+        public SkipInstallSpec[] skips;
+        public OverrideDestinationSpec[] overrides;
 
         public DependencyNode() { }
-        public DependencyNode(string name, string version, string repository) : this(name, version, repository, null) { }
-        public DependencyNode(string name, string version, string repository, List<DependencyNode> dependencies)
+        public DependencyNode(DependencyDefinition definition) : this(
+                definition.Name,
+                definition.Version,
+                definition.Repository,
+                definition.SkipInstall,
+                definition.OverrideDestination,
+                null
+                ) { }
+        public DependencyNode(string name, string version, string repository) : this(name, version, repository, null, null, null) { }
+        public DependencyNode(string name, string version, string repository, SkipInstallSpec[] skips, OverrideDestinationSpec[] overrides, List<DependencyNode> dependencies)
         {
             this.name = name;
             this.requirement = VersionParser.ParseRequirement(version);
             this.repository = repository;
             this.dependencies = dependencies;
+            this.skips = skips;
+            this.overrides = overrides;
 
             index = -1;
             lowlink = -1;

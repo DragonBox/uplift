@@ -42,11 +42,14 @@ namespace Uplift.DependencyResolution
             for(int i = 0; i < graph.nodeList.Count; i++)
             {
                 current = graph.nodeList[i];
+
                 result[i] = new DependencyDefinition()
                 {
                     Name = current.Name,
                     Version = current.Requirement.ToString(),
-                    Repository = current.Repository
+                    Repository = current.Repository,
+                    SkipInstall = current.skips,
+                    OverrideDestination = current.overrides
                 };
             }
 

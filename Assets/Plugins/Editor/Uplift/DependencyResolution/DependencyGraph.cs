@@ -42,7 +42,8 @@ namespace Uplift.DependencyResolution
 
         public void LoadDependencies(DependencyDefinition dependency, PackageList packageList, DependencyHelper.ConflictChecker checkConflict, out DependencyNode node)
         {
-            node = new DependencyNode(dependency.Name, dependency.Version, dependency.Repository);
+            node = new DependencyNode(dependency);
+
             if (Contains(dependency.Name))
             {
                 DependencyNode existing = FindByName(dependency.Name);

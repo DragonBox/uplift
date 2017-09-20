@@ -5,6 +5,8 @@ using Uplift.Packages;
 using Uplift.Schemas;
 using Uplift.DependencyResolution;
 using System.Text.RegularExpressions;
+using UnityEditor;
+using System;
 
 namespace Uplift
 {
@@ -139,6 +141,7 @@ namespace Uplift
             string localPackagePath = GetRepositoryInstallPath(package);
             upbring.AddPackage(package);
             Uplift.Common.FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
+            CheckGUIDConflicts(localPackagePath, package);
             upbring.AddLocation(package, InstallSpecType.Root, localPackagePath);
 
             InstallSpecPath[] specArray;
@@ -227,6 +230,34 @@ namespace Uplift
             upbring.SaveFile();
 
             td.Dispose();
+        }
+
+        private void CheckGUIDConflicts(string sourceDirectory, Upset package)
+        {
+            foreach(string file in FileSystemUtil.RecursivelyListFiles(sourceDirectory))
+            {
+                if (!file.EndsWith(".meta")) continue;
+                string guid = LoadGUID(file);
+                string guidPath = AssetDatabase.GUIDToAssetPath(guid);
+                if (!string.IsNullOrEmpty(guidPath))
+                {
+                    if(File.Exists(guidPath) || Directory.Exists(guidPath))
+                    {
+                        // the guid is cached and the associated file/directory exists
+                        Directory.Delete(sourceDirectory, true);
+                        throw new ApplicationException(
+                            string.Format(
+                                "The guid {0} is already used and tracks {1}. Uplift was trying to import a file with meta at {2} for package {3}. Uplift cannot install this package, please clean your project before trying again.",
+                                guid,
+                                guidPath,
+                                file,
+                                package.PackageName
+                                )
+                            );
+                    }
+                    // else, the guid is cached but there are no longer anything linked with it
+                }
+            }
         }
 
         private void TryUpringAddGUID(Upbring upbring, string file, Upset package, InstallSpecType type, string destination)

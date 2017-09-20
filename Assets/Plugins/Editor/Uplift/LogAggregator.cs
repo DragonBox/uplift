@@ -9,20 +9,24 @@ namespace Uplift
     class LogAggregator : ILogHandler
     {
         private List<string> logs;
-        private ILogHandler defaultHandler;
+        private ILogHandler originalHandler;
         private LogType level;
+        private bool started;
 
         public LogAggregator()
         {
             logs = new List<string>();
             level = LogType.Log;
+            started = false;
         }
 
         public void StartAggregating()
         {
-            defaultHandler = Debug.logger.logHandler;
+            if (started) return;
+            originalHandler = Debug.logger.logHandler;
             Debug.logger.logHandler = this;
             level = LogType.Log;
+            started = true;
         }
 
         public void LogFormat(LogType type, UnityEngine.Object _object, string format, params object[] elements)
@@ -39,38 +43,36 @@ namespace Uplift
 
         public void FinishAggregating(string regularMessage, string warningMessage, string errorMessage)
         {
-            Debug.logger.logHandler = defaultHandler;
-            string agglomerated = string.Join("\n", logs.ToArray());
+            if (!started) return;
+            Debug.logger.logHandler = originalHandler;
+            string concatenated = string.Join("\n", logs.ToArray());
+            string regularConcatenated = regularMessage + "\n" + concatenated;
+            string warningConcatenated = warningMessage + "\n" + concatenated;
+            string errorConcatenated = errorMessage + "\n" + concatenated;
             switch (level)
             {
                 case LogType.Log:
-                    agglomerated = regularMessage + "\n" + agglomerated;
-                    Debug.Log(agglomerated);
+                    Debug.Log(regularConcatenated);
                     break;
 
                 case LogType.Warning:
-                    agglomerated = warningMessage + "\n" + agglomerated;
-                    Debug.LogWarning(agglomerated);
+                    Debug.LogWarning(warningConcatenated);
                     break;
 
                 case LogType.Error:
-                    agglomerated = errorMessage + "\n" + agglomerated;
-                    Debug.LogError(agglomerated);
+                    Debug.LogError(errorConcatenated);
                     break;
 
                 case LogType.Assert:
-                    agglomerated = regularMessage + "\n" + agglomerated;
-                    Debug.Log(agglomerated);
+                    Debug.Log(regularConcatenated);
                     break;
 
                 case LogType.Exception:
-                    agglomerated = errorMessage + "\n" + agglomerated;
-                    Debug.LogError(agglomerated);
+                    Debug.LogError(errorConcatenated);
                     break;
 
                 default:
-                    agglomerated = regularMessage + "\n" + agglomerated;
-                    Debug.Log(agglomerated);
+                    Debug.Log(regularConcatenated);
                     break;
             }
             logs = new List<string>();
@@ -87,7 +89,7 @@ namespace Uplift
 
         ~LogAggregator()
         {
-            Debug.logger.logHandler = defaultHandler;
+            Debug.logger.logHandler = originalHandler;
             if(logs.Count > 0)
             {
                 FinishAggregating(

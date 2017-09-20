@@ -6,18 +6,39 @@ using UnityEngine;
 
 namespace Uplift
 {
-    class LogAggregator : ILogHandler
+    class LogAggregator : ILogHandler, IDisposable
     {
         private List<string> logs;
         private ILogHandler originalHandler;
         private LogType aggregatedLevel;
         private bool started;
+        private string onSuccess;
+        private string onWarning;
+        private string onError;
 
-        public LogAggregator()
+        public static LogAggregator InUnity(string onSuccess, string onWarning, string onError)
+        {
+            LogAggregator LA = new LogAggregator(onSuccess, onWarning, onError);
+            LA.StartAggregating();
+            return LA;
+        }
+
+        public static LogAggregator InUnity(string onSuccesFormat, string onWarningFormat, string onErrorFormat, params object[] arg0)
+        {
+            return InUnity(
+                string.Format(onSuccesFormat, arg0),
+                string.Format(onWarningFormat, arg0),
+                string.Format(onErrorFormat, arg0)
+                );
+        }
+
+        public LogAggregator(string onSuccess, string onWarning, string onError)
         {
             logs = new List<string>();
-            aggregatedLevel = LogType.Log;
             started = false;
+            this.onSuccess = onSuccess;
+            this.onWarning = onWarning;
+            this.onError = onError;
         }
 
         public void StartAggregating()
@@ -41,14 +62,13 @@ namespace Uplift
             aggregatedLevel = LogType.Error;
         }
 
-        public void FinishAggregating(string regularMessage, string warningMessage, string errorMessage)
+        private void FinishAggregating()
         {
             if (!started) return;
-            Debug.logger.logHandler = originalHandler;
             string concatenated = string.Join("\n", logs.ToArray());
-            string regularConcatenated = regularMessage + "\n" + concatenated;
-            string warningConcatenated = warningMessage + "\n" + concatenated;
-            string errorConcatenated = errorMessage + "\n" + concatenated;
+            string regularConcatenated = onSuccess + "\n" + concatenated;
+            string warningConcatenated = onWarning + "\n" + concatenated;
+            string errorConcatenated = onError + "\n" + concatenated;
             switch (aggregatedLevel)
             {
                 case LogType.Log:
@@ -78,26 +98,11 @@ namespace Uplift
             logs = new List<string>();
         }
 
-        public void FinishAggregating(string regularFormat, string warningFormat, string errorFormat, params object[] elements)
+        public void Dispose()
         {
-            FinishAggregating(
-                string.Format(regularFormat, elements),
-                string.Format(warningFormat, elements),
-                string.Format(errorFormat, elements)
-                );
-        }
-
-        ~LogAggregator()
-        {
+            if (!started) return;
             Debug.logger.logHandler = originalHandler;
-            if(logs.Count > 0)
-            {
-                FinishAggregating(
-                    "The aggregator was destroyed with regular logs not logged yet",
-                    "The aggregator was destroyed with warning logs not logged yet",
-                    "The aggregator was destroyed with error logs not logged yet"
-                    );
-            }
+            FinishAggregating();
         }
     }
 }

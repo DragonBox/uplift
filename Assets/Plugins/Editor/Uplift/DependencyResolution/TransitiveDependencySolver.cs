@@ -11,6 +11,8 @@ namespace Uplift.DependencyResolution
 
         public DependencyDefinition[] SolveDependencies(DependencyDefinition[] dependencies)
         {
+            VisualizeDependencies(dependencies);
+
             DependencyGraph dependencyGraph = GenerateGraph(dependencies);
             TarjanCycleDetector cycleDetector = new TarjanCycleDetector();
 
@@ -33,6 +35,32 @@ namespace Uplift.DependencyResolution
             }
 
             return graph;
+        }
+
+        private void VisualizeDependencies(DependencyDefinition[] dependencies)
+        {
+            string result = "";
+            foreach(DependencyDefinition def in dependencies)
+            {
+                result += RecursivelyListDependencies(def, "");
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter("Uptree.txt", false))
+            {
+                file.WriteLine(result);
+            }
+        }
+
+        private string RecursivelyListDependencies(DependencyDefinition def, string indent = "")
+        {
+            string result = indent + def.Name + "\n";
+            PackageRepo pr = PackageList.Instance().FindPackageAndRepository(def);
+            if(pr.Package != null && pr.Package.Dependencies != null)
+            {
+                foreach (DependencyDefinition packageDefinition in pr.Package.Dependencies)
+                    result += RecursivelyListDependencies(packageDefinition, indent + "   ");
+            }
+            return result;
         }
 
         private DependencyDefinition[] GetDependencyDefinitions(DependencyGraph graph)

@@ -10,13 +10,13 @@ namespace Uplift
     {
         private List<string> logs;
         private ILogHandler originalHandler;
-        private LogType level;
+        private LogType aggregatedLevel;
         private bool started;
 
         public LogAggregator()
         {
             logs = new List<string>();
-            level = LogType.Log;
+            aggregatedLevel = LogType.Log;
             started = false;
         }
 
@@ -25,20 +25,20 @@ namespace Uplift
             if (started) return;
             originalHandler = Debug.logger.logHandler;
             Debug.logger.logHandler = this;
-            level = LogType.Log;
+            aggregatedLevel = LogType.Log;
             started = true;
         }
 
         public void LogFormat(LogType type, UnityEngine.Object _object, string format, params object[] elements)
         {
-            logs.Add(string.Format(format, elements));
-            if ((int)type < (int)level) level = type;
+            logs.Add(string.Format(type.ToString() + " " + format, elements));
+            if ((int)type < (int)aggregatedLevel) aggregatedLevel = type;
         }
 
         public void LogException(Exception exception, UnityEngine.Object _object)
         {
             logs.Add(exception.ToString());
-            level = LogType.Error;
+            aggregatedLevel = LogType.Error;
         }
 
         public void FinishAggregating(string regularMessage, string warningMessage, string errorMessage)
@@ -49,7 +49,7 @@ namespace Uplift
             string regularConcatenated = regularMessage + "\n" + concatenated;
             string warningConcatenated = warningMessage + "\n" + concatenated;
             string errorConcatenated = errorMessage + "\n" + concatenated;
-            switch (level)
+            switch (aggregatedLevel)
             {
                 case LogType.Log:
                     Debug.Log(regularConcatenated);

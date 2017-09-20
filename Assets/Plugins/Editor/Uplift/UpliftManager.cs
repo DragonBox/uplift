@@ -141,10 +141,9 @@ namespace Uplift
             string localPackagePath = GetRepositoryInstallPath(package);
             upbring.AddPackage(package);
             Uplift.Common.FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
+            CheckGUIDConflicts(localPackagePath, package);
             upbring.AddLocation(package, InstallSpecType.Root, localPackagePath);
 
-
-            
             InstallSpecPath[] specArray;
             if (package.Configuration == null)
             {
@@ -233,6 +232,34 @@ namespace Uplift
             td.Dispose();
         }
 
+        private void CheckGUIDConflicts(string sourceDirectory, Upset package)
+        {
+            foreach(string file in FileSystemUtil.RecursivelyListFiles(sourceDirectory))
+            {
+                if (!file.EndsWith(".meta")) continue;
+                string guid = LoadGUID(file);
+                string guidPath = AssetDatabase.GUIDToAssetPath(guid);
+                if (!string.IsNullOrEmpty(guidPath))
+                {
+                    if(File.Exists(guidPath) || Directory.Exists(guidPath))
+                    {
+                        // the guid is cached and the associated file/directory exists
+                        Directory.Delete(sourceDirectory, true);
+                        throw new ApplicationException(
+                            string.Format(
+                                "The guid {0} is already used and tracks {1}. Uplift was trying to import a file with meta at {2} for package {3}. Uplift cannot install this package, please clean your project before trying again.",
+                                guid,
+                                guidPath,
+                                file,
+                                package.PackageName
+                                )
+                            );
+                    }
+                    // else, the guid is cached but there are no longer anything linked with it
+                }
+            }
+        }
+
         private void TryUpringAddGUID(Upbring upbring, string file, Upset package, InstallSpecType type, string destination)
         {
             if (file.EndsWith(".meta")) return;
@@ -243,20 +270,6 @@ namespace Uplift
                 return;
             }
             string guid = LoadGUID(metaPath);
-            string guidPath = AssetDatabase.GUIDToAssetPath(guid);
-            string destinationPath = FileSystemUtil.MakePathUnix(Path.Combine(destination, file));
-            if (!string.IsNullOrEmpty(guidPath) && !string.Equals(guidPath, destinationPath))
-            {
-                throw new ApplicationException(
-                    string.Format(
-                        "The guid {0} is already used and tracks {1}. Uplift was trying to import a file with meta at {3} for package {4}. Uplift cannot install package, please clean your project before trying again.",
-                        guid,
-                        guidPath,
-                        metaPath,
-                        package.PackageName
-                        )
-                    );
-            }
             upbring.AddGUID(package, type, guid);
         }
 

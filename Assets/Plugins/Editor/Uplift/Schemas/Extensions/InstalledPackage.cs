@@ -54,6 +54,10 @@ namespace Uplift.Schemas
                 {
                     InstallSpecGUID specGuid = spec as InstallSpecGUID;
                     string guidPath = AssetDatabase.GUIDToAssetPath(specGuid.Guid);
+                    if (String.IsNullOrEmpty(guidPath)) {
+                        Debug.Log("Warning, tracked file not found: guid: " + specGuid.Guid + " " + specGuid.Type);
+                        return;
+                    }
                     if (specGuid.Type == InstallSpecType.Root)
                     {
                         // Removing Root package

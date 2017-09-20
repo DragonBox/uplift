@@ -5,6 +5,7 @@ using Uplift.Packages;
 using Uplift.Schemas;
 using Uplift.DependencyResolution;
 using System.Text.RegularExpressions;
+using UnityEditor;
 
 namespace Uplift
 {
@@ -239,6 +240,14 @@ namespace Uplift
                 return;
             }
             string guid = LoadGUID(metaPath);
+            string guidPath = AssetDatabase.GUIDToAssetPath(guid);
+            string destinationPath = FileSystemUtil.MakePathUnix(Path.Combine(destination, file));
+            if (!string.IsNullOrEmpty(guidPath) && !string.Equals(guidPath, destinationPath))
+            {
+                UnityEngine.Debug.LogWarningFormat("The guid {0} is already used (tracks {1}), Uplift will then track the location ({2}) of the file. This could probably lead to issues if the file is the same. Please make sure you have no duplicates.", guid, guidPath, destinationPath);
+                upbring.AddLocation(package, type, Path.Combine(destination, file));
+                return;
+            }
             upbring.AddGUID(package, type, guid);
         }
 

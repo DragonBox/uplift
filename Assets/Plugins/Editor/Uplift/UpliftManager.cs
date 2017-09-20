@@ -6,6 +6,7 @@ using Uplift.Schemas;
 using Uplift.DependencyResolution;
 using System.Text.RegularExpressions;
 using UnityEditor;
+using System;
 
 namespace Uplift
 {
@@ -244,9 +245,13 @@ namespace Uplift
             string destinationPath = FileSystemUtil.MakePathUnix(Path.Combine(destination, file));
             if (!string.IsNullOrEmpty(guidPath) && !string.Equals(guidPath, destinationPath))
             {
-                UnityEngine.Debug.LogWarningFormat("The guid {0} is already used (tracks {1}), Uplift will then track the location ({2}) of the file. This could probably lead to issues if the file is the same. Please make sure you have no duplicates.", guid, guidPath, destinationPath);
-                upbring.AddLocation(package, type, Path.Combine(destination, file));
-                return;
+                throw new ApplicationException(
+                    string.Format(
+                        "The guid {0} is already used and tracks {1}. Uplift cannot install package, please clean your project before trying again.",
+                        guid, 
+                        guidPath
+                        )
+                    );
             }
             upbring.AddGUID(package, type, guid);
         }

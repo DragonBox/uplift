@@ -76,7 +76,9 @@ namespace Uplift
         }
 
         public void InstallDependencies(IDependencySolver dependencySolver)
-        {            
+        {
+            LogAggregator aggregator = new LogAggregator();
+            aggregator.StartAggregating();
             //FIXME: We should check for all repositories, not the first one
             //FileRepository rt = (FileRepository) Upfile.Repositories[0];
             PackageList pList = PackageList.Instance();
@@ -110,11 +112,20 @@ namespace Uplift
                     }
                 }
             }
+            aggregator.FinishAggregating(
+                "Installed {0} dependencies successfully",
+                "Installed {0} dependencies successfully but warnings were raised",
+                "Some errors occured while installing {0} dependencies",
+                dependencies.Length
+                );
         }
 
         public void NukeAllPackages()
         {
+            LogAggregator aggregator = new LogAggregator();
+            aggregator.StartAggregating();
             Upbring upbring = Upbring.Instance();
+            int count = upbring.InstalledPackage.Length;
 
             foreach (InstalledPackage package in upbring.InstalledPackage)
             {
@@ -124,6 +135,12 @@ namespace Uplift
 
             //TODO: Remove file when Upbring properly removes everything
             Upbring.RemoveFile();
+            aggregator.FinishAggregating(
+                "{0} packages were successfully nuked",
+                "{0} packages were successfully nuked but warnings were raised",
+                "Some errors occured while nuking {0} packages",
+                count
+                );
         }
 
         public string GetPackageDirectory(Upset package)
@@ -140,6 +157,8 @@ namespace Uplift
         // This should be contained using kinds of destinations.
         public void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition)
         {
+            LogAggregator aggregator = new LogAggregator();
+            aggregator.StartAggregating();
             Upbring upbring = Upbring.Instance();
             
             // Note: Full package is ALWAYS copied to the upackages directory right now
@@ -235,6 +254,12 @@ namespace Uplift
             upbring.SaveFile();
 
             td.Dispose();
+            aggregator.FinishAggregating(
+                "Package {0} was successfully installed",
+                "Package {0} was successfully installed but raised warnings",
+                "An error occured while installing package {0}",
+                package.PackageName
+                );
         }
 
         private void CheckGUIDConflicts(string sourceDirectory, Upset package)

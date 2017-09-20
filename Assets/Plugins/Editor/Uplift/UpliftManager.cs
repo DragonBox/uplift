@@ -143,6 +143,8 @@ namespace Uplift
             Uplift.Common.FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
             upbring.AddLocation(package, InstallSpecType.Root, localPackagePath);
 
+
+            
             InstallSpecPath[] specArray;
             if (package.Configuration == null)
             {
@@ -247,9 +249,11 @@ namespace Uplift
             {
                 throw new ApplicationException(
                     string.Format(
-                        "The guid {0} is already used and tracks {1}. Uplift cannot install package, please clean your project before trying again.",
-                        guid, 
-                        guidPath
+                        "The guid {0} is already used and tracks {1}. Uplift was trying to import a file with meta at {3} for package {4}. Uplift cannot install package, please clean your project before trying again.",
+                        guid,
+                        guidPath,
+                        metaPath,
+                        package.PackageName
                         )
                     );
             }

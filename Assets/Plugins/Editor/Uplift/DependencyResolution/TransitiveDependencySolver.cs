@@ -53,7 +53,7 @@ namespace Uplift.DependencyResolution
 
         private string RecursivelyListDependencies(DependencyDefinition def, string indent = "")
         {
-            string result = indent + def.Name + "\n";
+            string result = indent + def.Name + " " + def.Requirement + "\n";
             PackageRepo pr = PackageList.Instance().FindPackageAndRepository(def);
             if(pr.Package != null && pr.Package.Dependencies != null)
             {

@@ -46,8 +46,23 @@ namespace Uplift.Common
         public static bool operator <=(VersionStruct a, VersionStruct b) { return !(a > b); }
         public static bool operator >=(VersionStruct a, VersionStruct b) { return !(a < b); }
 
-        public static bool operator ==(VersionStruct a, VersionStruct b) { return a <= b && a >= b; }
-        public static bool operator !=(VersionStruct a, VersionStruct b) { return a < b || a > b; }
+        public static bool operator ==(VersionStruct a, VersionStruct b) {
+            return (
+                a.Major == b.Major &&
+                a.Minor == b.Minor &&
+                a.Patch == b.Patch &&
+                a.Optional == b.Optional
+                );
+        }
+        public static bool operator !=(VersionStruct a, VersionStruct b) { return !(a == b); }
+        public override int GetHashCode()
+        {
+            int result = Major;
+            if (Minor != null) result = result & (int)Minor;
+            if (Patch != null) result = result & (int)Patch;
+            if (Optional != null) result = result & (int)Optional;
+            return result;
+        }
 
         private static bool TryCompareInt(int? a, int? b, ref bool result)
         {

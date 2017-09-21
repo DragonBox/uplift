@@ -63,6 +63,10 @@ namespace Uplift.Common
             if (Optional != null) result = result & (int)Optional;
             return result;
         }
+        public override bool Equals(object o)
+        {
+            return this == (VersionStruct)o;
+        }
 
         private static bool TryCompareInt(int? a, int? b, ref bool result)
         {

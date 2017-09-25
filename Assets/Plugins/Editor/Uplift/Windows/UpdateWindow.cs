@@ -9,9 +9,9 @@ namespace Uplift.Windows
 {
     internal class UpdateUtility : EditorWindow
     {
-
-       protected void OnGUI()
-       {
+        private Vector2 scrollPosition;
+        protected void OnGUI()
+        {
             titleContent.text = "Update Utility";
 
             UpliftManager manager = UpliftManager.Instance();
@@ -31,7 +31,9 @@ namespace Uplift.Windows
             }
             else
             {
-                foreach(DependencyDefinition dependency in dependencies)
+                scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+
+                foreach (DependencyDefinition dependency in dependencies)
                 {
                     string name = dependency.Name;
                     EditorGUILayout.LabelField(name + ":", EditorStyles.boldLabel);
@@ -76,6 +78,8 @@ namespace Uplift.Windows
 
                     EditorGUILayout.Space();
                 }
+
+                EditorGUILayout.EndScrollView();
 
                 if (GUILayout.Button("Install all dependencies"))
                 {

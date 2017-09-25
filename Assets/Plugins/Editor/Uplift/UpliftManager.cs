@@ -48,9 +48,15 @@ namespace Uplift
 
         public void InstallDependencies()
         {
+            InstallDependencies(GetDependencySolver());
+        }
+
+        public IDependencySolver GetDependencySolver()
+        {
             TransitiveDependencySolver dependencySolver = new TransitiveDependencySolver();
             dependencySolver.CheckConflict += SolveVersionConflict;
-            InstallDependencies(dependencySolver);
+
+            return dependencySolver;
         }
 
         private void SolveVersionConflict(ref DependencyNode existing, DependencyNode compared)
@@ -63,7 +69,7 @@ namespace Uplift
             catch (IncompatibleRequirementException e)
             {
                 UnityEngine.Debug.LogError("Unsolvable version conflict in the dependency graph");
-                throw e;
+                throw new IncompatibleRequirementException("Some dependencies " + existing.Name + " are not compatible.\n", e);
             }
 
             existing.Requirement = restricted;

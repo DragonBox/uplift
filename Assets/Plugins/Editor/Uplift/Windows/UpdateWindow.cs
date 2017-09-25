@@ -109,7 +109,7 @@ namespace Uplift.Windows
                 GUI.enabled = true;
                 if (GUILayout.Button("Refresh Upfile"))
                 {
-                    Upfile.Instance();
+                    UpliftManager.ResetInstances();
 
                     Repaint();
                 }

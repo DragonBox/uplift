@@ -56,7 +56,7 @@ namespace Uplift.DependencyResolution
                 Upset package = packageList.FindPackageAndRepository(dependency).Package;
                 if (package == null)
                 {
-                    throw new MissingDependencyException(string.Format(" depends on {0} but it is not present in any of your specified repository", dependency.Name));
+                    throw new MissingDependencyException(string.Format(" depends on {0} ({1}) but it is not present in any of your specified repository", dependency.Name, dependency.Requirement));
                 }
 
                 if (package.Dependencies != null)

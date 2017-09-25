@@ -94,7 +94,6 @@ namespace Uplift
 
             foreach (DependencyDefinition packageDefinition in dependencies)
             {
-                
                 PackageRepo result = pList.FindPackageAndRepository(packageDefinition);
                 if (result.Repository != null)
                 {
@@ -303,9 +302,10 @@ namespace Uplift
             InstallPackage(package, td, definition);
         }
 
-        public void UpdatePackage(PackageRepo newer)
+        public void UpdatePackage(PackageRepo newer, bool updateDependencies = true)
         {
             InstalledPackage installed = Upbring.Instance().InstalledPackage.First(ip => ip.Name == newer.Package.PackageName);
+            
             // If latest version is greater than the one installed, update to it
             if (VersionParser.GreaterThan(newer.Package.PackageVersion, installed.Version))
             {
@@ -318,6 +318,30 @@ namespace Uplift
             {
                 UnityEngine.Debug.Log(string.Format("Latest version of {0} is already installed ({1})", installed.Name, installed.Version));
                 return;
+            }
+
+            if (updateDependencies)
+            {
+                DependencyDefinition[] packageDependencies = PackageList.Instance().RecursivelyListDependencies(
+                    GetDependencySolver()
+                    .SolveDependencies(upfile.Dependencies)
+                    .First(dep => dep.Name == newer.Package.PackageName)
+                    );
+                foreach(DependencyDefinition def in packageDependencies)
+                {
+                    PackageRepo dependencyPR = PackageList.Instance().FindPackageAndRepository(def);
+                    if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == def.Name))
+                    {
+                        UpdatePackage(dependencyPR, false);
+                    }
+                    else
+                    {
+                        using (TemporaryDirectory td = dependencyPR.Repository.DownloadPackage(dependencyPR.Package))
+                        {
+                            InstallPackage(dependencyPR.Package, td, def);
+                        }
+                    }
+                }
             }
         }
 

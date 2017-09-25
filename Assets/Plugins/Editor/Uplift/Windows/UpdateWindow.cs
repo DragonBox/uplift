@@ -152,7 +152,7 @@ namespace Uplift.Windows
                     EditorGUILayout.HelpBox("The latest available version does not meet the requirement of the dependency.", MessageType.Warning);
                 }
 
-                GUI.enabled = installed && installed_version != latest_version;
+                GUI.enabled = definition.Requirement.IsMetBy(latest_version) && installed && installed_version != latest_version;
                 if (GUILayout.Button("Update to " + latest_version))
                 {
                     Debug.Log(string.Format("Updating package {0} (to {1})", name, latest_version));

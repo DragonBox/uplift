@@ -115,7 +115,7 @@ namespace Uplift.Packages
             }
         }
 
-        public DependencyDefinition[] RecursivelyListDependencies(DependencyDefinition packageDefinition)
+        public DependencyDefinition[] ListDependenciesRecursively(DependencyDefinition packageDefinition)
         {
             DependencyDefinition[] dependencies = new DependencyDefinition[0];
 
@@ -126,7 +126,7 @@ namespace Uplift.Packages
                 foreach (DependencyDefinition def in pr.Package.Dependencies)
                 {
                     // Aggregate results
-                    DependencyDefinition[] packageDependencies = RecursivelyListDependencies(def);
+                    DependencyDefinition[] packageDependencies = ListDependenciesRecursively(def);
                     int newLength = packageDependencies.Length + dependencies.Length;
                     DependencyDefinition[] newDeps = new DependencyDefinition[newLength];
                     Array.Copy(dependencies, newDeps, dependencies.Length);

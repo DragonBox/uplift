@@ -56,14 +56,14 @@ namespace Uplift.Windows
                     {
                         DependencyBlock(directDependencies[i], any_installed);
 
-                        packageDependencies = packageList.RecursivelyListDependencies(directDependencies[i]);
+                        packageDependencies = packageList.ListDependenciesRecursively(directDependencies[i]);
                         if(packageDependencies.Length != 0)
                         {
                             EditorGUILayout.LabelField("Dependencies:");
                             EditorGUILayout.BeginHorizontal();
                             EditorGUILayout.Space();
                             EditorGUILayout.BeginVertical();
-                            foreach (DependencyDefinition packageDependency in packageList.RecursivelyListDependencies(directDependencies[i]))
+                            foreach (DependencyDefinition packageDependency in packageList.ListDependenciesRecursively(directDependencies[i]))
                                 DependencyBlock(packageDependency, any_installed);
                             EditorGUILayout.EndVertical();
                             EditorGUILayout.EndHorizontal();

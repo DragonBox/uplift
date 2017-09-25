@@ -322,7 +322,7 @@ namespace Uplift
 
             if (updateDependencies)
             {
-                DependencyDefinition[] packageDependencies = PackageList.Instance().RecursivelyListDependencies(
+                DependencyDefinition[] packageDependencies = PackageList.Instance().ListDependenciesRecursively(
                     GetDependencySolver()
                     .SolveDependencies(upfile.Dependencies)
                     .First(dep => dep.Name == newer.Package.PackageName)

@@ -226,7 +226,11 @@ namespace Uplift.Schemas
                     break;
 
                 case (InstallSpecType.Gizmo):
-                    PH = Configuration.GizmoPath;
+                    PH = new PathConfiguration()
+                    {
+                        Location = Configuration.GizmoPath.Location,
+                        SkipPackageStructure = true // Gizmo always skip package structure.
+                    };
                     break;
 
                 case (InstallSpecType.Media):

@@ -63,10 +63,14 @@ namespace Uplift.Common
     <BaseInstallPath    Location=""Assets/UPackages""               />
     <!-- Path where media  files are unpacked                     -->
     <MediaPath          Location=""Assets/UPackages""               />
+    <!-- 
+        NOTE: the following paths have specific functionnality in Unity.
+        Please make sure you know what you're doing before modifying them.
+    -->
     <!-- Path where plugin files are unpacked                     -->
     <PluginPath         Location=""Assets/Plugins""                 />
     <!-- Path where editor plugin files are unpacked              -->
-    <EditorPluginPath   Location=""Assets/Editor/Plugins""          />
+    <EditorPluginPath   Location=""Assets/Plugins/Editor""          />
     <!-- Path where gizmos are unpacked                           -->
     <GizmoPath          Location=""Assets/Gizmos""                  />
 

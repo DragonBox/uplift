@@ -38,7 +38,6 @@ namespace Uplift.Windows
                 {
                     directDependencies[i] = dependencies.First(dep => dep.Name == upfile.Dependencies[i].Name);
                 }
-                DependencyDefinition[] transitiveDependencies = dependencies.Except(directDependencies).ToArray();
 
                 bool any_installed =
                         upbring.InstalledPackage != null &&
@@ -51,21 +50,26 @@ namespace Uplift.Windows
                 else
                 {
                     scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-                    EditorGUILayout.LabelField("Direct dependencies:", EditorStyles.boldLabel);
-                    EditorGUILayout.Space();
 
-                    foreach (DependencyDefinition dependency in directDependencies)
-                        DependencyBlock(dependency, any_installed);
-
-                    if(transitiveDependencies.Length != 0)
+                    DependencyDefinition[] packageDependencies;
+                    for(int i = 0; i < directDependencies.Length; i++)
                     {
-                        EditorGUILayout.Space();
-                        EditorGUILayout.LabelField("Transitive dependencies:", EditorStyles.boldLabel);
-                        EditorGUILayout.Space();
+                        DependencyBlock(directDependencies[i], any_installed);
 
-                        foreach (DependencyDefinition dependency in transitiveDependencies)
-                            DependencyBlock(dependency, any_installed);
+                        packageDependencies = packageList.RecursivelyListDependencies(directDependencies[i]);
+                        if(packageDependencies.Length != 0)
+                        {
+                            EditorGUILayout.LabelField("Dependencies:");
+                            EditorGUILayout.BeginHorizontal();
+                            EditorGUILayout.Space();
+                            EditorGUILayout.BeginVertical();
+                            foreach (DependencyDefinition packageDependency in packageList.RecursivelyListDependencies(directDependencies[i]))
+                                DependencyBlock(packageDependency, any_installed);
+                            EditorGUILayout.EndVertical();
+                            EditorGUILayout.EndHorizontal();
+                        }
                     }
+
 
                     EditorGUILayout.EndScrollView();
 

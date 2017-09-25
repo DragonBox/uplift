@@ -115,6 +115,29 @@ namespace Uplift.Packages
             }
         }
 
+        public DependencyDefinition[] RecursivelyListDependencies(DependencyDefinition packageDefinition)
+        {
+            DependencyDefinition[] dependencies = new DependencyDefinition[0];
+
+            PackageRepo pr = FindPackageAndRepository(packageDefinition);
+            if (pr.Package != null && pr.Package.Dependencies != null)
+            {
+                dependencies = pr.Package.Dependencies;
+                foreach (DependencyDefinition def in pr.Package.Dependencies)
+                {
+                    // Aggregate results
+                    DependencyDefinition[] packageDependencies = RecursivelyListDependencies(def);
+                    int newLength = packageDependencies.Length + dependencies.Length;
+                    DependencyDefinition[] newDeps = new DependencyDefinition[newLength];
+                    Array.Copy(dependencies, newDeps, dependencies.Length);
+                    Array.Copy(packageDependencies, 0, newDeps, dependencies.Length, packageDependencies.Length);
+
+                    dependencies = newDeps;
+                }
+            }
+            return dependencies;
+        }
+
         [SuppressMessage("ReSharper", "ArrangeRedundantParentheses")]
         internal PackageRepo[] FindCandidatesForDefinition(DependencyDefinition packageDefinition)
         {

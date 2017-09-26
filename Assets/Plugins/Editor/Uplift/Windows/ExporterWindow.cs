@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml.Serialization;
 using UnityEditor;
 using UnityEngine;
@@ -61,7 +62,12 @@ namespace Uplift.Windows
                 foreach(PackageInfo pInfo in packageInfos)
                 {
                     if (!pInfo.selected) continue;
-                    string[] files = System.IO.Directory.GetFiles(pInfo.path, "*.*", System.IO.SearchOption.AllDirectories);
+                    string[] files = System.IO.Directory.GetFiles(pInfo.path, "*.*", SearchOption.AllDirectories);
+                    string[] directories = System.IO.Directory.GetDirectories(pInfo.path, "*", SearchOption.AllDirectories);
+                    string[] entries = new string[files.Length + directories.Length];
+                    Array.Copy(directories, entries, directories.Length);
+                    Array.Copy(files, 0, entries, directories.Length, files.Length);
+
                     string name = string.Format(packageFormat, pInfo.name, pInfo.version);
 
                     // Create Upset file for the package
@@ -83,7 +89,7 @@ namespace Uplift.Windows
                     }
 
                     // Export .unitypackage
-                    AssetDatabase.ExportPackage(files, name + ".unitypackage", ExportPackageOptions.Default);
+                    AssetDatabase.ExportPackage(entries, name + ".unitypackage", ExportPackageOptions.Default);
                 }
             }
         }

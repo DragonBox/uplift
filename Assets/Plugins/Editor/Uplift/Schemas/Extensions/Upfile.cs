@@ -213,12 +213,7 @@ namespace Uplift.Schemas
                     break;
 
                 case (InstallSpecType.EditorPlugin):
-                    PH = new PathConfiguration()
-                    {
-                        Location = Configuration.EditorPluginPath.Location,
-                        SkipPackageStructure = true // Plugins always skip package structure.
-
-                    };
+                    PH = Configuration.EditorPluginPath;
                     break;
 
                 case (InstallSpecType.Examples):
@@ -226,11 +221,7 @@ namespace Uplift.Schemas
                     break;
 
                 case (InstallSpecType.Gizmo):
-                    PH = new PathConfiguration()
-                    {
-                        Location = Configuration.GizmoPath.Location,
-                        SkipPackageStructure = true // Gizmo always skip package structure.
-                    };
+                    PH = Configuration.GizmoPath;
                     break;
 
                 case (InstallSpecType.Media):
@@ -238,11 +229,7 @@ namespace Uplift.Schemas
                     break;
 
                 case (InstallSpecType.Plugin):
-                    PH = new PathConfiguration()
-                    {
-                        Location = Configuration.PluginPath.Location,
-                        SkipPackageStructure = true // Plugins always skip package structure.
-                    };
+                    PH = Configuration.PluginPath;
 
                     // Platform as string
                     string platformAsString;

@@ -52,7 +52,7 @@ namespace Uplift
 
         public void LogFormat(LogType type, UnityEngine.Object _object, string format, params object[] elements)
         {
-            logs.Add(string.Format("[" + type.ToString() + "] " + format, elements));
+            logs.Add(string.Format("[" + type.ToString().ToUpper() + "] " + format, elements));
             if ((int)type < (int)aggregatedLevel) aggregatedLevel = type;
         }
 

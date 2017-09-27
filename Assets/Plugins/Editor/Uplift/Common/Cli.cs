@@ -12,7 +12,6 @@ namespace Uplift.Common
 
         public static void InstallDependencies() {
             UpliftManager.Instance().InstallDependencies();
-            AssetDatabase.Refresh();
         }
 
         public static void UpdatePackage() {
@@ -20,18 +19,15 @@ namespace Uplift.Common
 
             PackageRepo pr = PackageList.Instance().GetLatestPackage(packageName);
             UpliftManager.Instance().UpdatePackage(pr);
-            AssetDatabase.Refresh();
         }
 
         public static void NukePackage() {
             string packageName = LastArgument();
             UpliftManager.Instance().NukePackage(packageName);
-            AssetDatabase.Refresh();
         }
 
         public static void NukeAllPackages() {
             UpliftManager.Instance().NukeAllPackages();
-            AssetDatabase.Refresh();
         }
     }
 

@@ -26,7 +26,6 @@ namespace Uplift
             Debug.Log("Upfile refreshed");
         }
 
-
         [MenuItem("Uplift/Show Update Window", false, 1)]
         private static void ShowUpdateWindow()
         {

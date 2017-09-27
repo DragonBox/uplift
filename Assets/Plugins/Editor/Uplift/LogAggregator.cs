@@ -23,12 +23,12 @@ namespace Uplift
             return LA;
         }
 
-        public static LogAggregator InUnity(string onSuccesFormat, string onWarningFormat, string onErrorFormat, params object[] arg0)
+        public static LogAggregator InUnity(string onSuccesFormat, string onWarningFormat, string onErrorFormat, params object[] args)
         {
             return InUnity(
-                string.Format(onSuccesFormat, arg0),
-                string.Format(onWarningFormat, arg0),
-                string.Format(onErrorFormat, arg0)
+                string.Format(onSuccesFormat, args),
+                string.Format(onWarningFormat, args),
+                string.Format(onErrorFormat, args)
                 );
         }
 

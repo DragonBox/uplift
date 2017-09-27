@@ -213,12 +213,7 @@ namespace Uplift.Schemas
                     break;
 
                 case (InstallSpecType.EditorPlugin):
-                    PH = new PathConfiguration()
-                    {
-                        Location = Configuration.EditorPluginPath.Location,
-                        SkipPackageStructure = true // Plugins always skip package structure.
-
-                    };
+                    PH = Configuration.EditorPluginPath;
                     break;
 
                 case (InstallSpecType.Examples):
@@ -234,11 +229,7 @@ namespace Uplift.Schemas
                     break;
 
                 case (InstallSpecType.Plugin):
-                    PH = new PathConfiguration()
-                    {
-                        Location = Configuration.PluginPath.Location,
-                        SkipPackageStructure = true // Plugins always skip package structure.
-                    };
+                    PH = Configuration.PluginPath;
 
                     // Platform as string
                     string platformAsString;

@@ -109,6 +109,7 @@ task :build => [:chdir] do
 
     # All under Uplift except Testing code
     files = Dir[ File.join('Assets', 'Plugins', 'Editor', 'Uplift', '**', '*.cs') ].reject { |p| /Testing/ =~ p }
+    files += Dir[ File.join('Assets', 'Plugins', 'Editor', 'UnityHacks', '**', '*.cs') ]
 
     references = [
         unity.paths.managed('UnityEditor.dll'),

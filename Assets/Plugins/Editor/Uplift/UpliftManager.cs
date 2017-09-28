@@ -119,6 +119,8 @@ namespace Uplift
                     }
                 }
             }
+
+            UnityHacks.BuildSettingsEnforcer.EnforceAssetSave();
         }
 
         public void NukeAllPackages()
@@ -258,6 +260,7 @@ namespace Uplift
                 upbring.SaveFile();
 
                 td.Dispose();
+                UnityHacks.BuildSettingsEnforcer.EnforceAssetSave();
             }
         }
 
@@ -378,6 +381,7 @@ namespace Uplift
             package.Nuke();
             upbring.RemovePackage(package);
             upbring.SaveFile();
+            UnityHacks.BuildSettingsEnforcer.EnforceAssetSave();
         }
     }
 }

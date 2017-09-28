@@ -1,4 +1,5 @@
 using Uplift.Packages;
+using UnityEditor;
 
 namespace Uplift.Common
 {
@@ -23,6 +24,10 @@ namespace Uplift.Common
         public static void NukePackage() {
             string packageName = LastArgument();
             UpliftManager.Instance().NukePackage(packageName);
+        }
+
+        public static void NukeAllPackages() {
+            UpliftManager.Instance().NukeAllPackages();
         }
     }
 

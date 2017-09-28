@@ -4,6 +4,7 @@ namespace UnityHacks
 {
     /// <summary>
     /// Unity does not save correctly the scenes in Build Settings, resulting in errors when re-opening the project. The scenes are saved if some are added/removed or enabled/disabled, but changing the scene path or filename will not see its path saved correctly in the EditorBuildSettings.asset.
+    /// A bug report has been opened: Case 954716
     /// </summary>
     public class BuildSettingsEnforcer
     {

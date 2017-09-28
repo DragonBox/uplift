@@ -6,7 +6,8 @@
 # Please refrain from expanding this file unless really necessary
 
 task :chdir do
-    rakefile_dir = File.dirname __FILE__
+    file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
+    rakefile_dir = File.expand_path File.dirname file
     Dir.chdir(File.join(rakefile_dir, '..'))
 end
 

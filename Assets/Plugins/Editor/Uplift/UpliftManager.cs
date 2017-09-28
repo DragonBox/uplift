@@ -76,36 +76,45 @@ namespace Uplift
         }
 
         public void InstallDependencies(IDependencySolver dependencySolver)
-        {            
+        {
             //FIXME: We should check for all repositories, not the first one
             //FileRepository rt = (FileRepository) Upfile.Repositories[0];
             PackageList pList = PackageList.Instance();
 
             DependencyDefinition[] dependencies = dependencySolver.SolveDependencies(upfile.Dependencies);
 
-            // Remove installed dependencies that are no longer in the dependency tree
-            foreach(InstalledPackage ip in Upbring.Instance().InstalledPackage)
+            using(LogAggregator LA = LogAggregator.InUnity(
+                "Installed {0} dependencies successfully",
+                "Installed {0} dependencies successfully but warnings were raised",
+                "Some errors occured while installing {0} dependencies",
+                dependencies.Length
+                ))
             {
-                if (dependencies.Any(dep => dep.Name == ip.Name)) continue;
-
-                UnityEngine.Debug.Log("Removing unused dependency on " + ip.Name);
-                NukePackage(ip.Name);
-            }
-
-            foreach (DependencyDefinition packageDefinition in dependencies)
-            {
-                PackageRepo result = pList.FindPackageAndRepository(packageDefinition);
-                if (result.Repository != null)
+                // Remove installed dependencies that are no longer in the dependency tree
+                foreach (InstalledPackage ip in Upbring.Instance().InstalledPackage)
                 {
-                    if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == packageDefinition.Name))
+                    if (dependencies.Any(dep => dep.Name == ip.Name)) continue;
+
+                    UnityEngine.Debug.Log("Removing unused dependency on " + ip.Name);
+                    NukePackage(ip.Name);
+                }
+
+                foreach (DependencyDefinition packageDefinition in dependencies)
+                {
+
+                    PackageRepo result = pList.FindPackageAndRepository(packageDefinition);
+                    if (result.Repository != null)
                     {
-                        UpdatePackage(result);
-                    }
-                    else
-                    {
-                        using (TemporaryDirectory td = result.Repository.DownloadPackage(result.Package))
+                        if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == packageDefinition.Name))
                         {
-                            InstallPackage(result.Package, td, packageDefinition);
+                            UpdatePackage(result);
+                        }
+                        else
+                        {
+                            using (TemporaryDirectory td = result.Repository.DownloadPackage(result.Package))
+                            {
+                                InstallPackage(result.Package, td, packageDefinition);
+                            }
                         }
                     }
                 }
@@ -115,15 +124,22 @@ namespace Uplift
         public void NukeAllPackages()
         {
             Upbring upbring = Upbring.Instance();
-
-            foreach (InstalledPackage package in upbring.InstalledPackage)
+            using (LogAggregator LA = LogAggregator.InUnity(
+                "{0} packages were successfully nuked",
+                "{0} packages were successfully nuked but warnings were raised",
+                "Some errors occured while nuking {0} packages",
+                upbring.InstalledPackage.Length
+                ))
             {
-                package.Nuke();
-                upbring.RemovePackage(package);
-            }
+                foreach (InstalledPackage package in upbring.InstalledPackage)
+                {
+                    package.Nuke();
+                    upbring.RemovePackage(package);
+                }
 
-            //TODO: Remove file when Upbring properly removes everything
-            Upbring.RemoveFile();
+                //TODO: Remove file when Upbring properly removes everything
+                Upbring.RemoveFile();
+            }
         }
 
         public string GetPackageDirectory(Upset package)
@@ -140,101 +156,109 @@ namespace Uplift
         // This should be contained using kinds of destinations.
         public void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition)
         {
-            Upbring upbring = Upbring.Instance();
-            
-            // Note: Full package is ALWAYS copied to the upackages directory right now
-            string localPackagePath = GetRepositoryInstallPath(package);
-            upbring.AddPackage(package);
-            Uplift.Common.FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
-            CheckGUIDConflicts(localPackagePath, package);
-            upbring.AddLocation(package, InstallSpecType.Root, localPackagePath);
-
-            InstallSpecPath[] specArray;
-            if (package.Configuration == null)
+            using (LogAggregator LA = LogAggregator.InUnity(
+                "Package {0} was successfully installed",
+                "Package {0} was successfully installed but raised warnings",
+                "An error occured while installing package {0}",
+                package.PackageName
+                ))
             {
-                // If there is no Configuration present we assume
-                // that the whole package is wrapped in "InstallSpecType.Base"
-                InstallSpecPath wrapSpec = new InstallSpecPath
+                Upbring upbring = Upbring.Instance();
+
+                // Note: Full package is ALWAYS copied to the upackages directory right now
+                string localPackagePath = GetRepositoryInstallPath(package);
+                upbring.AddPackage(package);
+                FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
+                upbring.AddLocation(package, InstallSpecType.Root, localPackagePath);
+
+                InstallSpecPath[] specArray;
+                if (package.Configuration == null)
                 {
-                    Path = "",
-                    Type = InstallSpecType.Base
-                };
+                    // If there is no Configuration present we assume
+                    // that the whole package is wrapped in "InstallSpecType.Base"
+                    InstallSpecPath wrapSpec = new InstallSpecPath
+                    {
+                        Path = "",
+                        Type = InstallSpecType.Base
+                    };
 
-                specArray = new[] { wrapSpec };
-            }
-            else
-            {
-                specArray = package.Configuration;
-            }
-
-            foreach (InstallSpecPath spec in specArray)
-            {
-                if (dependencyDefinition.SkipInstall != null && dependencyDefinition.SkipInstall.Any(skip => skip.Type == spec.Type)) continue;
-
-                var sourcePath = Uplift.Common.FileSystemUtil.JoinPaths(td.Path, spec.Path);
-                
-                PathConfiguration PH = upfile.GetDestinationFor(spec);
-                if (dependencyDefinition.OverrideDestination != null && dependencyDefinition.OverrideDestination.Any(over => over.Type == spec.Type))
+                    specArray = new[] { wrapSpec };
+                }
+                else
                 {
-                    PH.Location = Uplift.Common.FileSystemUtil.MakePathOSFriendly(dependencyDefinition.OverrideDestination.First(over => over.Type == spec.Type).Location);
+                    specArray = package.Configuration;
                 }
 
-                var packageStructurePrefix =
-                    PH.SkipPackageStructure ? "" : GetPackageDirectory(package);
-
-                var destination = Path.Combine(PH.Location, packageStructurePrefix);
-
-                // Working with single file
-                if (File.Exists(sourcePath))
+                foreach (InstallSpecPath spec in specArray)
                 {
-                    // Working with singular file
-                    if (!Directory.Exists(destination))
-                    {
-                        Directory.CreateDirectory(destination);
-                    }
-                    if (Directory.Exists(destination)) { // we are copying a file into a directory
-                        destination = System.IO.Path.Combine(destination, System.IO.Path.GetFileName(sourcePath));
-                    }
-                    File.Copy(sourcePath, destination);
-                    Uplift.Common.FileSystemUtil.TryCopyMeta(sourcePath, destination);
+                    if (dependencyDefinition.SkipInstall != null && dependencyDefinition.SkipInstall.Any(skip => skip.Type == spec.Type)) continue;
 
-                    if (destination.StartsWith("Assets"))
+                    var sourcePath = Uplift.Common.FileSystemUtil.JoinPaths(td.Path, spec.Path);
+
+                    PathConfiguration PH = upfile.GetDestinationFor(spec);
+                    if (dependencyDefinition.OverrideDestination != null && dependencyDefinition.OverrideDestination.Any(over => over.Type == spec.Type))
                     {
-                        TryUpringAddGUID(upbring, sourcePath, package, spec.Type, destination);
-                    }
-                    else
-                    {
-                        upbring.AddLocation(package, spec.Type, destination);
+                        PH.Location = Uplift.Common.FileSystemUtil.MakePathOSFriendly(dependencyDefinition.OverrideDestination.First(over => over.Type == spec.Type).Location);
                     }
 
-                }
+                    var packageStructurePrefix =
+                        PH.SkipPackageStructure ? "" : GetPackageDirectory(package);
 
-                // Working with directory
-                if (Directory.Exists(sourcePath))
-                {
+                    var destination = Path.Combine(PH.Location, packageStructurePrefix);
+
+                    // Working with single file
+                    if (File.Exists(sourcePath))
+                    {
+                        // Working with singular file
+                        if (!Directory.Exists(destination))
+                        {
+                            Directory.CreateDirectory(destination);
+                        }
+                        if (Directory.Exists(destination))
+                        { // we are copying a file into a directory
+                            destination = System.IO.Path.Combine(destination, System.IO.Path.GetFileName(sourcePath));
+                        }
+                        File.Copy(sourcePath, destination);
+                        Uplift.Common.FileSystemUtil.TryCopyMeta(sourcePath, destination);
+
+                        if (destination.StartsWith("Assets"))
+                        {
+                            TryUpringAddGUID(upbring, sourcePath, package, spec.Type, destination);
+                        }
+                        else
+                        {
+                            upbring.AddLocation(package, spec.Type, destination);
+                        }
+
+                    }
+
                     // Working with directory
-                    Uplift.Common.FileSystemUtil.CopyDirectoryWithMeta(sourcePath, destination);
+                    if (Directory.Exists(sourcePath))
+                    {
+                        // Working with directory
+                        Uplift.Common.FileSystemUtil.CopyDirectoryWithMeta(sourcePath, destination);
 
-                    if (destination.StartsWith("Assets"))
-                    {
-                        foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
+                        if (destination.StartsWith("Assets"))
                         {
-                            TryUpringAddGUID(upbring, file, package, spec.Type, destination);
+                            foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
+                            {
+                                TryUpringAddGUID(upbring, file, package, spec.Type, destination);
+                            }
                         }
-                    }
-                    else
-                    {
-                        foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
+                        else
                         {
-                            upbring.AddLocation(package, spec.Type, Path.Combine(destination, file));
+                            foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
+                            {
+                                upbring.AddLocation(package, spec.Type, Path.Combine(destination, file));
+                            }
                         }
                     }
                 }
+
+                upbring.SaveFile();
+
+                td.Dispose();
             }
-
-            upbring.SaveFile();
-
-            td.Dispose();
         }
 
         private void CheckGUIDConflicts(string sourceDirectory, Upset package)

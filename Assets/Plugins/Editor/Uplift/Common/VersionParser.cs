@@ -33,7 +33,7 @@ namespace Uplift.Common
             throw new ArgumentException("Cannot parse requirement from " + requirement);
         }
 
-        public static VersionStruct ParseVersion(string version)
+        public static VersionStruct ParseVersion(string version, bool verbose = true)
         {
             const string matcher = @"(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)";
             Match matchObject = Regex.Match(version, matcher);
@@ -52,7 +52,9 @@ namespace Uplift.Common
             }
             catch (FormatException e)
             {
-                Debug.LogWarning(string.Format("Version {0} does not respect the MAJOR.MINOR.PATCH structure ({1}).", version, e));
+                if(verbose) {
+                    Debug.LogWarning(string.Format("Version {0} does not respect the MAJOR.MINOR.PATCH structure ({1}).", version, e));
+                }
                 return ParseIncompleteVersion(version);
             }
             return result;

@@ -14,6 +14,7 @@
     <GizmoPath          Location="Assets/Gizmos"            />
   </Configuration>
   <Dependencies>
+    <Package Name="PackageX" Version="1.0.0" />
     <Package Name="TestPackage.MetaFilesPackageTest" Version="0.0.1+" />
     <Package Name="TestPackage.NoMetaFilesPackageTest" Version="0.0.1!" />
     <Package Name="TestPackage.UnityPackageTest" Version="0.0.*" />

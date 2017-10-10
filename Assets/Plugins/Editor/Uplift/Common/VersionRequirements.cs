@@ -8,6 +8,19 @@ namespace Uplift.Common
         public int Major;
         public int? Minor, Patch, Optional;
 
+        // Note - this is for using in sorting in comparison
+        //        Ugly hack, but it works.
+        //
+        //        Feel free, to add IComparable interface.
+        //        I gave up. (pkaminski)
+
+        public int NumeralForm() {
+            return Major * 10^9 +
+                (Minor ?? 0) * 10^6 +
+                (Patch ?? 0 ) * 10^3 +
+                (Optional ?? 0);
+        }
+
         public VersionStruct Next
         {
             get

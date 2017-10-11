@@ -11,6 +11,14 @@ namespace Uplift.Schemas
 
         public Meta MetaInformation;
 
+        override public string ToString() {
+            var result = this.PackageName + "~" + this.PackageVersion;
+            if(this.UnityVersion != null) {
+                result = string.Format("{0} ({1})", result, this.UnityVersion);
+
+            }
+            return result;
+        }
         public int PackageVersionAsNumber()
         {
             VersionStruct version =  VersionParser.ParseVersion(PackageVersion);

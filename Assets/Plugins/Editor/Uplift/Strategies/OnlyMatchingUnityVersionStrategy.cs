@@ -1,5 +1,6 @@
 using Uplift.Common;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Uplift.Strategies {
     internal class OnlyMatchingUnityVersionStrategy : CandidateSelectionStrategy {
@@ -15,6 +16,13 @@ namespace Uplift.Strategies {
 
             foreach(PackageRepo item in candidates) {
                 VersionStruct packageUnityRequirement = VersionParser.ParseVersion(item.Package.UnityVersion, false);
+                // if lack of UnityVersion - continue gracefully but notify
+                if(item.Package.UnityVersion == null) {
+                    Debug.LogWarning("Package " + item.Package.ToString() + " doesn't have minimal UnityVersion specified!");
+                    result.Add(item);
+                    continue;
+                }
+
 
                 if(unityVersion >= packageUnityRequirement) {
                     result.Add(item);

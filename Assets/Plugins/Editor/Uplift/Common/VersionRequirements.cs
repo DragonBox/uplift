@@ -3,29 +3,50 @@
 namespace Uplift.Common
 {
     #region VersionStruct
-    public struct VersionStruct
+    public class VersionStruct : IComparable, ICloneable
     {
         public int Major;
         public int? Minor, Patch, Optional;
 
-        // Note - this is for using in sorting in comparison
-        //        Ugly hack, but it works.
-        //
-        //        Feel free, to add IComparable interface.
-        //        I gave up. (pkaminski)
+        // This is to conform struct->class transition
+        public VersionStruct() {}
 
-        public int NumeralForm() {
-            return Major * 10^9 +
-                (Minor ?? 0) * 10^6 +
-                (Patch ?? 0 ) * 10^3 +
-                (Optional ?? 0);
+        public VersionStruct(int Major, int? Minor, int? Patch, int? Optional) {
+            this.Major = Major;
+            this.Minor = Minor;
+            this.Patch = Patch;
+            this.Optional = Optional;
+        }
+
+        public object Clone() {
+            return new VersionStruct(this.Major, this.Minor, this.Patch, this.Optional);
+        }
+
+        public int CompareTo(object other) {
+            if(other == null) {
+                return 1;
+            }
+
+            VersionStruct otherVersion = other as VersionStruct;
+
+            if(otherVersion == null) {
+                // Not a VersionStruct object
+                return 1;
+            }
+
+            if(otherVersion > this) {
+                return -1;
+            } else {
+                return 1;
+            }
         }
 
         public VersionStruct Next
         {
             get
             {
-                VersionStruct result = this;
+                VersionStruct result = this.Clone() as VersionStruct;
+
                 if (Minor != null)
                 {
                     if (Patch != null)
@@ -60,6 +81,17 @@ namespace Uplift.Common
         public static bool operator >=(VersionStruct a, VersionStruct b) { return !(a < b); }
 
         public static bool operator ==(VersionStruct a, VersionStruct b) {
+
+            // Null checking...
+            if (ReferenceEquals(a, b))
+            {
+                return true;
+            }
+            if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+            {
+                return false;
+            }
+
             return (
                 a.Major == b.Major &&
                 a.Minor == b.Minor &&

@@ -1,9 +1,6 @@
 using Uplift.Common;
 using System.Linq;
-using UnityEngine;
 using System.Collections.Generic;
-
-
 
 namespace Uplift.Strategies
 {
@@ -25,7 +22,7 @@ namespace Uplift.Strategies
                 });
 
             foreach(var group in grouped) {
-                var closestMatch = group.OrderByDescending(i => VersionParser.ParseVersion(i.Package.UnityVersion, false).NumeralForm()).First();
+                var closestMatch = group.OrderByDescending(i => VersionParser.ParseVersion(i.Package.UnityVersion, false)).First();
                 result.Add(closestMatch);
             }
 

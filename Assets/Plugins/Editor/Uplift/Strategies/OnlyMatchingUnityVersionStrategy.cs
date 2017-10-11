@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Uplift.Strategies {
     internal class OnlyMatchingUnityVersionStrategy : CandidateSelectionStrategy {
 
-        VersionStruct unityVersion;
+        Version unityVersion;
 
         public OnlyMatchingUnityVersionStrategy(string unityVersion) {
             this.unityVersion = VersionParser.ParseVersion(unityVersion, false);
@@ -15,7 +15,6 @@ namespace Uplift.Strategies {
             var result = new List<PackageRepo>();
 
             foreach(PackageRepo item in candidates) {
-                VersionStruct packageUnityRequirement = VersionParser.ParseVersion(item.Package.UnityVersion, false);
                 // if lack of UnityVersion - continue gracefully but notify
                 if(item.Package.UnityVersion == null) {
                     Debug.LogWarning("Package " + item.Package.ToString() + " doesn't have minimal UnityVersion specified!");
@@ -23,6 +22,7 @@ namespace Uplift.Strategies {
                     continue;
                 }
 
+                Version packageUnityRequirement = VersionParser.ParseVersion(item.Package.UnityVersion, false);
 
                 if(unityVersion >= packageUnityRequirement) {
                     result.Add(item);

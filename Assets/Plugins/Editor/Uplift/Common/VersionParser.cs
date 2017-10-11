@@ -27,17 +27,17 @@ namespace Uplift.Common
             }
             else
             {
-                if(ParseVersion(requirement) != new VersionStruct { Major = 0 })
+                if(ParseVersion(requirement) != new Version { Major = 0 })
                     return new LoseVersionRequirement(requirement);
             }
             throw new ArgumentException("Cannot parse requirement from " + requirement);
         }
 
-        public static VersionStruct ParseVersion(string version, bool verbose = true)
+        public static Version ParseVersion(string version, bool verbose = true)
         {
             const string matcher = @"(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)";
             Match matchObject = Regex.Match(version, matcher);
-            VersionStruct result = new VersionStruct
+            Version result = new Version
             {
                 Major = 0,
                 Minor = 0,
@@ -60,9 +60,9 @@ namespace Uplift.Common
             return result;
         }
 
-        public static VersionStruct ParseIncompleteVersion(string version)
+        public static Version ParseIncompleteVersion(string version)
         {
-            VersionStruct result = new VersionStruct
+            Version result = new Version
             {
                 Major = 0,
                 Minor = null,
@@ -110,11 +110,11 @@ namespace Uplift.Common
             return item;
         }
 
-        public static VersionStruct ParseUnityVersion(string version)
+        public static Version ParseUnityVersion(string version)
         {
             const string matcher = @"(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\w+(?<build>\d+)\w*";
             Match matchObject = Regex.Match(version, matcher);
-            VersionStruct result = new VersionStruct
+            Version result = new Version
             {
                 Major = int.Parse(matchObject.Groups["major"].ToString()),
                 Minor = int.Parse(matchObject.Groups["minor"].ToString()),

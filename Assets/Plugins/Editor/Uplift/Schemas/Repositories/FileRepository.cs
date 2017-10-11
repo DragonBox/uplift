@@ -10,6 +10,7 @@ using Uplift.Extensions;
 using UnityEngine;
 using UnityEditor;
 using Uplift.Common;
+using Version = Uplift.Common.Version;
 using System.Text.RegularExpressions;
 
 namespace Uplift.Schemas {
@@ -32,7 +33,7 @@ namespace Uplift.Schemas {
             {
 
                 Uplift.Common.FileSystemUtil.CopyDirectoryWithMeta(sourcePath, td.Path);
-                
+
             }
             else if (IsUnityPackage(sourcePath))
             {
@@ -60,7 +61,7 @@ namespace Uplift.Schemas {
                         {
                             if (assetMS != null)
                                 throw new InvalidOperationException("Unexpected state: assetMS not null");
-                            
+
                             assetMS = new MemoryStream();
                             entry.WriteTo(assetMS);
                             assetMS.Position = 0;
@@ -198,7 +199,7 @@ namespace Uplift.Schemas {
 
         private void AddUnityPackages(List<Upset> upsetList) {
             string[] files =  Directory.GetFiles(Path, "*.*");
-            VersionStruct Unity5 = new VersionStruct{ Major = 5 };
+            Version Unity5 = new Version{ Major = 5 };
             foreach(string FileName in files)
             {
                 try

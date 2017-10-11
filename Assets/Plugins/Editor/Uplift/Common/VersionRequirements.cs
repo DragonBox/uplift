@@ -2,16 +2,16 @@
 
 namespace Uplift.Common
 {
-    #region VersionStruct
-    public class VersionStruct : IComparable, ICloneable
+    #region Version
+    public class Version : IComparable, ICloneable
     {
         public int Major;
         public int? Minor, Patch, Optional;
 
         // This is to conform struct->class transition
-        public VersionStruct() {}
+        public Version() {}
 
-        public VersionStruct(int Major, int? Minor, int? Patch, int? Optional) {
+        public Version(int Major, int? Minor, int? Patch, int? Optional) {
             this.Major = Major;
             this.Minor = Minor;
             this.Patch = Patch;
@@ -19,7 +19,7 @@ namespace Uplift.Common
         }
 
         public object Clone() {
-            return new VersionStruct(this.Major, this.Minor, this.Patch, this.Optional);
+            return new Version(this.Major, this.Minor, this.Patch, this.Optional);
         }
 
         public int CompareTo(object other) {
@@ -27,10 +27,10 @@ namespace Uplift.Common
                 return 1;
             }
 
-            VersionStruct otherVersion = other as VersionStruct;
+            Version otherVersion = other as Version;
 
             if(otherVersion == null) {
-                // Not a VersionStruct object
+                // Not a Version object
                 return 1;
             }
 
@@ -41,11 +41,11 @@ namespace Uplift.Common
             }
         }
 
-        public VersionStruct Next
+        public Version Next
         {
             get
             {
-                VersionStruct result = this.Clone() as VersionStruct;
+                Version result = this.Clone() as Version;
 
                 if (Minor != null)
                 {
@@ -67,7 +67,7 @@ namespace Uplift.Common
             }
         }
 
-        public static bool operator <(VersionStruct a, VersionStruct b)
+        public static bool operator <(Version a, Version b)
         {
             if (a.Major != b.Major) return a.Major < b.Major;
             bool result = false;
@@ -76,11 +76,11 @@ namespace Uplift.Common
             if (TryCompareInt(a.Optional, b.Optional, ref result)) return result;
             return false;
         }
-        public static bool operator >(VersionStruct a, VersionStruct b) { return b < a; }
-        public static bool operator <=(VersionStruct a, VersionStruct b) { return !(a > b); }
-        public static bool operator >=(VersionStruct a, VersionStruct b) { return !(a < b); }
+        public static bool operator >(Version a, Version b) { return b < a; }
+        public static bool operator <=(Version a, Version b) { return !(a > b); }
+        public static bool operator >=(Version a, Version b) { return !(a < b); }
 
-        public static bool operator ==(VersionStruct a, VersionStruct b) {
+        public static bool operator ==(Version a, Version b) {
 
             // Null checking...
             if (ReferenceEquals(a, b))
@@ -99,7 +99,7 @@ namespace Uplift.Common
                 a.Optional == b.Optional
                 );
         }
-        public static bool operator !=(VersionStruct a, VersionStruct b) { return !(a == b); }
+        public static bool operator !=(Version a, Version b) { return !(a == b); }
         public override int GetHashCode()
         {
             int result = Major;
@@ -110,7 +110,7 @@ namespace Uplift.Common
         }
         public override bool Equals(object o)
         {
-            return this == (VersionStruct)o;
+            return this == (Version)o;
         }
 
         private static bool TryCompareInt(int? a, int? b, ref bool result)
@@ -159,7 +159,7 @@ namespace Uplift.Common
     #region VersionRequirement
     public interface IVersionRequirement
     {
-        bool IsMetBy(VersionStruct version);
+        bool IsMetBy(Version version);
         IVersionRequirement RestrictTo(IVersionRequirement other);
     }
 
@@ -174,7 +174,7 @@ namespace Uplift.Common
     // When no version requirement is specified
     public class NoRequirement : IVersionRequirement
     {
-        public bool IsMetBy(VersionStruct version) { return true; }
+        public bool IsMetBy(Version version) { return true; }
         public IVersionRequirement RestrictTo(IVersionRequirement other) { return other; }
         public override string ToString() { return ""; }
     }
@@ -182,15 +182,15 @@ namespace Uplift.Common
     // When minimal+ is specified
     public class MinimalVersionRequirement : IVersionRequirement
     {
-        public VersionStruct minimal;
+        public Version minimal;
 
         public MinimalVersionRequirement(string minimal) : this(VersionParser.ParseIncompleteVersion(minimal)) { }
-        public MinimalVersionRequirement(VersionStruct minimal)
+        public MinimalVersionRequirement(Version minimal)
         {
             this.minimal = minimal;
         }
 
-        public bool IsMetBy(VersionStruct version)
+        public bool IsMetBy(Version version)
         {
             return version >= minimal;
         }
@@ -229,17 +229,17 @@ namespace Uplift.Common
     // When stub is specified
     public class LoseVersionRequirement : IVersionRequirement
     {
-        public VersionStruct stub;
-        private VersionStruct limit;
+        public Version stub;
+        private Version limit;
 
         public LoseVersionRequirement(string stub) : this(VersionParser.ParseIncompleteVersion(stub)) { }
-        public LoseVersionRequirement(VersionStruct stub)
+        public LoseVersionRequirement(Version stub)
         {
             this.stub = stub;
             limit = stub.Next;
         }
 
-        public bool IsMetBy(VersionStruct version)
+        public bool IsMetBy(Version version)
         {
             return version >= stub && version < limit;
         }
@@ -274,17 +274,17 @@ namespace Uplift.Common
 
     public class BoundedVersionRequirement : IVersionRequirement
     {
-        public VersionStruct lowerBound;
-        private VersionStruct upperBound;
+        public Version lowerBound;
+        private Version upperBound;
 
         public BoundedVersionRequirement(string lowerBound) : this(VersionParser.ParseIncompleteVersion(lowerBound)) { }
-        public BoundedVersionRequirement(VersionStruct lowerBound)
+        public BoundedVersionRequirement(Version lowerBound)
         {
             this.lowerBound = lowerBound;
             upperBound = lowerBound.Next;
         }
 
-        public bool IsMetBy(VersionStruct version)
+        public bool IsMetBy(Version version)
         {
             return version > lowerBound && version < upperBound;
         }
@@ -319,15 +319,15 @@ namespace Uplift.Common
 
     public class ExactVersionRequirement : IVersionRequirement
     {
-        public VersionStruct expected;
+        public Version expected;
 
         public ExactVersionRequirement(string expected) : this(VersionParser.ParseIncompleteVersion(expected)) { }
-        public ExactVersionRequirement(VersionStruct expected)
+        public ExactVersionRequirement(Version expected)
         {
             this.expected = expected;
         }
 
-        public bool IsMetBy(VersionStruct version)
+        public bool IsMetBy(Version version)
         {
             return expected.Equals(version);
         }

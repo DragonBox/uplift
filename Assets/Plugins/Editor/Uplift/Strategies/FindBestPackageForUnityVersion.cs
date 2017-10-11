@@ -6,7 +6,7 @@ namespace Uplift.Strategies
 {
     internal class FindBestPackageForUnityVersion : CandidateSelectionStrategy
     {
-        protected VersionStruct unityVersion;
+        protected Version unityVersion;
 
         public FindBestPackageForUnityVersion(string unityVersion) {
             this.unityVersion = VersionParser.ParseVersion(unityVersion, false);

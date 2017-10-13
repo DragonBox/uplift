@@ -19,7 +19,7 @@ namespace Uplift.Testing.Unit
             {
                 IVersionRequirement parsed = VersionParser.ParseRequirement("1.2+");
                 Assert.IsTrue(parsed is MinimalVersionRequirement);
-                Assert.AreEqual((parsed as MinimalVersionRequirement).minimal, new VersionStruct { Major = 1, Minor = 2 });
+                Assert.AreEqual((parsed as MinimalVersionRequirement).minimal, new Version { Major = 1, Minor = 2 });
             }
 
             [Test]
@@ -27,7 +27,7 @@ namespace Uplift.Testing.Unit
             {
                 IVersionRequirement parsed = VersionParser.ParseRequirement("1.2");
                 Assert.IsTrue(parsed is LoseVersionRequirement);
-                Assert.AreEqual((parsed as LoseVersionRequirement).stub, new VersionStruct { Major = 1, Minor = 2 });
+                Assert.AreEqual((parsed as LoseVersionRequirement).stub, new Version { Major = 1, Minor = 2 });
             }
 
             [Test]
@@ -35,7 +35,7 @@ namespace Uplift.Testing.Unit
             {
                 IVersionRequirement parsed = VersionParser.ParseRequirement("1.2.*");
                 Assert.IsTrue(parsed is BoundedVersionRequirement);
-                Assert.AreEqual((parsed as BoundedVersionRequirement).lowerBound, new VersionStruct { Major = 1, Minor = 2 });
+                Assert.AreEqual((parsed as BoundedVersionRequirement).lowerBound, new Version { Major = 1, Minor = 2 });
             }
 
             [Test]
@@ -43,9 +43,9 @@ namespace Uplift.Testing.Unit
             {
                 IVersionRequirement parsed = VersionParser.ParseRequirement("1.2.3!");
                 Assert.IsTrue(parsed is ExactVersionRequirement);
-                Assert.AreEqual((parsed as ExactVersionRequirement).expected, new VersionStruct { Major = 1, Minor = 2, Patch = 3 });
+                Assert.AreEqual((parsed as ExactVersionRequirement).expected, new Version { Major = 1, Minor = 2, Patch = 3 });
             }
-            
+
             [Test]
             public void DoNotParseWrongRequirement()
             {
@@ -62,7 +62,7 @@ namespace Uplift.Testing.Unit
             public void ParseCorrectUnityVersions()
             {
                 Assert.AreEqual(VersionParser.ParseUnityVersion("1.2.3f4"),
-                    new VersionStruct
+                    new Version
                     {
                         Major = 1,
                         Minor = 2,
@@ -71,7 +71,7 @@ namespace Uplift.Testing.Unit
                     }
                 );
                 Assert.AreEqual(VersionParser.ParseUnityVersion("5.6.1b1"),
-                    new VersionStruct
+                    new Version
                     {
                         Major = 5,
                         Minor = 6,
@@ -80,7 +80,7 @@ namespace Uplift.Testing.Unit
                     }
                 );
                 Assert.AreEqual(VersionParser.ParseUnityVersion("2017.1.0a3"),
-                    new VersionStruct
+                    new Version
                     {
                         Major = 2017,
                         Minor = 1,

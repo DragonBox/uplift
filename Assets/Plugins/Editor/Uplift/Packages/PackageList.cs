@@ -93,7 +93,15 @@ namespace Uplift.Packages
 
         public PackageRepo[] SelectCandidates(PackageRepo[] candidates, CandidateSelectionStrategy[] strategyList)
         {
-            return strategyList.Aggregate(new PackageRepo[0], (selected, next) => (selected.Union(SelectCandidates(candidates, next))).ToArray());
+            PackageRepo[] tempCandidates;
+
+            foreach(var strategy in strategyList) {
+                tempCandidates = strategy.Filter(candidates);
+                candidates = tempCandidates;
+
+            }
+
+            return candidates;
         }
 
 
@@ -102,7 +110,13 @@ namespace Uplift.Packages
             PackageRepo blankResult = new PackageRepo();
             PackageRepo[] candidates = FindCandidatesForDefinition(packageDefinition);
 
-            candidates = SelectCandidates(candidates, new LatestSelectionStrategy());
+            var strategies = new CandidateSelectionStrategy[]{
+                new OnlyMatchingUnityVersionStrategy(Application.unityVersion),
+                new FindBestPackageForUnityVersion(Application.unityVersion),
+                new LatestSelectionStrategy()
+            };
+
+            candidates = SelectCandidates(candidates, strategies);
 
             if (candidates.Length > 0)
             {

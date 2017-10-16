@@ -4,14 +4,21 @@ using System.Xml.Serialization;
 using UnityEditor;
 using UnityEngine;
 using Uplift.Schemas;
+using Uplift;
+using PackageInfo = Uplift.Common.PackageInfo;
 
 namespace Uplift.Windows
 {
     public class ExporterWindow : EditorWindow
     {
+        private struct PackageInfoHelper {
+            public PackageInfo packageInfo;
+            public bool selected;
+        }
+
         // TODO: Make Window scrollable if too many lines
         // QUESTION: UI has not been thought in term of effiency, should we rework it?
-        private PackageInfo[] packageInfos;
+        private PackageInfoHelper[] potentialPackages;
         private bool[] expanded;
         private string packageFormat = "{0}~{1}";
         private const bool defaultExpanded = true;
@@ -19,7 +26,8 @@ namespace Uplift.Windows
         public void Init()
         {
             string[] directories = System.IO.Directory.GetDirectories(GetSelectedPathOrFallback());
-            packageInfos = new PackageInfo[directories.Length];
+
+            potentialPackages = new PackageInfoHelper[directories.Length];
             expanded = new bool[directories.Length];
 
             string path;
@@ -27,11 +35,19 @@ namespace Uplift.Windows
             {
                 // TODO: Instead of assuming from context we should try to fetch existing Upfile.xml and parse info from it
                 path = directories[i];
-                packageInfos[i].selected = true;
-                packageInfos[i].path = path;
-                packageInfos[i].name = System.IO.Path.GetFileName(path);
-                packageInfos[i].version = "0.0.1";
-                packageInfos[i].license = "Undefined";
+
+
+                potentialPackages[i] = new PackageInfoHelper() {
+                    selected = true
+                };
+
+                potentialPackages[i].packageInfo = new PackageInfo() {
+                    paths = new string[]{path},
+                    name = System.IO.Path.GetFileName(path),
+                    version = "0.0.1",
+                    license = "Undefined"
+
+                };
 
                 expanded[i] = defaultExpanded;
             }
@@ -39,18 +55,20 @@ namespace Uplift.Windows
 
         public void OnGUI()
         {
-            titleContent.text = "Export Utility";            
+            titleContent.text = "Export Utility";
 
-            for(int i = 0; i < packageInfos.Length; i++)
+            for(int i = 0; i < potentialPackages.Length; i++)
             {
-                expanded[i] = EditorGUILayout.Foldout(expanded[i], packageInfos[i].path, true);
+                expanded[i] = EditorGUILayout.Foldout(expanded[i], potentialPackages[i].packageInfo.paths[0], true);
                 if (expanded[i])
                 {
-                    packageInfos[i].selected = EditorGUILayout.Toggle("Export?", packageInfos[i].selected);
-                    GUI.enabled = packageInfos[i].selected;
-                    packageInfos[i].name = EditorGUILayout.TextField("Package Name", packageInfos[i].name);
-                    packageInfos[i].version = EditorGUILayout.TextField("Package Version", packageInfos[i].version);
-                    packageInfos[i].license = EditorGUILayout.TextField("Package License", packageInfos[i].license);
+                    PackageInfo pi = potentialPackages[i].packageInfo;
+
+                    potentialPackages[i].selected = EditorGUILayout.Toggle("Export?", potentialPackages[i].selected);
+                    GUI.enabled = potentialPackages[i].selected;
+                    pi.name = EditorGUILayout.TextField("Package Name", pi.name);
+                    pi.version = EditorGUILayout.TextField("Package Version", pi.version);
+                    pi.license = EditorGUILayout.TextField("Package License", pi.license);
                     GUI.enabled = true;
                 }
 
@@ -59,37 +77,13 @@ namespace Uplift.Windows
 
             if (GUILayout.Button("Export selected packages"))
             {
-                foreach(PackageInfo pInfo in packageInfos)
+                foreach(PackageInfoHelper pInfoHelper in potentialPackages)
                 {
-                    if (!pInfo.selected) continue;
-                    string[] files = System.IO.Directory.GetFiles(pInfo.path, "*.*", SearchOption.AllDirectories);
-                    string[] directories = System.IO.Directory.GetDirectories(pInfo.path, "*", SearchOption.AllDirectories);
-                    string[] entries = new string[files.Length + directories.Length];
-                    Array.Copy(directories, entries, directories.Length);
-                    Array.Copy(files, 0, entries, directories.Length, files.Length);
+                    if (!pInfoHelper.selected) continue;
 
-                    string name = string.Format(packageFormat, pInfo.name, pInfo.version);
-
-                    // Create Upset file for the package
-                    Upset file = new Upset()
-                    {
-                        UnityVersion = Application.unityVersion,
-                        PackageName = pInfo.name,
-                        PackageLicense = pInfo.license,
-                        PackageVersion = pInfo.version
-                    };
-
-                    XmlSerializer serializer = new XmlSerializer(typeof(Upset));
-                    using (FileStream fs = new FileStream(name + ".Upset.xml", FileMode.Create))
-                    {
-                        using (StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8))
-                        {
-                            serializer.Serialize(sw, file);
-                        }
-                    }
-
-                    // Export .unitypackage
-                    AssetDatabase.ExportPackage(entries, name + ".unitypackage", ExportPackageOptions.Default);
+                    Exporter exporter = new Exporter();
+                    exporter.SetPackageInfo(pInfoHelper.packageInfo);
+                    exporter.Export();
                 }
             }
         }
@@ -115,12 +109,5 @@ namespace Uplift.Windows
             return path;
         }
 
-        private struct PackageInfo {
-            public bool selected;
-            public string path;
-            public string name;
-            public string version;
-            public string license;
-        }
     }
 }

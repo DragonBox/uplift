@@ -25,13 +25,21 @@ namespace Uplift {
             var exportEntries = new List<string>();
 
             for(int i=0; i<packageInfo.paths.Length;i++) {
+
                 string path = packageInfo.paths[i];
 
-                string[] tFiles = System.IO.Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
-                string[] tDirectories = System.IO.Directory.GetDirectories(path, "*", SearchOption.AllDirectories);
+                if(System.IO.File.Exists(path)) {
+                    exportEntries.Add(path);
 
-                exportEntries.AddRange(tFiles);
-                exportEntries.AddRange(tDirectories);
+                } else if (System.IO.Directory.Exists(path)) {
+                    string[] tFiles = System.IO.Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
+                    string[] tDirectories = System.IO.Directory.GetDirectories(path, "*", SearchOption.AllDirectories);
+
+                    exportEntries.AddRange(tFiles);
+                    exportEntries.AddRange(tDirectories);
+                }
+
+
             }
 
             // Calculate package basename

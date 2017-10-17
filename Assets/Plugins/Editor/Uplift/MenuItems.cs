@@ -88,7 +88,22 @@ namespace Uplift
             Debug.Log("Upfile refreshed");
         }
 
+        [MenuItem("Uplift/Create Export Spec")]
+        private static void CreatePackageExportData() {
+
+            PackageExportData asset = ScriptableObject.CreateInstance<PackageExportData>();
+
+            AssetDatabase.CreateAsset(asset, "Assets/PackageExport.asset");
+            AssetDatabase.SaveAssets();
+
+        }
+
         [MenuItem("Uplift/Export Package", false, 250)]
+        private static void ExportPackage() {
+            Uplift.Common.Cli.PackageModule();
+        }
+
+        [MenuItem("Uplift/Export Package Utility", false, 250)]
         private static void ExportPackageWindow()
         {
             ExporterWindow window = EditorWindow.GetWindow(typeof(ExporterWindow), true) as ExporterWindow;

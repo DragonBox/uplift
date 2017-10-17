@@ -20,7 +20,6 @@ namespace Uplift.Windows
         // QUESTION: UI has not been thought in term of effiency, should we rework it?
         private PackageInfoHelper[] potentialPackages;
         private bool[] expanded;
-        private string packageFormat = "{0}~{1}";
         private const bool defaultExpanded = true;
 
         public void Init()

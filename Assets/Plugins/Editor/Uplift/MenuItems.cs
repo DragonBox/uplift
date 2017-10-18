@@ -73,13 +73,6 @@ namespace Uplift
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Uplift/Debug/Nuke All Packages", false, 152)]
-        private static void NukePackages()
-        {
-            Debug.LogWarning("Nuking all packages!");
-            UpliftManager.Instance().NukeAllPackages();
-            AssetDatabase.Refresh();
-        }
 
         [MenuItem("Uplift/Debug/Refresh Upfile", false, 153)]
         private static void RefreshUpfile()
@@ -88,7 +81,7 @@ namespace Uplift
             Debug.Log("Upfile refreshed");
         }
 
-        [MenuItem("Uplift/Create Export Spec")]
+        [MenuItem("Uplift/Packaging/Create Export Package Definition", false, 200)]
         private static void CreatePackageExportData() {
 
             PackageExportData asset = ScriptableObject.CreateInstance<PackageExportData>();
@@ -98,17 +91,26 @@ namespace Uplift
 
         }
 
-        [MenuItem("Uplift/Export Package", false, 250)]
+        [MenuItem("Uplift/Packaging/Export Defined Packages", false, 201)]
         private static void ExportPackage() {
             Uplift.Exporter.PackageEverything();
         }
 
-        [MenuItem("Uplift/Export Package Utility", false, 250)]
+        [MenuItem("Uplift/Packaging/Export Package Utility", false, 250)]
         private static void ExportPackageWindow()
         {
             ExporterWindow window = EditorWindow.GetWindow(typeof(ExporterWindow), true) as ExporterWindow;
             window.Init();
             window.Show();
         }
+
+        [MenuItem("Uplift/Debug/Nuke All Packages", false, 1000)]
+        private static void NukePackages()
+        {
+            Debug.LogWarning("Nuking all packages!");
+            UpliftManager.Instance().NukeAllPackages();
+            AssetDatabase.Refresh();
+        }
+
     }
 }

@@ -2,15 +2,21 @@ using UnityEngine;
 using UnityEditor;
 
 namespace Uplift {
+    [CreateAssetMenuAttribute(fileName = "PackageExport.asset", menuName = "Uplift/Package Export Definition", order = 250)]
     class PackageExportData : ScriptableObject {
 
-        public  Object[]  pathsToExport   =  null;
+        [Header("Basic Package Information")]
         public  string    packageName     =  "";
         public  string    packageVersion  =  "";
         public  string    license         =  "";
+
+        [Header("Paths")]
+        public  Object[]  pathsToExport   =  new Object[0];
+
+        [Header("Export Settings")]
         public  string    targetDir       =  "target";
 
-        protected string[] rawPaths;
+        protected string[] rawPaths       = new string[0];
 
         public string[] paths {
             get { return pathsToStringArray(); }

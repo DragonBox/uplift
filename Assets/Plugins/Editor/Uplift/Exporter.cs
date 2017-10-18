@@ -100,12 +100,12 @@ namespace Uplift {
                 Exporter exporter = new Exporter();
 
                 // Preparing basic export data
-                PackageExportData exportData = new PackageExportData() {
-                    packageName = PlayerSettings.productName,
-                    packageVersion = PlayerSettings.bundleVersion,
-                    license = "undefined",
-                    paths = packageExportData.paths
-                };
+                PackageExportData exportData = ScriptableObject.CreateInstance<PackageExportData>();
+
+                exportData.packageName = PlayerSettings.productName;
+                exportData.packageVersion = PlayerSettings.bundleVersion;
+                exportData.license = "undefined";
+                exportData.paths = packageExportData.paths;
 
                 // Overriding based on the contents - notifying when needed
                 CheckForOverrideData("Package Name",    ref exportData.packageName,    packageExportData.packageName);

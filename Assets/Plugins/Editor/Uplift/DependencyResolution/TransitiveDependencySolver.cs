@@ -19,8 +19,20 @@ namespace Uplift.DependencyResolution
             cycleDetector.DetectCycles(dependencyGraph);
 
             // TODO: Save the current dependency tree so the whole tree doesn't have to be solved entirely later on
+            DependencyDefinition[] solvedDependencies = GetDependencyDefinitions(dependencyGraph);
+            string result = "# DEPENDENCIES\n";
+            foreach(DependencyDefinition def in solvedDependencies)
+            {
+                PackageRepo pr = PackageList.Instance().FindPackageAndRepository(def);
+                result += pr.Package.PackageName + " , " + pr.Package.PackageVersion + "\n";
+            }
 
-            return GetDependencyDefinitions(dependencyGraph);
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter("Upfile.lock", false))
+            {
+                file.WriteLine(result);
+            }
+
+            return solvedDependencies;
         }
 
         private DependencyGraph GenerateGraph(DependencyDefinition[] dependencies)
@@ -53,7 +65,7 @@ namespace Uplift.DependencyResolution
 
         private string RecursivelyListDependencies(DependencyDefinition def, string indent = "")
         {
-            string result = indent + def.Name + " " + def.Requirement + "\n";
+            string result = indent + def.Name + " " + def.Requirement + " " + def.Version + "\n";
             PackageRepo pr = PackageList.Instance().FindPackageAndRepository(def);
             if(pr.Package != null && pr.Package.Dependencies != null)
             {

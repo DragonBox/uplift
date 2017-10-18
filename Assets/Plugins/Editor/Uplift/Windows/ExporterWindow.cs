@@ -1,18 +1,13 @@
-﻿using System;
-using System.IO;
-using System.Xml.Serialization;
+﻿using System.IO;
 using UnityEditor;
 using UnityEngine;
-using Uplift.Schemas;
-using Uplift;
-using PackageInfo = Uplift.Common.PackageInfo;
 
 namespace Uplift.Windows
 {
     public class ExporterWindow : EditorWindow
     {
         private struct PackageInfoHelper {
-            public PackageInfo packageInfo;
+            public PackageExportData exportSpec;
             public bool selected;
         }
 
@@ -40,10 +35,10 @@ namespace Uplift.Windows
                     selected = true
                 };
 
-                potentialPackages[i].packageInfo = new PackageInfo() {
+                potentialPackages[i].exportSpec = new PackageExportData() {
                     paths = new string[]{path},
-                    name = System.IO.Path.GetFileName(path),
-                    version = "0.0.1",
+                    packageName = System.IO.Path.GetFileName(path),
+                    packageVersion = "0.0.1",
                     license = "Undefined"
 
                 };
@@ -58,16 +53,16 @@ namespace Uplift.Windows
 
             for(int i = 0; i < potentialPackages.Length; i++)
             {
-                expanded[i] = EditorGUILayout.Foldout(expanded[i], potentialPackages[i].packageInfo.paths[0], true);
+                expanded[i] = EditorGUILayout.Foldout(expanded[i], potentialPackages[i].exportSpec.paths[0], true);
                 if (expanded[i])
                 {
-                    PackageInfo pi = potentialPackages[i].packageInfo;
+                    PackageExportData ed = potentialPackages[i].exportSpec;
 
                     potentialPackages[i].selected = EditorGUILayout.Toggle("Export?", potentialPackages[i].selected);
                     GUI.enabled = potentialPackages[i].selected;
-                    pi.name = EditorGUILayout.TextField("Package Name", pi.name);
-                    pi.version = EditorGUILayout.TextField("Package Version", pi.version);
-                    pi.license = EditorGUILayout.TextField("Package License", pi.license);
+                    ed.packageName = EditorGUILayout.TextField("Package Name", ed.packageName);
+                    ed.packageVersion = EditorGUILayout.TextField("Package Version", ed.packageVersion);
+                    ed.license = EditorGUILayout.TextField("Package License", ed.license);
                     GUI.enabled = true;
                 }
 
@@ -81,7 +76,7 @@ namespace Uplift.Windows
                     if (!pInfoHelper.selected) continue;
 
                     Exporter exporter = new Exporter();
-                    exporter.SetPackageInfo(pInfoHelper.packageInfo);
+                    exporter.SetExportSpec(pInfoHelper.exportSpec);
                     exporter.Export();
                 }
             }

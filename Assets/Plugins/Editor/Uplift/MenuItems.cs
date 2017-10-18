@@ -100,7 +100,7 @@ namespace Uplift
 
         [MenuItem("Uplift/Export Package", false, 250)]
         private static void ExportPackage() {
-            Uplift.Common.Cli.PackageModule();
+            Uplift.Exporter.PackageEverything();
         }
 
         [MenuItem("Uplift/Export Package Utility", false, 250)]

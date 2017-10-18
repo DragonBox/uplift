@@ -3,11 +3,12 @@ using UnityEditor;
 
 namespace Uplift {
     class PackageExportData : ScriptableObject {
-        public Object[] pathsToExport = null;
-        public string   packageName = "";
-        public string   packageVersion = "";
-        public string   license = "";
-        public string   targetDir = "target";
+
+        public  Object[]  pathsToExport   =  null;
+        public  string    packageName     =  "";
+        public  string    packageVersion  =  "";
+        public  string    license         =  "";
+        public  string    targetDir       =  "target";
 
         protected string[] rawPaths;
 

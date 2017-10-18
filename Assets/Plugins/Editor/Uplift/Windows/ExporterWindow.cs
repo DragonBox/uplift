@@ -60,9 +60,11 @@ namespace Uplift.Windows
 
                     potentialPackages[i].selected = EditorGUILayout.Toggle("Export?", potentialPackages[i].selected);
                     GUI.enabled = potentialPackages[i].selected;
-                    ed.packageName = EditorGUILayout.TextField("Package Name", ed.packageName);
-                    ed.packageVersion = EditorGUILayout.TextField("Package Version", ed.packageVersion);
-                    ed.license = EditorGUILayout.TextField("Package License", ed.license);
+
+                    ed.packageName    = EditorGUILayout.TextField("Package Name"    , ed.packageName);
+                    ed.packageVersion = EditorGUILayout.TextField("Package Version" , ed.packageVersion);
+                    ed.license        = EditorGUILayout.TextField("Package License" , ed.license);
+
                     GUI.enabled = true;
                 }
 

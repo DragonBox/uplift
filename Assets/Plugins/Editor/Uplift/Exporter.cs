@@ -8,18 +8,11 @@ using System.Xml.Serialization;
 
 namespace Uplift {
     class Exporter {
-        public string unityVersion;
-
         PackageExportData exportSpec;
-        Upset upset;
-
-        public Exporter() {
-            unityVersion = Application.unityVersion;
-        }
 
         public void Export() {
 
-            // Prepare items to export
+            // Prepare list of entries to export
             var exportEntries = new List<string>();
 
             for(int i=0; i<exportSpec.paths.Length;i++) {
@@ -43,43 +36,43 @@ namespace Uplift {
             // Calculate package file basename
             string packageBasename = string.Format("{0}~{1}", exportSpec.packageName, exportSpec.packageVersion);
 
-            CreateTargetDir();
+            // Create Target Directory
+            if(!Directory.Exists(exportSpec.targetDir)) {
+                Directory.CreateDirectory(exportSpec.targetDir);
+            }
 
             // Write things to disk
+            // Upset
             WriteUpsetFile(Path.Combine(exportSpec.targetDir, packageBasename) + ".Upset.xml");
-            AssetDatabase.ExportPackage(exportEntries.ToArray(), Path.Combine(exportSpec.targetDir,packageBasename) + ".unitypackage", ExportPackageOptions.Default);
+
+            // .unitypackage file
+            AssetDatabase.ExportPackage(
+                                        exportEntries.ToArray(),
+                                        Path.Combine(exportSpec.targetDir,packageBasename) + ".unitypackage",
+                                        ExportPackageOptions.Default
+                                        );
 
         }
 
         public void SetExportSpec(PackageExportData exportSpec) {
             this.exportSpec = exportSpec;
-            SetUpset();
         }
 
-        protected void SetUpset() {
-            upset = new Upset() {
+        protected void WriteUpsetFile(string file) {
+            var upset = new Upset() {
                 UnityVersion = Application.unityVersion,
                 PackageName = exportSpec.packageName,
                 PackageLicense = exportSpec.license,
                 PackageVersion = exportSpec.packageVersion
             };
-        }
 
-        protected void WriteUpsetFile(string file) {
             XmlSerializer serializer = new XmlSerializer(typeof(Upset));
             using (FileStream fs = new FileStream(file, FileMode.Create))
             {
                 using (StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8))
                 {
-                    serializer.Serialize(sw, this.upset);
+                    serializer.Serialize(sw, upset);
                 }
-            }
-
-        }
-
-        protected void CreateTargetDir() {
-            if(!Directory.Exists(exportSpec.targetDir)) {
-                Directory.CreateDirectory(exportSpec.targetDir);
             }
 
         }
@@ -106,6 +99,7 @@ namespace Uplift {
 
                 Exporter exporter = new Exporter();
 
+                // Preparing basic export data
                 PackageExportData exportData = new PackageExportData() {
                     packageName = PlayerSettings.productName,
                     packageVersion = PlayerSettings.bundleVersion,
@@ -113,19 +107,21 @@ namespace Uplift {
                     paths = packageExportData.paths
                 };
 
-
-                CheckForOverrideData("Package Name", ref exportData.packageName, packageExportData.packageName);
+                // Overriding based on the contents - notifying when needed
+                CheckForOverrideData("Package Name",    ref exportData.packageName,    packageExportData.packageName);
                 CheckForOverrideData("Package Version", ref exportData.packageVersion, packageExportData.packageVersion);
-                CheckForOverrideData("License", ref exportData.license, packageExportData.license);
-
+                CheckForOverrideData("License",         ref exportData.license,        packageExportData.license);
 
                 exporter.SetExportSpec(exportData);
 
+                // Export of set package
                 exporter.Export();
             }
 
         }
 
+        // Method for notyfing whether we're overriding the value or not
+        // Warning: works on references
         protected static void CheckForOverrideData(string what, ref string original, string overrideData) {
                 if(!string.IsNullOrEmpty(overrideData)) {
 

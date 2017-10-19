@@ -159,7 +159,7 @@ namespace Uplift
         // This should be contained using kinds of destinations.
         public void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition)
         {
-            GitIgnorer handler = new GitIgnorer();
+            GitIgnorer VCSHandler = new GitIgnorer();
 
             using (LogAggregator LA = LogAggregator.InUnity(
                 "Package {0} was successfully installed",
@@ -212,7 +212,7 @@ namespace Uplift
                     var destination = Path.Combine(PH.Location, packageStructurePrefix);
 
                     string lastCreatedGitignore = "";
-                    handler.OnEditGitignore += delegate(object sender, string path) { lastCreatedGitignore = path; };
+                    VCSHandler.OnEditGitignore += delegate(object sender, string path) { lastCreatedGitignore = path; };
 
                     // Working with single file
                     if (File.Exists(sourcePath))
@@ -221,7 +221,7 @@ namespace Uplift
                         if (!Directory.Exists(destination))
                         {
                             Directory.CreateDirectory(destination);
-                            handler.HandleFile(destination);
+                            VCSHandler.HandleFile(destination);
                         }
                         if (Directory.Exists(destination))
                         { // we are copying a file into a directory
@@ -246,9 +246,9 @@ namespace Uplift
                     {
                         // Working with directory
                         Uplift.Common.FileSystemUtil.CopyDirectoryWithMeta(sourcePath, destination);
-                        handler.HandleDirectory(destination);
+                        VCSHandler.HandleDirectory(destination);
                         upbring.AddLocation(package, spec.Type, lastCreatedGitignore);
-                        handler.HandleFile(destination + ".meta");
+                        VCSHandler.HandleFile(destination + ".meta");
                         
                         if (destination.StartsWith("Assets"))
                         {

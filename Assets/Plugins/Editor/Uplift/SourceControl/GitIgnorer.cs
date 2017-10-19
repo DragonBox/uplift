@@ -7,7 +7,7 @@ namespace Uplift.SourceControl
 	public class GitIgnorer : ISourceControlHandler
 	{
 		public delegate void FileEdit(object sender, string path);
-		public event FileEdit OnEditGitignore;
+		public event FileEdit OnEditGitignore = null;
 		private readonly string ignoreTemplateHeader = "# == UPLIFT GITIGNORE START ==";
 		private readonly string ignoreTemplateComment = "# This section of the .gitignore has been created automatically by Uplift. Do not modify it or remove it.";
 		private readonly string ignoreTemplateFooter = "# == UPLIFT GITIGNORE END ==";
@@ -48,7 +48,8 @@ namespace Uplift.SourceControl
 				sw.WriteLine(ignoreTemplateFooter);
 			}
 
-			OnEditGitignore(this, gitIgnorePath);
+			if(OnEditGitignore != null)
+				OnEditGitignore(this, gitIgnorePath);
 		}
 
 		private string[] ExtractExistingLines(string path, out string[] upliftPatterns)

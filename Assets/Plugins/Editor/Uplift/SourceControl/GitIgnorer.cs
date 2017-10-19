@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Uplift.SourceControl
 {
@@ -11,16 +12,20 @@ namespace Uplift.SourceControl
 		private readonly string ignoreTemplateHeader = "# == UPLIFT GITIGNORE START ==";
 		private readonly string ignoreTemplateComment = "# This section of the .gitignore has been created automatically by Uplift. Do not modify it or remove it.";
 		private readonly string ignoreTemplateFooter = "# == UPLIFT GITIGNORE END ==";
+
 		public void HandleDirectory(string path)
 		{
-			Ignore(path, "*");
+			Ignore(
+				Path.GetDirectoryName(path),
+				new DirectoryInfo(path).Name + "*"
+				);
 		}
 
 		public void HandleFile(string path)
 		{
 			Ignore(
 				Path.GetDirectoryName(path),
-				Path.GetFileName(path)				
+				Path.GetFileName(path)
 			);
 		}
 
@@ -29,16 +34,20 @@ namespace Uplift.SourceControl
 			string gitIgnorePath = Path.Combine(path, ".gitignore");
 			string[] upliftPatterns;
 			string[] userLines = ExtractExistingLines(gitIgnorePath, out upliftPatterns);
-			string[] temp = new string[upliftPatterns.Length + 1];
-			Array.Copy(upliftPatterns, temp, upliftPatterns.Length);
-			temp[upliftPatterns.Length] = pattern;
-			upliftPatterns = temp;
+
+			// Avoid duplicated entries
+			if(!upliftPatterns.Any(pat => pat == pattern))
+			{
+				string[] temp = new string[upliftPatterns.Length + 1];
+				Array.Copy(upliftPatterns, temp, upliftPatterns.Length);
+				temp[upliftPatterns.Length] = pattern;
+				upliftPatterns = temp;
+			}
 
 			using(StreamWriter sw = new StreamWriter(gitIgnorePath, false))
 			{
 				foreach(string line in userLines)
 					sw.WriteLine(line);
-				if(userLines.Length > 0) sw.WriteLine("\n");
 				sw.WriteLine(ignoreTemplateHeader);
 				sw.WriteLine(ignoreTemplateComment);
 				foreach(string line in upliftPatterns)

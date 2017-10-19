@@ -179,7 +179,7 @@ namespace Uplift
                 FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
                 upbring.AddLocation(package, InstallSpecType.Root, localPackagePath);
 
-                VCSHandler.HandleDirectory(localPackagePath);
+                VCSHandler.HandleDirectory(upfile.GetPackagesRootPath());
 
                 InstallSpecPath[] specArray;
                 if (package.Configuration == null)
@@ -253,7 +253,6 @@ namespace Uplift
                         Uplift.Common.FileSystemUtil.CopyDirectoryWithMeta(sourcePath, destination);
                         VCSHandler.HandleDirectory(destination);
                         upbring.AddLocation(package, spec.Type, lastCreatedGitignore);
-                        VCSHandler.HandleFile(destination + ".meta");
                         
                         if (destination.StartsWith("Assets"))
                         {

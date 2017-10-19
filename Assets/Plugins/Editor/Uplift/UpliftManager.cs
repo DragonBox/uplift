@@ -175,6 +175,7 @@ namespace Uplift
                 upbring.AddPackage(package);
                 FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
                 upbring.AddLocation(package, InstallSpecType.Root, localPackagePath);
+                VCSHandler.HandleDirectory(localPackagePath);
 
                 InstallSpecPath[] specArray;
                 if (package.Configuration == null)

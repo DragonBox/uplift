@@ -78,12 +78,7 @@ namespace Uplift.SourceControl
 				else if(((headerIndex == -1) ^ (footerIndex == -1)) || (footerIndex < headerIndex))
 				{
 					// One of the line is present, not the other one OR the footer is before the header
-					UnityEngine.Debug.LogError((headerIndex == -1) ^ (footerIndex == -1));
-					UnityEngine.Debug.LogError((footerIndex < headerIndex));
-					UnityEngine.Debug.LogError(((headerIndex == -1) ^ (footerIndex == -1)) || (footerIndex < headerIndex));
-					UnityEngine.Debug.LogError("headerIndex: " + headerIndex);
-					UnityEngine.Debug.LogError("footerIndex: " + footerIndex);
-					UnityEngine.Debug.LogError(string.Format("The .gitignore at {0} is not properly formed", path));
+					UnityEngine.Debug.LogErrorFormat("The .gitignore at {0} is not properly formed", path);
 				}
 			}
 

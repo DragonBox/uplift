@@ -17,8 +17,13 @@ namespace Uplift.SourceControl
 		{
 			Ignore(
 				Path.GetDirectoryName(path),
-				new DirectoryInfo(path).Name + "*"
-				);
+				"/" + new DirectoryInfo(path).Name
+			);
+			Ignore(
+				Path.GetDirectoryName(path),
+				new DirectoryInfo(path).Name + ".meta"
+			);
+
 		}
 
 		public void HandleFile(string path)

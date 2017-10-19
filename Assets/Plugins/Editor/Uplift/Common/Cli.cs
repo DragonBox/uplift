@@ -31,9 +31,7 @@ namespace Uplift.Common
             UpliftManager.Instance().NukeAllPackages();
         }
 
-        public static string defaultPathsFile = ".simplebuild";
-
-        public static void PackageModule() {
+        public static void PackageEverything() {
             Uplift.Exporter.PackageEverything();
         }
     }

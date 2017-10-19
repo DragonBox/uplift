@@ -97,22 +97,14 @@ namespace Uplift {
 
                 Debug.Log(string.Format("Export {0}/{1} using {2}", i+1, guids.Length, packageExportPath));
 
+                // Preparing exporter instance
                 Exporter exporter = new Exporter();
 
-                // Preparing basic export data
-                PackageExportData exportData = ScriptableObject.CreateInstance<PackageExportData>();
+                // Checking which defaults had been overriden
+                packageExportData.SetOrCheckOverridenDefaults(GetDefaultExportData());
 
-                exportData.packageName = PlayerSettings.productName;
-                exportData.packageVersion = PlayerSettings.bundleVersion;
-                exportData.license = "undefined";
-                exportData.paths = packageExportData.paths;
-
-                // Overriding based on the contents - notifying when needed
-                CheckForOverrideData("Package Name",    ref exportData.packageName,    packageExportData.packageName);
-                CheckForOverrideData("Package Version", ref exportData.packageVersion, packageExportData.packageVersion);
-                CheckForOverrideData("License",         ref exportData.license,        packageExportData.license);
-
-                exporter.SetExportSpec(exportData);
+                // Setting exporter spec
+                exporter.SetExportSpec(packageExportData);
 
                 // Export of set package
                 exporter.Export();
@@ -120,16 +112,16 @@ namespace Uplift {
 
         }
 
-        // Method for notyfing whether we're overriding the value or not
-        // Warning: works on references
-        protected static void CheckForOverrideData(string what, ref string original, string overrideData) {
-                if(!string.IsNullOrEmpty(overrideData)) {
+        public static PackageExportData GetDefaultExportData() {
+                PackageExportData defaultExportData = ScriptableObject.CreateInstance<PackageExportData>();
 
-                    Debug.Log(string.Format("NOTE: {0} overriden by Package Export Specification ({1} -> {2})",
-                                            what, original, overrideData ));
-                    original = overrideData;
-                }
-            }
+                defaultExportData.packageName = PlayerSettings.productName;
+                defaultExportData.packageVersion = PlayerSettings.bundleVersion;
+                defaultExportData.license = "undefined";
+
+                return defaultExportData;
+
+        }
 
 
     }

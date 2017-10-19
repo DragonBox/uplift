@@ -123,7 +123,9 @@ namespace Uplift.Testing.Integration
         {
             manager.NukePackage("package_d");
             
-            CollectionAssert.AreEquivalent(original_snapshot, GetSnapshot());
+            string[] snap = GetSnapshot();
+            string diff = string.Join(", ", original_snapshot.Except(snap).ToArray());
+            CollectionAssert.AreEquivalent(original_snapshot, snap, "Difference is: " + diff);
         }
 
         [Test]
@@ -147,7 +149,9 @@ namespace Uplift.Testing.Integration
             Array.Copy(original_snapshot, expected, original_snapshot.Length);
             Array.Copy(extra_files, 0, expected, original_snapshot.Length, extra_files.Length);
 
-            CollectionAssert.AreEquivalent(expected, GetSnapshot());
+            string[] snap = GetSnapshot();
+            string diff = string.Join(", ", expected.Except(snap).ToArray());
+            CollectionAssert.AreEquivalent(expected, snap, "Difference is: " + diff);
         }
 
         private string[] GetSnapshot()

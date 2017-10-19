@@ -173,8 +173,12 @@ namespace Uplift
                 // Note: Full package is ALWAYS copied to the upackages directory right now
                 string localPackagePath = GetRepositoryInstallPath(package);
                 upbring.AddPackage(package);
+                if (!Directory.Exists(localPackagePath))
+                    Directory.CreateDirectory(localPackagePath);
+
                 FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
                 upbring.AddLocation(package, InstallSpecType.Root, localPackagePath);
+
                 VCSHandler.HandleDirectory(localPackagePath);
 
                 InstallSpecPath[] specArray;

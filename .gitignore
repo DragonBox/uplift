@@ -1,7 +1,6 @@
 # /
 /Temp
 /Library
-/UPackages
 /target
 /test-results
 /obj
@@ -27,3 +26,7 @@ UpliftTesting/obj
 UpliftTesting/*.csproj
 UpliftTesting/*.csproj.user
 UpliftTesting/*.sln
+# == UPLIFT GITIGNORE START ==
+# This section of the .gitignore has been created automatically by Uplift. Do not modify it or remove it.
+UPackages*
+# == UPLIFT GITIGNORE END ==

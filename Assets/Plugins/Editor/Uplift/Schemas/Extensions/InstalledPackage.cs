@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using Uplift.Common;
+using Uplift.SourceControl;
 
 namespace Uplift.Schemas
 {
@@ -12,6 +13,7 @@ namespace Uplift.Schemas
     {
         public void Nuke()
         {
+            GitIgnorer ignorer = new GitIgnorer();
             using(LogAggregator LA = LogAggregator.InUnity(
                 "Package {0} was successfully nuked",
                 "Package {0} was successfully nuked but raised warnings",
@@ -31,6 +33,14 @@ namespace Uplift.Schemas
                         {
                             // Removing Root package
                             Directory.Delete(friendlyPath, true);
+                        }
+                        if (friendlyPath.Contains("gitignore"))
+                        {
+                            // Do not remove the file but rather the reference to the package
+                            if(!ignorer.TryRemoveFile(friendlyPath))
+                            {
+                                Debug.LogFormat("The .gitignore at {0} cannot be deleted by Uplift. Please make sure it doesn't cause any kind of issue.", friendlyPath);
+                            }
                         }
                         else
                         {

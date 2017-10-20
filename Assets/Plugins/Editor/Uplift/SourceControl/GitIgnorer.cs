@@ -35,6 +35,19 @@ namespace Uplift.SourceControl
 			);
 		}
 
+		public bool TryRemoveFile(string gitIgnorePath)
+		{
+			string[] upliftPatterns;
+			string[][] userLines = ExtractExistingLines(gitIgnorePath, out upliftPatterns);
+
+			if(userLines[0].Length == 0 && userLines[1].Length == 0 && upliftPatterns.Length == 1)
+			{
+				File.Delete(gitIgnorePath);
+				return true;
+			}
+			return false;
+		}
+
 		private void Ignore(string path, string pattern)
 		{
 			string gitIgnorePath = Path.Combine(path, ".gitignore");
@@ -84,6 +97,11 @@ namespace Uplift.SourceControl
 			{
 				foreach(string line in File.ReadAllLines(path))
 					readLines.Add(line);
+				if(readLines.Count == 0)
+				{
+					upliftPatterns = new string[0];
+					return userLines;
+				}
 
 				int headerIndex = readLines.IndexOf(ignoreTemplateHeader);
 				int footerIndex = readLines.IndexOf(ignoreTemplateFooter);
@@ -95,10 +113,12 @@ namespace Uplift.SourceControl
 						upliftLines.Add(readLines[i]);
 					}
 
-					userLines[0] = new string[headerIndex - 1];
-					userLines[1] = new string[readLines.Count - footerIndex];
-					Array.Copy(readLines.ToArray(), 0, userLines[0], 0, headerIndex - 1);
-					Array.Copy(readLines.ToArray(), footerIndex + 1, userLines[1], 0, readLines.Count - footerIndex);
+					userLines[0] = new string[headerIndex];
+					int lastIndex = readLines.Count - 1;
+					userLines[1] = new string[lastIndex - footerIndex];
+					Array.Copy(readLines.ToArray(), 0, userLines[0], 0, headerIndex);
+					if(footerIndex != lastIndex)
+						Array.Copy(readLines.ToArray(), footerIndex + 1, userLines[1], 0, lastIndex - footerIndex);
 				}
 				else if(((headerIndex == -1) ^ (footerIndex == -1)) || (footerIndex < headerIndex))
 				{

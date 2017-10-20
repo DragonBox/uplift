@@ -77,6 +77,8 @@ namespace Uplift
 
         public void InstallDependencies(IDependencySolver dependencySolver)
         {
+            UpliftManager.ResetInstances();
+
             //FIXME: We should check for all repositories, not the first one
             //FileRepository rt = (FileRepository) Upfile.Repositories[0];
             PackageList pList = PackageList.Instance();

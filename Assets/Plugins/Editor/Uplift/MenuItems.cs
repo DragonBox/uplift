@@ -19,13 +19,6 @@ namespace Uplift
 
         }
 
-        [MenuItem("Uplift/Refresh Upfile", false, 0)]
-        private static void RefreshUpfile()
-        {
-            UpliftManager.ResetInstances();
-            Debug.Log("Upfile refreshed");
-        }
-
         [MenuItem("Uplift/Show Update Window", false, 1)]
         private static void ShowUpdateWindow()
         {
@@ -86,6 +79,13 @@ namespace Uplift
             Debug.LogWarning("Nuking all packages!");
             UpliftManager.Instance().NukeAllPackages();
             AssetDatabase.Refresh();
+        }
+
+        [MenuItem("Uplift/Debug/Refresh Upfile", false, 153)]
+        private static void RefreshUpfile()
+        {
+            UpliftManager.ResetInstances();
+            Debug.Log("Upfile refreshed");
         }
 
         [MenuItem("Uplift/Export Package", false, 250)]

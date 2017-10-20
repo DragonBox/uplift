@@ -44,11 +44,19 @@ namespace Uplift.SourceControl
 			string[] upliftPatterns;
 			string[][] userLines = ExtractExistingLines(gitIgnorePath, out upliftPatterns);
 
-			if(userLines[0].Length == 0 && userLines[1].Length == 0 && upliftPatterns.Length == 1)
+			if(userLines[0].Length == 0 && userLines[1].Length == 0 && upliftPatterns.Length <= 3)
 			{
-				File.Delete(gitIgnorePath);
-				return true;
+				bool deletable = false;
+				if(upliftPatterns.Length == 1) deletable = true;
+				if(upliftPatterns.Length == 2) deletable = string.Equals(upliftPatterns[0] + ".meta", upliftPatterns[1]) || string.Equals(upliftPatterns[0], upliftPatterns[1] + ".meta");
+
+				if(deletable)
+				{
+					File.Delete(gitIgnorePath);
+					return true;
+				}
 			}
+			
 			return false;
 		}
 

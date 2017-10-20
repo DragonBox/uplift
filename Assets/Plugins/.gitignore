@@ -1,5 +1,7 @@
 # == UPLIFT GITIGNORE START ==
 # This section of the .gitignore has been created automatically by Uplift. Do not modify it or remove it.
+/AnotherPluginScript.cs
+/AnotherPluginScript.cs.meta
 /PluginScript.cs
 /PluginScript.cs.meta
 # == UPLIFT GITIGNORE END ==

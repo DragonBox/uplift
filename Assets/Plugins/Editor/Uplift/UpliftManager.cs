@@ -266,7 +266,10 @@ namespace Uplift
                                 upbring.AddLocation(package, spec.Type, Path.Combine(destination, file));
                             
                             if(PH.SkipPackageStructure)
+                            {
                                 VCSHandler.HandleFile(Path.Combine(destination, file));
+                                upbring.AddLocation(package, spec.Type, lastCreatedGitignore);
+                            }
                         }
                     }
                 }

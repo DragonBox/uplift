@@ -251,22 +251,22 @@ namespace Uplift
                     {
                         // Working with directory
                         Uplift.Common.FileSystemUtil.CopyDirectoryWithMeta(sourcePath, destination);
-                        VCSHandler.HandleDirectory(destination);
-                        upbring.AddLocation(package, spec.Type, lastCreatedGitignore);
-                        
-                        if (destination.StartsWith("Assets"))
+                        if(!PH.SkipPackageStructure)
                         {
-                            foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
-                            {
-                                TryUpringAddGUID(upbring, file, package, spec.Type, destination);
-                            }
+                            VCSHandler.HandleDirectory(destination);
+                            upbring.AddLocation(package, spec.Type, lastCreatedGitignore);
                         }
-                        else
+                        
+                        bool useGuid = destination.StartsWith("Assets");
+                        foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
                         {
-                            foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
-                            {
+                            if(useGuid)
+                                TryUpringAddGUID(upbring, file, package, spec.Type, destination);
+                            else
                                 upbring.AddLocation(package, spec.Type, Path.Combine(destination, file));
-                            }
+                            
+                            if(PH.SkipPackageStructure)
+                                VCSHandler.HandleFile(Path.Combine(destination, file));
                         }
                     }
                 }

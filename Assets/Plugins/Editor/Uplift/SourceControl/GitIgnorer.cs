@@ -31,7 +31,11 @@ namespace Uplift.SourceControl
 		{
 			Ignore(
 				Path.GetDirectoryName(path),
-				Path.GetFileName(path)
+				"/" + Path.GetFileName(path)
+			);
+			Ignore(
+				Path.GetDirectoryName(path),
+				"/" + Path.GetFileName(path) + ".meta"
 			);
 		}
 

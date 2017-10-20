@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Uplift.Schemas;
 
 namespace Uplift.SourceControl
 {
@@ -38,7 +39,7 @@ namespace Uplift.SourceControl
 		{
 			string gitIgnorePath = Path.Combine(path, ".gitignore");
 			string[] upliftPatterns;
-			string[] userLines = ExtractExistingLines(gitIgnorePath, out upliftPatterns);
+			string[][] userLines = ExtractExistingLines(gitIgnorePath, out upliftPatterns);
 
 			// Avoid duplicated entries
 			if(!upliftPatterns.Any(pat => pat == pattern))
@@ -51,7 +52,7 @@ namespace Uplift.SourceControl
 
 			using(StreamWriter sw = new StreamWriter(gitIgnorePath, false))
 			{
-				foreach(string line in userLines)
+				foreach(string line in userLines[0])
 					sw.WriteLine(line);
 				sw.WriteLine(ignoreTemplateHeader);
 				sw.WriteLine(ignoreTemplateComment);
@@ -60,45 +61,58 @@ namespace Uplift.SourceControl
 					sw.WriteLine(line);
 				}
 				sw.WriteLine(ignoreTemplateFooter);
+				foreach(string line in userLines[1])
+					sw.WriteLine(line);
 			}
 
 			if(OnEditGitignore != null)
 				OnEditGitignore(this, gitIgnorePath);
 		}
 
-		private string[] ExtractExistingLines(string path, out string[] upliftPatterns)
+		private string[][] ExtractExistingLines(string path, out string[] upliftPatterns)
 		{
-			List<string> userLines = new List<string>();
+			List<string> readLines = new List<string>();
 			List<string> upliftLines = new List<string>();
+			string[][] userLines = new string[2][]{
+				new string[0],
+				new string[0]
+			};
 
 			upliftPatterns = new string[0];
 
 			if(File.Exists(path))
 			{
 				foreach(string line in File.ReadAllLines(path))
-					userLines.Add(line);
+					readLines.Add(line);
 
-				int headerIndex = userLines.IndexOf(ignoreTemplateHeader);
-				int footerIndex = userLines.IndexOf(ignoreTemplateFooter);
+				int headerIndex = readLines.IndexOf(ignoreTemplateHeader);
+				int footerIndex = readLines.IndexOf(ignoreTemplateFooter);
 				if(headerIndex != -1 && footerIndex != -1 && headerIndex < footerIndex)
 				{
 					for(int i = headerIndex + 1; i < footerIndex; i++)
 					{
-						if(userLines[i].StartsWith(ignoreTemplateComment)) continue;
-						upliftLines.Add(userLines[i]);
+						if(readLines[i].StartsWith(ignoreTemplateComment)) continue;
+						upliftLines.Add(readLines[i]);
 					}
 
-					userLines.RemoveRange(headerIndex, footerIndex - headerIndex + 1);
+					userLines[0] = new string[headerIndex - 1];
+					userLines[1] = new string[readLines.Count - footerIndex];
+					Array.Copy(readLines.ToArray(), 0, userLines[0], 0, headerIndex - 1);
+					Array.Copy(readLines.ToArray(), footerIndex + 1, userLines[1], 0, readLines.Count - footerIndex);
 				}
 				else if(((headerIndex == -1) ^ (footerIndex == -1)) || (footerIndex < headerIndex))
 				{
 					// One of the line is present, not the other one OR the footer is before the header
 					UnityEngine.Debug.LogErrorFormat("The .gitignore at {0} is not properly formed", path);
 				}
+				else
+				{
+					userLines[0] = readLines.ToArray();
+				}
 			}
 
 			upliftPatterns = upliftLines.ToArray();
-			return userLines.ToArray();
+			return userLines;
 		}
 	}
 }

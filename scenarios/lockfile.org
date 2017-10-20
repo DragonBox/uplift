@@ -93,6 +93,36 @@
     - Package A version 1.0.1 successfully uninstalled
     - Package A version 1.0.0 successfully installed
 
+* Suite: Package Install with lockfile but missing dependency
+** Given
+*** Package A (version 1.0.0)
+    - Specified with version 1.0.0
+    - Specified with shortname "package_a"
+    - Containing files: A1, A2, A3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Package B (version 1.0.0)
+    - Specified with version 1.0.0
+    - Specified with shortname "package_b"
+    - Containing files: B1, B2, B3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Upfile.xml
+    - Containing dependency for package A version 1.0.0+
+    - Containing dependency for package B version 1.0.0+
+    - Contains default configuration for paths
+    - Listing repository R
+ *** Upfile.lock
+    - Containing dependency for package A version 1.0.0
+
+** Scenario
+*** When Installing
+*** QUESTION: What should we expect?
+    - Hard failure
+    - Soft failure
+    - Add missing dependency to lockfile and perform installation
+    - Update all dependencies and perform installation
+
 * Suite: Package Update no lockfile
 ** Given
 *** Package A (version 1.0.0)

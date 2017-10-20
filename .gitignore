@@ -25,7 +25,7 @@ Thumbs.db
 # == UPLIFT GITIGNORE START ==
 # This section of the .gitignore has been created automatically by Uplift. Do not modify it or remove it.
 /UPackages
-UPackages.meta
+/UPackages.meta
 # == UPLIFT GITIGNORE END ==
 
 UpliftTesting/bin

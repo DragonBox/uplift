@@ -22,7 +22,7 @@ namespace Uplift.SourceControl
 			);
 			Ignore(
 				Path.GetDirectoryName(path),
-				new DirectoryInfo(path).Name + ".meta"
+				"/" + new DirectoryInfo(path).Name + ".meta"
 			);
 
 		}

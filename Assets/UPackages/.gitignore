@@ -1,17 +1,17 @@
 # == UPLIFT GITIGNORE START ==
 # This section of the .gitignore has been created automatically by Uplift. Do not modify it or remove it.
 /PackageX~1.0.0
-PackageX~1.0.0.meta
+/PackageX~1.0.0.meta
 /TestPackage.MetaFilesPackageTest~0.0.1
-TestPackage.MetaFilesPackageTest~0.0.1.meta
+/TestPackage.MetaFilesPackageTest~0.0.1.meta
 /TestPackage.NoMetaFilesPackageTest~0.0.1
-TestPackage.NoMetaFilesPackageTest~0.0.1.meta
+/TestPackage.NoMetaFilesPackageTest~0.0.1.meta
 /TestPackage.UnityPackageTest~0.0.1
-TestPackage.UnityPackageTest~0.0.1.meta
+/TestPackage.UnityPackageTest~0.0.1.meta
 /DependencyRoot~0.0.1
-DependencyRoot~0.0.1.meta
+/DependencyRoot~0.0.1.meta
 /DependencyMiddle~0.0.1
-DependencyMiddle~0.0.1.meta
+/DependencyMiddle~0.0.1.meta
 /DependencyLeaf~0.0.1
-DependencyLeaf~0.0.1.meta
+/DependencyLeaf~0.0.1.meta
 # == UPLIFT GITIGNORE END ==

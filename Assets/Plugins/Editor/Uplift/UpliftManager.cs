@@ -216,9 +216,6 @@ namespace Uplift
 
                     var destination = Path.Combine(PH.Location, packageStructurePrefix);
 
-                    string lastCreatedGitignore = "";
-                    VCSHandler.OnEditGitignore += delegate(object sender, string path) { lastCreatedGitignore = path; };
-
                     // Working with single file
                     if (File.Exists(sourcePath))
                     {
@@ -252,10 +249,7 @@ namespace Uplift
                         // Working with directory
                         Uplift.Common.FileSystemUtil.CopyDirectoryWithMeta(sourcePath, destination);
                         if(!PH.SkipPackageStructure)
-                        {
                             VCSHandler.HandleDirectory(destination);
-                            upbring.AddLocation(package, spec.Type, lastCreatedGitignore);
-                        }
                         
                         bool useGuid = destination.StartsWith("Assets");
                         foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
@@ -266,10 +260,7 @@ namespace Uplift
                                 upbring.AddLocation(package, spec.Type, Path.Combine(destination, file));
                             
                             if(PH.SkipPackageStructure)
-                            {
                                 VCSHandler.HandleFile(Path.Combine(destination, file));
-                                upbring.AddLocation(package, spec.Type, lastCreatedGitignore);
-                            }
                         }
                     }
                 }

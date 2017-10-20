@@ -16,27 +16,16 @@ namespace Uplift.SourceControl
 
 		public void HandleDirectory(string path)
 		{
-			Ignore(
-				Path.GetDirectoryName(path),
-				"/" + new DirectoryInfo(path).Name
-			);
-			Ignore(
-				Path.GetDirectoryName(path),
-				"/" + new DirectoryInfo(path).Name + ".meta"
-			);
-
+			string unixPath = "/" + Uplift.Common.FileSystemUtil.MakePathUnix(path);
+			Ignore(unixPath);
+			Ignore(unixPath + ".meta");
 		}
 
 		public void HandleFile(string path)
 		{
-			Ignore(
-				Path.GetDirectoryName(path),
-				"/" + Path.GetFileName(path)
-			);
-			Ignore(
-				Path.GetDirectoryName(path),
-				"/" + Path.GetFileName(path) + ".meta"
-			);
+			string unixPath = "/" + Uplift.Common.FileSystemUtil.MakePathUnix(path);
+			Ignore(unixPath);
+			Ignore(unixPath + ".meta");
 		}
 
 		public bool TryRemoveFile(string gitIgnorePath)
@@ -60,18 +49,18 @@ namespace Uplift.SourceControl
 			return false;
 		}
 
-		private void Ignore(string path, string pattern)
+		private void Ignore(string path)
 		{
-			string gitIgnorePath = Path.Combine(path, ".gitignore");
+			string gitIgnorePath = ".gitignore";
 			string[] upliftPatterns;
 			string[][] userLines = ExtractExistingLines(gitIgnorePath, out upliftPatterns);
 
 			// Avoid duplicated entries
-			if(!upliftPatterns.Any(pat => pat == pattern))
+			if(!upliftPatterns.Any(pat => pat == path))
 			{
 				string[] temp = new string[upliftPatterns.Length + 1];
 				Array.Copy(upliftPatterns, temp, upliftPatterns.Length);
-				temp[upliftPatterns.Length] = pattern;
+				temp[upliftPatterns.Length] = path;
 				upliftPatterns = temp;
 			}
 

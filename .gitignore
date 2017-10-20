@@ -21,11 +21,29 @@
 .db
 Thumbs.db
 
-
+/Assets/UPackages.meta
 # == UPLIFT GITIGNORE START ==
 # This section of the .gitignore has been created automatically by Uplift. Do not modify it or remove it.
 /UPackages
 /UPackages.meta
+/Assets/UPackages/PackageX~1.0.0
+/Assets/UPackages/PackageX~1.0.0.meta
+/Assets/UPackages/TestPackage.MetaFilesPackageTest~0.0.1
+/Assets/UPackages/TestPackage.MetaFilesPackageTest~0.0.1.meta
+/Assets/UPackages/TestPackage.NoMetaFilesPackageTest~0.0.1
+/Assets/UPackages/TestPackage.NoMetaFilesPackageTest~0.0.1.meta
+/Assets/UPackages/TestPackage.UnityPackageTest~0.0.1
+/Assets/UPackages/TestPackage.UnityPackageTest~0.0.1.meta
+/Assets/UPackages/DependencyRoot~0.0.1
+/Assets/UPackages/DependencyRoot~0.0.1.meta
+/Assets/UPackages/DependencyMiddle~0.0.1
+/Assets/UPackages/DependencyMiddle~0.0.1.meta
+/Assets/UPackages/DependencyLeaf~0.0.1
+/Assets/UPackages/DependencyLeaf~0.0.1.meta
+/Assets/Plugins/AnotherPluginScript.cs
+/Assets/Plugins/AnotherPluginScript.cs.meta
+/Assets/Plugins/PluginScript.cs
+/Assets/Plugins/PluginScript.cs.meta
 # == UPLIFT GITIGNORE END ==
 
 UpliftTesting/bin

@@ -69,7 +69,7 @@ namespace Uplift
         private static void InstallDependencies()
         {
             Debug.Log("Installing Upfile dependencies");
-            UpliftManager.Instance().InstallDependencies();
+            UpliftManager.Instance().InstallDependencies(refresh: true);
             AssetDatabase.Refresh();
         }
 

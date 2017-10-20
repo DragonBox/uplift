@@ -46,9 +46,9 @@ namespace Uplift
         // --- CLASS DECLARATION ---
         protected Upfile upfile;
 
-        public void InstallDependencies()
+        public void InstallDependencies(bool refresh = false)
         {
-            InstallDependencies(GetDependencySolver());
+            InstallDependencies(GetDependencySolver(), refresh);
         }
 
         public IDependencySolver GetDependencySolver()
@@ -75,9 +75,9 @@ namespace Uplift
             existing.Requirement = restricted;
         }
 
-        public void InstallDependencies(IDependencySolver dependencySolver)
+        public void InstallDependencies(IDependencySolver dependencySolver, bool refresh)
         {
-            UpliftManager.ResetInstances();
+            if (refresh) UpliftManager.ResetInstances();
 
             //FIXME: We should check for all repositories, not the first one
             //FileRepository rt = (FileRepository) Upfile.Repositories[0];

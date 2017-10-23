@@ -20,17 +20,6 @@ namespace Uplift.DependencyResolution
 
             // TODO: Save the current dependency tree so the whole tree doesn't have to be solved entirely later on
             DependencyDefinition[] solvedDependencies = GetDependencyDefinitions(dependencyGraph);
-            string result = "# DEPENDENCIES\n";
-            foreach(DependencyDefinition def in solvedDependencies)
-            {
-                PackageRepo pr = PackageList.Instance().FindPackageAndRepository(def);
-                result += pr.Package.PackageName + " , " + pr.Package.PackageVersion + "\n";
-            }
-
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter("Upfile.lock", false))
-            {
-                file.WriteLine(result);
-            }
 
             return solvedDependencies;
         }

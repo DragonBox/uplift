@@ -57,12 +57,10 @@ namespace Uplift {
                 var defaultValue = field.GetValue(defaults) as string;
                 var currentValue = field.GetValue(this) as string;
 
-                if(!string.IsNullOrEmpty(currentValue) && currentValue != defaultValue) {
-                    Debug.Log(string.Format("NOTE: {0} overriden by Package Export Specification ({1} -> {2})",
-                                            fieldName, defaultValue, currentValue ));
-
-                } else {
+                if(string.IsNullOrEmpty(currentValue) && currentValue != defaultValue) {
+                    Debug.Log(string.Format("NOTE: using default for Package Export Specification {0}: {1}", fieldName, defaultValue));
                     field.SetValue(this, defaultValue);
+
                 }
             }
 

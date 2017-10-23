@@ -58,7 +58,7 @@ namespace Uplift {
                 var currentValue = field.GetValue(this) as string;
 
                 if(string.IsNullOrEmpty(currentValue) && currentValue != defaultValue) {
-                    Debug.Log(string.Format("NOTE: using default for Package Export Specification {0}: {1}", fieldName, defaultValue));
+                    Debug.LogFormat("NOTE: using default for Package Export Specification {0}: {1}", fieldName, defaultValue);
                     field.SetValue(this, defaultValue);
 
                 }

@@ -84,18 +84,18 @@ namespace Uplift {
             var guids = AssetDatabase.FindAssets("t:PackageExportData");
 
             if(guids.Length == 0) {
-                throw new System.Exception("PackageExportData doesn't exist. Create at least one using Uplift -> Create Export Spec");
+                throw new System.Exception("PackageExportData doesn't exist. Create at least one using Uplift -> Create Export Spec.");
             }
 
 
-            Debug.Log(string.Format("{0} Package Export Specification(s) found. Preparing for export", guids.Length));
+            Debug.LogFormat("{0} Package Export Specification(s) found. Preparing for export.", guids.Length);
 
             for(int i=0; i<guids.Length;i++) {
 
                 string packageExportPath = AssetDatabase.GUIDToAssetPath(guids[i]);
                 PackageExportData packageExportData = AssetDatabase.LoadAssetAtPath<PackageExportData>(packageExportPath);
 
-                Debug.Log(string.Format("Export {0}/{1} using {2}", i+1, guids.Length, packageExportPath));
+                Debug.LogFormat("Export {0}/{1} using {2}", i+1, guids.Length, packageExportPath);
 
                 // Preparing exporter instance
                 Exporter exporter = new Exporter();

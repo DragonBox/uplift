@@ -124,6 +124,7 @@ namespace Uplift
                     targets = new PackageRepo[unmodifiable.Length + installableModified.Length];
                     Array.Copy(unmodifiable, targets, unmodifiable.Length);
                     Array.Copy(installableModified, 0, targets, unmodifiable.Length, installableModified.Length);
+                    targets = targets.Distinct().ToArray();
 
                     GenerateLockfile(new LockfileSnapshot
                     {
@@ -215,7 +216,7 @@ namespace Uplift
 
         private LockfileSnapshot LoadLockfile()
         {
-            string pattern = @"([\w\.]+)\s\(([\w\.\+!\*]+)\)";
+            string pattern = @"([\w\.\-]+)\s\(([\w\.\+!\*]+)\)";
             LockfileSnapshot result = new LockfileSnapshot();
 
             using(StreamReader file = new StreamReader(lockfilePath))

@@ -3,6 +3,7 @@ using System.Linq;
 using Uplift.Common;
 using Uplift.Packages;
 using Uplift.Schemas;
+using Uplift.SourceControl;
 using Uplift.DependencyResolution;
 using System.Text.RegularExpressions;
 using UnityEditor;
@@ -160,6 +161,8 @@ namespace Uplift
         // This should be contained using kinds of destinations.
         public void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition)
         {
+            GitIgnorer VCSHandler = new GitIgnorer();
+
             using (LogAggregator LA = LogAggregator.InUnity(
                 "Package {0} was successfully installed",
                 "Package {0} was successfully installed but raised warnings",
@@ -168,12 +171,17 @@ namespace Uplift
                 ))
             {
                 Upbring upbring = Upbring.Instance();
-
+                
                 // Note: Full package is ALWAYS copied to the upackages directory right now
                 string localPackagePath = GetRepositoryInstallPath(package);
                 upbring.AddPackage(package);
+                if (!Directory.Exists(localPackagePath))
+                    Directory.CreateDirectory(localPackagePath);
+
                 FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
                 upbring.AddLocation(package, InstallSpecType.Root, localPackagePath);
+
+                VCSHandler.HandleDirectory(upfile.GetPackagesRootPath());
 
                 InstallSpecPath[] specArray;
                 if (package.Configuration == null)
@@ -217,6 +225,7 @@ namespace Uplift
                         if (!Directory.Exists(destination))
                         {
                             Directory.CreateDirectory(destination);
+                            VCSHandler.HandleFile(destination);
                         }
                         if (Directory.Exists(destination))
                         { // we are copying a file into a directory
@@ -241,20 +250,19 @@ namespace Uplift
                     {
                         // Working with directory
                         Uplift.Common.FileSystemUtil.CopyDirectoryWithMeta(sourcePath, destination);
-
-                        if (destination.StartsWith("Assets"))
+                        if(!PH.SkipPackageStructure)
+                            VCSHandler.HandleDirectory(destination);
+                        
+                        bool useGuid = destination.StartsWith("Assets");
+                        foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
                         {
-                            foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
-                            {
+                            if(useGuid)
                                 TryUpringAddGUID(upbring, file, package, spec.Type, destination);
-                            }
-                        }
-                        else
-                        {
-                            foreach (var file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourcePath, true))
-                            {
+                            else
                                 upbring.AddLocation(package, spec.Type, Path.Combine(destination, file));
-                            }
+                            
+                            if(PH.SkipPackageStructure)
+                                VCSHandler.HandleFile(Path.Combine(destination, file));
                         }
                     }
                 }

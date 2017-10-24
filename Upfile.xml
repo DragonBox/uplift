@@ -9,7 +9,7 @@
     <ExamplesPath       Location="UPackages/Examples"       />
     <BaseInstallPath    Location="Assets/UPackages"         />
     <MediaPath          Location="Assets/UPackages"         />
-    <PluginPath         Location="Assets/Plugins"           />
+    <PluginPath         Location="Assets/Plugins"           SkipPackageStructure="true" />
     <EditorPluginPath   Location="Assets/Editor/Plugins"    />
     <GizmoPath          Location="Assets/Gizmos"            />
   </Configuration>
@@ -19,5 +19,6 @@
     <Package Name="TestPackage.NoMetaFilesPackageTest" Version="0.0.1!" />
     <Package Name="TestPackage.UnityPackageTest" Version="0.0.*" />
     <Package Name="DependencyRoot" Version="0.0.1" />
+    <Package Name="PluginPackage" Version="0+" />
   </Dependencies>
 </Upfile>

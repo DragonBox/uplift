@@ -279,7 +279,7 @@ namespace Uplift
                         });
                     }
                     // Read the dependencies
-                    while((line = file.ReadLine()).StartsWith("\t"))
+                    while((line = file.ReadLine()) != null && line.StartsWith("\t"))
                     {
                         match = Regex.Match(line, pattern);
                         if(!match.Success || match.Groups.Count < 3)

@@ -4,6 +4,7 @@ TestPackage.MetaFilesPackageTest (0.0.1+)
 TestPackage.NoMetaFilesPackageTest (0.0.1!)
 TestPackage.UnityPackageTest (0.0.*)
 DependencyRoot (0.0.1)
+AnotherRoot (0+)
 PluginPackage (0+)
 
 # SOLVED DEPENDENCIES
@@ -16,5 +17,7 @@ DependencyRoot (0.0.1)
 DependencyMiddle (0.0.1)
 	DependencyLeaf (0.0.1)
 DependencyLeaf (0.0.1)
+AnotherRoot (0.0.1)
+	DependencyMiddle (0.0.1)
 PluginPackage (0.0.1)
 

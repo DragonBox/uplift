@@ -92,6 +92,8 @@ Thumbs.db
 /Assets/UPackages/Zenject-WithSampleGames~5.2.1.meta
 /Assets/UPackages/SoftMask~1.1.1
 /Assets/UPackages/SoftMask~1.1.1.meta
+/Assets/UPackages/AnotherRoot~0.0.1
+/Assets/UPackages/AnotherRoot~0.0.1.meta
 # == UPLIFT GITIGNORE END ==
 
 UpliftTesting/bin

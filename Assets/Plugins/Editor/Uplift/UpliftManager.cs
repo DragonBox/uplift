@@ -84,7 +84,12 @@ namespace Uplift
                 // Case where the file does not exist is already covered
                 LockfileSnapshot snapshot = LoadLockfile();
 
-                DependencyDefinition[] modifiedDependencies = upfileDependencies.Where(def => !snapshot.upfileDependencies.Any(d => d.Name == def.Name && d.Version == def.Version)).ToArray();
+                DependencyDefinition[] modifiedDependencies = 
+                    upfileDependencies
+                    .Where(def => !snapshot.upfileDependencies.Any(
+                        d => d.Name == def.Name && d.Version == def.Version
+                        ))
+                    .ToArray();
                 if(modifiedDependencies.Length == 0)
                     targets = installableDependencies;
                 else
@@ -103,7 +108,13 @@ namespace Uplift
                             foreach(DependencyDefinition def in top.Package.Dependencies)
                                 scanningQueue.Enqueue(snapshot.installableDependencies.First(pr => pr.Package.PackageName == def.Name));
                     }
-                    PackageRepo[] unmodifiable = snapshot.installableDependencies.Where(pr => unmodifiableList.Any(unmodpr => unmodpr.Package.PackageName == pr.Package.PackageName && unmodpr.Package.PackageVersion == pr.Package.PackageVersion)).ToArray();
+                    PackageRepo[] unmodifiable = 
+                        snapshot.installableDependencies
+                        .Where(pr => unmodifiableList.Any(unmodpr => 
+                            unmodpr.Package.PackageName == pr.Package.PackageName &&
+                            unmodpr.Package.PackageVersion == pr.Package.PackageVersion
+                            ))
+                        .ToArray();
 
                     DependencyDefinition[] solvedModified = solver.SolveDependencies(modifiedDependencies);
                     DependencyDefinition[] conflicting = solvedModified.Where(def => unmodifiable.Any(pr => pr.Package.PackageName == def.Name)).ToArray();

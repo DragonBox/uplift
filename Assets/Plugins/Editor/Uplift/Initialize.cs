@@ -28,11 +28,7 @@ namespace Uplift
 
         private static bool IsInitialized()
         {
-            try
-            {
-                return string.Equals(Environment.GetEnvironmentVariable(env_variable), "true");
-            }
-            catch { return false; }
+            return string.Equals(Environment.GetEnvironmentVariable(env_variable), "true");
         }
 
         private static void MarkAsInitialized()

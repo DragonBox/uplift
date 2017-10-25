@@ -110,9 +110,7 @@ namespace Uplift
                     if(conflicting.Length != 0)
                     {
                         foreach(DependencyDefinition def in conflicting)
-                        {
-                            Upset package = unmodifiable.First(pr => pr.Package.PackageName == def.Name).Package;
-                            
+                        {                           
                             if(!def.Requirement.IsMetBy(unmodifiable.First(pr => pr.Package.PackageName == def.Name).Package.PackageVersion))
                                 throw new ApplicationException("Existing dependency on " + def.Name + " would be broken when installing. Please update it manually.");
                         }

@@ -1,5 +1,6 @@
 Library/
 Upfile.xml
+Upfile.lock
 ProjectSettings/
 Assets/Plugins/Editor/Uplift/Uplift.dll
 Assets/Plugins/Editor/SharpCompress.dll*

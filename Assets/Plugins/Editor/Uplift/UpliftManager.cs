@@ -103,7 +103,7 @@ namespace Uplift
                             foreach(DependencyDefinition def in top.Package.Dependencies)
                                 scanningQueue.Enqueue(snapshot.installableDependencies.First(pr => pr.Package.PackageName == def.Name));
                     }
-                    PackageRepo[] unmodifiable = unmodifiableList.ToArray();
+                    PackageRepo[] unmodifiable = snapshot.installableDependencies.Where(pr => unmodifiableList.Any(unmodpr => unmodpr.Package.PackageName == pr.Package.PackageName && unmodpr.Package.PackageVersion == pr.Package.PackageVersion)).ToArray();
 
                     DependencyDefinition[] solvedModified = solver.SolveDependencies(modifiedDependencies);
                     DependencyDefinition[] conflicting = solvedModified.Where(def => unmodifiable.Any(pr => pr.Package.PackageName == def.Name)).ToArray();
@@ -112,8 +112,7 @@ namespace Uplift
                         foreach(DependencyDefinition def in conflicting)
                         {
                             Upset package = unmodifiable.First(pr => pr.Package.PackageName == def.Name).Package;
-                            UnityEngine.Debug.Log(def.Requirement);
-                            UnityEngine.Debug.Log(package.PackageVersion);
+                            
                             if(!def.Requirement.IsMetBy(unmodifiable.First(pr => pr.Package.PackageName == def.Name).Package.PackageVersion))
                                 throw new ApplicationException("Existing dependency on " + def.Name + " would be broken when installing. Please update it manually.");
                         }
@@ -124,13 +123,13 @@ namespace Uplift
                     targets = new PackageRepo[unmodifiable.Length + installableModified.Length];
                     Array.Copy(unmodifiable, targets, unmodifiable.Length);
                     Array.Copy(installableModified, 0, targets, unmodifiable.Length, installableModified.Length);
-
-                    GenerateLockfile(new LockfileSnapshot
-                    {
-                        upfileDependencies = upfileDependencies,
-                        installableDependencies = targets
-                    });
                 }
+
+                GenerateLockfile(new LockfileSnapshot
+                {
+                    upfileDependencies = upfileDependencies,
+                    installableDependencies = targets
+                });
             }
             else if(strategy == InstallStrategy.ONLY_LOCKFILE)
             {
@@ -225,7 +224,7 @@ namespace Uplift
                     throw new FileLoadException("Cannot load Upfile.lock, it is missing the \'UPFILE DEPENDENCIES\' header");
                 
                 List<DependencyDefinition> upfileDependencyList = new List<DependencyDefinition>();
-                List<DependencyDefinition> solvedDependencyList = new List<DependencyDefinition>();
+                
                 Match match;
                 while(!string.IsNullOrEmpty(line = file.ReadLine()))
                 {
@@ -239,7 +238,6 @@ namespace Uplift
                         Version = match.Groups[2].Value
                     };
                     upfileDependencyList.Add(temp);
-                    solvedDependencyList.Add(temp);
                 }
                 result.upfileDependencies = upfileDependencyList.ToArray();
 
@@ -264,6 +262,7 @@ namespace Uplift
                         Name = match.Groups[1].Value,
                         Version = match.Groups[2].Value + "!" // Check for exact version
                     });
+
                     if(temp.Package != null && temp.Repository != null)
                     {
                         installableList.Add(temp);
@@ -285,17 +284,11 @@ namespace Uplift
                         match = Regex.Match(line, pattern);
                         if(!match.Success || match.Groups.Count < 3)
                             throw new FileLoadException("Cannot load Upfile.lock, the line " + line + " does not match \'package_name (version_requirement)\'");
-
-                        solvedDependencyList.Add(new DependencyDefinition
-                        {
-                            Name = match.Groups[1].Value,
-                            Version = match.Groups[2].Value
-                        });
                     }
                 }
                 result.installableDependencies = installableList.ToArray();
             }
-
+            
             return result;
         }
 
@@ -399,7 +392,7 @@ namespace Uplift
                 if (!Directory.Exists(localPackagePath))
                     Directory.CreateDirectory(localPackagePath);
 
-                FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
+                Uplift.Common.FileSystemUtil.CopyDirectory(td.Path, localPackagePath);
                 upbring.AddLocation(package, InstallSpecType.Root, localPackagePath);
 
                 VCSHandler.HandleDirectory(upfile.GetPackagesRootPath());
@@ -497,7 +490,7 @@ namespace Uplift
 
         private void CheckGUIDConflicts(string sourceDirectory, Upset package)
         {
-            foreach(string file in FileSystemUtil.RecursivelyListFiles(sourceDirectory))
+            foreach(string file in Uplift.Common.FileSystemUtil.RecursivelyListFiles(sourceDirectory))
             {
                 if (!file.EndsWith(".meta")) continue;
                 string guid = LoadGUID(file);

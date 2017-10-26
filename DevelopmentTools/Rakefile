@@ -100,8 +100,7 @@ module U3d
     end
 end
 
-desc 'Build the Uplift DLL and the unitypackage contain the DLL and its dependencies'
-task :build => [:chdir] do
+task :build_u3d => [:chdir] do
     require 'u3d'
     require 'u3d/unity_project' # remove when updating to u3d 1.0.4
     
@@ -147,27 +146,16 @@ task :build => [:chdir] do
     end
 end
 
-task :build2 => [:chdir] do
-    require 'u3d'
-    require 'u3d/unity_project' # remove when updating to u3d 1.0.4
+desc 'Build the Uplift DLL and the unitypackage contain the DLL and its dependencies'
+task :build => [:chdir] do
+    sh('bundle exec u3d -- -logFile u3d.log -batchmode -quit -executeMethod BuildTool.DllCompiler.BuildPackage')
 
-    unity = U3d::UnityProject.unity
-
-    uplift_dll = File.join('target', 'Uplift.dll')
-    # using -r right now as output unproperly parsed.
-    sh('bundle exec u3d -r -- -logFile u3d.log -batchmode -quit -executeMethod BuildTool.DllCompiler.BuildUpliftDll')
-
-    # prepare a Unity package
-    packing_dir = 'Build'
-
-    # copy packaged dependencies from current project into packing dir
     editor_dir = File.join('Assets', 'Plugins', 'Editor')
-
-    # export unity package
+    # prepare a Unity package
     dirs = [ editor_dir ]
-    unitypackage = File.absolute_path(File.join('target', "Uplift.unitypackage"))
-    pwd = Dir.pwd
-    Dir.chdir(packing_dir) do
-        unity.export_package(dirs: dirs, out: unitypackage, log_file: "#{pwd}/u3d.log")
+    uplift_package = File.absolute_path File.join('target', 'Uplift.unitypackage')
+    Dir.chdir('Build') do
+        sh("bundle exec u3d -- -logFile u3d.log -batchmode -quit -exportPackage #{dirs.join(" ")} #{uplift_package}")
     end
+    puts "File #{uplift_package} generated!"
 end

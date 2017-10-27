@@ -91,6 +91,16 @@ namespace Uplift.Schemas
             }
         }
 
+        public void SaveFile()
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
+            using(FileStream fs = new FileStream(upfilePath, FileMode.Create)) {
+                using(StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8)) {
+                    serializer.Serialize(sw, this);
+                }
+            }
+        }
+
         public virtual void LoadOverrides()
         {
             string homePath = (Environment.OSVersion.Platform == PlatformID.Unix ||

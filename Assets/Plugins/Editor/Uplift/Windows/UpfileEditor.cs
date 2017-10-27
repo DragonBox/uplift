@@ -52,6 +52,7 @@ namespace Uplift.Windows
                 upfile.Configuration.ExamplesPath = PathField("Examples path:", upfile.Configuration.ExamplesPath);
                 upfile.Configuration.BaseInstallPath = PathField("Base install path:", upfile.Configuration.BaseInstallPath);
                 upfile.Configuration.MediaPath = PathField("Media path:", upfile.Configuration.MediaPath);
+                EditorGUILayout.Separator();
                 EditorGUILayout.LabelField("Warning: the following path have special behaviours in Unity. Modify them at your own risk!");
                 upfile.Configuration.GizmoPath = PathField("Gizmo path:", upfile.Configuration.GizmoPath);
                 upfile.Configuration.PluginPath = PathField("Plugin path:", upfile.Configuration.PluginPath);
@@ -101,7 +102,7 @@ namespace Uplift.Windows
         {
             PathConfiguration temp = path;
             EditorGUILayout.BeginHorizontal();
-            temp.Location = EditorGUILayout.TextField(temp.Location);
+            temp.Location = EditorGUILayout.TextField(label, temp.Location);
             temp.SkipPackageStructure = EditorGUILayout.Toggle("Skip Package structure?", temp.SkipPackageStructure, GUILayout.Width(180f));
             temp.SkipPackageStructureSpecified = temp.SkipPackageStructure == true;
             EditorGUILayout.EndHorizontal();

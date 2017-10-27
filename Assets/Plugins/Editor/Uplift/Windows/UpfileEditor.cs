@@ -103,6 +103,7 @@ namespace Uplift.Windows
             EditorGUILayout.BeginHorizontal();
             temp.Location = EditorGUILayout.TextField(temp.Location);
             temp.SkipPackageStructure = EditorGUILayout.Toggle("Skip Package structure?", temp.SkipPackageStructure, GUILayout.Width(180f));
+            temp.SkipPackageStructureSpecified = temp.SkipPackageStructure == true;
             EditorGUILayout.EndHorizontal();
             return temp;
         }

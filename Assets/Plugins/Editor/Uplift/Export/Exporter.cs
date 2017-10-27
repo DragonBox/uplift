@@ -1,12 +1,16 @@
 using UnityEngine;
 using UnityEditor;
 
+
 using Uplift.Schemas;
+
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace Uplift {
+
+
+namespace Uplift.Export {
     class Exporter {
         PackageExportData exportSpec;
 

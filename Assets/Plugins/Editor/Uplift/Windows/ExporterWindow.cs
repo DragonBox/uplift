@@ -2,6 +2,8 @@
 using UnityEditor;
 using UnityEngine;
 
+using Uplift.Export;
+
 namespace Uplift.Windows
 {
     public class ExporterWindow : EditorWindow

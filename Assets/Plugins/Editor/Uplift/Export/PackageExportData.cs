@@ -5,7 +5,7 @@ using Object = UnityEngine.Object;
 
 
 
-namespace Uplift {
+namespace Uplift.Export {
     [CreateAssetMenuAttribute(fileName = "PackageExport.asset", menuName = "Uplift/Package Export Definition", order = 250)]
     class PackageExportData : ScriptableObject, ICloneable {
 
@@ -37,7 +37,7 @@ namespace Uplift {
             }
 
             for(int i=0; i<rawPaths.Length;i++) {
-                result[i] = rawPaths[i];
+                result[pathsToExport.Length + i] = rawPaths[i];
             }
 
             return result;

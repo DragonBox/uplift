@@ -1,7 +1,4 @@
 ﻿using System.ComponentModel;
-using System.IO;
-using System.Xml;
-using System.Xml.Serialization;
 using UnityEditor;
 using UnityEngine;
 using Uplift.Windows;
@@ -9,6 +6,9 @@ using Uplift.Schemas;
 using Uplift.Packages;
 using Uplift.Common;
 using System.Linq;
+
+using Uplift.Export;
+
 
 namespace Uplift
 {
@@ -93,7 +93,7 @@ namespace Uplift
 
         [MenuItem("Uplift/Packaging/Export Defined Packages", false, 201)]
         private static void ExportPackage() {
-            Uplift.Exporter.PackageEverything();
+            Exporter.PackageEverything();
         }
 
         [MenuItem("Uplift/Packaging/Export Package Utility", false, 250)]

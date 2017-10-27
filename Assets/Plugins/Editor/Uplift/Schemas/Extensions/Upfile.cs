@@ -122,14 +122,32 @@ namespace Uplift.Schemas
 
         internal virtual void LoadOverrides(string path)
         {
+            Repository[] overrides = GetOverrides(path);
+            
+            if (Repositories == null)
+            {
+                Repositories = overrides;
+            }
+            else if(overrides != null) 
+            {
+                int repositoriesSize = Repositories.Length + overrides.Length;
+
+                Repository[] newRepositoryArray = new Repository[repositoriesSize];
+                Array.Copy(Repositories, newRepositoryArray, Repositories.Length);
+                Array.Copy(overrides, 0, newRepositoryArray, Repositories.Length, overrides.Length);
+
+                Repositories = newRepositoryArray;
+            }
+        }
+        internal virtual Repository[] GetOverrides(string path)
+        {
             // If we don't have override file, ignore
-            if (!File.Exists(path)) return;
+            if (!File.Exists(path)) return null;
 
             StrictXmlDeserializer<UpfileOverride> deserializer = new StrictXmlDeserializer<UpfileOverride>();
 
             using (FileStream fs = new FileStream(path, FileMode.Open))
             {
-
                 try
                 {
                     UpfileOverride upOverride = deserializer.Deserialize(fs);
@@ -140,23 +158,12 @@ namespace Uplift.Schemas
                             (repo as FileRepository).Path = Uplift.Common.FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
                     }
 
-                    if (Repositories == null)
-                    {
-                        Repositories = upOverride.Repositories;
-                    }
-                    else {
-                        int repositoriesSize = Repositories.Length + upOverride.Repositories.Length;
-
-                        Repository[] newRepositoryArray = new Repository[repositoriesSize];
-                        Array.Copy(Repositories, newRepositoryArray, Repositories.Length);
-                        Array.Copy(upOverride.Repositories, 0, newRepositoryArray, Repositories.Length, upOverride.Repositories.Length);
-
-                        Repositories = newRepositoryArray;
-                    }
+                    return upOverride.Repositories;
                 }
                 catch (InvalidOperationException)
                 {
                     Debug.LogError(string.Format("Global Override file at {0} is not well formed", path));
+                    return null;
                 }
             }
         }

@@ -93,6 +93,7 @@ namespace Uplift.Schemas
 
         public void SaveFile()
         {
+            // FIXME: Make it so saving the file doesn't erase comments
             XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
             using(FileStream fs = new FileStream(upfilePath, FileMode.Create)) {
                 using(StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8)) {

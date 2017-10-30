@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Xml;
 using System.Xml.Serialization;
 using UnityEngine;
 using Uplift.Common;
@@ -94,22 +96,130 @@ namespace Uplift.Schemas
         public void SaveFile()
         {
             // FIXME: Make it so saving the file doesn't erase comments
-            XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
-            using(FileStream fs = new FileStream(upfilePath, FileMode.Create)) {
-                using(StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8)) {
-                    serializer.Serialize(sw, this);
-                }
+            XmlDocument doc = new XmlDocument();
+            doc.Load(upfilePath);
+            XmlElement root = doc.DocumentElement;
+
+            // Set Unity Version
+            root.SelectSingleNode("UnityVersion").InnerText = UnityVersion;
+
+            // Set Repositories
+            foreach(Repository repo in Repositories)
+                if(!GetOverrides(GetOverrideFilePath()).Any(extraRepo =>
+                    extraRepo is FileRepository &&
+                    Uplift.Common.FileSystemUtil.MakePathOSFriendly((extraRepo as FileRepository).Path) == Uplift.Common.FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path)
+                ))
+                    AddOrReplaceRepository(doc, repo);
+
+            foreach(XmlNode node in root.SelectSingleNode("Repositories").SelectNodes("FileRepository"))
+            {
+                if(!Repositories.Any(repo => (repo as FileRepository).Path == node.Attributes["Path"].Value))
+                    root.SelectSingleNode("Repositories").RemoveChild(node);
             }
+
+            // Set Configuration
+            SetPathConfiguration(doc,   "BaseInstallPath",  Configuration.BaseInstallPath);
+            SetPathConfiguration(doc,   "DocsPath",         Configuration.DocsPath);
+            SetPathConfiguration(doc,   "EditorPluginPath", Configuration.EditorPluginPath);
+            SetPathConfiguration(doc,   "ExamplesPath",     Configuration.ExamplesPath);
+            SetPathConfiguration(doc,   "GizmoPath",        Configuration.GizmoPath);
+            SetPathConfiguration(doc,   "MediaPath",        Configuration.MediaPath);
+            SetPathConfiguration(doc,   "PluginPath",       Configuration.PluginPath);
+            SetPathConfiguration(doc,   "RepositoryPath",   Configuration.RepositoryPath);
+
+            // Set Dependencies
+            foreach(DependencyDefinition def in Dependencies)
+                AddOrReplaceDependency(doc, def);
+
+            foreach(XmlNode node in root.SelectSingleNode("Dependencies").SelectNodes("Package"))
+            {
+                if(!Dependencies.Any(def => def.Name == node.Attributes["Name"].Value))
+                    root.SelectSingleNode("Dependencies").RemoveChild(node);
+            }
+
+            doc.Save(upfilePath);   
+        }
+
+        private void AddOrReplaceRepository(XmlDocument document, Repository repository)
+        {
+            XmlNode main = document.DocumentElement.SelectSingleNode("Repositories");
+            // FIXME: support other repositories when necessary
+            XmlNodeList repositoryList = main.SelectNodes("FileRepository");
+            foreach(XmlNode node in repositoryList)
+            if(node.Attributes["Path"].Value == (repository as FileRepository).Path)
+                {
+                    main.RemoveChild(node);
+                    break;
+                }
+
+            XmlElement repo = document.CreateElement("FileRepository");
+            repo.SetAttribute("Path", Uplift.Common.FileSystemUtil.MakePathUnix((repository as FileRepository).Path));
+            
+            main.AppendChild(repo);
+        }
+
+        private void SetPathConfiguration(XmlDocument document, string nodeName, PathConfiguration pc)
+        {
+            XmlNode original = document.DocumentElement.SelectSingleNode("Configuration").SelectSingleNode(nodeName);
+            XmlNode temp = original;
+
+            temp.Attributes["Location"].Value = pc.Location;
+            if(pc.SkipPackageStructureSpecified)
+            {
+                if(temp.Attributes["SkipPackageStructure"] == null)
+                    temp.Attributes.Append(document.CreateAttribute("SkipPackageStructure"));
+
+                temp.Attributes["SkipPackageStructure"].Value = pc.SkipPackageStructure.ToString().ToLower();
+            }
+            else
+                temp.Attributes.RemoveNamedItem("SkipPackageStructure");
+
+            document.DocumentElement.SelectSingleNode("Configuration").ReplaceChild(original, temp);
+        }
+
+        private void AddOrReplaceDependency(XmlDocument document, DependencyDefinition def)
+        {
+            XmlNode main = document.DocumentElement.SelectSingleNode("Dependencies");
+            XmlNodeList dependencyList = main.SelectNodes("Package");
+            foreach(XmlNode node in dependencyList)
+                if(node.Attributes["Name"].Value == def.Name)
+                {
+                    main.RemoveChild(node);
+                    break;
+                }
+            
+            XmlElement dependency = document.CreateElement("Package");
+            dependency.SetAttribute("Name", def.Name);
+            dependency.SetAttribute("Version", def.Version);
+            if(def.OverrideDestination != null)
+            {
+                XmlElement overrideNode = document.CreateElement("OverrideDestination");
+                foreach(OverrideDestinationSpec spec in def.OverrideDestination)
+                {
+                    XmlElement over = document.CreateElement("Override");
+                    over.SetAttribute("Type", spec.Type.ToString());
+                    over.SetAttribute("Location", spec.Location);
+                    overrideNode.AppendChild(over);
+                }
+                dependency.AppendChild(overrideNode);
+            }
+            if(def.SkipInstall != null)
+            {
+                XmlElement skipNode = document.CreateElement("SkipInstall");
+                foreach(SkipInstallSpec spec in def.SkipInstall)
+                {
+                    XmlElement skip = document.CreateElement("Skip");
+                    skip.SetAttribute("Type", spec.Type.ToString());
+                    skipNode.AppendChild(skip);
+                }
+                dependency.AppendChild(skipNode);
+            }
+            main.AppendChild(dependency);
         }
 
         public virtual void LoadOverrides()
         {
-            string homePath = (Environment.OSVersion.Platform == PlatformID.Unix ||
-                               Environment.OSVersion.Platform == PlatformID.MacOSX)
-                ? Environment.GetEnvironmentVariable("HOME")
-                : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
-
-            string overrideFilePath = Path.Combine(homePath, globalOverridePath);
+            string overrideFilePath = GetOverrideFilePath();
 
             try
             {
@@ -119,6 +229,16 @@ namespace Uplift.Schemas
             {
                 throw new ApplicationException("Uplift: Could not load Upfile overrides from "+overrideFilePath, e);
             }
+        }
+
+        internal virtual string GetOverrideFilePath()
+        {
+            string homePath = (Environment.OSVersion.Platform == PlatformID.Unix ||
+                               Environment.OSVersion.Platform == PlatformID.MacOSX)
+                ? Environment.GetEnvironmentVariable("HOME")
+                : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
+
+            return Path.Combine(homePath, globalOverridePath);
         }
 
         internal virtual void LoadOverrides(string path)

@@ -138,7 +138,6 @@ namespace Uplift.Windows
             SkipInstallSpec defaultSIS = new SkipInstallSpec { Type = InstallSpecType.Docs };
             if(temp.OverrideDestination != null)
             {
-                
                 temp.OverrideDestination = ArrayField<OverrideDestinationSpec>(
                     temp.OverrideDestination,
                     "Do not override this",
@@ -209,6 +208,7 @@ namespace Uplift.Windows
                 array = new T[temp.Length + 1];
                 Array.Copy(temp, array, temp.Length);
                 array[temp.Length] = defaultElement;
+                Repaint();
             }
             return array;
         }

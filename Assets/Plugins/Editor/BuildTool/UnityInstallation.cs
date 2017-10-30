@@ -52,7 +52,7 @@ namespace BuildTool {
 		public static UnityInstallation Current() {
 			string exe = System.Environment.GetCommandLineArgs ()[0];
 			string RootPath;
-			if (Helper.isMac()) {
+			if (Helper.IsMac()) {
 				UnityEngine.Debug.Log(exe);
 				RootPath = exe.Substring(0, exe.IndexOf("/Unity.app"));
 			} else {

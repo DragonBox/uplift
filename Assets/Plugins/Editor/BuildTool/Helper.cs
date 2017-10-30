@@ -7,7 +7,7 @@ namespace BuildTool
 {
 	public class Helper
 	{
-		public static bool isMac() {
+		public static bool IsMac() {
 			return Application.platform == RuntimePlatform.OSXEditor;
 		}
 

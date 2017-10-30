@@ -31,7 +31,7 @@ namespace BuildTool {
 
 		public string ManagedPath() {
 			string ManagedPath;
-			if (Helper.isMac ()) {
+			if (Helper.IsMac ()) {
 				ManagedPath = Helper.PathCombine(unity.RootPath, "Unity.app", "Contents", "Managed");
 			} else {
 				ManagedPath = Helper.PathCombine(unity.RootPath, "Editor", "Data", "Managed");
@@ -42,7 +42,7 @@ namespace BuildTool {
 
 		public string Mcs() {
 			string ManagedPath;
-			if (Helper.isMac ()) {
+			if (Helper.IsMac ()) {
 				ManagedPath = Helper.PathCombine(unity.RootPath, "Unity.app", "Contents", "MonoBleedingEdge", "bin", "mcs");
 			} else {
 				ManagedPath = Helper.PathCombine(unity.RootPath, "Editor", "Data", "MonoBleedingEdge", "bin", "mcs");

@@ -95,7 +95,6 @@ namespace Uplift.Schemas
 
         public void SaveFile()
         {
-            // FIXME: Make it so saving the file doesn't erase comments
             XmlDocument doc = new XmlDocument();
             doc.Load(upfilePath);
             XmlElement root = doc.DocumentElement;

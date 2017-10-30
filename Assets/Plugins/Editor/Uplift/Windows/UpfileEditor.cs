@@ -13,6 +13,8 @@ namespace Uplift.Windows
 
         protected void OnGUI()
         {
+            titleContent.text = "Edit Upfile";
+
             upfile = Upfile.Instance();
             if(GUILayout.Button("Refresh Upfile"))
             {
@@ -184,11 +186,19 @@ namespace Uplift.Windows
                 array[i] = elementField.Invoke(array[i]);
                 if(GUILayout.Button(removeMessage, GUILayout.Width(180f)))
                 {
-                    T[] temp = array;
-                    array = new T[temp.Length - 1];
-                    Array.Copy(temp, array, i);
-                    Array.Copy(temp, i + 1, array, i, temp.Length - i - 1);
-                    Repaint();
+                    if(array.Length <= 1)
+                    {
+                        array = null;
+                        break;
+                    }
+                    else
+                    {
+                        T[] temp = array;
+                        array = new T[temp.Length - 1];
+                        Array.Copy(temp, array, i);
+                        Array.Copy(temp, i + 1, array, i, temp.Length - i - 1);
+                        Repaint();
+                    }                    
                 }
                 EditorGUILayout.EndHorizontal();
             }

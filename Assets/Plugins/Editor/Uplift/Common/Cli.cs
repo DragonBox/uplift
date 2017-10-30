@@ -1,5 +1,7 @@
 using Uplift.Packages;
-using UnityEditor;
+
+using Uplift.Export;
+
 
 namespace Uplift.Common
 {
@@ -28,6 +30,10 @@ namespace Uplift.Common
 
         public static void NukeAllPackages() {
             UpliftManager.Instance().NukeAllPackages();
+        }
+
+        public static void PackageEverything() {
+            Export.Exporter.PackageEverything();
         }
     }
 

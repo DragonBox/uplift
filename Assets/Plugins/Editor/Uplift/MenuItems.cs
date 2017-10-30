@@ -1,7 +1,4 @@
 ﻿using System.ComponentModel;
-using System.IO;
-using System.Xml;
-using System.Xml.Serialization;
 using UnityEditor;
 using UnityEngine;
 using Uplift.Windows;
@@ -9,6 +6,9 @@ using Uplift.Schemas;
 using Uplift.Packages;
 using Uplift.Common;
 using System.Linq;
+
+using Uplift.Export;
+
 
 namespace Uplift
 {
@@ -73,13 +73,6 @@ namespace Uplift
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Uplift/Debug/Nuke All Packages", false, 152)]
-        private static void NukePackages()
-        {
-            Debug.LogWarning("Nuking all packages!");
-            UpliftManager.Instance().NukeAllPackages();
-            AssetDatabase.Refresh();
-        }
 
         [MenuItem("Uplift/Debug/Refresh Upfile", false, 153)]
         private static void RefreshUpfile()
@@ -88,12 +81,36 @@ namespace Uplift
             Debug.Log("Upfile refreshed");
         }
 
-        [MenuItem("Uplift/Export Package", false, 250)]
+        [MenuItem("Uplift/Packaging/Create Export Package Definition", false, 200)]
+        private static void CreatePackageExportData() {
+
+            PackageExportData asset = ScriptableObject.CreateInstance<PackageExportData>();
+
+            AssetDatabase.CreateAsset(asset, "Assets/PackageExport.asset");
+            AssetDatabase.SaveAssets();
+
+        }
+
+        [MenuItem("Uplift/Packaging/Export Defined Packages", false, 201)]
+        private static void ExportPackage() {
+            Exporter.PackageEverything();
+        }
+
+        [MenuItem("Uplift/Packaging/Export Package Utility", false, 250)]
         private static void ExportPackageWindow()
         {
             ExporterWindow window = EditorWindow.GetWindow(typeof(ExporterWindow), true) as ExporterWindow;
             window.Init();
             window.Show();
         }
+
+        [MenuItem("Uplift/Debug/Nuke All Packages", false, 1000)]
+        private static void NukePackages()
+        {
+            Debug.LogWarning("Nuking all packages!");
+            UpliftManager.Instance().NukeAllPackages();
+            AssetDatabase.Refresh();
+        }
+
     }
 }

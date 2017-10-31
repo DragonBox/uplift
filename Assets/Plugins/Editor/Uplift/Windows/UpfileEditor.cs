@@ -16,11 +16,8 @@ namespace Uplift.Windows
             titleContent.text = "Edit Upfile";
 
             upfile = Upfile.Instance();
-            if(GUILayout.Button("Refresh Upfile"))
-            {
-                Upfile.InitializeInstance();
-            }
 
+            EditorGUILayout.Space();
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
 
             upfile.UnityVersion = EditorGUILayout.TextField("Unity version:", upfile.UnityVersion);
@@ -84,12 +81,26 @@ namespace Uplift.Windows
                 Repaint();
             }
 
-            EditorGUILayout.Separator();
             EditorGUILayout.EndScrollView();
+
+            EditorGUILayout.Separator();
+            EditorGUILayout.BeginHorizontal();
+            
+            if(GUILayout.Button("Refresh Upfile"))
+            {
+                Upfile.InitializeInstance();
+            }
+
+            if(GUILayout.Button("Edit raw Upfile"))
+            {
+                EditorWindow.GetWindow(typeof(RawUpfileEditor));
+            }
+
             if(GUILayout.Button("Save Upfile"))
             {
                 upfile.SaveFile();
             }
+            EditorGUILayout.EndHorizontal();
         }
         
         private Repository RepositoryField(Repository repository) 

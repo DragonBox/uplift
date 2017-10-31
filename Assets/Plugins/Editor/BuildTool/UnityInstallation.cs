@@ -43,7 +43,7 @@ namespace BuildTool {
 			args.Add ("-out:" + data.OutFile);
 			args.AddRange (data.Files);
 
-			Helper.RunCommand (Helper.ArgEscape(Paths().Mcs ()), args.ToArray ()); 
+			Helper.RunProcess (Helper.ArgEscape(Paths().Mcs ()), args.ToArray ()); 
 			UnityEngine.Debug.LogFormat("Library '{0}' built!", data.OutFile);
 		}
 	}
@@ -53,8 +53,10 @@ namespace BuildTool {
 			string exe = System.Environment.GetCommandLineArgs ()[0];
 			string RootPath;
 			if (Helper.IsMac()) {
-				UnityEngine.Debug.Log(exe);
 				RootPath = exe.Substring(0, exe.IndexOf("/Unity.app"));
+			} else if (Helper.IsWindows()) {
+				DirectoryInfo exeInfo = new DirectoryInfo(exe);
+				RootPath = exeInfo.Parent.Parent.FullName;
 			} else {
 				throw new System.Exception ("TODO: Implement RootPath finder from " + exe);
 			}

@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.IO;
 using System.Text;
+using System.Linq;
 
 namespace BuildTool
 {
@@ -11,25 +12,50 @@ namespace BuildTool
 			return Application.platform == RuntimePlatform.OSXEditor;
 		}
 
+		public static bool IsWindows() {
+			return Application.platform == RuntimePlatform.WindowsEditor;
+		}
+
 		public static string PathCombine(params string[] values) {
 			return string.Join (Path.DirectorySeparatorChar.ToString (), values);
 		}
 
 		public static string ArgEscape(string s) {
-			// FIXME for spaces
 			if (s.Contains (" ")) {
-				Debug.LogWarning ("ArgEscape not yet implemented yet file " + s + " contains spaces");
+				string temp;
+				if(Helper.IsWindows())
+				{
+					temp = "\"" + s + "\"";
+				}
+				else
+				{
+					temp = s.Replace(" ", "\\ ");
+				}
+				return temp;
 			}
 			return s;
 		}
+
+		public static void RunProcess(string exeName, string[] args) {
+			if(Helper.IsWindows())
+				RunCommand(
+					"cmd.exe",
+					new string[] { "/c \"" + exeName + " " + string.Join(" ", args) + "\"" }
+				);
+			else
+			{
+				RunCommand(exeName, args);
+			}
+		}
 	
-		public static void RunCommand(string ExeName, string[] args) {
+		public static void RunCommand(string exeName, string[] args) {
 			using (var process = new System.Diagnostics.Process ()) {
-				process.StartInfo.FileName = ExeName;
-				process.StartInfo.Arguments = string.Join (" ", args);
+				process.StartInfo.FileName = exeName;
+				process.StartInfo.Arguments = string.Join(" ", args);
 				process.StartInfo.RedirectStandardError = true;
 				process.StartInfo.RedirectStandardOutput = true;
 				process.StartInfo.UseShellExecute = false;
+				process.StartInfo.CreateNoWindow = true;
 
 				StringBuilder stdout = new StringBuilder ();
 				StringBuilder stderr = new StringBuilder ();
@@ -63,9 +89,10 @@ namespace BuildTool
 					Debug.Log ("** error: \n" + error);
 
 				if (process.ExitCode != 0) {
-					throw new Exception ("Failed running " + ExeName + " error: " + process.ExitCode + " : " + error);
+					throw new Exception ("Failed running " + exeName + " error: " + process.ExitCode + " : " + error);
 				}
 			}
-		}}
+		}
+	}
 }
 

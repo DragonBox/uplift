@@ -69,7 +69,7 @@ namespace Uplift
         private static void InstallDependencies()
         {
             Debug.Log("Installing Upfile dependencies");
-            UpliftManager.Instance().InstallDependencies(refresh: true);
+            UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.INCOMPLETE_LOCKFILE, refresh: true);
             AssetDatabase.Refresh();
         }
 
@@ -94,6 +94,13 @@ namespace Uplift
         [MenuItem("Uplift/Packaging/Export Defined Packages", false, 201)]
         private static void ExportPackage() {
             Exporter.PackageEverything();
+        }
+
+        [MenuItem("Uplift/Debug/Install from lockfile", false, 154)]
+        private static void InstallLockfile()
+        {
+            UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE, refresh: true);
+            AssetDatabase.Refresh();
         }
 
         [MenuItem("Uplift/Packaging/Export Package Utility", false, 250)]

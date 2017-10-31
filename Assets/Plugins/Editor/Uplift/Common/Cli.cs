@@ -13,7 +13,11 @@ namespace Uplift.Common
         }
 
         public static void InstallDependencies() {
-            UpliftManager.Instance().InstallDependencies();
+            UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.INCOMPLETE_LOCKFILE);
+        }
+
+        public static void InstallLockfile() {
+            UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE);
         }
 
         public static void UpdatePackage() {

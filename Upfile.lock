@@ -1,0 +1,23 @@
+# UPFILE DEPENDENCIES
+PackageX (1.0.0)
+TestPackage.MetaFilesPackageTest (0.0.1+)
+TestPackage.NoMetaFilesPackageTest (0.0.1!)
+TestPackage.UnityPackageTest (0.0.*)
+DependencyRoot (0.0.1)
+AnotherRoot (0+)
+PluginPackage (0+)
+
+# SOLVED DEPENDENCIES
+PackageX (1.0.0)
+TestPackage.MetaFilesPackageTest (0.0.1)
+TestPackage.NoMetaFilesPackageTest (0.0.1)
+TestPackage.UnityPackageTest (0.0.1)
+DependencyRoot (0.0.1)
+	DependencyMiddle (0.0.1)
+DependencyMiddle (0.0.1)
+	DependencyLeaf (0.0.1)
+DependencyLeaf (0.0.1)
+AnotherRoot (0.0.1)
+	DependencyMiddle (0.0.1)
+PluginPackage (0.0.1)
+

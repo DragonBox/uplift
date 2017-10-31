@@ -24,6 +24,7 @@
 
 using UnityEditor;
 using UnityEngine;
+using Uplift.Updating;
 
 namespace Uplift.Windows
 {
@@ -52,7 +53,7 @@ We have detected that you run an outdated version of Uplift, and you can update 
 
             if(GUILayout.Button("Udpate Uplift"))
             {
-                
+                Updater.UpdateUplift(downloadUrl);
             }
         }
     }

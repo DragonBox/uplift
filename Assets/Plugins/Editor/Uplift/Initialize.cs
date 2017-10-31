@@ -93,14 +93,15 @@ namespace Uplift
 			} else {
 				System.Object obj = MiniJSON.Json.Deserialize (json);
 				List<System.Object> releases = (List<System.Object>)obj;
-				foreach (Dictionary<string,object> release in releases) {
+				foreach (Dictionary<string, object> release in releases)
+				{
                     if(VersionParser.GreaterThan((string)release ["tag_name"], About.Version))
                     {
                         Debug.Log("There is a new version of Uplift available!");
                         UpdatePopup popup = EditorWindow.GetWindow(typeof(UpdatePopup), true) as UpdatePopup;
                         popup.SetInformations(
                             (string)release["tag_name"],
-                            (string)release["html_url"],
+                            ExtractUnityPackageUrl(release),
                             (string)release["body"]
                         );
                     }
@@ -125,6 +126,19 @@ namespace Uplift
 			else {
 				yield return www.text;
 			}
+		}
+
+		static string ExtractUnityPackageUrl(Dictionary<string, object> release)
+		{
+			if (release["assets"] == null) return string.Empty;
+			List<System.Object> assets = (List<System.Object>)release["assets"];
+			foreach (Dictionary<string, object> asset in assets) {
+				string downloadUrl = (string)asset["browser_download_url"];
+				if(downloadUrl.EndsWith(".unitypackage"))
+					return downloadUrl;
+			}
+
+			return string.Empty;
 		}
 	}
 }

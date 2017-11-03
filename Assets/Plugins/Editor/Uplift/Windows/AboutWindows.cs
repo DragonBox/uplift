@@ -7,6 +7,7 @@ namespace Uplift.Windows
     {
         public void OnGUI()
         {
+            EditorStyles.label.normal.textColor = Color.black;
             titleContent.text = "About Uplift";
 
             EditorGUILayout.LabelField("Uplift", EditorStyles.largeLabel, GUILayout.Height(25f));
@@ -16,7 +17,12 @@ namespace Uplift.Windows
             foreach(string author in About.Authors)
                 EditorGUILayout.LabelField(author);
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Find Uplift on Github: " + About.Repository);
+            EditorStyles.label.normal.textColor = Color.blue;
+            if(GUILayout.Button("Find Uplift on Github!", EditorStyles.label))
+            {
+                Application.OpenURL(About.Repository);
+            }
+            EditorStyles.label.normal.textColor = Color.black;
             EditorGUILayout.Space();
             EditorGUILayout.LabelField(About.Copyright);
             EditorGUILayout.LabelField(About.License);

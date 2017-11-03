@@ -31,7 +31,7 @@ namespace BuildTool {
 			// All under Uplift except Testing code
 			List<string> FileList = new List<string> ();
 			FileList.AddRange (FileSystemUtil.GetFiles (Helper.PathCombine ("Assets", "Plugins", "Editor", "Uplift")).Where (f => f.EndsWith(".cs") && !f.Contains ("Testing")));
-			FileList.AddRange (FileSystemUtil.GetFiles (Helper.PathCombine ("Assets", "Plugins", "Editor", "BuildTool")).Where (f => f.EndsWith(".cs")));
+			// FileList.AddRange (FileSystemUtil.GetFiles (Helper.PathCombine ("Assets", "Plugins", "Editor", "BuildTool")).Where (f => f.EndsWith(".cs")));
 			FileList.AddRange (FileSystemUtil.GetFiles (Helper.PathCombine ("Assets", "Plugins", "Editor", "UnityHacks")).Where (f => f.EndsWith(".cs")));
 			Data.Files = FileList.ToArray ();
 

@@ -19,6 +19,12 @@ namespace Uplift
 
         }
 
+        [MenuItem("Tools/Uplift/Show Update Window", true, 1)]
+        private static bool EnableShowUpdateWindow()
+        {
+            return UpliftPreferences.UseExperimental();
+        }
+
         [MenuItem("Tools/Uplift/Show Update Window", false, 1)]
         private static void ShowUpdateWindow()
         {

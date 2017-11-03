@@ -13,6 +13,7 @@
 /*.patch
 /*.log
 /*.vs
+/*.vscode
 *.unityproj
 *.pyc
 *.pidb

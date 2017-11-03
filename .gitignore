@@ -20,6 +20,8 @@
 .DS_Store
 .db
 Thumbs.db
+/.idea
+/results.xml
 
 /Assets/UPackages.meta
 # == UPLIFT GITIGNORE START ==

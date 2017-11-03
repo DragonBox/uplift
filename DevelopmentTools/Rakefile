@@ -11,138 +11,26 @@ task :chdir do
     Dir.chdir(File.join(rakefile_dir, '..'))
 end
 
+task :install_gems => [:chdir] do
+    sh('bundle install')
+end
+
 desc "Run the tests using u3d"
 task :test => [:chdir] do
     pwd = Dir.pwd
     sh "u3d run -- -logFile u3d.log -runTests -projectPath #{pwd} -testResults #{pwd}/results.xml -testPlatform editmode -batchmode"
 end
 
-# potential future extensions to move to U3d
-module U3d
-    class BuildPaths
-        def initialize(unity)
-            @unity = unity
-        end
-
-        def managed(file)
-            file = File.join(managed_path, file)
-            raise "Managed file '#{file}' not found" unless File.exist? file
-            file
-        end
-
-        def managed_path
-            if U3d::Helper.mac?
-                # Note: the location of the managed files and mcs has changed between 5.3 and 5.6
-                # This method currently only support Unity version 5.6+
-                managed_path = File.join(@unity.path, 'Contents', 'Managed')
-            else
-                managed_path = File.join(@unity.path, 'Editor', 'Data', 'Managed')
-            end
-            managed_path
-        end
-        def mcs
-            if U3d::Helper.mac?
-                mcs_path = File.join(@unity.path, 'Contents', 'MonoBleedingEdge', 'bin', 'mcs')
-            else
-                mcs_path = File.join(@unity.path, 'Editor', 'Data', 'MonoBleedingEdge', 'bin', 'mcs')
-            end
-            mcs_path
-        end
-    end
-
-    class Installation
-        def paths
-            @paths ||= U3d::BuildPaths.new(self)
-        end
-
-        def build_library(references: [], files: [], sdk_level: 2, out: 'Output.dll')
-            target = File.dirname out
-            U3d::Utils.ensure_dir(target)
-
-            reference_string = references.map { |dep| dep.argescape }.join(',')
-
-            output_callback = proc do |line|
-                UI.command_output(line.rstrip)
-            end
-            # we will need a smarter command builder once we have optional parameters
-            command = "#{paths.mcs.argescape} -r:#{reference_string} -target:library -sdk:#{sdk_level} -out:#{out} #{files.join(' ')}"
-            U3dCore::CommandExecutor.execute_command(command: command, output_callback: output_callback)
-            U3dCore::UI.success "Library '#{out}' built!"
-        end
-
-        def export_package(dirs: [], dir: Dir.pwd, log_file: '/dev/stdout',  raw_logs: false, out: nil)
-            # FIXME there's a bit of duplication from the commands here. Revisit API
-            require 'u3d/unity_runner'
-            require 'u3d/log_analyzer'
-            up = U3d::UnityProject.new(dir)
-            run_args = [
-                '-logFile', log_file,
-                '-projectpath', up.path,
-                '-exportPackage', dirs, out,
-                '-batchmode', '-quit'
-            ].flatten
-            runner = Runner.new
-            runner.run(self, run_args, raw_logs: raw_logs)
-            U3dCore::UI.success "UnityPackage '#{out}' built!"
-        end
-    end
-
-    class UnityProject
-        class << self
-            def unity(dir: Dir.pwd)
-                require 'u3d/installer'
-                version = U3d::UnityProject.new(dir).editor_version
-                unity = U3d::Installer.create.installed.find { |u| u.version == version }
-                U3dCore::UI.user_error!("Missing unity version #{version}") unless unity
-                unity
-            end
-        end
-    end
-end
-
 desc 'Build the Uplift DLL and the unitypackage contain the DLL and its dependencies'
 task :build => [:chdir] do
-    require 'u3d'
-    require 'u3d/unity_project' # remove when updating to u3d 1.0.4
-    
-    unity = U3d::UnityProject.unity
+    sh('bundle exec u3d -- -logFile u3d.log -batchmode -quit -executeMethod BuildTool.DllCompiler.BuildPackage')
 
-    # All under Uplift except Testing code
-    files = Dir[ File.join('Assets', 'Plugins', 'Editor', 'Uplift', '**', '*.cs') ].reject { |p| /Testing/ =~ p }
-    files += Dir[ File.join('Assets', 'Plugins', 'Editor', 'UnityHacks', '**', '*.cs') ]
-
-    references = [
-        unity.paths.managed('UnityEditor.dll'),
-        unity.paths.managed('UnityEngine.dll'),
-        File.join('Assets', 'Plugins', 'Editor', 'SharpCompress.dll')
-    ]
-
-    # build a library under target
-    uplift_dll = File.join('target', 'Uplift.dll')
-    unity.build_library(references: references, files: files, sdk_level: 2, out: uplift_dll)
-
-    # prepare a Unity package
-    packing_dir = 'Build'
-
-    # copy packaged dependencies from current project into packing dir
     editor_dir = File.join('Assets', 'Plugins', 'Editor')
-    editor_packing_dir = File.join(packing_dir, editor_dir)
-    U3d::Utils.ensure_dir editor_packing_dir
-    Dir[File.join(editor_dir, 'SharpCompress.dll*')].each do |file|
-        FileUtils.cp(file, editor_packing_dir)
-    end
-
-    # copy built library into packing dir
-    uplift_dir = File.join('Assets', 'Plugins', 'Editor', 'Uplift')
-    uplift_packing_dir = File.join(packing_dir, uplift_dir)
-    U3d::Utils.ensure_dir uplift_packing_dir
-    FileUtils.cp(uplift_dll, uplift_packing_dir)
-
-    # export unity package
+    # prepare a Unity package
     dirs = [ editor_dir ]
-    unitypackage = File.absolute_path(File.join('target', "Uplift.unitypackage"))
-    pwd = Dir.pwd
-    Dir.chdir(packing_dir) do
-        unity.export_package(dirs: dirs, out: unitypackage, log_file: "#{pwd}/u3d.log")
+    uplift_package = File.absolute_path File.join('target', 'Uplift.unitypackage')
+    Dir.chdir('Build') do
+        sh("bundle exec u3d -- -logFile u3d.log -batchmode -quit -exportPackage #{dirs.join(" ")} #{uplift_package}")
     end
+    puts "File #{uplift_package} generated!"
 end

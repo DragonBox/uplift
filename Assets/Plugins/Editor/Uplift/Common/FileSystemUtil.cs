@@ -43,6 +43,12 @@ namespace Uplift.Common
 			}
 		}
 
+		public static void EnsureDirExists(string targetDir) {
+			if (!Directory.Exists(targetDir)) {
+				Directory.CreateDirectory(targetDir);
+			}
+		}
+
 		public static string GetAbsolutePath(string dir) {
 			DirectoryInfo parent = Directory.GetParent(dir);
 			if (parent.Exists) {

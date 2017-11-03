@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace BuildTool {
 
-	public class BuildLibraryData /*: ScriptableObject*/ {
+	public class BuildLibraryData {
 		public string[] References;
 		public string[] Files;
 		public int SdkLevel;

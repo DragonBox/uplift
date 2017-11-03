@@ -57,13 +57,6 @@ namespace BuildTool {
 			string UpliftPackingDir = Helper.PathCombine (PackingDir, UpliftDir);
 			FileSystemUtil.EnsureDirExists (UpliftPackingDir);
 			CopyFileExactly(UpliftDLL, Helper.PathCombine(UpliftPackingDir, "Uplift.dll"));
-
-			/*
-			string[] exportEntries = ListAllFiles (EditorDir);
-			AssetDatabase.ExportPackage(exportEntries,
-				Path.Combine("target", "Uplift.unitypackage"),
-				ExportPackageOptions.Default);
-				*/
 		}
 
 		public static void CopyFileExactly(string copyFromPath, string copyToPath)
@@ -77,26 +70,5 @@ namespace BuildTool {
 			destination.LastWriteTime = origin.LastWriteTime;
 			destination.LastAccessTime = origin.LastAccessTime;
 		}
-		/*
-		private static string[] ListAllFiles(params string[] paths) {
-			var exportEntries = new List<string>();
-			for (int i = 0; i < paths.Length; i++) {
-
-				string path = paths [i];
-
-				if (System.IO.File.Exists (path)) {
-					exportEntries.Add (path);
-
-				} else if (System.IO.Directory.Exists (path)) {
-					string[] tFiles = System.IO.Directory.GetFiles (path, "*.*", SearchOption.AllDirectories);
-					string[] tDirectories = System.IO.Directory.GetDirectories (path, "*", SearchOption.AllDirectories);
-
-					exportEntries.AddRange (tFiles);
-					exportEntries.AddRange (tDirectories);
-				}
-			}
-			return exportEntries.ToArray ();
-		}
-		*/
 	}
 }

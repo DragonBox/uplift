@@ -1,4 +1,5 @@
-﻿using System;
+#if UNITY_5_3_OR_NEWER
+using System;
 using Uplift.Packages;
 using NUnit.Framework;
 using Moq;
@@ -200,3 +201,4 @@ namespace Uplift.Testing.Unit
         }
     }
 }
+#endif

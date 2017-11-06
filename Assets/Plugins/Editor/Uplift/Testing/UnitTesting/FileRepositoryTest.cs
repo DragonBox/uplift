@@ -1,4 +1,5 @@
-﻿using System;
+#if UNITY_5_3_OR_NEWER
+using System;
 using Uplift.Schemas;
 using NUnit.Framework;
 using System.IO;
@@ -165,3 +166,4 @@ namespace Uplift.Testing.Unit
         }
     }
 }
+#endif

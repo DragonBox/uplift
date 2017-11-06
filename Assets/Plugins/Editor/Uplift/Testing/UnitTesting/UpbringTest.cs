@@ -1,4 +1,5 @@
-﻿using Uplift.Schemas;
+#if UNITY_5_3_OR_NEWER
+using Uplift.Schemas;
 using NUnit.Framework;
 using System.IO;
 using System.Xml.Serialization;
@@ -286,3 +287,4 @@ namespace Uplift.Testing.Unit
         }
     }
 }
+#endif

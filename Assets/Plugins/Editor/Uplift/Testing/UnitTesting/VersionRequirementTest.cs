@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+#if UNITY_5_3_OR_NEWER
+using NUnit.Framework;
 using Uplift.Common;
 
 namespace Uplift.Testing.Unit
@@ -655,3 +656,4 @@ namespace Uplift.Testing.Unit
         }
     }
 }
+#endif

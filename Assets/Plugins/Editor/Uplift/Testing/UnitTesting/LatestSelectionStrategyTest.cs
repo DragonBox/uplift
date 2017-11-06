@@ -1,4 +1,5 @@
-﻿using Uplift.Strategies;
+#if UNITY_5_3_OR_NEWER
+using Uplift.Strategies;
 using Uplift.Schemas;
 using NUnit.Framework;
 using Moq;
@@ -28,3 +29,4 @@ namespace Uplift.Testing.Unit
         }
     }
 }
+#endif

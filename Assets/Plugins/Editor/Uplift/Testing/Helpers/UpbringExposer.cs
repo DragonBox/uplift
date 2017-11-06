@@ -1,4 +1,5 @@
-﻿using Uplift.Schemas;
+#if UNITY_5_3_OR_NEWER
+using Uplift.Schemas;
 using System.IO;
 
 namespace Uplift.Testing.Helpers
@@ -16,3 +17,4 @@ namespace Uplift.Testing.Helpers
         }
     }
 }
+#endif

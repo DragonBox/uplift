@@ -162,7 +162,7 @@ namespace Uplift.Schemas
             XmlNode original = document.DocumentElement.SelectSingleNode("Configuration").SelectSingleNode(nodeName);
             XmlNode temp = original;
 
-            temp.Attributes["Location"].Value = pc.Location;
+            temp.Attributes["Location"].Value = Uplift.Common.FileSystemUtil.MakePathUnix(pc.Location);
             if(pc.SkipPackageStructureSpecified)
             {
                 if(temp.Attributes["SkipPackageStructure"] == null)

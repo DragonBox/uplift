@@ -6,6 +6,18 @@ using UnityEngine;
 
 namespace Uplift
 {
+#if !UNITY_5_3_OR_NEWER
+    interface ILogHandler {
+        void LogException(Exception exception, UnityEngine.Object context);
+        void LogFormat(LogType logType, UnityEngine.Object context, string format, params object[] args);
+    }
+    class LogHandlerUtils {
+        public static ILogHandler ReplaceLogHandler(ILogHandler newLogHandler) {
+            Debug.Log("On Unity < 5.3, Uplift doesn't aggregate logs");
+            return newLogHandler;
+        }
+    }
+#else
     class LogHandlerUtils {
         public static ILogHandler ReplaceLogHandler(ILogHandler newLogHandler) {
             ILogHandler currentLogHandler = Debug.logger.logHandler;
@@ -13,6 +25,7 @@ namespace Uplift
             return currentLogHandler;
         }
     }
+#endif
 
     class LogAggregator : ILogHandler, IDisposable
     {

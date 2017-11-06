@@ -21,6 +21,7 @@ end
 task :build_5_0 do
     sh 'rm -rf ./Assets/Plugins/Editor/Uplift/Testing* Assets/Plugins/Editor/Uplift/Properties/TestingProperties.cs*'
     sh 'echo "m_EditorVersion: 5.0.4f1" > ProjectSettings/ProjectVersion.txt'
+    sh 'echo "m_EditorVersion: 5.0.4f1" > Build/ProjectSettings/ProjectVersion.txt'
     Rake::Task["build"].execute
 end
 

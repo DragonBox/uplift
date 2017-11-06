@@ -33,6 +33,9 @@ namespace BuildTool {
 			string ManagedPath;
 			if (Helper.IsMac ()) {
 				ManagedPath = Helper.PathCombine(unity.RootPath, "Unity.app", "Contents", "Managed");
+				if (!Directory.Exists(ManagedPath)) { // Pre 5.6
+					ManagedPath = Helper.PathCombine(unity.RootPath, "Unity.app", "Contents", "Frameworks", "Managed");
+				}
 			} else {
 				ManagedPath = Helper.PathCombine(unity.RootPath, "Editor", "Data", "Managed");
 			}
@@ -44,6 +47,9 @@ namespace BuildTool {
 			string ManagedPath;
 			if (Helper.IsMac ()) {
 				ManagedPath = Helper.PathCombine(unity.RootPath, "Unity.app", "Contents", "MonoBleedingEdge", "bin", "mcs");
+				if (!File.Exists(ManagedPath)) { // Pre 5.6
+					ManagedPath = Helper.PathCombine(unity.RootPath, "Unity.app", "Contents", "Frameworks", "MonoBleedingEdge", "bin", "mcs");
+				}
 			} else {
 				ManagedPath = Helper.PathCombine(unity.RootPath, "Editor", "Data", "MonoBleedingEdge", "bin", "mcs");
 			}

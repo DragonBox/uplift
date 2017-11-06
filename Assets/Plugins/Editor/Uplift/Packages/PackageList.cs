@@ -30,8 +30,13 @@ namespace Uplift.Packages
         protected Repository[] Repositories;
         protected VersionParser versionParser;
 
-        public void LoadPackages(Repository[] repositories)
+        public void LoadPackages(Repository[] repositories, bool refresh = false)
         {
+            if (refresh)
+            {
+                Packages.Clear();
+            }
+
             if (Repositories == null)
             {
                 Repositories = repositories;
@@ -41,15 +46,6 @@ namespace Uplift.Packages
             {
                 LoadPackages(repo);
             }
-        }
-
-        public void LoadPackages(Repository[] repositories, bool refresh = false)
-        {
-            if (refresh)
-            {
-                Packages.Clear();
-            }
-            LoadPackages(repositories);
         }
 
         public void RefreshPackages()

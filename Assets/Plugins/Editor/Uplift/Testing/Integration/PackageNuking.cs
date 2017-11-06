@@ -1,4 +1,5 @@
-﻿using Uplift;
+#if UNITY_5_3_OR_NEWER
+using Uplift;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -183,3 +184,4 @@ namespace Uplift.Testing.Integration
         }
     }
 }
+#endif

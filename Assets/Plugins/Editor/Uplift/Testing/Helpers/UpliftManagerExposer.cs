@@ -1,4 +1,5 @@
-﻿using Uplift;
+#if UNITY_5_3_OR_NEWER
+using Uplift;
 
 namespace Uplift.Testing.Helpers
 {
@@ -12,3 +13,4 @@ namespace Uplift.Testing.Helpers
         }
     }
 }
+#endif

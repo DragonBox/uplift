@@ -6,7 +6,9 @@ using Object = UnityEngine.Object;
 
 
 namespace Uplift.Export {
+#if UNITY_5_1_OR_NEWER
     [CreateAssetMenuAttribute(fileName = "PackageExport.asset", menuName = "Uplift/Package Export Definition", order = 250)]
+#endif
     class PackageExportData : ScriptableObject, ICloneable {
 
         [Header("Basic Package Information")]

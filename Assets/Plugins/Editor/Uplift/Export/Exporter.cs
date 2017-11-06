@@ -97,8 +97,11 @@ namespace Uplift.Export {
             for(int i=0; i<guids.Length;i++) {
 
                 string packageExportPath = AssetDatabase.GUIDToAssetPath(guids[i]);
+#if UNITY_5_6_OR_NEWER
                 PackageExportData packageExportData = AssetDatabase.LoadAssetAtPath<PackageExportData>(packageExportPath);
-
+#else
+                PackageExportData packageExportData = (PackageExportData)AssetDatabase.LoadAssetAtPath(packageExportPath, typeof(PackageExportData));
+#endif
                 Debug.LogFormat("Export {0}/{1} using {2}", i+1, guids.Length, packageExportPath);
 
                 // Preparing exporter instance

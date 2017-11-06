@@ -1,4 +1,5 @@
-﻿using System.IO;
+#if UNITY_5_3_OR_NEWER
+using System.IO;
 using System.Xml.Serialization;
 using Uplift.Common;
 using Uplift.Schemas;
@@ -64,3 +65,4 @@ namespace Uplift.Testing.Helpers
         }
     }
 }
+#endif

@@ -51,11 +51,16 @@ namespace Uplift.Windows
 
         public void OnGUI()
         {
+#if UNITY_5_1_OR_NEWER
             titleContent.text = "Export Utility";
-
+#endif
             for(int i = 0; i < potentialPackages.Length; i++)
             {
+#if !UNITY_5_5_OR_NEWER
+                expanded[i] = EditorGUILayout.Foldout(expanded[i], potentialPackages[i].exportSpec.paths[0]);
+#else
                 expanded[i] = EditorGUILayout.Foldout(expanded[i], potentialPackages[i].exportSpec.paths[0], true);
+#endif
                 if (expanded[i])
                 {
                     PackageExportData ed = potentialPackages[i].exportSpec;

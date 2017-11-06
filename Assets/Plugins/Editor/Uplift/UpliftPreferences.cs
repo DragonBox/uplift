@@ -8,7 +8,7 @@ namespace Uplift
         private static bool prefsLoaded = false;
         private static readonly string useExperimentalFeaturesKey = "UpliftExperimentalFeatures";
 
-        public static bool useExperimentalFeatures;
+        private static bool useExperimentalFeatures;
 
         [PreferenceItem("Uplift")]
         public static void PreferencesGUI()

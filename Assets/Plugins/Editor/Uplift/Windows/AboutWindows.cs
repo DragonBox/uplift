@@ -20,7 +20,7 @@ namespace Uplift.Windows
             EditorStyles.label.normal.textColor = Color.blue;
             if(GUILayout.Button("Find Uplift on Github!", EditorStyles.label))
             {
-                Application.OpenURL(About.Repository);
+                Application.OpenURL(About.GithubRepository);
             }
             EditorStyles.label.normal.textColor = Color.black;
             EditorGUILayout.Space();

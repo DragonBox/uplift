@@ -31,6 +31,18 @@ namespace Uplift
             EditorWindow.GetWindow(typeof(UpdateUtility));
         }
 
+        [MenuItem("Tools/Uplift/Edit Upfile (experimental)", true, 101)]
+        private static bool EnableEditUpfile()
+        {
+            return UpliftPreferences.UseExperimental();
+        }
+        
+        [MenuItem("Tools/Uplift/Edit Upfile (experimental)", false, 101)]
+        private static void EditUpfile()
+        {
+            EditorWindow.GetWindow(typeof(UpfileEditor));
+        }
+
         [MenuItem("Tools/Uplift/Check Dependencies", false, 102)]
         private static void CheckDependencies()
         {

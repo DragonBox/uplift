@@ -4,14 +4,14 @@
     <FileRepository Path="Examples/SampleRepository" />
   </Repositories>
   <Configuration>
-    <RepositoryPath     Location="UPackages"                />
-    <DocsPath           Location="UPackages/Docs"           />
-    <ExamplesPath       Location="UPackages/Examples"       />
-    <BaseInstallPath    Location="Assets/UPackages"         />
-    <MediaPath          Location="Assets/UPackages"         />
-    <PluginPath         Location="Assets/Plugins"           SkipPackageStructure="true" />
-    <EditorPluginPath   Location="Assets/Editor/Plugins"    />
-    <GizmoPath          Location="Assets/Gizmos"            />
+    <RepositoryPath Location="UPackages" />
+    <DocsPath Location="UPackages/Docs" />
+    <ExamplesPath Location="UPackages/Examples" />
+    <BaseInstallPath Location="Assets/UPackages" />
+    <MediaPath Location="Assets/UPackages" />
+    <PluginPath Location="Assets/Plugins" SkipPackageStructure="true" />
+    <EditorPluginPath Location="Assets/Editor/Plugins" SkipPackageStructure="true" />
+    <GizmoPath Location="Assets/Gizmos" SkipPackageStructure="true" />
   </Configuration>
   <Dependencies>
     <Package Name="PackageX" Version="1.0.0" />

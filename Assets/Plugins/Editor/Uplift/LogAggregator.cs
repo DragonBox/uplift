@@ -6,6 +6,14 @@ using UnityEngine;
 
 namespace Uplift
 {
+    class LogHandlerUtils {
+        public static ILogHandler ReplaceLogHandler(ILogHandler newLogHandler) {
+            ILogHandler currentLogHandler = Debug.logger.logHandler;
+            Debug.logger.logHandler = newLogHandler;
+            return currentLogHandler;
+        }
+    }
+
     class LogAggregator : ILogHandler, IDisposable
     {
         private List<string> logs;
@@ -44,8 +52,7 @@ namespace Uplift
         public void StartAggregating()
         {
             if (started) return;
-            originalHandler = Debug.logger.logHandler;
-            Debug.logger.logHandler = this;
+            originalHandler = LogHandlerUtils.ReplaceLogHandler(this);
             aggregatedLevel = LogType.Log;
             started = true;
         }
@@ -102,7 +109,7 @@ namespace Uplift
         public void Dispose()
         {
             if (!started) return;
-            Debug.logger.logHandler = originalHandler;
+            LogHandlerUtils.ReplaceLogHandler(originalHandler);
             FinishAggregating();
         }
     }

@@ -32,7 +32,7 @@ namespace Uplift
         }
 
         [MenuItem("Tools/Uplift/Edit Upfile", true, 101)]
-        private static bool EnableUpfileEditor()
+        private static bool EnableEditUpfile()
         {
             return UpliftPreferences.UseExperimental();
         }

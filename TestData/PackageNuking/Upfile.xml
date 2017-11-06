@@ -1,0 +1,15 @@
+﻿<Upfile>
+  <UnityVersion>0.0.0</UnityVersion>
+  <Configuration>
+    <RepositoryPath   Location="UPackages" />
+    <BaseInstallPath  Location="Assets/UPackages" />
+    <MediaPath        Location="Assets/Media" SkipPackageStructure="true" />
+  </Configuration>
+  <Repositories>
+    <FileRepository Path="../TestData/PackageNuking/PackageRepo" />
+  </Repositories>
+  <Dependencies>
+    <Package Name="package_d" Version="1.8.6"/>
+    <Package Name="filler_package" Version="0.0.0"/>
+  </Dependencies>
+</Upfile>

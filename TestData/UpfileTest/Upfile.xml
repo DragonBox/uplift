@@ -1,0 +1,18 @@
+<Upfile>
+  <UnityVersion>5.6.0f3</UnityVersion>
+  <Configuration>
+    <RepositoryPath Location="UPackages" />
+    <DocsPath Location="UPackages/Docs" />
+    <ExamplesPath Location="UPackages/Examples" />
+    <BaseInstallPath Location="Assets/UPackages" />
+    <MediaPath Location="Assets/UPackages" SkipPackageStructure="true" />
+    <PluginPath Location="Assets/Plugins"/>
+    <EditorPluginPath Location="Assets/Editor/Plugins"/>
+  </Configuration>
+  <Repositories>
+    <FileRepository Path="Path/To/Some/Repository"/>
+  </Repositories>
+  <Dependencies>
+      <Package Name="test_package" Version="1.0" />
+  </Dependencies>
+</Upfile>

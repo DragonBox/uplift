@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="Common.xsd"/>
+  <xs:element name="Upset" type="Upset"/>
+  <xs:complexType name="Upset">
+    <xs:sequence>
+      <xs:element type="xs:string" name="UnityVersion" />
+      <xs:element type="xs:string" name="PackageName" />
+      <xs:element type="xs:string" name="PackageVersion" />
+      <xs:element type="xs:string" name="PackageLicense" />
+      <xs:element type="DependenciesList" name="Dependencies" minOccurs="0" />
+      <xs:element type="InstallConfiguration" name="Configuration" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InstallConfiguration">
+    <xs:sequence>
+      <xs:element type="InstallSpecPath" name="Spec" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  
+</xs:schema>

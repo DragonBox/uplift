@@ -1,0 +1,15 @@
+﻿<Upfile>
+  <UnityVersion>0.0.0</UnityVersion>
+  <Configuration>
+    <RepositoryPath   Location="UPackages"        />
+    <ExamplesPath     Location="Examples"         />
+    <MediaPath        Location="Assets/Media"     />
+    <BaseInstallPath  Location="Assets/UPackages" />
+  </Configuration>
+  <Repositories>
+    <FileRepository Path="../TestData/CustomizedFileLocation/PackageRepoModifiedNoSkip" />
+  </Repositories>
+  <Dependencies>
+    <Package Name="package_c" Version="1.3.5"/>
+  </Dependencies>
+</Upfile>

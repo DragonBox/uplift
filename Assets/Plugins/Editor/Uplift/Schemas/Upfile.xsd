@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    attributeFormDefault="unqualified" elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    >
+  <xs:include schemaLocation="Common.xsd"/>
+  <xs:include schemaLocation="RepositoryTypes.xsd"/>
+
+  <!-- Structure -->
+  <xs:element name="Upfile" type="Upfile"/>
+  <xs:complexType name="Upfile">
+    <xs:sequence>
+      <xs:element type="xs:string" name="UnityVersion"/>
+      <xs:element type="Configuration" name="Configuration" /> <!-- To be extended later on, optional -->
+      <xs:element type="RepositoriesList" name="Repositories" minOccurs="0" />
+      <xs:element type="DependenciesList" name="Dependencies" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PathConfiguration">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="SkipPackageStructure" type="xs:boolean" use="optional" />
+        <xs:attribute name="Location" use="required">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:minLength value="1"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="Configuration">
+    <xs:sequence>
+      <xs:element name="RepositoryPath" type="PathConfiguration" />
+      <xs:element name="DocsPath" type="PathConfiguration"/>
+      <xs:element name="ExamplesPath" type="PathConfiguration" />
+
+      <xs:element name="BaseInstallPath" type="PathConfiguration" />
+      <xs:element name="MediaPath" type="PathConfiguration" />
+      <xs:element name="GizmoPath" type="PathConfiguration"/>
+      <xs:element name="PluginPath" type="PathConfiguration"/>
+      <xs:element name="EditorPluginPath" type="PathConfiguration"/>
+
+    </xs:sequence>
+
+
+  </xs:complexType>
+
+</xs:schema>

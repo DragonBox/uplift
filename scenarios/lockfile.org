@@ -1,0 +1,232 @@
+* Expected Behaviour
+** Install
+*** When there is no lockfile
+    - Generate lockfile
+    - Parse lockfile dependencies
+    - Install dependencies
+
+*** When there is a lockfile
+    - Parse lockfile dependencies
+    - Install dependencies
+
+** Update
+    - Generate lockfile
+    - Parse lockfile dependencies
+    - Install dependencies
+
+* Suite: Package Install no lockfile
+** Given
+*** Package A (version 1.0.0)
+    - Specified with version 1.0.0
+    - Specified with shortname "package_a"
+    - Containing files: A1, A2, A3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Package A (version 1.0.1)
+    - Specified with version 1.0.1
+    - Specified with shortname "package_a"
+    - Containing files: A1, A2, A3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Upfile.xml
+    - Containing dependency for package A version 1.0.0
+    - Contains default configuration for paths
+    - Listing repository R
+** Scenario
+*** When Installing
+*** Expect
+    - Upfile.lock specifying dependency: package A (1.0.0)
+    - Package A version 1.0.0 successfully installed
+    
+* Suite: Package Install with lockfile
+** Given
+*** Package A (version 1.0.0)
+    - Specified with version 1.0.0
+    - Specified with shortname "package_a"
+    - Containing files: A1, A2, A3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Package A (version 1.0.1)
+    - Specified with version 1.0.1
+    - Specified with shortname "package_a"
+    - Containing files: A1, A2, A3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Upfile.xml
+    - Containing dependency for package A version 1.0.0+
+    - Contains default configuration for paths
+    - Listing repository R
+*** Upfile.lock
+    - Containing dependency for package A version 1.0.0
+** Scenario
+*** When Installing
+*** Expect
+    - Untounched Upfile.lock 
+    - Package A version 1.0.0 successfully installed
+
+* Suite: Package Install with lockfile and installed package
+** Given
+*** Package A (version 1.0.0)
+    - Specified with version 1.0.0
+    - Specified with shortname "package_a"
+    - Containing files: A1, A2, A3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Package A (version 1.0.1)
+    - Specified with version 1.0.1
+    - Specified with shortname "package_a"
+    - Containing files: A1, A2, A3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Installed Package A
+    - Version 1.0.1
+*** Upfile.xml
+    - Containing dependency for package A version 1.0.0+
+    - Contains default configuration for paths
+    - Listing repository R
+*** Upfile.lock
+    - Containing dependency for package A version 1.0.0
+** Scenario
+*** When Installing
+*** Expect
+    - Untounched Upfile.lock 
+    - Package A version 1.0.1 successfully uninstalled
+    - Package A version 1.0.0 successfully installed
+
+* Suite: Package Install with lockfile but missing dependency
+** Given
+*** Package A (version 1.0.0)
+    - Specified with version 1.0.0
+    - Specified with shortname "package_a"
+    - Containing files: A1, A2, A3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Package B (version 1.0.0)
+    - Specified with version 1.0.0
+    - Specified with shortname "package_b"
+    - Containing files: B1, B2, B3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Upfile.xml
+    - Containing dependency for package A version 1.0.0+
+    - Containing dependency for package B version 1.0.0+
+    - Contains default configuration for paths
+    - Listing repository R
+ *** Upfile.lock
+    - Containing dependency for package A version 1.0.0
+
+** Scenario
+*** When Installing
+*** QUESTION: What should we expect?
+    - Hard failure
+    - Soft failure
+    - Add missing dependency to lockfile and perform installation
+    - Update all dependencies and perform installation
+
+* Suite: Package Update no lockfile
+** Given
+*** Package A (version 1.0.0)
+    - Specified with version 1.0.0
+    - Specified with shortname "package_a"
+    - Containing files: A1, A2, A3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Package A (version 1.0.1)
+    - Specified with version 1.0.1
+    - Specified with shortname "package_a"
+    - Containing files: A1, A2, A3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Upfile.xml
+    - Containing dependency for package A version 1.0.0
+    - Contains default configuration for paths
+    - Listing repository R
+** Scenario
+*** When Installing
+*** Expect
+    - Upfile.lock specifying dependency: package A (1.0.0)
+    - Package A version 1.0.0 successfully installed
+
+* Suite: Package Update with lockfile
+** Given
+*** Package A (version 1.0.0)
+    - Specified with version 1.0.0
+    - Specified with shortname "package_a"
+    - Containing files: A1, A2, A3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Package A (version 1.0.1)
+    - Specified with version 1.0.1
+    - Specified with shortname "package_a"
+    - Containing files: A1, A2, A3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Upfile.xml
+    - Containing dependency for package A version 1.0.0+
+    - Contains default configuration for paths
+    - Listing repository R
+*** Upfile.lock
+    - Containing dependency for package A version 1.0.0
+** Scenario
+*** When Installing
+*** Expect
+    - Upfile.lock modified to reference package A version 1.0.1
+    - Package A version 1.0.1 successfully installed
+
+* Suite: Package Update with lockfile and installed package matching requirement
+** Given
+*** Package A (version 1.0.0)
+    - Specified with version 1.0.0
+    - Specified with shortname "package_a"
+    - Containing files: A1, A2, A3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Package A (version 1.0.1)
+    - Specified with version 1.0.1
+    - Specified with shortname "package_a"
+    - Containing files: A1, A2, A3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Installed Package A
+    - Version 1.0.0
+*** Upfile.xml
+    - Containing dependency for package A version 1.0.0+
+    - Contains default configuration for paths
+    - Listing repository R
+*** Upfile.lock
+    - Containing dependency for package A version 1.0.0
+** Scenario
+*** When Installing
+*** Expect
+    - Upfile.lock modified to reference package A version 1.0.1
+    - Package A version 1.0.0 successfully uninstalled
+    - Package A version 1.0.1 successfully installed
+
+* Suite: Package Update with lockfile and installed package not matching requirement
+** Given
+*** Package A (version 1.0.0)
+    - Specified with version 1.0.0
+    - Specified with shortname "package_a"
+    - Containing files: A1, A2, A3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Package A (version 1.0.1)
+    - Specified with version 1.0.1
+    - Specified with shortname "package_a"
+    - Containing files: A1, A2, A3
+    - Containing Upset.xml
+    - Contained in repository R
+*** Installed Package A
+    - Version 1.0.0
+*** Upfile.xml
+    - Containing dependency for package A version 1.0.1+
+    - Contains default configuration for paths
+    - Listing repository R
+*** Upfile.lock
+    - Containing dependency for package A version 1.0.0
+** Scenario
+*** When Installing
+*** Expect
+    - Upfile.lock modified to reference package A version 1.0.1
+    - Package A version 1.0.0 successfully uninstalled
+    - Package A version 1.0.1 successfully installed

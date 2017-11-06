@@ -1,0 +1,60 @@
+## --- BEGIN LICENSE BLOCK ---
+# Copyright (c) 2017-present WeWantToKnow AS
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+## --- END LICENSE BLOCK ---
+
+# This Rakefile is primarily used by the developers for automation purposes
+#
+# Please refrain from expanding this file unless really necessary
+
+task :chdir do
+    file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
+    rakefile_dir = File.expand_path File.dirname file
+    Dir.chdir(File.join(rakefile_dir, '..'))
+end
+
+task :install_gems => [:chdir] do
+    sh('bundle install')
+end
+
+desc "Run the tests using u3d"
+task :test => [:chdir] do
+    pwd = Dir.pwd
+    sh "bundle exec u3d run -- -logFile u3d.log -runTests -projectPath #{pwd} -testResults #{pwd}/results.xml -testPlatform editmode -batchmode"
+end
+
+desc 'Build the Uplift DLL and the unitypackage contain the DLL and its dependencies'
+task :build, [:unity_version] => [:chdir] do |t, args|
+    args.with_defaults(unity_version: '5.6.0f3')
+    unity_version = args[:unity_version]
+    sh "echo \"m_EditorVersion: #{unity_version}\" > ProjectSettings/ProjectVersion.txt"
+    sh("cp ProjectSettings/ProjectVersion.txt Build/ProjectSettings/ProjectVersion.txt")
+
+    sh('bundle exec u3d -- -logFile u3d.log -batchmode -quit -executeMethod BuildTool.DllCompiler.BuildPackage')
+
+    editor_dir = File.join('Assets', 'Plugins', 'Editor')
+    # prepare a Unity package
+    dirs = [ editor_dir ]
+    uplift_package = File.absolute_path File.join('target', "Uplift_#{unity_version}.unitypackage")
+    Dir.chdir('Build') do
+        sh("bundle exec u3d -- -logFile u3d.log -batchmode -quit -exportPackage #{dirs.join(" ")} #{uplift_package}")
+    end
+    puts "File #{uplift_package} generated!"
+end

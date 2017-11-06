@@ -1,0 +1,25 @@
+<Upfile>
+  <UnityVersion>5.6.0f3</UnityVersion>
+  <Repositories>
+    <FileRepository Path="Examples/SampleRepository" />
+  </Repositories>
+  <Configuration>
+    <RepositoryPath Location="UPackages" />
+    <DocsPath Location="UPackages/Docs" />
+    <ExamplesPath Location="UPackages/Examples" />
+    <BaseInstallPath Location="Assets/UPackages" />
+    <MediaPath Location="Assets/UPackages" />
+    <PluginPath Location="Assets/Plugins" SkipPackageStructure="true" />
+    <EditorPluginPath Location="Assets/Editor/Plugins" SkipPackageStructure="true" />
+    <GizmoPath Location="Assets/Gizmos" SkipPackageStructure="true" />
+  </Configuration>
+  <Dependencies>
+    <Package Name="PackageX" Version="1.0.0" />
+    <Package Name="TestPackage.MetaFilesPackageTest" Version="0.0.1+" />
+    <Package Name="TestPackage.NoMetaFilesPackageTest" Version="0.0.1!" />
+    <Package Name="TestPackage.UnityPackageTest" Version="0.0.*" />
+    <Package Name="DependencyRoot" Version="0.0.1" />
+    <Package Name="AnotherRoot" Version="0+" />
+    <Package Name="PluginPackage" Version="0+" />
+  </Dependencies>
+</Upfile>

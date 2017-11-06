@@ -41,13 +41,18 @@ task :test => [:chdir] do
 end
 
 desc 'Build the Uplift DLL and the unitypackage contain the DLL and its dependencies'
-task :build => [:chdir] do
+task :build, [:unity_version] => [:chdir] do |t, args|
+    args.with_defaults(unity_version: '5.6.0f3')
+    unity_version = args[:unity_version]
+    sh "echo \"m_EditorVersion: #{unity_version}\" > ProjectSettings/ProjectVersion.txt"
+    sh("cp ProjectSettings/ProjectVersion.txt Build/ProjectSettings/ProjectVersion.txt")
+
     sh('bundle exec u3d -- -logFile u3d.log -batchmode -quit -executeMethod BuildTool.DllCompiler.BuildPackage')
 
     editor_dir = File.join('Assets', 'Plugins', 'Editor')
     # prepare a Unity package
     dirs = [ editor_dir ]
-    uplift_package = File.absolute_path File.join('target', 'Uplift.unitypackage')
+    uplift_package = File.absolute_path File.join('target', "Uplift_#{unity_version}.unitypackage")
     Dir.chdir('Build') do
         sh("bundle exec u3d -- -logFile u3d.log -batchmode -quit -exportPackage #{dirs.join(" ")} #{uplift_package}")
     end

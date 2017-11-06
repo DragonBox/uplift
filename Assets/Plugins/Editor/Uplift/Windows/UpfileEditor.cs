@@ -37,8 +37,9 @@ namespace Uplift.Windows
 
         protected void OnGUI()
         {
+#if UNITY_5_1_OR_NEWER
             titleContent.text = "Edit Upfile";
-
+#endif
             upfile = Upfile.Instance();
 
             EditorGUILayout.Space();

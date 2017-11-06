@@ -32,8 +32,9 @@ namespace Uplift.Windows
         public void OnGUI()
         {
             EditorStyles.label.normal.textColor = Color.black;
+#if UNITY_5_1_OR_NEWER
             titleContent.text = "About Uplift";
-
+#endif
             EditorGUILayout.LabelField("Uplift", EditorStyles.largeLabel, GUILayout.Height(25f));
             EditorGUILayout.LabelField("Version " + About.Version, EditorStyles.label);
             EditorGUILayout.Space();

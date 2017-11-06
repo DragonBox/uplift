@@ -10,7 +10,7 @@ namespace Uplift
             "Paul Niezborala"
         };
         public static readonly string Copyright = "2017 WeWantToKnow AS";
-        public static readonly string License = "All rights reserved WeWantToKnow";
+        public static readonly string License = "MIT";
         public static readonly string GithubRepository = "https://github.com/DragonBox/uplift";
     } 
 }

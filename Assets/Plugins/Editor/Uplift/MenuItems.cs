@@ -31,7 +31,7 @@ namespace Uplift
             EditorWindow.GetWindow(typeof(UpdateUtility));
         }
         
-        [MenuItem("Uplift/Edit Upfile", false, 101)]
+        [MenuItem("Tools/Uplift/Edit Upfile", false, 101)]
         private static void EditUpfile()
         {
             EditorWindow.GetWindow(typeof(UpfileEditor));

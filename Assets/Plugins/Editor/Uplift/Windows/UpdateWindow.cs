@@ -19,8 +19,9 @@ namespace Uplift.Windows
 
         protected void OnGUI()
         {
+#if UNITY_5_1_OR_NEWER
             titleContent.text = "Update Utility";
-
+#endif
             manager = UpliftManager.Instance();
             upbring = Upbring.Instance();
             upfile = Upfile.Instance();

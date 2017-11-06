@@ -18,13 +18,6 @@ task :test => [:chdir] do
     sh "bundle exec u3d run -- -logFile u3d.log -runTests -projectPath #{pwd} -testResults #{pwd}/results.xml -testPlatform editmode -batchmode"
 end
 
-task :build_5_0 do
-    sh 'rm -rf ./Assets/Plugins/Editor/Uplift/Testing* Assets/Plugins/Editor/Uplift/Properties/TestingProperties.cs*'
-    sh 'echo "m_EditorVersion: 5.0.4f1" > ProjectSettings/ProjectVersion.txt'
-    sh 'echo "m_EditorVersion: 5.0.4f1" > Build/ProjectSettings/ProjectVersion.txt'
-    Rake::Task["build"].execute
-end
-
 desc 'Build the Uplift DLL and the unitypackage contain the DLL and its dependencies'
 task :build => [:chdir] do
     sh('bundle exec u3d -- -logFile u3d.log -batchmode -quit -executeMethod BuildTool.DllCompiler.BuildPackage')

@@ -24,6 +24,8 @@
 #
 # Please refrain from expanding this file unless really necessary
 
+require 'fileutils'
+
 task :chdir do
     file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
     rakefile_dir = File.expand_path File.dirname file
@@ -42,16 +44,10 @@ end
 
 desc 'Build the Uplift DLL and the unitypackage contain the DLL and its dependencies'
 task :build, [:unity_version] => [:chdir] do |t, args|
-    require 'u3d'
     args.with_defaults(unity_version: '5.6.0f3')
     unity_version = args[:unity_version]
-    if(U3dCore::Helper.windows?)
-        sh "echo m_EditorVersion: #{unity_version} > ProjectSettings/ProjectVersion.txt"
-        sh('copy ProjectSettings\ProjectVersion.txt Build\ProjectSettings /Y')
-    else
-        sh "echo \"m_EditorVersion: #{unity_version}\" > ProjectSettings/ProjectVersion.txt"
-        sh("cp ProjectSettings/ProjectVersion.txt Build/ProjectSettings/ProjectVersion.txt")
-    end
+    File.write("ProjectSettings/ProjectVersion.txt", "m_EditorVersion: #{unity_version}")
+    FileUtils.cp("ProjectSettings/ProjectVersion.txt", "Build/ProjectSettings/ProjectVersion.txt")
 
     sh('bundle exec u3d -- -logFile u3d.log -batchmode -quit -executeMethod BuildTool.DllCompiler.BuildPackage')
 

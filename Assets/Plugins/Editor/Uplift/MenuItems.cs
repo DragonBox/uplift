@@ -125,5 +125,10 @@ namespace Uplift
             AssetDatabase.Refresh();
         }
 
+        [MenuItem("Tools/Uplift/About Uplift", false, 2000)]
+        private static void AboutUplift()
+        {
+            EditorWindow.GetWindow(typeof(AboutWindow));
+        }
     }
 }

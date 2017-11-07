@@ -46,6 +46,9 @@ namespace Uplift.Windows
 #if UNITY_5_1_OR_NEWER
             titleContent.text = "Update Utility";
 #endif
+            EditorGUILayout.HelpBox("Please note that this window is not currently supported, and still experimental. Using it may cause unexpected issues. Use with care.", MessageType.Warning);
+            EditorGUILayout.Space();
+            
             manager = UpliftManager.Instance();
             upbring = Upbring.Instance();
             upfile = Upfile.Instance();

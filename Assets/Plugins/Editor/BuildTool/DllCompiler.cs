@@ -34,13 +34,13 @@ namespace BuildTool {
 	public class DllCompiler {
 		static string UpliftDLL = "target/Uplift.dll";
 
-		[MenuItem("Tools/Uplift/Build/BuildAndExportDll", false, 0)]
+		[MenuItem("Tools/Uplift/Build/BuildAndExportDll", false, 311)]
 		public static void BuildPackage() {
 			BuildUpliftDll ();
 			PrepareExportArea();
 		}
 
-		[MenuItem("Tools/Uplift/Build/BuildDll", false, 1)]
+		[MenuItem("Tools/Uplift/Build/BuildDll", false, 312)]
 		public static void BuildUpliftDll() {
 			UnityInstallation unity = UnityInstallationUtils.Current ();
 

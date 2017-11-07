@@ -1,4 +1,4 @@
-// --- BEGIN LICENSE BLOCK ---
+﻿// --- BEGIN LICENSE BLOCK ---
 /*
  * Copyright (c) 2017-present WeWantToKnow AS
  *
@@ -43,32 +43,7 @@ namespace Uplift
 
         }
 
-        [MenuItem("Tools/Uplift/Show Update Window (experimental)", true, 1)]
-        private static bool EnableShowUpdateWindow()
-        {
-            return UpliftPreferences.UseExperimental();
-        }
-
-        [MenuItem("Tools/Uplift/Show Update Window (experimental)", false, 1)]
-        private static void ShowUpdateWindow()
-        {
-            UpdateUtility window = EditorWindow.GetWindow(typeof(UpdateUtility)) as UpdateUtility;
-            window.Init();
-        }
-
-        [MenuItem("Tools/Uplift/Edit Upfile (experimental)", true, 101)]
-        private static bool EnableEditUpfile()
-        {
-            return UpliftPreferences.UseExperimental();
-        }
-        
-        [MenuItem("Tools/Uplift/Edit Upfile (experimental)", false, 101)]
-        private static void EditUpfile()
-        {
-            EditorWindow.GetWindow(typeof(UpfileEditor));
-        }
-
-        [MenuItem("Tools/Uplift/Check Dependencies", false, 102)]
+        [MenuItem("Tools/Uplift/Check Dependencies", false, 1)]
         private static void CheckDependencies()
         {
             using(LogAggregator LA = LogAggregator.InUnity(
@@ -119,7 +94,7 @@ namespace Uplift
             }
         }
 
-        [MenuItem("Tools/Uplift/Install Dependencies", false, 103)]
+        [MenuItem("Tools/Uplift/Install Dependencies", false, 2)]
         private static void InstallDependencies()
         {
             Debug.Log("Installing Upfile dependencies");
@@ -127,15 +102,32 @@ namespace Uplift
             AssetDatabase.Refresh();
         }
 
-
-        [MenuItem("Tools/Uplift/Debug/Refresh Upfile", false, 153)]
-        private static void RefreshUpfile()
+        [MenuItem("Tools/Uplift/Show Update Window (experimental)", true, 3)]
+        private static bool EnableShowUpdateWindow()
         {
-            UpliftManager.ResetInstances();
-            Debug.Log("Upfile refreshed");
+            return UpliftPreferences.UseExperimental();
         }
 
-        [MenuItem("Tools/Uplift/Packaging/Create Export Package Definition", false, 200)]
+        [MenuItem("Tools/Uplift/Show Update Window (experimental)", false, 3)]
+        private static void ShowUpdateWindow()
+        {
+            UpdateUtility window = EditorWindow.GetWindow(typeof(UpdateUtility)) as UpdateUtility;
+            window.Init();
+        }
+
+        [MenuItem("Tools/Uplift/Edit Upfile (experimental)", true, 101)]
+        private static bool EnableEditUpfile()
+        {
+            return UpliftPreferences.UseExperimental();
+        }
+        
+        [MenuItem("Tools/Uplift/Edit Upfile (experimental)", false, 101)]
+        private static void EditUpfile()
+        {
+            EditorWindow.GetWindow(typeof(UpfileEditor));
+        }
+
+        [MenuItem("Tools/Uplift/Packaging/Create Export Package Definition", false, 201)]
         private static void CreatePackageExportData() {
 
             PackageExportData asset = ScriptableObject.CreateInstance<PackageExportData>();
@@ -145,19 +137,12 @@ namespace Uplift
 
         }
 
-        [MenuItem("Tools/Uplift/Packaging/Export Defined Packages", false, 201)]
+        [MenuItem("Tools/Uplift/Packaging/Export Defined Packages", false, 202)]
         private static void ExportPackage() {
             Exporter.PackageEverything();
         }
 
-        [MenuItem("Tools/Uplift/Debug/Install from lockfile", false, 154)]
-        private static void InstallLockfile()
-        {
-            UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE, refresh: true);
-            AssetDatabase.Refresh();
-        }
-
-        [MenuItem("Tools/Uplift/Packaging/Export Package Utility", false, 250)]
+        [MenuItem("Tools/Uplift/Packaging/Export Package Utility", false, 203)]
         private static void ExportPackageWindow()
         {
             ExporterWindow window = EditorWindow.GetWindow(typeof(ExporterWindow), true) as ExporterWindow;
@@ -165,11 +150,27 @@ namespace Uplift
             window.Show();
         }
 
-        [MenuItem("Tools/Uplift/Debug/Nuke All Packages", false, 1000)]
+
+        [MenuItem("Tools/Uplift/Debug/Refresh Upfile", false, 1001)]
+        private static void RefreshUpfile()
+        {
+            UpliftManager.ResetInstances();
+            Debug.Log("Upfile refreshed");
+        }
+
+        [MenuItem("Tools/Uplift/Debug/Nuke All Packages", false, 1002)]
         private static void NukePackages()
         {
             Debug.LogWarning("Nuking all packages!");
             UpliftManager.Instance().NukeAllPackages();
+            AssetDatabase.Refresh();
+        }
+        
+
+        [MenuItem("Tools/Uplift/Debug/Install from lockfile", false, 1003)]
+        private static void InstallLockfile()
+        {
+            UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE, refresh: true);
             AssetDatabase.Refresh();
         }
 

@@ -471,7 +471,7 @@ namespace Uplift
 
         //FIXME: This is super unsafe right now, as we can copy down into the FS.
         // This should be contained using kinds of destinations.
-        private void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition)
+        private void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition, bool updateLockfile = false)
         {
             GitIgnorer VCSHandler = new GitIgnorer();
 
@@ -581,6 +581,31 @@ namespace Uplift
 
                 upbring.SaveFile();
 
+                if(updateLockfile)
+                {
+                    LockfileSnapshot snapshot = LoadLockfile();
+                    int index;
+                    bool found = false;
+                    for(index = 0; index < snapshot.installableDependencies.Length; index++)
+                    {
+                        if(snapshot.installableDependencies[index].Package.PackageName == package.PackageName)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(found)
+                        snapshot.installableDependencies[index].Package = package;
+                    else
+                    {
+                        PackageRepo[] temp = snapshot.installableDependencies;
+                        snapshot.installableDependencies = new PackageRepo[temp.Length + 1];
+                        Array.Copy(temp, snapshot.installableDependencies, temp.Length);
+                        snapshot.installableDependencies[temp.Length] = new PackageRepo { Package = package };
+                    }
+                    GenerateLockfile(snapshot);
+                }
+
                 td.Dispose();
                 UnityHacks.BuildSettingsEnforcer.EnforceAssetSave();
             }
@@ -648,7 +673,7 @@ namespace Uplift
             NukePackage(package.PackageName);
 
             DependencyDefinition definition = Upfile.Instance().Dependencies.First(dep => dep.Name == package.PackageName);
-            InstallPackage(package, td, definition);
+            InstallPackage(package, td, definition, true);
         }
 
         public void UpdatePackage(PackageRepo newer, bool updateDependencies = true)
@@ -687,7 +712,7 @@ namespace Uplift
                     {
                         using (TemporaryDirectory td = dependencyPR.Repository.DownloadPackage(dependencyPR.Package))
                         {
-                            InstallPackage(dependencyPR.Package, td, def);
+                            InstallPackage(dependencyPR.Package, td, def, true);
                         }
                     }
                 }

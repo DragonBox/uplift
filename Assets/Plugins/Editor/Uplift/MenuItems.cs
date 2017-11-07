@@ -52,7 +52,8 @@ namespace Uplift
         [MenuItem("Tools/Uplift/Show Update Window (experimental)", false, 1)]
         private static void ShowUpdateWindow()
         {
-            EditorWindow.GetWindow(typeof(UpdateUtility));
+            UpdateUtility window = EditorWindow.GetWindow(typeof(UpdateUtility)) as UpdateUtility;
+            window.Init();
         }
 
         [MenuItem("Tools/Uplift/Edit Upfile (experimental)", true, 101)]
@@ -70,39 +71,50 @@ namespace Uplift
         [MenuItem("Tools/Uplift/Check Dependencies", false, 102)]
         private static void CheckDependencies()
         {
-            Upbring upbring = Upbring.Instance();
-            Upfile upfile = Upfile.Instance();
-            PackageList packageList = PackageList.Instance();
-            PackageRepo[] packageRepos = packageList.GetAllPackages();
-
-            bool any_installed =
-                        upbring.InstalledPackage != null &&
-                        upbring.InstalledPackage.Length != 0;
-
-            foreach (DependencyDefinition dependency in upfile.Dependencies)
+            using(LogAggregator LA = LogAggregator.InUnity(
+                "Dependencies state:",
+                "Dependencies state:",
+                "Dependencies state:"
+                ))
             {
-                string name = dependency.Name;
-                bool installed =
-                        any_installed &&
-                        upbring.InstalledPackage.Any(ip => ip.Name == name);
-                bool installable = packageRepos.Any(pr => pr.Package.PackageName == name);
-                string latest = installable ? packageList.GetLatestPackage(name).Package.PackageVersion : "";
-                string string_latest = string.IsNullOrEmpty(latest) ? "No version available in any repository" : "Latest version is " + latest;
-                if (installed)
+                UpliftManager.DependencyState[] states = UpliftManager.Instance().GetDependenciesState(false);
+
+                foreach(UpliftManager.DependencyState state in states)
                 {
-                    string installed_version = upbring.GetInstalledPackage(name).Version;
-                    if (installed_version != latest)
+                    string message = string.Format("Package {0} ({1}) ", state.definition.Name, state.definition.Version);
+                    if(state.installed != null)
                     {
-                        Debug.Log(string.Format("Package {0} is outdated: installed version is {1}, latest is {2}", name, installed_version, string_latest));
+                        if(state.installed.Version != state.bestMatch.Package.PackageVersion)
+                            message += string.Format(
+                                "is outdated. Best available version is {0} (from {1})",
+                                state.bestMatch.Package.PackageVersion,
+                                state.bestMatch.Repository.ToString()
+                            );
+                        else
+                            message += "is up to date.";
+                        
+                        if(!state.definition.Requirement.IsMetBy(state.installed.Version))
+                            message += "\nWarning: the package currently installed does not match your requirements";
+                    
                     }
                     else
-                    {
-                        Debug.Log(string.Format("Package {0} is up-to-date ({1})", name, installed_version));
-                    }
-                }
-                else
-                {
-                    Debug.Log(string.Format("Package {0} is not installed ({1})", name, string_latest));
+                        message += string.Format(
+                            "is not installed. Best available version is {0} (from {1})",
+                            state.bestMatch.Package.PackageVersion,
+                            state.bestMatch.Repository.ToString()
+                        );
+
+                    if(state.latest.Package.PackageVersion != state.bestMatch.Package.PackageVersion)
+                        message += string.Format(
+                            "\nNote: there is a more recent version of the package ({0} from {1}), but it doesn't match your requirement",
+                            state.latest.Package.PackageVersion,
+                            state.bestMatch.Repository.ToString()
+                        );
+
+                    if(state.transitive)
+                        message = "`--> " + string.Join("    \n", message.Split('\n'));
+
+                    Debug.Log(message);
                 }
             }
         }

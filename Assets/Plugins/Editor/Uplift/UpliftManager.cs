@@ -1,4 +1,4 @@
-// --- BEGIN LICENSE BLOCK ---
+﻿// --- BEGIN LICENSE BLOCK ---
 /*
  * Copyright (c) 2017-present WeWantToKnow AS
  *
@@ -79,6 +79,14 @@ namespace Uplift
             UPDATE_LOCKFILE
         }
 
+        public struct DependencyState
+        {
+            public DependencyDefinition definition;
+            public InstalledPackage installed;
+            public PackageRepo bestMatch, latest;
+            public bool transitive;
+        }
+        
         public void InstallDependencies(InstallStrategy strategy = InstallStrategy.UPDATE_LOCKFILE, bool refresh = false)
         {
             if (refresh) UpliftManager.ResetInstances();
@@ -86,7 +94,64 @@ namespace Uplift
             InstallPackages(targets);
         }
 
-        private PackageRepo[] GetTargets(IDependencySolver solver, InstallStrategy strategy)
+        public DependencyState[] GetDependenciesState(bool refresh = false)
+        {
+            if (refresh) UpliftManager.ResetInstances();
+            Upbring upbring = Upbring.Instance();
+            PackageRepo[] targets = GetTargets(GetDependencySolver(), InstallStrategy.UPDATE_LOCKFILE, false);
+
+            bool anyInstalled =
+                        upbring.InstalledPackage != null &&
+                        upbring.InstalledPackage.Length != 0;
+            
+            List<DependencyState> dependenciesState = new List<DependencyState>();
+            foreach(DependencyDefinition definition in upfile.Dependencies)
+                AppendDependencyState(
+                        ref dependenciesState,
+                        definition,
+                        targets,
+                        anyInstalled
+                    );
+
+            return dependenciesState.ToArray();
+        }
+
+        private void AppendDependencyState(
+            ref List<DependencyState> dependenciesState,
+            DependencyDefinition definition,
+            PackageRepo[] targets,
+            bool anyInstalled,
+            bool transitive = false
+        )
+        {
+            Upbring upbring = Upbring.Instance();
+
+            DependencyState state = new DependencyState
+            {
+                definition = definition,
+                latest = PackageList.Instance().GetLatestPackage(definition.Name)
+            };
+
+            state.bestMatch = targets.First(pr => pr.Package.PackageName == definition.Name);
+            if(anyInstalled && upbring.InstalledPackage.Any(ip => ip.Name == definition.Name))
+            {
+                state.installed = upbring.InstalledPackage.First(ip => ip.Name == definition.Name);
+            }
+            state.transitive = transitive;
+            
+            dependenciesState.Add(state);
+            if(state.bestMatch.Package.Dependencies != null)
+                foreach(DependencyDefinition dependency in state.bestMatch.Package.Dependencies)
+                    AppendDependencyState(
+                        ref dependenciesState,
+                        dependency,
+                        targets,
+                        anyInstalled,
+                        true
+                    );
+        }
+
+        private PackageRepo[] GetTargets(IDependencySolver solver, InstallStrategy strategy, bool updateLockfile = true)
         {
             DependencyDefinition[] upfileDependencies = upfile.Dependencies;
             DependencyDefinition[] solvedDependencies = solver.SolveDependencies(upfileDependencies);
@@ -96,11 +161,12 @@ namespace Uplift
 
             if(strategy == InstallStrategy.UPDATE_LOCKFILE || (strategy == InstallStrategy.INCOMPLETE_LOCKFILE && !present))
             {
-                GenerateLockfile(new LockfileSnapshot
-                {
-                    upfileDependencies = upfileDependencies,
-                    installableDependencies = installableDependencies
-                });
+                if(updateLockfile)
+                    GenerateLockfile(new LockfileSnapshot
+                    {
+                        upfileDependencies = upfileDependencies,
+                        installableDependencies = installableDependencies
+                    });
                 targets = installableDependencies;
             }
             else if(strategy == InstallStrategy.INCOMPLETE_LOCKFILE)
@@ -158,11 +224,12 @@ namespace Uplift
                     Array.Copy(installableModified, 0, targets, unmodifiable.Length, installableModified.Length);
                 }
 
-                GenerateLockfile(new LockfileSnapshot
-                {
-                    upfileDependencies = upfileDependencies,
-                    installableDependencies = targets
-                });
+                if(updateLockfile)
+                    GenerateLockfile(new LockfileSnapshot
+                    {
+                        upfileDependencies = upfileDependencies,
+                        installableDependencies = targets
+                    });
             }
             else if(strategy == InstallStrategy.ONLY_LOCKFILE)
             {
@@ -406,7 +473,7 @@ namespace Uplift
 
         //FIXME: This is super unsafe right now, as we can copy down into the FS.
         // This should be contained using kinds of destinations.
-        private void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition)
+        private void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition, bool updateLockfile = false)
         {
             GitIgnorer VCSHandler = new GitIgnorer();
 
@@ -516,6 +583,29 @@ namespace Uplift
 
                 upbring.SaveFile();
 
+                if(updateLockfile)
+                {
+                    LockfileSnapshot snapshot = LoadLockfile();
+                    int index;
+                    bool found = false;
+                    for(index = 0; index < snapshot.installableDependencies.Length; index++)
+                    {
+                        if(snapshot.installableDependencies[index].Package.PackageName == package.PackageName)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(found)
+                        snapshot.installableDependencies[index].Package = package;
+                    else
+                    {
+                        Array.Resize<PackageRepo>(ref snapshot.installableDependencies, snapshot.installableDependencies.Length + 1);
+                        snapshot.installableDependencies[snapshot.installableDependencies.Length] = new PackageRepo { Package = package };
+                    }
+                    GenerateLockfile(snapshot);
+                }
+
                 td.Dispose();
                 UnityHacks.BuildSettingsEnforcer.EnforceAssetSave();
             }
@@ -583,7 +673,7 @@ namespace Uplift
             NukePackage(package.PackageName);
 
             DependencyDefinition definition = Upfile.Instance().Dependencies.First(dep => dep.Name == package.PackageName);
-            InstallPackage(package, td, definition);
+            InstallPackage(package, td, definition, true);
         }
 
         public void UpdatePackage(PackageRepo newer, bool updateDependencies = true)
@@ -622,7 +712,7 @@ namespace Uplift
                     {
                         using (TemporaryDirectory td = dependencyPR.Repository.DownloadPackage(dependencyPR.Package))
                         {
-                            InstallPackage(dependencyPR.Package, td, def);
+                            InstallPackage(dependencyPR.Package, td, def, true);
                         }
                     }
                 }

@@ -18,7 +18,7 @@
     <Package Name="TestPackage.MetaFilesPackageTest" Version="0.0.1+" />
     <Package Name="TestPackage.NoMetaFilesPackageTest" Version="0.0.1!" />
     <Package Name="TestPackage.UnityPackageTest" Version="0.0.*" />
-    <Package Name="DependencyRoot" Version="0.0.1" />
+    <Package Name="DependencyRoot" Version="0.0.1+" />
     <Package Name="AnotherRoot" Version="0+" />
     <Package Name="PluginPackage" Version="0+" />
   </Dependencies>

@@ -49,6 +49,10 @@ Thumbs.db
 /Assets/Plugins/PluginScript.cs.meta
 /Assets/UPackages/AnotherRoot~0.0.1
 /Assets/UPackages/AnotherRoot~0.0.1.meta
+/Assets/UPackages/DependencyRoot~0.0.2
+/Assets/UPackages/DependencyRoot~0.0.2.meta
+/Assets/UPackages/AnotherDependencyLeaf~0.0.1
+/Assets/UPackages/AnotherDependencyLeaf~0.0.1.meta
 # == UPLIFT GITIGNORE END ==
 
 UpliftTesting/bin

@@ -35,11 +35,13 @@ namespace Uplift.Windows
     internal class UpdateUtility : EditorWindow
     {
         private Vector2 scrollPosition;
-        private UpliftManager manager;
-        private Upbring upbring;
-        private Upfile upfile;
-        private PackageList packageList;
-        private PackageRepo[] packageRepos;
+        private UpliftManager.DependencyState[] states = new UpliftManager.DependencyState[0];
+
+        public void Init()
+        {
+            states = UpliftManager.Instance().GetDependenciesState(true);
+            Repaint();
+        }
 
         protected void OnGUI()
         {
@@ -47,153 +49,89 @@ namespace Uplift.Windows
             titleContent.text = "Update Utility";
 #endif
             EditorGUILayout.HelpBox("Please note that this window is not currently supported, and still experimental. Using it may cause unexpected issues. Use with care.", MessageType.Warning);
-            EditorGUILayout.Space();
             
-            manager = UpliftManager.Instance();
-            upbring = Upbring.Instance();
-            upfile = Upfile.Instance();
-            packageList = PackageList.Instance();
-            packageRepos = packageList.GetAllPackages();
-
-            IDependencySolver solver = manager.GetDependencySolver();
-            DependencyDefinition[] dependencies = new DependencyDefinition[0];
-
-            try
+            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+            foreach(UpliftManager.DependencyState state in states)
             {
-                dependencies = solver.SolveDependencies(upfile.Dependencies);
-                DependencyDefinition[] directDependencies = new DependencyDefinition[upfile.Dependencies.Length];
-                for(int i = 0; i < upfile.Dependencies.Length; i++)
+                if(state.transitive)
                 {
-                    directDependencies[i] = dependencies.First(dep => dep.Name == upfile.Dependencies[i].Name);
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.Space();
+                    EditorGUILayout.BeginVertical();
                 }
 
-                bool any_installed =
-                        upbring.InstalledPackage != null &&
-                        upbring.InstalledPackage.Length != 0;
+                DependencyStateBlock(
+                    state.definition,
+                    state.bestMatch,
+                    state.latest,
+                    state.installed
+                );
 
-                if (directDependencies.Length == 0)
+                if(state.transitive)
                 {
-                    EditorGUILayout.HelpBox("It seems that you didn't specify any dependency in the Upfile. Try refreshing it if you did.", MessageType.Warning);
-                }
-                else
-                {
-                    scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-
-                    DependencyDefinition[] packageDependencies;
-                    for(int i = 0; i < directDependencies.Length; i++)
-                    {
-                        DependencyBlock(directDependencies[i], any_installed);
-
-                        packageDependencies = packageList.ListDependenciesRecursively(directDependencies[i]);
-                        if(packageDependencies.Length != 0)
-                        {
-                            EditorGUILayout.LabelField("Dependencies:");
-                            EditorGUILayout.BeginHorizontal();
-                            EditorGUILayout.Space();
-                            EditorGUILayout.BeginVertical();
-                            foreach (DependencyDefinition packageDependency in packageList.ListDependenciesRecursively(directDependencies[i]))
-                                DependencyBlock(packageDependency, any_installed);
-                            EditorGUILayout.EndVertical();
-                            EditorGUILayout.EndHorizontal();
-                        }
-                    }
-
-
-                    EditorGUILayout.EndScrollView();
-
-                    if (GUILayout.Button("Install all dependencies"))
-                    {
-                        manager.InstallDependencies();
-
-                        AssetDatabase.Refresh();
-
-                        Repaint();
-                    }
-                    GUI.enabled = any_installed;
-                    if (GUILayout.Button("Update all installed packages"))
-                    {
-                        foreach (InstalledPackage package in upbring.InstalledPackage)
-                        {
-                            PackageRepo latestPackageRepo = packageList.GetLatestPackage(package.Name);
-                            if (package.Version != latestPackageRepo.Package.PackageVersion)
-                            {
-                                Debug.Log(string.Format("Updating package {0} (to {1})", package.Name, latestPackageRepo.Package.PackageVersion));
-                                manager.UpdatePackage(latestPackageRepo);
-                            }
-                        }
-
-                        AssetDatabase.Refresh();
-
-                        Repaint();
-                    }
-                    GUI.enabled = true;
-                    if (GUILayout.Button("Refresh Upfile"))
-                    {
-                        UpliftManager.ResetInstances();
-
-                        Repaint();
-                    }
+                    EditorGUILayout.EndVertical();
+                    EditorGUILayout.EndHorizontal();
                 }
             }
-            catch(IncompatibleRequirementException e)
-            {
-                EditorGUILayout.HelpBox("There is a conflict in your dependency tree:\n" + e.ToString(), MessageType.Error);
-            }
-            catch(MissingDependencyException e)
-            {
-                EditorGUILayout.HelpBox("A dependency cannot be found in any of your specified repository:\n" + e.ToString(), MessageType.Error);
-            }
+            EditorGUILayout.EndScrollView();
         }
 
-        private void DependencyBlock(DependencyDefinition definition, bool any_installed)
+        private void DependencyStateBlock(
+            DependencyDefinition definition,
+            PackageRepo bestMatch,
+            PackageRepo latest,
+            InstalledPackage installed
+        )
         {
-            string name = definition.Name;
-            EditorGUILayout.LabelField(name + ":", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(definition.Name + ":", EditorStyles.boldLabel);
             EditorGUILayout.LabelField("Requirement: " + definition.Requirement.ToString());
-            bool installable = packageRepos.Any(pr => pr.Package.PackageName == name);
-            bool installed =
-                any_installed &&
-                upbring.InstalledPackage.Any(ip => ip.Name == name);
-            string installed_version = installed ? upbring.GetInstalledPackage(name).Version : "";
-
-            if (installed)
+            if(installed != null)
             {
-                EditorGUILayout.LabelField("- Installed version is " + installed_version);
+                EditorGUILayout.LabelField("Installed version: " + installed.Version);
+
+                if(installed.Version != bestMatch.Package.PackageVersion)
+                {
+                    EditorGUILayout.HelpBox(
+                        string.Format(
+                            "Package is outdated. You can update it to {0} (from {1})",
+                            bestMatch.Package.PackageVersion,
+                            bestMatch.Repository.ToString()
+                        ),
+                        MessageType.Info
+                    );
+                    if(GUILayout.Button("Update to version " + bestMatch.Package.PackageVersion))
+                    {
+                        UpliftManager.Instance().UpdatePackage(bestMatch);
+                        Init();
+                        Repaint();
+                    }
+                }
+                else
+                    EditorGUILayout.HelpBox("Package is up to date!", MessageType.Info);
+
+                if(!definition.Requirement.IsMetBy(installed.Version))
+                    EditorGUILayout.HelpBox(
+                        "The version of the package currently installed does not match the requirements of your project!",
+                        installed.Version != bestMatch.Package.PackageVersion ? MessageType.Warning : MessageType.Error
+                    );
             }
             else
-            {
-                EditorGUILayout.LabelField("- Not yet installed");
-            }
+                EditorGUILayout.LabelField("Not yet installed");
 
-            if (!installable)
-            {
-                EditorGUILayout.HelpBox("No repository contains this package. Try specifying one whith this package in.", MessageType.Warning);
-            }
-            else
-            {
-                PackageRepo latestPackageRepo = packageList.GetLatestPackage(name);
-                string latest_version = latestPackageRepo.Package.PackageVersion;
+            if(latest.Package.PackageVersion != bestMatch.Package.PackageVersion)
+                EditorGUILayout.HelpBox(
+                    string.Format(
+                        "Note: there is a more recent version of the package ({0} from {1}), but it doesn't match your requirement",
+                        latest.Package.PackageVersion,
+                        bestMatch.Repository.ToString()
+                    ),
+                    MessageType.Info
+                );
+        }
 
-                EditorGUILayout.LabelField(string.Format("- Latest version is: {0} (from {1})", latest_version, latestPackageRepo.Repository.ToString()));
-                if (!definition.Requirement.IsMetBy(latest_version))
-                {
-                    EditorGUILayout.HelpBox("The latest available version does not meet the requirement of the dependency.", MessageType.Warning);
-                }
-
-                GUI.enabled = definition.Requirement.IsMetBy(latest_version) && installed && installed_version != latest_version;
-                if (GUILayout.Button("Update to " + latest_version))
-                {
-                    Debug.Log(string.Format("Updating package {0} (to {1})", name, latest_version));
-                    manager.UpdatePackage(latestPackageRepo);
-
-                    AssetDatabase.Refresh();
-
-                    Repaint();
-                }
-                GUI.enabled = true;
-            }
-
-            EditorGUILayout.Space();
+        public void OnInspectorUpdate()
+        {
+            this.Repaint();
         }
     }
 }

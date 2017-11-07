@@ -58,6 +58,6 @@ If you do not want to import foreign DLLs into your project, you can clone this 
 
 ## If you want to contribute
 
-First of all, take a look at the [Code of conduct](https://github.com/DragonBox/uplift/blob/master.old/CODE_OF_CONDUCT.md) and our [Contributor agreement](https://github.com/DragonBox/uplift/blob/master.old/CONTRIBUTING.md)
+First of all, take a look at the [Code of conduct](https://github.com/DragonBox/uplift/blob/master/CODE_OF_CONDUCT.md) and our [Contributor agreement](https://github.com/DragonBox/uplift/blob/master/CONTRIBUTING.md)
 
 If you add a feature, please try to test it as thoroughly as possible!

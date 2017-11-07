@@ -79,11 +79,76 @@ namespace Uplift
             UPDATE_LOCKFILE
         }
 
+        public struct DependencyState
+        {
+            public DependencyDefinition definition;
+            public InstalledPackage installed;
+            public PackageRepo bestMatch, latest;
+            public bool transitive;
+        }
+        
         public void InstallDependencies(InstallStrategy strategy = InstallStrategy.UPDATE_LOCKFILE, bool refresh = false)
         {
             if (refresh) UpliftManager.ResetInstances();
             PackageRepo[] targets = GetTargets(GetDependencySolver(), strategy);
             InstallPackages(targets);
+        }
+
+        public DependencyState[] GetDependenciesState(bool refresh = false)
+        {
+            if (refresh) UpliftManager.ResetInstances();
+            Upbring upbring = Upbring.Instance();
+            PackageRepo[] targets = GetTargets(GetDependencySolver(), InstallStrategy.UPDATE_LOCKFILE);
+
+            bool any_installed =
+                        upbring.InstalledPackage != null &&
+                        upbring.InstalledPackage.Length != 0;
+            
+            List<DependencyState> dependenciesState = new List<DependencyState>();
+            foreach(DependencyDefinition definition in upfile.Dependencies)
+                AppendDependencyState(
+                        ref dependenciesState,
+                        definition,
+                        targets,
+                        any_installed
+                    );
+
+            return dependenciesState.ToArray();
+        }
+
+        public void AppendDependencyState(
+            ref List<DependencyState> dependenciesState,
+            DependencyDefinition definition,
+            PackageRepo[] targets,
+            bool any_installed,
+            bool transitive = false
+        )
+        {
+            Upbring upbring = Upbring.Instance();
+
+            DependencyState state = new DependencyState
+            {
+                definition = definition,
+                latest = PackageList.Instance().GetLatestPackage(definition.Name)
+            };
+
+            state.bestMatch = targets.First(pr => pr.Package.PackageName == definition.Name);
+            if(any_installed && upbring.InstalledPackage.Any(ip => ip.Name == definition.Name))
+            {
+                state.installed = upbring.InstalledPackage.First(ip => ip.Name == definition.Name);
+            }
+            state.transitive = transitive;
+            
+            dependenciesState.Add(state);
+            if(state.bestMatch.Package.Dependencies != null)
+                foreach(DependencyDefinition dependency in state.bestMatch.Package.Dependencies)
+                    AppendDependencyState(
+                        ref dependenciesState,
+                        dependency,
+                        targets,
+                        any_installed,
+                        true
+                    );
         }
 
         private PackageRepo[] GetTargets(IDependencySolver solver, InstallStrategy strategy)

@@ -1,4 +1,4 @@
-// --- BEGIN LICENSE BLOCK ---
+﻿// --- BEGIN LICENSE BLOCK ---
 /*
  * Copyright (c) 2017-present WeWantToKnow AS
  *
@@ -98,9 +98,9 @@ namespace Uplift
         {
             if (refresh) UpliftManager.ResetInstances();
             Upbring upbring = Upbring.Instance();
-            PackageRepo[] targets = GetTargets(GetDependencySolver(), InstallStrategy.UPDATE_LOCKFILE);
+            PackageRepo[] targets = GetTargets(GetDependencySolver(), InstallStrategy.UPDATE_LOCKFILE, false);
 
-            bool any_installed =
+            bool anyInstalled =
                         upbring.InstalledPackage != null &&
                         upbring.InstalledPackage.Length != 0;
             
@@ -110,17 +110,17 @@ namespace Uplift
                         ref dependenciesState,
                         definition,
                         targets,
-                        any_installed
+                        anyInstalled
                     );
 
             return dependenciesState.ToArray();
         }
 
-        public void AppendDependencyState(
+        private void AppendDependencyState(
             ref List<DependencyState> dependenciesState,
             DependencyDefinition definition,
             PackageRepo[] targets,
-            bool any_installed,
+            bool anyInstalled,
             bool transitive = false
         )
         {
@@ -133,7 +133,7 @@ namespace Uplift
             };
 
             state.bestMatch = targets.First(pr => pr.Package.PackageName == definition.Name);
-            if(any_installed && upbring.InstalledPackage.Any(ip => ip.Name == definition.Name))
+            if(anyInstalled && upbring.InstalledPackage.Any(ip => ip.Name == definition.Name))
             {
                 state.installed = upbring.InstalledPackage.First(ip => ip.Name == definition.Name);
             }
@@ -146,12 +146,12 @@ namespace Uplift
                         ref dependenciesState,
                         dependency,
                         targets,
-                        any_installed,
+                        anyInstalled,
                         true
                     );
         }
 
-        private PackageRepo[] GetTargets(IDependencySolver solver, InstallStrategy strategy)
+        private PackageRepo[] GetTargets(IDependencySolver solver, InstallStrategy strategy, bool updateLockfile = true)
         {
             DependencyDefinition[] upfileDependencies = upfile.Dependencies;
             DependencyDefinition[] solvedDependencies = solver.SolveDependencies(upfileDependencies);
@@ -161,11 +161,12 @@ namespace Uplift
 
             if(strategy == InstallStrategy.UPDATE_LOCKFILE || (strategy == InstallStrategy.INCOMPLETE_LOCKFILE && !present))
             {
-                GenerateLockfile(new LockfileSnapshot
-                {
-                    upfileDependencies = upfileDependencies,
-                    installableDependencies = installableDependencies
-                });
+                if(updateLockfile)
+                    GenerateLockfile(new LockfileSnapshot
+                    {
+                        upfileDependencies = upfileDependencies,
+                        installableDependencies = installableDependencies
+                    });
                 targets = installableDependencies;
             }
             else if(strategy == InstallStrategy.INCOMPLETE_LOCKFILE)
@@ -223,11 +224,12 @@ namespace Uplift
                     Array.Copy(installableModified, 0, targets, unmodifiable.Length, installableModified.Length);
                 }
 
-                GenerateLockfile(new LockfileSnapshot
-                {
-                    upfileDependencies = upfileDependencies,
-                    installableDependencies = targets
-                });
+                if(updateLockfile)
+                    GenerateLockfile(new LockfileSnapshot
+                    {
+                        upfileDependencies = upfileDependencies,
+                        installableDependencies = targets
+                    });
             }
             else if(strategy == InstallStrategy.ONLY_LOCKFILE)
             {
@@ -598,10 +600,8 @@ namespace Uplift
                         snapshot.installableDependencies[index].Package = package;
                     else
                     {
-                        PackageRepo[] temp = snapshot.installableDependencies;
-                        snapshot.installableDependencies = new PackageRepo[temp.Length + 1];
-                        Array.Copy(temp, snapshot.installableDependencies, temp.Length);
-                        snapshot.installableDependencies[temp.Length] = new PackageRepo { Package = package };
+                        Array.Resize<PackageRepo>(ref snapshot.installableDependencies, snapshot.installableDependencies.Length + 1);
+                        snapshot.installableDependencies[snapshot.installableDependencies.Length] = new PackageRepo { Package = package };
                     }
                     GenerateLockfile(snapshot);
                 }

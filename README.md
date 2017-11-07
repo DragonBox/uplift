@@ -61,3 +61,26 @@ If you do not want to import foreign DLLs into your project, you can clone this 
 First of all, take a look at the [Code of conduct](https://github.com/DragonBox/uplift/blob/master/CODE_OF_CONDUCT.md) and our [Contributor agreement](https://github.com/DragonBox/uplift/blob/master/CONTRIBUTING.md)
 
 If you add a feature, please try to test it as thoroughly as possible!
+
+## A word about PackMan
+
+> Package Manager: Exposed the API for enabling internal components to be updated more frequently than the Editor. This is the first step in implementing the Unity Package Manager. We are taking an incremental approach to integrate the system into the Unity ecosystem. It will grow with more features over time. For this first release, we have avoided exposing user-facing features.
+
+From the [Unity 2017.2 release notes](https://unity3d.com/fr/unity/whats-new/unity-2017.2.0).
+
+Unity is currently developing their own package manager, and you may be interested in our stance on the subject of the future of Uplift after PackMan (or whatever name it will have) release.
+
+__NOTE:__ The information we have about Unity's package manager is limited and could be not accurate. Do not take our word for granted when it comes to the features and limitations of their product. It is not yet released so it could still be subject to changes and the communication around it from Unity has been limited so we may be wrong.
+
+The first thing that has to be said is that we do not think that Uplift can be objectively better than Unity's own made package manager. They have more time and resource than we do and have access to the core of their engine. Therefore, in the long run Uplift cannot be the main package manager of Unity.
+Nonetheless, we believe that Uplift has strengths that could motivate one to use it, despite the upcoming Unity product:
+
+- First thing first, __Uplift is completly open source__. When it comes down to tools that can have a heavy impact on your project, we believe that having access to what is exactly happening is a good thing. You can fork it and use your own version, you can contribute to this one if you think that its behaviour should be enhanced; it is __YOUR__ tool.
+
+- __Uplift is available right now__. The official Unity feature is not yet finished and we don't know exactly when it will be fully released, but we believe that it will not be before mid 2018. You can start using Uplift right now and have all the benefits of a package manager without having to wait for several months.
+
+- __Uplift has been designed to work with Unity 5.3 and upwards__ (and we partially support Unity 5.0 to 5.3). It is our understanding that Unity's package manager will only support the versions of Unity 2017 and upwards, so any project that you are not willing to migrate to 2017+ could not use it, while Uplift will work for these projects.
+
+- Finally, __Uplift is not in complete opposition with PackMan__. Using Uplift requires you to do a big paradigm shift towards the use of a package manager. It encourages modularity, versioning and other concepts that are separated from the actual implementation of the package manager. If you start using Uplift right now and modularize some of you projects, your work will not be lost if you decide to shift to Unity's package manager when it is released. Most of it will actually be done, as a big part of using package managers requires you to adopt a specific mindset and switching from one another should not be too much of a hassle, and should remain an implementation detail.
+
+In conclusion to this matter, we believe that Uplift and Unity's Package Manager do not completly overlap. Whether it is in scope or in implementation, we are confident that both of these products can find use without major conflict with the other.

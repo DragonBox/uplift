@@ -11,15 +11,14 @@ namespace Uplift.Common
 {
     public class UnityPackageOpener
     {
-        public void OpenUnityPackage(string archivePath, bool deleteAfterOpening = false)
+        public void ExtractUnityPackage(string archivePath)
         {
-            OpenUnityPackage(
+            ExtractUnityPackage(
                 archivePath,
-                Path.GetDirectoryName(archivePath),
-                deleteAfterOpening
+                Path.GetDirectoryName(archivePath)
             );
         }
-        public void OpenUnityPackage(string archivePath, string destinationPath, bool deleteAfterOpening = false)
+        public void ExtractUnityPackage(string archivePath, string destinationPath)
         {
             using (MemoryStream TarArchiveMS = new MemoryStream())
             {
@@ -122,11 +121,6 @@ namespace Uplift.Common
                         assetPath = null;
                     }
                 }
-            }
-
-            if(deleteAfterOpening)
-            {
-                File.Delete(archivePath);
             }
         }
     }

@@ -57,8 +57,8 @@ namespace Uplift.Schemas {
             }
             else if (IsUnityPackage(sourcePath))
             {
-                UnityPackageOpener opener = new UnityPackageOpener();
-                opener.ExtractUnityPackage(sourcePath, td.Path);
+                var unityPackage = new UnityPackage();
+                unityPackage.Extract(sourcePath, td.Path);
             }
             else
             {

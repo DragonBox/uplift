@@ -9,16 +9,23 @@ using Uplift.Extensions;
 
 namespace Uplift.Common
 {
-    public class UnityPackageOpener
+    public class UnityPackage
     {
-        public void ExtractUnityPackage(string archivePath)
+        /// <summary>
+        /// Extracts a package at archivePath, and unpacks it at the same location
+        /// </summary>
+        public void Extract(string archivePath)
         {
-            ExtractUnityPackage(
+            Extract(
                 archivePath,
                 Path.GetDirectoryName(archivePath)
             );
         }
-        public void ExtractUnityPackage(string archivePath, string destinationPath)
+
+        /// <summary>
+        /// Extracts a package at archivePath, and unpacks it at destinationPath
+        /// </summary>
+        public void Extract(string archivePath, string destinationPath)
         {
             using (MemoryStream TarArchiveMS = new MemoryStream())
             {

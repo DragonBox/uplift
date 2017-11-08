@@ -27,6 +27,9 @@ using UnityEngine;
 using Uplift.Common;
 using Uplift.Schemas;
 using System;
+using System.Collections.Generic;
+using System.Collections;
+using UnityEngine.Networking;
 
 namespace Uplift
 {
@@ -60,4 +63,73 @@ namespace Uplift
             Environment.SetEnvironmentVariable(env_variable, "true");
         }
     }
+
+	[InitializeOnLoad]
+	[ExecuteInEditMode]
+	public class CheckForUpdate : MonoBehaviour
+	{
+		static IEnumerator myCoroutine;
+
+		static CheckForUpdate()
+		{
+			Debug.Log ("Checking for Uplift Update");
+			EditorApplication.update += EditorUpdate;
+			myCoroutine = CheckForUpdateRoutine();
+		}
+
+		static void EditorUpdate()
+		{
+			myCoroutine.MoveNext ();
+		}
+
+		static IEnumerator CheckForUpdateRoutine() {
+			IEnumerator e = GetReleasesJson();
+			while (e.MoveNext()) yield return e.Current;
+
+			string json = (string) e.Current;
+
+			if (json == null) {
+				Debug.LogError ("Unable to check for Uplift updates");
+			} else {
+				System.Object obj = MiniJSON.Json.Deserialize (json);
+				List<System.Object> releases = (List<System.Object>)obj;
+				foreach (Dictionary<string,object> release in releases) {
+					/*foreach (string key in release.Keys) {
+						Debug.Log ("release[" + key + "]: " + release [key]);
+					}*/
+					Debug.Log (release ["tag_name"]);
+					Debug.Log (release ["body"]);
+					Debug.Log (release ["html_url"]); // where to go to download manually
+				}
+			}
+			EditorApplication.update -= EditorUpdate;
+		}
+
+		static IEnumerator GetReleasesJson() {
+			string url = "https://api.github.com/repos/DragonBox/uplift/releases";
+			WWW www = new WWW (url);
+			while (www.isDone == false)
+				yield return null;
+			yield return www;
+			if(!string.IsNullOrEmpty(www.error)) {
+				Debug.Log(www.error);
+			}
+			else {
+				yield return www.text;
+			}
+			// not stable in early Unitys 5
+			/*
+			using(UnityWebRequest www = UnityWebRequest.Get(url)) {
+				yield return www.Send();
+
+				if(www.isError) {
+					Debug.Log(www.error);
+				}
+				else {
+					// Show results as text
+					return www.downloadHandler.text;
+				}
+			}*/
+		}
+	}
 }

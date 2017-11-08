@@ -39,10 +39,8 @@ using System.Text.RegularExpressions;
 
 namespace Uplift.Schemas {
 
-    public partial class FileRepository {
-
-        private const string formatPattern = "{0}{1}{2}";
-
+    public partial class FileRepository
+    {
         public override string ToString()
         {
             return "FileRepository " + this.Path;
@@ -50,120 +48,19 @@ namespace Uplift.Schemas {
 
         public override TemporaryDirectory DownloadPackage(Upset package) {
             TemporaryDirectory td = new TemporaryDirectory();
-
-            string sourcePath = string.Format(formatPattern, Path, System.IO.Path.DirectorySeparatorChar, package.MetaInformation.dirName);
+            
+            string sourcePath = System.IO.Path.Combine(Path, package.MetaInformation.dirName);
 
             if (Directory.Exists(sourcePath))
             {
-
                 Uplift.Common.FileSystemUtil.CopyDirectoryWithMeta(sourcePath, td.Path);
-
             }
             else if (IsUnityPackage(sourcePath))
             {
-                using (MemoryStream TarArchiveMS = new MemoryStream())
-                {
-                    using (FileStream originalFileStream = new FileStream(sourcePath, FileMode.Open))
-                    {
-                        using (GZipStream decompressionStream =
-                            new GZipStream(originalFileStream, CompressionMode.Decompress))
-                        {
-                            decompressionStream.CopyTo(TarArchiveMS);
-                            TarArchiveMS.Position = 0;
-                        }
-                    }
-                    TarArchive reader = TarArchive.Open(TarArchiveMS);
-
-                    string assetPath = null;
-                    MemoryStream assetMS = null;
-                    MemoryStream metaMS = null;
-                    foreach (TarArchiveEntry entry in reader.Entries)
-                    {
-                        if (entry.IsDirectory) continue;
-
-                        if (entry.Key.EndsWith("asset"))
-                        {
-                            if (assetMS != null)
-                                throw new InvalidOperationException("Unexpected state: assetMS not null");
-
-                            assetMS = new MemoryStream();
-                            entry.WriteTo(assetMS);
-                            assetMS.Position = 0;
-                            continue;
-                        }
-                        if (entry.Key.EndsWith("metaData"))
-                        {
-                            throw new NotSupportedException("The package has been packed by a Unity version prior to Unity5, and we do not support this. Contact the package maintainer for updated version.");
-                        }
-                        if (entry.Key.EndsWith("meta"))
-                        {
-                            metaMS = new MemoryStream();
-                            entry.WriteTo(metaMS);
-                            metaMS.Position = 0;
-                            continue;
-                        }
-                        if (entry.Key.EndsWith("pathname"))
-                        {
-                            MemoryStream MSM = new MemoryStream();
-                            entry.WriteTo(MSM);
-                            MSM.Position = 0;
-                            using (StreamReader SR = new StreamReader(MSM))
-                            {
-                                assetPath = SR.ReadToEnd().Split('\n')[0];
-                            }
-                        }
-                        if (assetPath != null)
-                        {
-                            string AssetPath = System.IO.Path.Combine(td.Path, assetPath.Replace('/', System.IO.Path.DirectorySeparatorChar));
-                            if (assetMS == null)
-                            {
-                                // asset is a directory
-                                if (!Directory.Exists(AssetPath))
-                                {
-                                    Directory.CreateDirectory(AssetPath);
-                                }
-                                if (metaMS != null)
-                                {
-                                    string MetaPath = AssetPath + ".meta";
-                                    using (FileStream FS = new FileStream(MetaPath, FileMode.Create))
-                                    {
-                                        metaMS.CopyTo(FS);
-                                    }
-                                    metaMS.Dispose();
-                                    metaMS = null;
-                                } else {
-                                    // asset is a broken directory - missing meta
-                                    Debug.LogError("Directory at path " + assetPath + " doesn't have its meta.");
-                                }
-                                assetPath = null;
-                                continue;
-                            }
-                            var AssetPathDir = new FileInfo(AssetPath).Directory.FullName;
-                            if (!Directory.Exists(AssetPathDir))
-                            {
-                                Directory.CreateDirectory(AssetPathDir);
-                            }
-                            using (FileStream FS = new FileStream(AssetPath, FileMode.Create))
-                            {
-                                assetMS.CopyTo(FS);
-                            }
-                            assetMS.Dispose();
-                            assetMS = null;
-                            if (metaMS != null)
-                            {
-                                string MetaPath = AssetPath + ".meta";
-                                using (FileStream FS = new FileStream(MetaPath, FileMode.Create))
-                                {
-                                    metaMS.CopyTo(FS);
-                                }
-                                metaMS.Dispose();
-                                metaMS = null;
-                            }
-                            assetPath = null;
-                        }
-                    }
-                }
-            } else
+                var unityPackage = new UnityPackage();
+                unityPackage.Extract(sourcePath, td.Path);
+            }
+            else
             {
                 Debug.LogError(string.Format("Package {0} version {1} found at {2} has an unexpected format and cannot be downloaded ", package.PackageName, package.PackageVersion, sourcePath));
             }
@@ -192,10 +89,7 @@ namespace Uplift.Schemas {
                 string directoryName = directoryPath.Split(System.IO.Path.DirectorySeparatorChar).Last();
                 try
                 {
-                    // Don't look at me. System.IO.Path.Combine(string, string, string) doesn't work in Unity :(
-                    char SC = System.IO.Path.DirectorySeparatorChar;
-                    string upsetPath = Path + SC + directoryName + SC + UpsetFile;
-
+                    string upsetPath = Uplift.Common.FileSystemUtil.JoinPaths(Path, directoryName, UpsetFile);
                     if (!File.Exists(upsetPath)) continue;
 
                     StrictXmlDeserializer<Upset> deserializer = new StrictXmlDeserializer<Upset>();

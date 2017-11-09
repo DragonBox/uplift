@@ -26,6 +26,7 @@ using UnityEditor;
 using UnityEngine;
 using Uplift.Common;
 using Uplift.Schemas;
+using Uplift.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections;
@@ -93,9 +94,20 @@ namespace Uplift
 				System.Object obj = MiniJSON.Json.Deserialize (json);
 				List<System.Object> releases = (List<System.Object>)obj;
 				foreach (Dictionary<string,object> release in releases) {
-					Debug.Log (release ["tag_name"]);
-					Debug.Log (release ["body"]);
-					Debug.Log (release ["html_url"]); // where to go to download manually
+                    if(VersionParser.GreaterThan((string)release ["tag_name"], About.Version))
+                    {
+                        Debug.Log("There is a new version of Uplift available!");
+                        UpdatePopup popup = EditorWindow.GetWindow(typeof(UpdatePopup), true) as UpdatePopup;
+                        popup.SetInformations(
+                            (string)release["tag_name"],
+                            (string)release["html_url"],
+                            (string)release["body"]
+                        );
+                    }
+                    else
+                    {
+                        Debug.Log("No update for Uplift available");
+                    }
 				}
 			}
 			EditorApplication.update -= EditorUpdate;

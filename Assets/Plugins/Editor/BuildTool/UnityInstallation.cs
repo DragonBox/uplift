@@ -55,7 +55,6 @@ namespace BuildTool {
 		}
 
 		public void BuildLibrary(BuildLibraryData data) {
-			string targetDir = Path.GetDirectoryName (data.OutFile);
 			FileSystemUtil.EnsureParentExists (data.OutFile);
 
 			string ReferenceString = string.Join(",", data.References.Select(s => Helper.ArgEscape(s)).ToArray());

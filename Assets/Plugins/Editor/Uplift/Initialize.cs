@@ -72,7 +72,6 @@ namespace Uplift
 
 		static CheckForUpdate()
 		{
-			Debug.Log ("Checking for Uplift Update");
 			EditorApplication.update += EditorUpdate;
 			myCoroutine = CheckForUpdateRoutine();
 		}
@@ -94,9 +93,6 @@ namespace Uplift
 				System.Object obj = MiniJSON.Json.Deserialize (json);
 				List<System.Object> releases = (List<System.Object>)obj;
 				foreach (Dictionary<string,object> release in releases) {
-					/*foreach (string key in release.Keys) {
-						Debug.Log ("release[" + key + "]: " + release [key]);
-					}*/
 					Debug.Log (release ["tag_name"]);
 					Debug.Log (release ["body"]);
 					Debug.Log (release ["html_url"]); // where to go to download manually
@@ -117,19 +113,6 @@ namespace Uplift
 			else {
 				yield return www.text;
 			}
-			// not stable in early Unitys 5
-			/*
-			using(UnityWebRequest www = UnityWebRequest.Get(url)) {
-				yield return www.Send();
-
-				if(www.isError) {
-					Debug.Log(www.error);
-				}
-				else {
-					// Show results as text
-					return www.downloadHandler.text;
-				}
-			}*/
 		}
 	}
 }

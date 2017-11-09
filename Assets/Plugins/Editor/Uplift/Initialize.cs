@@ -27,16 +27,12 @@ using UnityEngine;
 using Uplift.Common;
 using Uplift.Schemas;
 using System;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Uplift
 {
     [InitializeOnLoad]
     public class Initialize : MonoBehaviour
     {
-        private static readonly string env_variable = "UPLIFT_INSTALLATION_DONE";
         static Initialize()
         {
             Debug.Log("Upfile loading...");
@@ -48,34 +44,19 @@ namespace Uplift
             
             if(!IsInitialized())
             {
-                UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE, refresh: true);
-                MarkAsInitialized();
+                UpliftManager manager = UpliftManager.Instance();
+                manager.InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE, refresh: true);
+                manager.StoreLockfileMD5Environnment();
             }
         }
 
         private static bool IsInitialized()
         {
-            return string.Equals(Environment.GetEnvironmentVariable(env_variable), GetLockfileMD5());
-        }
-
-        private static void MarkAsInitialized()
-        {
-            Environment.SetEnvironmentVariable(env_variable, GetLockfileMD5());
-        }
-
-        private static string GetLockfileMD5()
-        {
-            using(MD5 md5hash = MD5.Create())
-            using(StreamReader file = new StreamReader(UpliftManager.lockfilePath))
-            {
-                byte[] data = md5hash.ComputeHash(Encoding.UTF8.GetBytes(file.ReadToEnd()));
-                StringBuilder sBuilder = new StringBuilder();
-                for (int i = 0; i < data.Length; i++)
-                {
-                    sBuilder.Append(data[i].ToString("x2"));
-                }
-                return sBuilder.ToString();
-            }
+            UpliftManager manager = UpliftManager.Instance();
+            return string.Equals(
+                Environment.GetEnvironmentVariable(UpliftManager.env_variable),
+                manager.GetLockfileMD5()
+            );
         }
     }
 }

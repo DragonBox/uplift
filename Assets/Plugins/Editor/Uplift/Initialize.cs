@@ -45,7 +45,7 @@ namespace Uplift
             
             if(!IsInitialized())
             {
-                UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.INCOMPLETE_LOCKFILE, refresh: true);
+                UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE, refresh: true);
                 MarkAsInitialized();
             }
         }

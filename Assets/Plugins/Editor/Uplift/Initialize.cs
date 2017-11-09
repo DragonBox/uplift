@@ -27,6 +27,9 @@ using UnityEngine;
 using Uplift.Common;
 using Uplift.Schemas;
 using System;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Uplift
 {
@@ -52,12 +55,27 @@ namespace Uplift
 
         private static bool IsInitialized()
         {
-            return string.Equals(Environment.GetEnvironmentVariable(env_variable), "true");
+            return string.Equals(Environment.GetEnvironmentVariable(env_variable), GetLockfileMD5());
         }
 
         private static void MarkAsInitialized()
         {
-            Environment.SetEnvironmentVariable(env_variable, "true");
+            Environment.SetEnvironmentVariable(env_variable, GetLockfileMD5());
+        }
+
+        private static string GetLockfileMD5()
+        {
+            using(MD5 md5hash = MD5.Create())
+            using(StreamReader file = new StreamReader(UpliftManager.lockfilePath))
+            {
+                byte[] data = md5hash.ComputeHash(Encoding.UTF8.GetBytes(file.ReadToEnd()));
+                StringBuilder sBuilder = new StringBuilder();
+                for (int i = 0; i < data.Length; i++)
+                {
+                    sBuilder.Append(data[i].ToString("x2"));
+                }
+                return sBuilder.ToString();
+            }
         }
     }
 }

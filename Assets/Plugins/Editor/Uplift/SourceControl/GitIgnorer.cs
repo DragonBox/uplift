@@ -90,6 +90,7 @@ namespace Uplift.SourceControl
 
 			using(StreamWriter sw = new StreamWriter(gitIgnorePath, false))
 			{
+				sw.NewLine = "\n";
 				foreach(string line in userLines[0])
 					sw.WriteLine(line);
 				sw.WriteLine(ignoreTemplateHeader);

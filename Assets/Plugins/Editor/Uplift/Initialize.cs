@@ -33,7 +33,6 @@ namespace Uplift
     [InitializeOnLoad]
     public class Initialize : MonoBehaviour
     {
-        private static readonly string env_variable = "UPLIFT_INSTALLATION_DONE";
         static Initialize()
         {
             Debug.Log("Upfile loading...");
@@ -43,21 +42,11 @@ namespace Uplift
                 SampleFile.CreateSampleUpfile();
             }
             
-            if(!IsInitialized())
+            if(LockFileTracker.HasChanged())
             {
                 UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE, refresh: true);
-                MarkAsInitialized();
+                LockFileTracker.SaveState();
             }
-        }
-
-        private static bool IsInitialized()
-        {
-            return string.Equals(Environment.GetEnvironmentVariable(env_variable), "true");
-        }
-
-        private static void MarkAsInitialized()
-        {
-            Environment.SetEnvironmentVariable(env_variable, "true");
         }
     }
 }

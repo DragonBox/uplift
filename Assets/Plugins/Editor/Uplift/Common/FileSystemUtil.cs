@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Security.Cryptography;
 using UnityEditor;
 using UnityEngine;
 
@@ -226,5 +228,20 @@ namespace Uplift.Common
             if (string.IsNullOrEmpty(path)) { return path; }
             return string.Join("/", path.Split('/', '\\'));
         }
-	}
+
+        public static string GetFileMD5(string path)
+        {
+            using(MD5 md5hash = MD5.Create())
+            using(StreamReader file = new StreamReader(path))
+            {
+                byte[] data = md5hash.ComputeHash(Encoding.UTF8.GetBytes(file.ReadToEnd()));
+                StringBuilder sBuilder = new StringBuilder();
+                for (int i = 0; i < data.Length; i++)
+                {
+                    sBuilder.Append(data[i].ToString("x2"));
+                }
+                return sBuilder.ToString();
+            }
+        }
+    }
 }

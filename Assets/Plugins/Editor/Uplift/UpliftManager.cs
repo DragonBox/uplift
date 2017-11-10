@@ -310,6 +310,8 @@ namespace Uplift
             {
                 file.WriteLine(result);
             }
+
+            LockFileTracker.SaveState();
         }
 
         private LockfileSnapshot LoadLockfile()

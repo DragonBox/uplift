@@ -7,23 +7,17 @@ using Uplift.Common;
 using Uplift.Windows;
 using System.Net;
 using System.Linq;
+using System;
+using System.Globalization;
 
 namespace Uplift.Updating
 {
     public class Updater : MonoBehaviour
     {
+        private static readonly string dateFormat = @"MM\/dd\/yyyy HH:mm";
+        private static readonly CultureInfo provider = CultureInfo.InvariantCulture;
+        private static readonly string lastUpdateCheckKey = "UpliftLastUpdateCheck";
         private static IEnumerator updateCoroutine;
-
-        public static void CheckForUpdate()
-        {
-            EditorApplication.update += EditorUpdate;
-			updateCoroutine = CheckForUpdateRoutine();
-        }
-        
-        private static void EditorUpdate()
-        {
-            updateCoroutine.MoveNext();
-        }
 
         public static void UpdateUplift(string url)
         {
@@ -38,6 +32,37 @@ namespace Uplift.Updating
             }
 
             AssetDatabase.ImportPackage(destination, false);
+        }
+
+        public static void CheckForUpdate(bool forceCheck = false)
+        {
+            if(forceCheck || ShouldCheck())
+            {
+                EditorApplication.update += EditorUpdate;
+    			updateCoroutine = CheckForUpdateRoutine();
+            }
+        }
+        
+        private static void EditorUpdate()
+        {
+            updateCoroutine.MoveNext();
+        }
+
+        private static bool ShouldCheck()
+        {
+            string lastCheck = EditorPrefs.GetString(lastUpdateCheckKey);
+            if(string.IsNullOrEmpty(lastCheck)) return true;
+            
+            try
+            {
+                TimeSpan timeFromLastCheck = DateTime.UtcNow - DateTime.ParseExact(lastCheck, dateFormat, provider);
+                return timeFromLastCheck > TimeSpan.FromDays(1);
+            }
+            catch(FormatException e)
+            {
+                Debug.LogErrorFormat("The date stored for the last check of Uplift ({0}) is not in the correct format:\n{1}", lastCheck, e);
+            }
+            return true;
         }
         
         private static IEnumerator CheckForUpdateRoutine() {
@@ -70,6 +95,10 @@ namespace Uplift.Updating
 				}
 			}
 			EditorApplication.update -= EditorUpdate;
+            EditorPrefs.SetString(
+                lastUpdateCheckKey,
+                DateTime.UtcNow.ToString(dateFormat, provider)
+            );
 		}
 
 		private static IEnumerator GetReleasesJson() {

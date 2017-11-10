@@ -184,7 +184,7 @@ namespace Uplift
         [MenuItem("Tools/Uplift/Try to update Uplift", false, 2001)]
         private static void TryUpdateUplift()
         {
-            Updater.CheckForUpdate();
+            Updater.CheckForUpdate(true);
         }
     }
 }

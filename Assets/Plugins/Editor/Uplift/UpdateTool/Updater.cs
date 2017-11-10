@@ -66,18 +66,18 @@ namespace Uplift.Updating
         }
         
         private static IEnumerator CheckForUpdateRoutine() {
-			IEnumerator e = GetReleasesJson();
-			while (e.MoveNext()) yield return e.Current;
+            IEnumerator e = GetReleasesJson();
+            while (e.MoveNext()) yield return e.Current;
 
-			string json = (string) e.Current;
+            string json = (string) e.Current;
 
-			if (json == null) {
-				Debug.LogError ("Unable to check for Uplift updates");
-			} else {
-				System.Object obj = MiniJSON.Json.Deserialize (json);
-				List<System.Object> releases = (List<System.Object>)obj;
-				foreach (Dictionary<string, object> release in releases)
-				{
+            if (json == null) {
+                Debug.LogError ("Unable to check for Uplift updates");
+            } else {
+                System.Object obj = MiniJSON.Json.Deserialize (json);
+                List<System.Object> releases = (List<System.Object>)obj;
+                foreach (Dictionary<string, object> release in releases)
+                {
                     if(VersionParser.GreaterThan((string)release ["tag_name"], About.Version))
                     {
                         Debug.Log("There is a new version of Uplift available!");
@@ -92,40 +92,40 @@ namespace Uplift.Updating
                     {
                         Debug.Log("No update for Uplift available");
                     }
-				}
-			}
-			EditorApplication.update -= EditorUpdate;
+                }
+            }
+            EditorApplication.update -= EditorUpdate;
             EditorPrefs.SetString(
                 lastUpdateCheckKey,
                 DateTime.UtcNow.ToString(dateFormat, provider)
             );
-		}
+        }
 
-		private static IEnumerator GetReleasesJson() {
-			string url = "https://api.github.com/repos/DragonBox/uplift/releases";
-			WWW www = new WWW (url);
-			while (www.isDone == false)
-				yield return null;
-			yield return www;
-			if(!string.IsNullOrEmpty(www.error)) {
-				Debug.Log(www.error);
-			}
-			else {
-				yield return www.text;
-			}
-		}
+        private static IEnumerator GetReleasesJson() {
+            string url = "https://api.github.com/repos/DragonBox/uplift/releases";
+            WWW www = new WWW (url);
+            while (www.isDone == false)
+                yield return null;
+            yield return www;
+            if(!string.IsNullOrEmpty(www.error)) {
+                Debug.Log(www.error);
+            }
+            else {
+                yield return www.text;
+            }
+        }
 
-		private static string ExtractUnityPackageUrl(Dictionary<string, object> release)
-		{
-			if (release["assets"] == null) return string.Empty;
-			List<System.Object> assets = (List<System.Object>)release["assets"];
-			foreach (Dictionary<string, object> asset in assets) {
-				string downloadUrl = (string)asset["browser_download_url"];
-				if(downloadUrl.EndsWith(".unitypackage"))
-					return downloadUrl;
-			}
+        private static string ExtractUnityPackageUrl(Dictionary<string, object> release)
+        {
+            if (release["assets"] == null) return string.Empty;
+            List<System.Object> assets = (List<System.Object>)release["assets"];
+            foreach (Dictionary<string, object> asset in assets) {
+                string downloadUrl = (string)asset["browser_download_url"];
+                if(downloadUrl.EndsWith(".unitypackage"))
+                    return downloadUrl;
+            }
 
-			return string.Empty;
-		}
+            return string.Empty;
+        }
     }
 }

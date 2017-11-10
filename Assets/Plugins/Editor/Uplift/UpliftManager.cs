@@ -397,9 +397,9 @@ namespace Uplift
         public void InstallPackages(PackageRepo[] targets)
         {
             using(LogAggregator LA = LogAggregator.InUnity(
-                "Installed {0} dependencies successfully",
-                "Installed {0} dependencies successfully but warnings were raised",
-                "Some errors occured while installing {0} dependencies",
+                "Successfully installed dependencies ({0} actions were done)",
+                "Successfully installed dependencies ({0} actions were done) but warnings were raised",
+                "Some errors occured while installing dependencies",
                 targets.Length
                 ))
             {

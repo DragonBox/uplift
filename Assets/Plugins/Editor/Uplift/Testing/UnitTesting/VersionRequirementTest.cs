@@ -482,6 +482,9 @@ namespace Uplift.Testing.Unit
                 loseRequirement = new LoseVersionRequirement("1.0.1");
                 Assert.AreSame(requirement.RestrictTo(loseRequirement), loseRequirement);
 
+                // When losely comparable (1.0)
+                loseRequirement = new LoseVersionRequirement("1.0");
+                Assert.AreSame(requirement.RestrictTo(loseRequirement), requirement);
 
                 // When lesser (0.9)
                 loseRequirement = new LoseVersionRequirement("0.9");

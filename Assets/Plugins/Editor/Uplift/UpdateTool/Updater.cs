@@ -21,7 +21,9 @@ namespace Uplift.Updating
         private static readonly CultureInfo provider = CultureInfo.InvariantCulture;
         private static readonly string lastUpdateCheckKey = "UpliftLastUpdateCheck";
         private static IEnumerator updateCoroutine;
-        private static readonly string githubCertificateString =
+        private static readonly string[] githubCertificatesString = new string[]
+        {
+// github.com
 @"-----BEGIN CERTIFICATE-----
 MIIHeTCCBmGgAwIBAgIQC/20CQrXteZAwwsWyVKaJzANBgkqhkiG9w0BAQsFADB1
 MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
@@ -64,7 +66,96 @@ RDS4BF+EEFQ4l5GY+yp4WJA/xSvYsTHWeWxRD1/nl62/Rd9FN2NkacRVozCxRVle
 FrBHTFxqIP6kDnxiLElBrZngtY07ietaYZVLQN/ETyqLQftsf8TecwTklbjvm8NT
 JqbaIVifYwqwNN+4lRxS3F5lNlA/il12IOgbRioLI62o8G0DaEUQgHNf8vSG
 -----END CERTIFICATE-----
-";
+",
+// DigiCert High Assurance EV Root CA
+@"-----BEGIN CERTIFICATE-----
+MIIDxTCCAq2gAwIBAgIQAqxcJmoLQJuPC3nyrkYldzANBgkqhkiG9w0BAQUFADBs
+MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
+d3cuZGlnaWNlcnQuY29tMSswKQYDVQQDEyJEaWdpQ2VydCBIaWdoIEFzc3VyYW5j
+ZSBFViBSb290IENBMB4XDTA2MTExMDAwMDAwMFoXDTMxMTExMDAwMDAwMFowbDEL
+MAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3
+LmRpZ2ljZXJ0LmNvbTErMCkGA1UEAxMiRGlnaUNlcnQgSGlnaCBBc3N1cmFuY2Ug
+RVYgUm9vdCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMbM5XPm
++9S75S0tMqbf5YE/yc0lSbZxKsPVlDRnogocsF9ppkCxxLeyj9CYpKlBWTrT3JTW
+PNt0OKRKzE0lgvdKpVMSOO7zSW1xkX5jtqumX8OkhPhPYlG++MXs2ziS4wblCJEM
+xChBVfvLWokVfnHoNb9Ncgk9vjo4UFt3MRuNs8ckRZqnrG0AFFoEt7oT61EKmEFB
+Ik5lYYeBQVCmeVyJ3hlKV9Uu5l0cUyx+mM0aBhakaHPQNAQTXKFx01p8VdteZOE3
+hzBWBOURtCmAEvF5OYiiAhF8J2a3iLd48soKqDirCmTCv2ZdlYTBoSUeh10aUAsg
+EsxBu24LUTi4S8sCAwEAAaNjMGEwDgYDVR0PAQH/BAQDAgGGMA8GA1UdEwEB/wQF
+MAMBAf8wHQYDVR0OBBYEFLE+w2kD+L9HAdSYJhoIAu9jZCvDMB8GA1UdIwQYMBaA
+FLE+w2kD+L9HAdSYJhoIAu9jZCvDMA0GCSqGSIb3DQEBBQUAA4IBAQAcGgaX3Nec
+nzyIZgYIVyHbIUf4KmeqvxgydkAQV8GK83rZEWWONfqe/EW1ntlMMUu4kehDLI6z
+eM7b41N5cdblIZQB2lWHmiRk9opmzN6cN82oNLFpmyPInngiK3BD41VHMWEZ71jF
+hS9OMPagMRYjyOfiZRYzy78aG6A9+MpeizGLYAiJLQwGXFK3xPkKmNEVX58Svnw2
+Yzi9RKR/5CYrCsSXaQ3pjOLAEFe4yHYSkVXySGnYvCoCWw9E1CAx2/S6cCZdkGCe
+vEsXCS+0yx5DaMkHJ8HSXPfqIbloEpw8nL+e/IBcm2PN7EeqJSdnoDfzAIJ9VNep
++OkuE6N36B9K
+-----END CERTIFICATE-----
+",
+// DigiCert SHA2 Extended Validation Server CA
+@"-----BEGIN CERTIFICATE-----
+MIIEtjCCA56gAwIBAgIQDHmpRLCMEZUgkmFf4msdgzANBgkqhkiG9w0BAQsFADBs
+MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
+d3cuZGlnaWNlcnQuY29tMSswKQYDVQQDEyJEaWdpQ2VydCBIaWdoIEFzc3VyYW5j
+ZSBFViBSb290IENBMB4XDTEzMTAyMjEyMDAwMFoXDTI4MTAyMjEyMDAwMFowdTEL
+MAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3
+LmRpZ2ljZXJ0LmNvbTE0MDIGA1UEAxMrRGlnaUNlcnQgU0hBMiBFeHRlbmRlZCBW
+YWxpZGF0aW9uIFNlcnZlciBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC
+ggEBANdTpARR+JmmFkhLZyeqk0nQOe0MsLAAh/FnKIaFjI5j2ryxQDji0/XspQUY
+uD0+xZkXMuwYjPrxDKZkIYXLBxA0sFKIKx9om9KxjxKws9LniB8f7zh3VFNfgHk/
+LhqqqB5LKw2rt2O5Nbd9FLxZS99RStKh4gzikIKHaq7q12TWmFXo/a8aUGxUvBHy
+/Urynbt/DvTVvo4WiRJV2MBxNO723C3sxIclho3YIeSwTQyJ3DkmF93215SF2AQh
+cJ1vb/9cuhnhRctWVyh+HA1BV6q3uCe7seT6Ku8hI3UarS2bhjWMnHe1c63YlC3k
+8wyd7sFOYn4XwHGeLN7x+RAoGTMCAwEAAaOCAUkwggFFMBIGA1UdEwEB/wQIMAYB
+Af8CAQAwDgYDVR0PAQH/BAQDAgGGMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEF
+BQcDAjA0BggrBgEFBQcBAQQoMCYwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRp
+Z2ljZXJ0LmNvbTBLBgNVHR8ERDBCMECgPqA8hjpodHRwOi8vY3JsNC5kaWdpY2Vy
+dC5jb20vRGlnaUNlcnRIaWdoQXNzdXJhbmNlRVZSb290Q0EuY3JsMD0GA1UdIAQ2
+MDQwMgYEVR0gADAqMCgGCCsGAQUFBwIBFhxodHRwczovL3d3dy5kaWdpY2VydC5j
+b20vQ1BTMB0GA1UdDgQWBBQ901Cl1qCt7vNKYApl0yHU+PjWDzAfBgNVHSMEGDAW
+gBSxPsNpA/i/RwHUmCYaCALvY2QrwzANBgkqhkiG9w0BAQsFAAOCAQEAnbbQkIbh
+hgLtxaDwNBx0wY12zIYKqPBKikLWP8ipTa18CK3mtlC4ohpNiAexKSHc59rGPCHg
+4xFJcKx6HQGkyhE6V6t9VypAdP3THYUYUN9XR3WhfVUgLkc3UHKMf4Ib0mKPLQNa
+2sPIoc4sUqIAY+tzunHISScjl2SFnjgOrWNoPLpSgVh5oywM395t6zHyuqB8bPEs
+1OG9d4Q3A84ytciagRpKkk47RpqF/oOi+Z6Mo8wNXrM9zwR4jxQUezKcxwCmXMS1
+oVWNWlZopCJwqjyBcdmdqEU79OX2olHdx3ti6G8MdOu42vi/hw15UJGQmxg7kVkn
+8TUoE6smftX3eg==
+-----END CERTIFICATE-----
+",
+// Amazon S3 (provider for the release download) *.s3.amazonaws.com
+@"-----BEGIN CERTIFICATE-----
+MIIFWjCCBEKgAwIBAgIQBVG1kvpTzyBSuLcPJ1zBWTANBgkqhkiG9w0BAQsFADBk
+MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
+d3cuZGlnaWNlcnQuY29tMSMwIQYDVQQDExpEaWdpQ2VydCBCYWx0aW1vcmUgQ0Et
+MiBHMjAeFw0xNzA5MjIwMDAwMDBaFw0xOTAxMDMxMjAwMDBaMGsxCzAJBgNVBAYT
+AlVTMRMwEQYDVQQIEwpXYXNoaW5ndG9uMRAwDgYDVQQHEwdTZWF0dGxlMRgwFgYD
+VQQKEw9BbWF6b24uY29tIEluYy4xGzAZBgNVBAMMEiouczMuYW1hem9uYXdzLmNv
+bTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKK5it42LH/8WFaEE7O9
+4XJMg48TengCM25C9O0dUaPGOnZ1+oGf7DNvdo/MGVoAW5hfPX9WqjY30KyuKiFv
+8uAbyX+9Bzq8KMLjdvGxzYMqbSxeAPSBf1yMdCyDEc8gW+vh2uXO+x9QePgiOAoO
+qujLzyS/p7pSWPUKUH8kpMgP99RPoD/lRNbPAFr3QeJr7D/x3xNTKBHCbpE4SxBH
+QM02GCu2DSYQtgm3hfZmD79BB1Ej4U1vM0hgiOu9eFLwmycbnrnU8sa4DkvmUJlv
+xiIP5PvNweawm/QeoH6Qk/zDF30nr+5Av9IUhE4uAhl1H2OMqPp79SfJ2wxtvmNt
+3z0CAwEAAaOCAf8wggH7MB8GA1UdIwQYMBaAFMASsih0aEZn6XAldBoARVsGfVxE
+MB0GA1UdDgQWBBSQFZo7H1VA7uODvdTP1I6idMLqyDAvBgNVHREEKDAmghIqLnMz
+LmFtYXpvbmF3cy5jb22CEHMzLmFtYXpvbmF3cy5jb20wDgYDVR0PAQH/BAQDAgWg
+MB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjCBgQYDVR0fBHoweDA6oDig
+NoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0QmFsdGltb3JlQ0Et
+MkcyLmNybDA6oDigNoY0aHR0cDovL2NybDQuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
+QmFsdGltb3JlQ0EtMkcyLmNybDBMBgNVHSAERTBDMDcGCWCGSAGG/WwBATAqMCgG
+CCsGAQUFBwIBFhxodHRwczovL3d3dy5kaWdpY2VydC5jb20vQ1BTMAgGBmeBDAEC
+AjB5BggrBgEFBQcBAQRtMGswJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2lj
+ZXJ0LmNvbTBDBggrBgEFBQcwAoY3aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29t
+L0RpZ2lDZXJ0QmFsdGltb3JlQ0EtMkcyLmNydDAMBgNVHRMBAf8EAjAAMA0GCSqG
+SIb3DQEBCwUAA4IBAQBydwnbmrwTTwhtCckZ9lDGoE+tdDFchjFG59dyzX1I4bHV
+thVUwjEoc3VxngvmKb3cqLcHzXHNdoEdffRtw0IiEerPRsk7Nxh2p1HWR3cu/Hyp
+kqGlObJADiw1DX4UDob735hevqcGN9M0rn9P/AbPK0HCn5uokLDmbeqe6u1YgdJL
+m4skA/WsUsMCfsZY27RiZ+B162+laDD0oRiovOx5zKrzG/3yAFVutz2Bfud3QenU
+3zt14ttnzFCcMlglW9oqffHMwQ1Smx/30ccDonoa1E02hnNmxeLyBwomPqd/ZYy6
+zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
+-----END CERTIFICATE-----
+"
+        };
         private static bool trustUnknown;
 
         public static void UpdateUplift(string url)
@@ -187,12 +278,19 @@ JqbaIVifYwqwNN+4lRxS3F5lNlA/il12IOgbRioLI62o8G0DaEUQgHNf8vSG
             bool correct = true;
             if(sslPolicyErrors == SslPolicyErrors.None) return true;
 
-            X509Certificate githubCertificate = new X509Certificate();
-            githubCertificate.Import(Encoding.ASCII.GetBytes(githubCertificateString));
+            X509Certificate[] githubCertificates = new X509Certificate[githubCertificatesString.Length];
+            for(int i = 0; i < githubCertificatesString.Length; i++)
+            {
+                githubCertificates[i] = new X509Certificate();
+                githubCertificates[i].Import(Encoding.ASCII.GetBytes(githubCertificatesString[i]));
+            }            
             
-            if(certificate.GetCertHashString() != githubCertificate.GetCertHashString() && !trustUnknown)
+            if(!(githubCertificates.Any(cert => cert.GetCertHashString() == certificate.GetCertHashString()) || trustUnknown))
             {
                 Debug.LogErrorFormat("The received certificate ({0}) is not known by Uplift. We cannot download the update package. You could update Uplift manually, or go to Preferences and set 'Trust unknown certificates' to true.", certificate.GetCertHashString());
+                Debug.Log("Known certificates are:");
+                foreach(X509Certificate cert in githubCertificates)
+                    Debug.Log(" -- " + cert.GetCertHashString());
                 return false;
             }
 

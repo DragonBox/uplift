@@ -229,9 +229,9 @@ namespace Uplift.Common
             return string.Join("/", path.Split('/', '\\'));
         }
 
-		public static string GetFileMD5(string path)
-		{
-			using(MD5 md5hash = MD5.Create())
+        public static string GetFileMD5(string path)
+        {
+            using(MD5 md5hash = MD5.Create())
             using(StreamReader file = new StreamReader(path))
             {
                 byte[] data = md5hash.ComputeHash(Encoding.UTF8.GetBytes(file.ReadToEnd()));
@@ -242,6 +242,6 @@ namespace Uplift.Common
                 }
                 return sBuilder.ToString();
             }
-		}
-	}
+        }
+    }
 }

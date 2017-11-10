@@ -33,8 +33,6 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Uplift
 {
@@ -73,8 +71,6 @@ namespace Uplift
 
         // --- CLASS DECLARATION ---
         public static readonly string lockfilePath = "Upfile.lock";
-        public static readonly string env_variable = "UPFILE_LOCK_MD5";
-
         protected Upfile upfile;
 
         public enum InstallStrategy {
@@ -315,7 +311,7 @@ namespace Uplift
                 file.WriteLine(result);
             }
 
-            StoreLockfileMD5Environnment();
+            LockFileTracker.SaveState();
         }
 
         private LockfileSnapshot LoadLockfile()
@@ -396,26 +392,6 @@ namespace Uplift
             }
             
             return result;
-        }
-
-        public void StoreLockfileMD5Environnment()
-        {
-            Environment.SetEnvironmentVariable(env_variable, GetLockfileMD5());
-        }
-
-        public string GetLockfileMD5()
-        {
-            using(MD5 md5hash = MD5.Create())
-            using(StreamReader file = new StreamReader(UpliftManager.lockfilePath))
-            {
-                byte[] data = md5hash.ComputeHash(Encoding.UTF8.GetBytes(file.ReadToEnd()));
-                StringBuilder sBuilder = new StringBuilder();
-                for (int i = 0; i < data.Length; i++)
-                {
-                    sBuilder.Append(data[i].ToString("x2"));
-                }
-                return sBuilder.ToString();
-            }
         }
 
         public void InstallPackages(PackageRepo[] targets)

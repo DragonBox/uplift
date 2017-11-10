@@ -42,21 +42,11 @@ namespace Uplift
                 SampleFile.CreateSampleUpfile();
             }
             
-            if(!IsInitialized())
+            if(LockFileTracker.HasChanged())
             {
-                UpliftManager manager = UpliftManager.Instance();
-                manager.InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE, refresh: true);
-                manager.StoreLockfileMD5Environnment();
+                UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE, refresh: true);
+                LockFileTracker.SaveState();
             }
-        }
-
-        private static bool IsInitialized()
-        {
-            UpliftManager manager = UpliftManager.Instance();
-            return string.Equals(
-                Environment.GetEnvironmentVariable(UpliftManager.env_variable),
-                manager.GetLockfileMD5()
-            );
         }
     }
 }

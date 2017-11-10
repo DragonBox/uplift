@@ -65,9 +65,11 @@ FrBHTFxqIP6kDnxiLElBrZngtY07ietaYZVLQN/ETyqLQftsf8TecwTklbjvm8NT
 JqbaIVifYwqwNN+4lRxS3F5lNlA/il12IOgbRioLI62o8G0DaEUQgHNf8vSG
 -----END CERTIFICATE-----
 ";
+        private static bool trustUnknown;
 
         public static void UpdateUplift(string url)
         {
+            trustUnknown = UpliftPreferences.TrustUnknownCertificates();
             string unitypackageName = url.Split('/').Last();
             DirectoryInfo assetsPath = new DirectoryInfo(Application.dataPath);
             string destination = Path.Combine(assetsPath.Parent.FullName, unitypackageName);
@@ -188,7 +190,7 @@ JqbaIVifYwqwNN+4lRxS3F5lNlA/il12IOgbRioLI62o8G0DaEUQgHNf8vSG
             X509Certificate githubCertificate = new X509Certificate();
             githubCertificate.Import(Encoding.ASCII.GetBytes(githubCertificateString));
             
-            if(certificate.GetCertHashString() != githubCertificate.GetCertHashString() && !UpliftPreferences.TrustUnknownCertificates())
+            if(certificate.GetCertHashString() != githubCertificate.GetCertHashString() && !trustUnknown)
             {
                 Debug.LogErrorFormat("The received certificate ({0}) is not known by Uplift. We cannot download the update package. You could update Uplift manually, or go to Preferences and set 'Trust unknown certificates' to true.", certificate.GetCertHashString());
                 return false;

@@ -282,6 +282,7 @@ namespace Uplift.Common
             else if(other is BoundedVersionRequirement)
             {
                 if (IsMetBy((other as BoundedVersionRequirement).lowerBound)) return other;
+                if ((other as BoundedVersionRequirement).IsMetBy(stub)) return this;
             }
             else if(other is ExactVersionRequirement)
             {
@@ -315,14 +316,10 @@ namespace Uplift.Common
 
         public IVersionRequirement RestrictTo(IVersionRequirement other)
         {
-            if (other is NoRequirement || other is MinimalVersionRequirement)
+            if (other is NoRequirement || other is MinimalVersionRequirement || other is LoseVersionRequirement)
             {
                 return other.RestrictTo(this);
-            }
-            else if(other is LoseVersionRequirement)
-            {
-                if (IsMetBy((other as LoseVersionRequirement).stub)) return other;
-            }
+            }   
             else if(other is BoundedVersionRequirement)
             {
                 if (IsMetBy((other as BoundedVersionRequirement).lowerBound)) return other;

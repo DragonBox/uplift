@@ -26,12 +26,8 @@ using UnityEditor;
 using UnityEngine;
 using Uplift.Common;
 using Uplift.Schemas;
-using Uplift.Windows;
 using Uplift.Updating;
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using UnityEngine.Networking;
 
 namespace Uplift
 {

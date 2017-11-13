@@ -204,7 +204,7 @@ zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
             if(forceCheck || ShouldCheck())
             {
                 EditorApplication.update += EditorUpdate;
-    			updateCoroutine = CheckForUpdateRoutine();
+                updateCoroutine = CheckForUpdateRoutine();
             }
         }
         

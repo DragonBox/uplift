@@ -28,6 +28,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using Uplift.Common;
+using Uplift.GitHubModule;
 using Uplift.Windows;
 using System.Net;
 using System.Linq;
@@ -230,70 +231,29 @@ zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
         }
         
         private static IEnumerator CheckForUpdateRoutine() {
-            IEnumerator e = GetReleasesJson();
+            IEnumerator e = GitHub.LoadReleases("https://api.github.com/repos/DragonBox/uplift/releases");
             while (e.MoveNext()) yield return e.Current;
 
-            string json = (string) e.Current;
+            GitHubRelease[] releases = (GitHubRelease[]) e.Current;
 
-            if (json == null) {
+            if (releases == null)
+            {
                 Debug.LogError ("Unable to check for Uplift updates");
-            } else {
-                System.Object obj = MiniJSON.Json.Deserialize (json);
-                List<System.Object> releases = (List<System.Object>)obj;
-                Dictionary<string, object> latest = releases[0] as Dictionary<string, object>;
-
-                foreach (Dictionary<string, object> release in releases)
-                    if(VersionParser.GreaterThan((string)release ["tag_name"], (string)latest ["tag_name"]))
-                        latest = release;
-                
-                if(VersionParser.GreaterThan((string)latest ["tag_name"], About.Version))
-                {
-                    Debug.Log("There is a new version of Uplift available!");
-                    UpdatePopup popup = EditorWindow.GetWindow(typeof(UpdatePopup), true) as UpdatePopup;
-                    popup.SetInformations(
-                        (string)latest["tag_name"],
-                        ExtractUnityPackageUrl(latest),
-                        (string)latest["body"]
-                    );
-                }
-                else
-                {
-                    Debug.Log("No update for Uplift available");
-                }
-                
+            }
+            else if(!releases.Any(release => VersionParser.GreaterThan(release.tag, About.Version)))
+            {
+                Debug.Log("No udpate for Uplift available");
+            }
+            else
+            {
+                UpdatePopup popup = EditorWindow.GetWindow(typeof(UpdatePopup), true) as UpdatePopup;
+                popup.SetReleases(releases.Where(release => VersionParser.GreaterThan(release.tag, About.Version)).ToArray());
             }
             EditorApplication.update -= EditorUpdate;
             EditorPrefs.SetString(
                 lastUpdateCheckKey,
                 DateTime.UtcNow.ToString(dateFormat, provider)
             );
-        }
-
-        private static IEnumerator GetReleasesJson() {
-            string url = "https://api.github.com/repos/DragonBox/uplift/releases";
-            WWW www = new WWW (url);
-            while (www.isDone == false)
-                yield return null;
-            yield return www;
-            if(!string.IsNullOrEmpty(www.error)) {
-                Debug.Log(www.error);
-            }
-            else {
-                yield return www.text;
-            }
-        }
-
-        private static string ExtractUnityPackageUrl(Dictionary<string, object> release)
-        {
-            if (release["assets"] == null) return string.Empty;
-            List<System.Object> assets = (List<System.Object>)release["assets"];
-            foreach (Dictionary<string, object> asset in assets) {
-                string downloadUrl = (string)asset["browser_download_url"];
-                if(downloadUrl.EndsWith(".unitypackage"))
-                    return downloadUrl;
-            }
-
-            return string.Empty;
         }
 
         private static bool CertificateValidationCallback(

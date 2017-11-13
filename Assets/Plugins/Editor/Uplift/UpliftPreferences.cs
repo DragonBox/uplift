@@ -46,6 +46,7 @@ namespace Uplift
                 prefsLoaded = true;
             }
             EditorGUILayout.LabelField("SSL Certificates:", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox("Uplift uses SSL certificates when updating itself, as it fetches its update from Github with HTTPS", MessageType.Info);
             EditorGUILayout.HelpBox(
                 "Unknown certificates could be the result of our registered certificates being outdated or the result of a potential attack. Trusting unknown certificates could lead to security breaches. Use at your own risk!",
                 MessageType.Warning

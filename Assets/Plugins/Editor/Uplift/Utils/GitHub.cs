@@ -59,7 +59,6 @@ namespace Uplift.GitHubModule
 
             System.Object obj = MiniJSON.Json.Deserialize (jsonString);
             List<System.Object> releases = (List<System.Object>)obj;
-            Dictionary<string, object> latest = releases[0] as Dictionary<string, object>;
 
             foreach (Dictionary<string, object> releaseObject in releases)
             {

@@ -31,8 +31,10 @@ namespace Uplift
     {
         private static bool prefsLoaded = false;
         private static readonly string useExperimentalFeaturesKey = "UpliftExperimentalFeatures";
+        private static readonly string trustUnknownCertificatesKey = "UpliftUnknownCertificates";
 
         private static bool useExperimentalFeatures;
+        private static bool trustUnknownCertificates;
 
         [PreferenceItem("Uplift")]
         public static void PreferencesGUI()
@@ -40,9 +42,18 @@ namespace Uplift
             if(!prefsLoaded)
             {
                 useExperimentalFeatures = EditorPrefs.GetBool(useExperimentalFeaturesKey, false);
+                trustUnknownCertificates = EditorPrefs.GetBool(trustUnknownCertificatesKey, false);
                 prefsLoaded = true;
             }
+            EditorGUILayout.LabelField("SSL Certificates:", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox("Uplift uses SSL certificates when updating itself, as it fetches its update from Github with HTTPS", MessageType.Info);
+            EditorGUILayout.HelpBox(
+                "Unknown certificates could be the result of our registered certificates being outdated or the result of a potential attack. Trusting unknown certificates could lead to security breaches. Use at your own risk!",
+                MessageType.Warning
+            );
+            trustUnknownCertificates = EditorGUILayout.Toggle("Trust unknown certificates", trustUnknownCertificates);
 
+            EditorGUILayout.LabelField("Experimental features:", EditorStyles.boldLabel);
             EditorGUILayout.HelpBox(
                 "Experimental features are not thoroughly tested and could induce bugs. Use at your own risk!",
                 MessageType.Warning
@@ -50,12 +61,20 @@ namespace Uplift
             useExperimentalFeatures = EditorGUILayout.Toggle("Use experimental features", useExperimentalFeatures);
 
             if(GUI.changed)
+            {
                 EditorPrefs.SetBool(useExperimentalFeaturesKey, useExperimentalFeatures);
+                EditorPrefs.SetBool(trustUnknownCertificatesKey, trustUnknownCertificates);
+            }
         }
 
         public static bool UseExperimental()
         {
             return EditorPrefs.GetBool(useExperimentalFeaturesKey, false);
+        }
+
+        public static bool TrustUnknownCertificates()
+        {
+            return EditorPrefs.GetBool(trustUnknownCertificatesKey, false);
         }
     }
 }

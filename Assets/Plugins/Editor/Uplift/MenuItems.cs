@@ -29,6 +29,7 @@ using Uplift.Windows;
 using Uplift.Schemas;
 using Uplift.Packages;
 using Uplift.Common;
+using Uplift.Updating;
 using System.Linq;
 
 using Uplift.Export;
@@ -178,6 +179,12 @@ namespace Uplift
         private static void AboutUplift()
         {
             EditorWindow.GetWindow(typeof(AboutWindow));
+        }
+
+        [MenuItem("Tools/Uplift/Try to update Uplift", false, 2001)]
+        private static void TryUpdateUplift()
+        {
+            Updater.CheckForUpdate(true);
         }
     }
 }

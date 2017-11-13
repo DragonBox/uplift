@@ -26,11 +26,13 @@ using UnityEditor;
 using UnityEngine;
 using Uplift.Common;
 using Uplift.Schemas;
+using Uplift.Updating;
 using System;
 
 namespace Uplift
 {
     [InitializeOnLoad]
+    [ExecuteInEditMode]
     public class Initialize : MonoBehaviour
     {
         static Initialize()
@@ -47,6 +49,8 @@ namespace Uplift
                 UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE, refresh: true);
                 LockFileTracker.SaveState();
             }
+
+            Updater.CheckForUpdate();
         }
     }
 }

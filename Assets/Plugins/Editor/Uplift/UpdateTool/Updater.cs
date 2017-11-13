@@ -240,23 +240,27 @@ zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
             } else {
                 System.Object obj = MiniJSON.Json.Deserialize (json);
                 List<System.Object> releases = (List<System.Object>)obj;
+                Dictionary<string, object> latest = releases[0] as Dictionary<string, object>;
+
                 foreach (Dictionary<string, object> release in releases)
+                    if(VersionParser.GreaterThan((string)release ["tag_name"], (string)latest ["tag_name"]))
+                        latest = release;
+                
+                if(VersionParser.GreaterThan((string)latest ["tag_name"], About.Version))
                 {
-                    if(VersionParser.GreaterThan((string)release ["tag_name"], About.Version))
-                    {
-                        Debug.Log("There is a new version of Uplift available!");
-                        UpdatePopup popup = EditorWindow.GetWindow(typeof(UpdatePopup), true) as UpdatePopup;
-                        popup.SetInformations(
-                            (string)release["tag_name"],
-                            ExtractUnityPackageUrl(release),
-                            (string)release["body"]
-                        );
-                    }
-                    else
-                    {
-                        Debug.Log("No update for Uplift available");
-                    }
+                    Debug.Log("There is a new version of Uplift available!");
+                    UpdatePopup popup = EditorWindow.GetWindow(typeof(UpdatePopup), true) as UpdatePopup;
+                    popup.SetInformations(
+                        (string)latest["tag_name"],
+                        ExtractUnityPackageUrl(latest),
+                        (string)latest["body"]
+                    );
                 }
+                else
+                {
+                    Debug.Log("No update for Uplift available");
+                }
+                
             }
             EditorApplication.update -= EditorUpdate;
             EditorPrefs.SetString(

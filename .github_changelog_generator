@@ -1,0 +1,5 @@
+future-release=v1.0.0beta2
+since-tag=v1.0.0beta1
+exclude_tags_regex=v0\.[0-8]\..*
+exclude-labels=nochangelog
+cache_log=./github-changelog-generator.log

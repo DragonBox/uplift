@@ -26,7 +26,7 @@ namespace Uplift
 {
     internal static class About
     {
-        public static readonly string Version = "1.0.0beta1";
+        public static readonly string Version = "1.0.0beta2";
         public static readonly string[] Authors = new string[]
         {
             "Przemysław Kamiński",

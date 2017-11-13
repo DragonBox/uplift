@@ -25,38 +25,218 @@
 # Please refrain from expanding this file unless really necessary
 
 require 'fileutils'
+require 'github_api'
+require 'u3d'
+
+UI = U3dCore::UI
 
 task :chdir do
-    file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
-    rakefile_dir = File.expand_path File.dirname file
-    Dir.chdir(File.join(rakefile_dir, '..'))
+  file = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
+  rakefile_dir = File.expand_path File.dirname file
+  Dir.chdir(File.join(rakefile_dir, '..'))
 end
 
-task :install_gems => [:chdir] do
-    sh('bundle install')
+task install_gems: [:chdir] do
+  sh('bundle install')
 end
 
-desc "Run the tests using u3d"
-task :test => [:chdir] do
-    pwd = Dir.pwd
-    sh "bundle exec u3d run -- -logFile u3d.log -runTests -projectPath #{pwd} -testResults #{pwd}/results.xml -testPlatform editmode -batchmode"
+desc 'Run the tests using u3d'
+task test: [:chdir] do
+  pwd = Dir.pwd
+  sh "bundle exec u3d run -- -logFile u3d.log -runTests -projectPath #{pwd} -testResults #{pwd}/results.xml -testPlatform editmode -batchmode"
 end
 
 desc 'Build the Uplift DLL and the unitypackage contain the DLL and its dependencies'
-task :build, [:unity_version] => [:chdir] do |t, args|
-    args.with_defaults(unity_version: '5.6.0f3')
-    unity_version = args[:unity_version]
-    File.write("ProjectSettings/ProjectVersion.txt", "m_EditorVersion: #{unity_version}")
-    FileUtils.cp("ProjectSettings/ProjectVersion.txt", "Build/ProjectSettings/ProjectVersion.txt")
+task :build, [:unity_version] => [:chdir] do |_t, args|
+  args.with_defaults(unity_version: '5.6.0f3')
+  unity_version = args[:unity_version]
+  File.write('ProjectSettings/ProjectVersion.txt', "m_EditorVersion: #{unity_version}")
+  FileUtils.cp('ProjectSettings/ProjectVersion.txt', 'Build/ProjectSettings/ProjectVersion.txt')
 
-    sh('bundle exec u3d -- -logFile u3d.log -batchmode -quit -executeMethod BuildTool.DllCompiler.BuildPackage')
+  sh('bundle exec u3d -- -logFile u3d.log -batchmode -quit -executeMethod BuildTool.DllCompiler.BuildPackage')
 
-    editor_dir = File.join('Assets', 'Plugins', 'Editor')
-    # prepare a Unity package
-    dirs = [ editor_dir ]
-    uplift_package = File.absolute_path File.join('target', "Uplift_#{unity_version}.unitypackage")
-    Dir.chdir('Build') do
-        sh("bundle exec u3d -- -logFile u3d.log -batchmode -quit -exportPackage #{dirs.join(" ")} #{uplift_package}")
-    end
-    puts "File #{uplift_package} generated!"
+  editor_dir = File.join('Assets', 'Plugins', 'Editor')
+  # prepare a Unity package
+  dirs = [editor_dir]
+  uplift_package = File.absolute_path File.join('target', "Uplift_#{unity_version}.unitypackage")
+  Dir.chdir('Build') do
+    sh("bundle exec u3d -- -logFile u3d.log -batchmode -quit -exportPackage #{dirs.join(' ')} #{uplift_package}")
+  end
+  puts "File #{uplift_package} generated!"
 end
+
+# DEPLOYMENT
+
+artifact_targets = ['5.6.0f3', '2017.1.2f1']
+repository = 'uplift'
+owner = 'Dragonbox'
+
+desc 'Make sure the current branch is master, and no changes have been made'
+task :ensure_git_clean do
+  branch = run_command('git rev-parse --abbrev-ref HEAD', "Couldn't get current git branch").strip
+  UI.user_error!("You are not on 'master' but on '#{branch}'") unless branch == 'master'
+  output = run_command('git status --porcelain', "Couldn't get git status")
+  UI.user_error!("git status not clean:\n#{output}") unless output == ''
+end
+
+task :prepare_git_pr, [:pr_branch] do |_t, args|
+  pr_branch = args['pr_branch']
+  raise 'Missing pr_branch argument' unless pr_branch
+  UI.user_error! 'Prepare git PR stopped by user' unless UI.confirm("Creating PR branch #{pr_branch}")
+  run_command("git checkout -b #{pr_branch}")
+end
+
+desc 'Bump the version number to the version entered interactively; pushes a commit to master'
+task bump: %i[ensure_git_clean chdir] do
+  nextversion = UI.input 'Next version will be:'
+  UI.user_error! 'Bump version stopped by user' unless UI.confirm("Next version will be #{nextversion}. Confirm?")
+  UpliftCode.version = nextversion
+  GithubChangelogGenerator.future_release = nextversion
+  sh 'git add .github_changelog_generator Assets/Plugins/Editor/Uplift/About.cs'
+  sh "git commit -m \"Bump version to #{nextversion}\""
+  sh 'git push'
+end
+
+desc 'Update the changelog, no commit made'
+task :changelog do
+  puts "Updating changelog #{ENV['UPLIFT_GITHUB_TOKEN']}"
+  sh 'github_changelog_generator' if ENV['UPLIFT_GITHUB_TOKEN']
+end
+
+desc 'Prepare a release: check repo status, generate changelog, create PR'
+task pre_release: %i[ensure_git_clean chdir] do
+  nextversion = UpliftCode.version
+
+  # check if not already prereleased
+  output = run_command("git tag -l v#{nextversion}").strip
+  UI.user_error! "Version '#{nextversion}' already released. Run 'rake bump'" unless output == ''
+
+  gh_future_release = GithubChangelogGenerator.future_release
+  UI.user_error! "GithubChangelogGenerator version #{gh_future_release} != #{nextversion}" unless gh_future_release == nextversion
+
+  pr_branch = "release_#{nextversion}"
+  Rake::Task['prepare_git_pr'].invoke(pr_branch)
+
+  Rake::Task['changelog'].invoke
+
+  UI.user_error! 'Pre release stopped by user.' unless UI.confirm("CHANGELOG PR for version #{nextversion}. Confirm?")
+
+  msg = "Preparing release for #{nextversion}"
+  sh 'git add CHANGELOG.md'
+  sh "git commit -m \"#{msg}\""
+  sh "git push origin #{pr_branch}"
+
+  github = MyGithub.github
+  github.pull_requests.create owner, repository,
+    title: msg,
+    body: 'This is automatically generated to prepare for the new version',
+    head: pr_branch,
+    base: 'master'
+
+  sh 'git checkout master'
+  sh "git branch -D #{pr_branch}"
+end
+
+desc 'Release the new version and generate artifacts to attach to it'
+task release: %i[ensure_git_clean chdir] do
+  nextversion = UpliftCode.version
+
+  # check if preleased
+  output = run_command("git tag -l v#{nextversion}").strip
+  UI.user_error! "Version '#{nextversion}' has not been prepared, run 'rake pre_release'" if output == ''
+
+  tag_name = 'v' + nextversion
+
+  github = MyGithub.github
+  release = github.repos.releases.create owner, repository,
+    tag_name: tag_name,
+    target_commitish: 'master',
+    name: "Release for version #{tag_name}",
+    draft: true,
+    prelease: false
+
+  artifact_targets.each do |tar|
+    puts "--- #{tar} ---"
+    Rake::Task['build'].invoke(tar)
+    Rake::Task['build'].reenable
+  end
+
+  Dir['target/*.unitypackage'].each do |artifact|
+    github.repos.releases.assets.upload owner, repository, release['id'], artifact,
+      name: File.basename(artifact),
+      content_type: 'application/octet-stream'
+  end
+end
+
+class GithubChangelogGenerator
+  PATH = '.github_changelog_generator'.freeze
+  class << self
+      def future_release
+        s = File.read(PATH)
+        s.split("\n").each do |line|
+          m = line.match(/future-release=v(.*)/)
+          return m[1] if m
+        end
+        raise "Couldn't find future-release in #{PATH}"
+      end
+
+      def future_release=(nextv)
+        s = File.read(PATH)
+        lines = s.split("\n").map do |line|
+          m = line.match(/future-release=v(.*)/)
+          if m
+            "future-release=v#{nextv}"
+          else
+            line
+          end
+        end
+        File.write(PATH, lines.join("\n") + "\n")
+      end
+  end
+end
+
+class UpliftCode
+  PATH = 'Assets/Plugins/Editor/Uplift/About.cs'.freeze
+  class << self
+      def version
+        s = File.read(PATH)
+        s.split("\n").each do |line|
+          m = line.match(/public static readonly string Version = "(.*)"/)
+          return m[1] if m
+        end
+        UI.user_error! 'Could not retrieve version from codebase'
+      end
+
+      def version=(version)
+        s = File.read(PATH)
+        lines = s.split("\n").map do |line|
+          m = line.match(/(.*public static readonly string Version = ").*(".*)/)
+          if m
+            "#{m[1]}#{version}#{m[2]}"
+          else
+            line
+          end
+        end
+        File.write(PATH, lines.join("\n") + "\n")
+      end
+  end
+end
+
+class MyGithub
+  @github
+  def self.github
+    @github = Github.new oauth_token: ENV['UPLIFT_GITHUB_TOKEN'] unless @github
+    @github
+  end
+end
+
+def run_command(command, error_message = nil)
+  output = `#{command}`
+  unless $CHILD_STATUS.success?
+    error_message = "Failed to run command '#{command}'" if error_message.nil?
+    UI.user_error!(error_message)
+  end
+  output
+end
+
+task default: ['test']

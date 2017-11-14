@@ -8,6 +8,7 @@ namespace Uplift
 
         public static bool HasChanged()
         {
+            if(!System.IO.File.Exists(UpliftManager.lockfilePath)) return false;
             string currentMD5 = Uplift.Common.FileSystemUtil.GetFileMD5(UpliftManager.lockfilePath);
             string oldMD5 = Environment.GetEnvironmentVariable(envVariable);
 

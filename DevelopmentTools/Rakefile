@@ -141,10 +141,6 @@ desc 'Release the new version and generate artifacts to attach to it'
 task release: %i[ensure_git_clean chdir] do
   nextversion = UpliftCode.version
 
-  # check if preleased
-  output = run_command("git tag -l v#{nextversion}").strip
-  UI.user_error! "Version '#{nextversion}' has not been prepared, run 'rake pre_release'" if output == ''
-
   tag_name = 'v' + nextversion
 
   github = MyGithub.github

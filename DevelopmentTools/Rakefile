@@ -162,7 +162,7 @@ task release: %i[ensure_git_clean chdir] do
   release = github.repos.releases.create owner, repository,
                                          tag_name: tag_name,
                                          target_commitish: 'master',
-                                         name: "Release for version #{tag_name}",
+                                         name: "Version #{tag_name}",
                                          body: release_notes,
                                          draft: true,
                                          prelease: false

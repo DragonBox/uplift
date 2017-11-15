@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
-using SharpCompress.Archives;
-using SharpCompress.Archives.Tar;
 using UnityEngine;
 using Uplift.Extensions;
 
@@ -23,112 +25,217 @@ namespace Uplift.Common
         }
 
         /// <summary>
-        /// Extracts a package at archivePath, and unpacks it at destinationPath
+        /// Extracts a package from archivePath, and unpacks it at destinationPath
         /// </summary>
         public void Extract(string archivePath, string destinationPath)
         {
-            using (MemoryStream TarArchiveMS = new MemoryStream())
+            using (FileStream compressedFileStream = File.OpenRead(archivePath))
             {
-                using (FileStream originalFileStream = new FileStream(archivePath, FileMode.Open))
+                GZipStream gzipFileStream = new GZipStream(compressedFileStream, CompressionMode.Decompress);
+                BinaryReader reader = new BinaryReader(gzipFileStream);
+                int readBufferSize = 1024 * 1024 * 10;
+                int tarBlockSize = 512;
+                byte[] readBuffer = new byte[readBufferSize];
+                Regex hashPattern = new Regex(@"^([a-f\d]{20,})\/");
+
+                byte[] rawAsset = null;
+                byte[] rawMeta = null;
+                string path = null;
+
+                while (true)
                 {
-                    using (GZipStream decompressionStream =
-                        new GZipStream(originalFileStream, CompressionMode.Decompress))
+                    byte[] headerBuffer = reader.ReadBytes(tarBlockSize);                   //We want the header, but the header is padded to a blocksize
+                    if (headerBuffer.All(x => x == 0))
                     {
-                        decompressionStream.CopyTo(TarArchiveMS);
-                        TarArchiveMS.Position = 0;
+                        //Reached end of stream
+                        break;
                     }
-                }
-                TarArchive reader = TarArchive.Open(TarArchiveMS);
+                    GCHandle handle = GCHandle.Alloc(headerBuffer, GCHandleType.Pinned);
+                    TarHeader header;
+                    header = (TarHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(TarHeader));
+                    handle.Free();
 
-                string assetPath = null;
-                MemoryStream assetMS = null;
-                MemoryStream metaMS = null;
-                foreach (TarArchiveEntry entry in reader.Entries)
-                {
-                    if (entry.IsDirectory) continue;
+                    string filename;
+                    unsafe
+                    {
+                        filename = Marshal.PtrToStringAnsi((IntPtr)header.filename, 100);
+                    }
+                    filename = filename.Trim();
+                    filename = filename.TrimEnd(new char[] { (char)0 });
 
-                    if (entry.Key.EndsWith("asset"))
+                    //Debug.Log((char)header.linkIndicator);
+                    string ustar;
+                    unsafe
                     {
-                        if (assetMS != null)
-                            throw new InvalidOperationException("Unexpected state: assetMS not null");
+                        ustar = Marshal.PtrToStringAnsi((IntPtr)header.ustar, 6);
+                    }
+                    string prefix = string.Empty;
+                    if (ustar.Equals("ustar"))
+                    {
+                        unsafe
+                        {
+                            prefix = Marshal.PtrToStringAnsi((IntPtr)header.prefix, 155);
+                        }
+                    }
+                    //Debug.Log(prefix + filename);
+                    prefix = prefix.Trim();
+                    prefix = prefix.TrimEnd(new char[] { (char)0 });
 
-                        assetMS = new MemoryStream();
-                        entry.WriteTo(assetMS);
-                        assetMS.Position = 0;
-                        continue;
-                    }
-                    if (entry.Key.EndsWith("metaData"))
+                    string fullname = prefix + filename;
+                    Match hashMatch = hashPattern.Match(fullname);
+
+                    bool extractPathName = false;
+                    bool extractRawMeta = false;
+                    bool extractRawAsset = false;
+
+                    string hash = string.Empty;
+                    if (hashMatch.Success)
                     {
-                        throw new NotSupportedException("The package has been packed by a Unity version prior to Unity5, and we do not support this. Contact the package maintainer for updated version.");
-                    }
-                    if (entry.Key.EndsWith("meta"))
-                    {
-                        metaMS = new MemoryStream();
-                        entry.WriteTo(metaMS);
-                        metaMS.Position = 0;
-                        continue;
-                    }
-                    if (entry.Key.EndsWith("pathname"))
-                    {
-                        MemoryStream MSM = new MemoryStream();
-                        entry.WriteTo(MSM);
-                        MSM.Position = 0;
-                        using (StreamReader SR = new StreamReader(MSM))
+                        // Group g = hashMatch.Groups[1];
+                        // hash = g.Value;
+                        // if (!packageContents.ContainsKey(hash))
+                        // {
+
+                        // }
+
+                        if (fullname.EndsWith("/asset.meta"))
                         {
-                            assetPath = SR.ReadToEnd().Split('\n')[0];
+                            extractRawMeta = true;
+                        }
+                        if (fullname.EndsWith("/asset"))
+                        {
+                            extractRawAsset = true;
+                        }
+                        if (fullname.EndsWith("/pathname"))
+                        {
+                            extractPathName = true;
                         }
                     }
-                    if (assetPath != null)
+
+                    string rawFilesize;
+                    unsafe
                     {
-                        string AssetPath = System.IO.Path.Combine(destinationPath, assetPath.Replace('/', System.IO.Path.DirectorySeparatorChar));
-                        if (assetMS == null)
+                        rawFilesize = Marshal.PtrToStringAnsi((IntPtr)header.filesize, 12);
+                    }
+                    string filesize = rawFilesize.Trim();
+                    filesize = filesize.TrimEnd(new char[] { (char)0 });
+                    /*Debug.Log(filesize);
+                    foreach (byte fsChar in filesize)
+                    {
+                        Debug.Log(fsChar);
+                    }*/
+
+                    //Convert the octal string to a decimal number
+                    try
+                    {
+                        int filesizeInt = Convert.ToInt32(filesize, 8);
+                        int toRead = filesizeInt;
+                        int modulus = filesizeInt % tarBlockSize;
+                        if (modulus > 0)
+                            toRead += (tarBlockSize - modulus);    //Read the file and assume it's also 512 byte padded
+                        while (toRead > 0)
                         {
-                            // asset is a directory
-                            if (!Directory.Exists(AssetPath))
+                            int readThisTime = Math.Min(readBufferSize, toRead);
+                            readBuffer = reader.ReadBytes(readThisTime);
+                            if (extractPathName)
                             {
-                                Directory.CreateDirectory(AssetPath);
+                                if (toRead > readThisTime)
+                                    throw new Exception("Assumed a pathname would fit in a single read!");
+                                string pathnameFileContents = Encoding.UTF8.GetString(readBuffer, 0, filesizeInt);
+                                path = FormatPath(pathnameFileContents.Split(new char[] { '\n' })[0]);
+                                Debug.Log(path);
                             }
-                            if (metaMS != null)
+                            else if(extractRawMeta)
                             {
-                                string MetaPath = AssetPath + ".meta";
-                                using (FileStream FS = new FileStream(MetaPath, FileMode.Create))
-                                {
-                                    metaMS.CopyTo(FS);
-                                }
-                                metaMS.Dispose();
-                                metaMS = null;
-                            } else {
-                                // asset is a broken directory - missing meta
-                                Debug.LogError("Directory at path " + assetPath + " doesn't have its meta.");
+                                if(rawMeta == null) rawMeta = new byte[0];
+                                int rawLength = rawMeta.Length;
+                                Array.Resize<byte>(ref rawMeta, rawLength + readThisTime);
+                                Array.Copy(readBuffer, 0, rawMeta, rawLength, readThisTime);
                             }
-                            assetPath = null;
-                            continue;
-                        }
-                        var AssetPathDir = new FileInfo(AssetPath).Directory.FullName;
-                        if (!Directory.Exists(AssetPathDir))
-                        {
-                            Directory.CreateDirectory(AssetPathDir);
-                        }
-                        using (FileStream FS = new FileStream(AssetPath, FileMode.Create))
-                        {
-                            assetMS.CopyTo(FS);
-                        }
-                        assetMS.Dispose();
-                        assetMS = null;
-                        if (metaMS != null)
-                        {
-                            string MetaPath = AssetPath + ".meta";
-                            using (FileStream FS = new FileStream(MetaPath, FileMode.Create))
+                            else if(extractRawAsset)
                             {
-                                metaMS.CopyTo(FS);
+                                if(rawAsset == null) rawAsset = new byte[0];
+                                int rawLength = rawAsset.Length;
+                                Array.Resize<byte>(ref rawAsset, rawLength + readThisTime);
+                                Array.Copy(readBuffer, 0, rawAsset, rawLength, readThisTime);
                             }
-                            metaMS.Dispose();
-                            metaMS = null;
+                            toRead -= readThisTime;
                         }
-                        assetPath = null;
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Log(String.Format("Caught Exception converting octal string to int: {0}", ex.Message));
+                        foreach (byte fsChar in filesize)
+                        {
+                            Debug.Log(fsChar);
+                        }
+                        throw;
+                    }
+
+                    // Path has been read, write to file system
+                    if(path != null)
+                    {
+                        string target = Path.Combine(destinationPath, path);
+                        Uplift.Common.FileSystemUtil.EnsureParentExists(target);
+
+                        // Asset or not? (ie directory)
+                        if(rawAsset == null)
+                        {
+                            Directory.CreateDirectory(target);
+                        }
+                        else
+                        {
+                            using (FileStream fs = new FileStream(target, FileMode.Create))
+                            {
+                                fs.Write(rawAsset, 0, rawAsset.Length);
+                            }
+                            rawAsset = null;
+                        }
+
+                        // Create meta
+                        if(rawMeta != null)
+                        {
+                            using (FileStream fs = new FileStream(target + ".meta", FileMode.Create))
+                            {
+                                fs.Write(rawMeta, 0, rawMeta.Length);
+                            }
+                            rawMeta = null;
+                        }
+
+                        path = null;
                     }
                 }
             }
         }
+
+        private string FormatPath(string path)
+        {
+            string outPath = path.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToLower().TrimStart(new char[] { '/' });
+            if (outPath.StartsWith("./"))
+                outPath = outPath.Substring(2);
+            return outPath;
+        }
+        
+        [StructLayout(LayoutKind.Sequential)]
+        private unsafe struct TarHeader
+        {
+            public fixed byte filename[100];
+            public fixed byte filemode[8];
+            public fixed byte uid[8];
+            public fixed byte gid[8];
+            public fixed byte filesize[12]; //Octal
+            public fixed byte modtime[12];
+            public fixed byte checksum[8];
+            public byte linkIndicator;      //OR Type flag in UStar format
+            public fixed byte linkname[100];
+            //USTAR fields
+            public fixed byte ustar[6];
+            public fixed byte ustarVersion[2];
+            public fixed byte uname[32];
+            public fixed byte ugroupname[32];
+            public fixed byte major[8];
+            public fixed byte minor[8];
+            public fixed byte prefix[155];
+        };
     }
 }

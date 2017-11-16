@@ -64,7 +64,7 @@ namespace BuildTool {
 			args.Add ("-target:library");
 			args.Add ("-sdk:" + data.SdkLevel.ToString ());
 			args.Add ("-out:" + data.OutFile);
-            if(data.useUnsafe)
+			if(data.useUnsafe)
 			    args.Add ("-unsafe");
 			args.AddRange (data.Files);
 

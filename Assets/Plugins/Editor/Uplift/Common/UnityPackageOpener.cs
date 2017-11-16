@@ -113,7 +113,6 @@ namespace Uplift.Common
                     bool extractRawMeta = false;
                     bool extractRawAsset = false;
 
-                    string hash = string.Empty;
                     if (hashMatch.Success)
                     {
                         if (fullname.EndsWith("/asset.meta"))

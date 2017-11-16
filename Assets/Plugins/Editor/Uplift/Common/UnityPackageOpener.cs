@@ -210,7 +210,7 @@ namespace Uplift.Common
 
         private string FormatPath(string path)
         {
-            string outPath = path.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToLower().TrimStart(new char[] { '/' });
+            string outPath = path.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).TrimStart(new char[] { '/' });
             if (outPath.StartsWith("./"))
                 outPath = outPath.Substring(2);
             return outPath;

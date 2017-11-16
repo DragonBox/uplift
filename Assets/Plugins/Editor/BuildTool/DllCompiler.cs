@@ -48,8 +48,7 @@ namespace BuildTool {
 
 			Data.References = new string[] {
 				unity.Paths().Managed("UnityEditor.dll"),
-				unity.Paths().Managed("UnityEngine.dll"),
-				Helper.PathCombine("Assets", "Plugins", "Editor", "SharpCompress.dll")
+				unity.Paths().Managed("UnityEngine.dll")
 			};
 
 			// All under Uplift except Testing code
@@ -70,12 +69,6 @@ namespace BuildTool {
 			string EditorDir = Helper.PathCombine ("Assets", "Plugins", "Editor");
 			string EditorPackingDir = Helper.PathCombine (PackingDir, EditorDir);
 			FileSystemUtil.EnsureDirExists (EditorPackingDir);
-
-			// copy packaged dependencies from current project into packing dir
-			string[] DllAndMeta = System.IO.Directory.GetFiles(EditorDir, "SharpCompress.dll*", SearchOption.AllDirectories);
-			foreach (string path in DllAndMeta) {
-				CopyFileExactly(path, Helper.PathCombine (PackingDir, path));
-			}
 
 			string UpliftDir = Helper.PathCombine ("Assets", "Plugins", "Editor", "Uplift");
 			string UpliftPackingDir = Helper.PathCombine (PackingDir, UpliftDir);

@@ -28,8 +28,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Xml.Serialization;
-using SharpCompress.Archives;
-using SharpCompress.Archives.Tar;
 using Uplift.Extensions;
 using UnityEngine;
 using UnityEditor;

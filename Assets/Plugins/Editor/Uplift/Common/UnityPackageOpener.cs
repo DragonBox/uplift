@@ -71,7 +71,7 @@ namespace Uplift.Common
 
                 while (true)
                 {
-                    byte[] headerBuffer = reader.ReadBytes(tarBlockSize);                   //We want the header, but the header is padded to a blocksize
+                    byte[] headerBuffer = reader.ReadBytes(tarBlockSize);   //We want the header, but the header is padded to a blocksize
                     if (headerBuffer.All(x => x == 0))
                     {
                         //Reached end of stream
@@ -90,7 +90,6 @@ namespace Uplift.Common
                     filename = filename.Trim();
                     filename = filename.TrimEnd(new char[] { (char)0 });
 
-                    //Debug.Log((char)header.linkIndicator);
                     string ustar;
                     unsafe
                     {
@@ -104,7 +103,6 @@ namespace Uplift.Common
                             prefix = Marshal.PtrToStringAnsi((IntPtr)header.prefix, 155);
                         }
                     }
-                    //Debug.Log(prefix + filename);
                     prefix = prefix.Trim();
                     prefix = prefix.TrimEnd(new char[] { (char)0 });
 
@@ -118,13 +116,6 @@ namespace Uplift.Common
                     string hash = string.Empty;
                     if (hashMatch.Success)
                     {
-                        // Group g = hashMatch.Groups[1];
-                        // hash = g.Value;
-                        // if (!packageContents.ContainsKey(hash))
-                        // {
-
-                        // }
-
                         if (fullname.EndsWith("/asset.meta"))
                         {
                             extractRawMeta = true;
@@ -146,11 +137,6 @@ namespace Uplift.Common
                     }
                     string filesize = rawFilesize.Trim();
                     filesize = filesize.TrimEnd(new char[] { (char)0 });
-                    Debug.Log(filesize);
-                    /*foreach (byte fsChar in filesize)
-                    {
-                        Debug.Log(fsChar);
-                    }*/
 
                     //Convert the octal string to a decimal number
                     try
@@ -158,7 +144,6 @@ namespace Uplift.Common
                         int filesizeInt = Convert.ToInt32(filesize, 8);
                         int toRead = filesizeInt;
                         int toWrite = filesizeInt;
-                        Debug.Log(filesizeInt);
                         int modulus = filesizeInt % tarBlockSize;
                         if (modulus > 0)
                             toRead += (tarBlockSize - modulus);    //Read the file and assume it's also 512 byte padded

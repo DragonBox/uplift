@@ -119,8 +119,8 @@ namespace Uplift.Common
                     }
                     string filesize = rawFilesize.Trim();
                     filesize = filesize.TrimEnd(new char[] { (char)0 });
-                    /*Debug.Log(filesize);
-                    foreach (byte fsChar in filesize)
+                    Debug.Log(filesize);
+                    /*foreach (byte fsChar in filesize)
                     {
                         Debug.Log(fsChar);
                     }*/
@@ -130,12 +130,15 @@ namespace Uplift.Common
                     {
                         int filesizeInt = Convert.ToInt32(filesize, 8);
                         int toRead = filesizeInt;
+                        int toWrite = filesizeInt;
+                        Debug.Log(filesizeInt);
                         int modulus = filesizeInt % tarBlockSize;
                         if (modulus > 0)
                             toRead += (tarBlockSize - modulus);    //Read the file and assume it's also 512 byte padded
                         while (toRead > 0)
                         {
                             int readThisTime = Math.Min(readBufferSize, toRead);
+                            int writeThisTime = Math.Min(readBufferSize, toWrite);
                             readBuffer = reader.ReadBytes(readThisTime);
                             if (extractPathName)
                             {
@@ -149,17 +152,18 @@ namespace Uplift.Common
                             {
                                 if(rawMeta == null) rawMeta = new byte[0];
                                 int rawLength = rawMeta.Length;
-                                Array.Resize<byte>(ref rawMeta, rawLength + readThisTime);
-                                Array.Copy(readBuffer, 0, rawMeta, rawLength, readThisTime);
+                                Array.Resize<byte>(ref rawMeta, rawLength + writeThisTime);
+                                Array.Copy(readBuffer, 0, rawMeta, rawLength, writeThisTime);
                             }
                             else if(extractRawAsset)
                             {
                                 if(rawAsset == null) rawAsset = new byte[0];
                                 int rawLength = rawAsset.Length;
-                                Array.Resize<byte>(ref rawAsset, rawLength + readThisTime);
-                                Array.Copy(readBuffer, 0, rawAsset, rawLength, readThisTime);
+                                Array.Resize<byte>(ref rawAsset, rawLength + writeThisTime);
+                                Array.Copy(readBuffer, 0, rawAsset, rawLength, writeThisTime);
                             }
                             toRead -= readThisTime;
+                            toWrite -= writeThisTime;
                         }
                     }
                     catch (Exception ex)
@@ -185,9 +189,9 @@ namespace Uplift.Common
                         }
                         else
                         {
-                            using (FileStream fs = new FileStream(target, FileMode.Create))
+                            using(var tw = new StreamWriter(target, false, new UTF8Encoding(false)))
                             {
-                                fs.Write(rawAsset, 0, rawAsset.Length);
+                                tw.BaseStream.Write(rawAsset, 0, rawAsset.Length);
                             }
                             rawAsset = null;
                         }
@@ -195,9 +199,9 @@ namespace Uplift.Common
                         // Create meta
                         if(rawMeta != null)
                         {
-                            using (FileStream fs = new FileStream(target + ".meta", FileMode.Create))
+                            using(var tw = new StreamWriter(target + ".meta", false, new UTF8Encoding(false)))
                             {
-                                fs.Write(rawMeta, 0, rawMeta.Length);
+                                tw.BaseStream.Write(rawMeta, 0, rawMeta.Length);
                             }
                             rawMeta = null;
                         }

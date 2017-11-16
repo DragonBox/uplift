@@ -1,5 +1,13 @@
 # Change Log
 
+## [v1.0.0beta3](https://github.com/DragonBox/uplift/tree/v1.0.0beta3) (2017-11-16)
+[Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta2...v1.0.0beta3)
+
+**Merged pull requests:**
+
+- Remove dependency on Sharpcompress [\#16](https://github.com/DragonBox/uplift/pull/16) ([niezbop](https://github.com/niezbop))
+- Automate build and release of binaries on Github [\#15](https://github.com/DragonBox/uplift/pull/15) ([niezbop](https://github.com/niezbop))
+
 ## [v1.0.0beta2](https://github.com/DragonBox/uplift/tree/v1.0.0beta2) (2017-11-14)
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta1...v1.0.0beta2)
 
@@ -17,6 +25,7 @@
 
 **Merged pull requests:**
 
+- Preparing release for 1.0.0beta2 [\#14](https://github.com/DragonBox/uplift/pull/14) ([niezbop](https://github.com/niezbop))
 - Fix Version requirement lose and bounded conflict [\#13](https://github.com/DragonBox/uplift/pull/13) ([niezbop](https://github.com/niezbop))
 - Force gitignore to have Unix EOL [\#10](https://github.com/DragonBox/uplift/pull/10) ([lacostej](https://github.com/lacostej))
 - Refactor dependency management logic for consistency and separation from UI [\#7](https://github.com/DragonBox/uplift/pull/7) ([niezbop](https://github.com/niezbop))

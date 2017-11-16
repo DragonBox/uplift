@@ -39,5 +39,6 @@ namespace BuildTool {
 		public string[] Files;
 		public int SdkLevel;
 		public string OutFile;
+        public bool useUnsafe = false;
 	}
 }

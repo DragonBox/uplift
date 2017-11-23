@@ -12,6 +12,13 @@
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
+  <xs:complexType name="GithubRepository">
+    <xs:simpleContent>
+      <xs:extension base="Repository">
+        <xs:attribute type="xs:anyURI" name="Url" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
   <xs:complexType name="GitRepository">
     <xs:simpleContent>
       <xs:extension base="Repository">
@@ -38,6 +45,7 @@
       <xs:element type="FileRepository" name="FileRepository" />
       <xs:element type="WebRepository" name="WebRepository"/>
       <xs:element type="GitRepository" name="GitRepository"/>
+      <xs:element type="GithubRepository" name="GithubRepository"/>
     </xs:choice>
   </xs:complexType>
 </xs:schema>

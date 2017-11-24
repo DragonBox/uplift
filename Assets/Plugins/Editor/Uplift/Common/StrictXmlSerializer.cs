@@ -42,10 +42,15 @@ namespace Uplift.Common
             this.serializer = new XmlSerializer(typeof(T));
         }
 
-        public T Deserialize(FileStream fileStream) {
+        public T Deserialize(Stream stream) {
             return StrictDeserialize(
-                () => { return serializer.Deserialize(fileStream); }
+                () => { return serializer.Deserialize(stream); }
             );
+        }
+
+        public T Deserialize(string xmlString)
+        {
+            return Deserialize(new MemoryStream (Convert.FromBase64String(xmlString)));
         }
 
         private T StrictDeserialize(Func<Object> block) {

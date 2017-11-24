@@ -23,31 +23,95 @@
 // --- END LICENSE BLOCK ---
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
+using System.Linq;
+using System.IO;
+using System.Text.RegularExpressions;
+using UnityEngine;
 using Uplift.Common;
+using Uplift.GitHubModule;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Uplift.Schemas
 {
     public partial class GithubRepository : Repository
     {
+        private GitHubRelease release;
+
         public override TemporaryDirectory DownloadPackage(Upset package)
         {
-            throw new NotImplementedException();
+            string sourceName = Regex.Replace(package.MetaInformation.dirName, ".Upset.xml$", ".unitypackage", RegexOptions.IgnoreCase);
+
+            release = GetPackagesRelease();
+            if(!release.assets.Any(asset => asset.name.Contains(sourceName)))
+                throw new ArgumentException(string.Format("Package {0} is not present in this repository", package.PackageName));
+
+            GitHubAsset packageAsset = release.assets.First(asset => asset.name.Contains(sourceName));
+            TemporaryDirectory td = new TemporaryDirectory();
+            StreamReader sr = new StreamReader(GitHub.GetAssetStream(packageAsset, GetToken()));
+            UnityPackage unityPackage = new UnityPackage();
+            unityPackage.Extract(sr.BaseStream, td.Path);
+            return td;
         }
 
         public override Upset[] ListPackages()
         {
-            // FIXME:
-            /* Github API:
-             *  - Retrieve release tagged "packages"
-             *  - foreach asset in the release, if asset is Upset, parse Upset and add it to LIST
-             *  - return LIST
-             */
-            throw new NotImplementedException();
+            release = GetPackagesRelease();
+
+            GitHubAsset[] upsetAssets = release.assets.Where(asset => asset.name.EndsWith("Upset.xml")).ToArray();
+
+            List<Upset> upsetList = new List<Upset>();
+            foreach(GitHubAsset asset in upsetAssets)
+            {
+                StrictXmlDeserializer<Upset> deserializer = new StrictXmlDeserializer<Upset>();
+                
+                StreamReader sr = new StreamReader(GitHub.GetAssetStream(asset, GetToken()));
+                UnityPackage unityPackage = new UnityPackage();
+                Upset upset = deserializer.Deserialize(sr.BaseStream);
+                upset.MetaInformation.dirName = asset.name;
+                upsetList.Add(upset);
+            }
+
+            return upsetList.ToArray();
         }
 
-        private object GetPackagesRelease()
+        private GitHubRelease GetPackagesRelease()
         {
-            
+            if(release == null)
+            {
+                IEnumerator e = GitHub.LoadReleases(urlField, GetToken());
+                do { Thread.Sleep(1000); } while (e.MoveNext());
+
+                GitHubRelease[] releases = (GitHubRelease[]) e.Current;
+                if (releases == null)
+                    throw new ApplicationException("This github repository does not have releases");
+
+                if (!releases.Any(rel => rel.tag == "packages"))
+                    throw new ApplicationException("This repository does not have a release untitled 'packages'");
+
+                release = releases.First(rel => rel.tag == "packages");
+            }
+
+            return release;    
+        }
+
+        private string GetToken()
+        {
+            DotUplift dotUplift = DotUplift.FromDefaultFile();
+            if(dotUplift.AuthenticationMethods != null)
+                foreach(RepositoryAuthentication auth in dotUplift.AuthenticationMethods)
+                {
+                    if(!(auth is RepositoryToken)) continue;
+                    if(!(auth.Repository == urlField)) continue;
+
+                    return (auth as RepositoryToken).Token;
+                }
+
+            Debug.LogWarning("Could not find authentication method for repository at " + urlField);
+            return null;
         }
     }
 }

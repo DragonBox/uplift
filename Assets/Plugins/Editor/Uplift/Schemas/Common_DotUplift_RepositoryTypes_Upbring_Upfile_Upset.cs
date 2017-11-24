@@ -42,8 +42,8 @@ namespace Uplift.Schemas {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("GitRepository", typeof(RepositoryToken), IsNullable=false)]
-        [System.Xml.Serialization.XmlArrayItemAttribute("GithubRepository", typeof(RepositoryCredentials), IsNullable=false)]
+        [System.Xml.Serialization.XmlArrayItemAttribute(typeof(RepositoryCredentials), IsNullable=false)]
+        [System.Xml.Serialization.XmlArrayItemAttribute(typeof(RepositoryToken), IsNullable=false)]
         public RepositoryAuthentication[] AuthenticationMethods {
             get {
                 return this.authenticationMethodsField;

@@ -17,8 +17,8 @@
   
   <xs:complexType name="AuthenticationList">
     <xs:choice minOccurs="1" maxOccurs="unbounded">
-      <xs:element type="RepositoryToken" name="GitRepository"/>
-      <xs:element type="RepositoryCredentials" name="GithubRepository"/>
+      <xs:element type="RepositoryToken" name="RepositoryToken"/>
+      <xs:element type="RepositoryCredentials" name="RepositoryCredentials"/>
     </xs:choice>
   </xs:complexType>
 

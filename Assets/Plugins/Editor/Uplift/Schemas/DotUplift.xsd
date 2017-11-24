@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    attributeFormDefault="unqualified" elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    >
+  <xs:include schemaLocation="Common.xsd"/>
+  <xs:include schemaLocation="RepositoryTypes.xsd"/>
+
+  <xs:element name="DotUplift" type="DotUplift"/>
+
+  <xs:complexType name="DotUplift">
+    <xs:sequence>
+      <xs:element type="RepositoriesList" name="Repositories" minOccurs="0" />
+      <xs:element type="AuthenticationList" name="AuthenticationMethods" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="AuthenticationList">
+    <xs:choice minOccurs="1" maxOccurs="unbounded">
+      <xs:element type="RepositoryToken" name="GitRepository"/>
+      <xs:element type="RepositoryCredentials" name="GithubRepository"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="RepositoryAuthentication" abstract="true">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="Repository" use="required" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="RepositoryToken">
+    <xs:simpleContent>
+      <xs:extension base="RepositoryAuthentication">
+        <xs:attribute name="Token" use="required" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="RepositoryCredentials">
+    <xs:simpleContent>
+      <xs:extension base="RepositoryAuthentication">
+        <xs:attribute name="Login" use="required" />
+        <xs:attribute name="Password" use="required" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+</xs:schema>

@@ -1,5 +1,5 @@
-<UpfileOverride>
+<DotUplift>
   <Repositories>
     <FileRepository Path="Path/To/Another/Repository"/>
   </Repositories>
-</UpfileOverride>
+</DotUplift>

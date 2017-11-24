@@ -73,7 +73,7 @@ namespace Uplift.Schemas
 
         // --- CLASS DECLARATION ---
         public static readonly string upfilePath = "Upfile.xml";
-        public static readonly string globalOverridePath = ".Upfile.xml";
+        public string overridePath;
 
         public static bool CheckForUpfile()
         {
@@ -128,7 +128,7 @@ namespace Uplift.Schemas
 
             // Set Repositories
             foreach(Repository repo in Repositories)
-                if(!GetOverrides(GetOverrideFilePath()).Any(extraRepo =>
+                if(!GetRepositoryOverrides().Any(extraRepo =>
                     extraRepo is FileRepository &&
                     Uplift.Common.FileSystemUtil.MakePathOSFriendly((extraRepo as FileRepository).Path) == Uplift.Common.FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path)
                 ))
@@ -242,76 +242,36 @@ namespace Uplift.Schemas
 
         public virtual void LoadOverrides()
         {
-            string overrideFilePath = GetOverrideFilePath();
-
             try
             {
-                LoadOverrides(overrideFilePath);
+                Repository[] overrides = GetRepositoryOverrides();
+                if (Repositories == null)
+                {
+                    Repositories = overrides;
+                }
+                else if(overrides != null)
+                {
+                    int repositoriesSize = Repositories.Length + overrides.Length;
+
+                    Repository[] newRepositoryArray = new Repository[repositoriesSize];
+                    Array.Copy(Repositories, newRepositoryArray, Repositories.Length);
+                    Array.Copy(overrides, 0, newRepositoryArray, Repositories.Length, overrides.Length);
+
+                    Repositories = newRepositoryArray;
+                }
             }
             catch (Exception e)
             {
-                throw new ApplicationException("Uplift: Could not load Upfile overrides from "+overrideFilePath, e);
+                Debug.LogError("Could not load repositories overrides from .Uplift file\n" + e);
             }
         }
 
-        internal virtual string GetOverrideFilePath()
+        internal Repository[] GetRepositoryOverrides()
         {
-            string homePath = (Environment.OSVersion.Platform == PlatformID.Unix ||
-                               Environment.OSVersion.Platform == PlatformID.MacOSX)
-                ? Environment.GetEnvironmentVariable("HOME")
-                : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
-
-            return Path.Combine(homePath, globalOverridePath);
+            return string.IsNullOrEmpty(overridePath) ?
+                DotUplift.FromDefaultFile().Repositories :
+                DotUplift.FromFile(overridePath).Repositories;
         }
-
-        internal virtual void LoadOverrides(string path)
-        {
-            Repository[] overrides = GetOverrides(path);
-            
-            if (Repositories == null)
-            {
-                Repositories = overrides;
-            }
-            else if(overrides != null) 
-            {
-                int repositoriesSize = Repositories.Length + overrides.Length;
-
-                Repository[] newRepositoryArray = new Repository[repositoriesSize];
-                Array.Copy(Repositories, newRepositoryArray, Repositories.Length);
-                Array.Copy(overrides, 0, newRepositoryArray, Repositories.Length, overrides.Length);
-
-                Repositories = newRepositoryArray;
-            }
-        }
-        internal virtual Repository[] GetOverrides(string path)
-        {
-            // If we don't have override file, ignore
-            if (!File.Exists(path)) return null;
-
-            StrictXmlDeserializer<UpfileOverride> deserializer = new StrictXmlDeserializer<UpfileOverride>();
-
-            using (FileStream fs = new FileStream(path, FileMode.Open))
-            {
-                try
-                {
-                    UpfileOverride upOverride = deserializer.Deserialize(fs);
-
-                    foreach (Repository repo in upOverride.Repositories)
-                    {
-                        if (repo is FileRepository)
-                            (repo as FileRepository).Path = Uplift.Common.FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
-                    }
-
-                    return upOverride.Repositories;
-                }
-                catch (InvalidOperationException)
-                {
-                    Debug.LogError(string.Format("Global Override file at {0} is not well formed", path));
-                    return null;
-                }
-            }
-        }
-
 
         public string GetPackagesRootPath()
         {

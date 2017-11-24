@@ -29,6 +29,7 @@ using System.Threading;
 using System.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
+using UnityEditor;
 using UnityEngine;
 using Uplift.Common;
 using Uplift.GitHubModule;
@@ -63,7 +64,11 @@ namespace Uplift.Schemas
 
             GitHubAsset[] upsetAssets = release.assets.Where(asset => asset.name.EndsWith("Upset.xml")).ToArray();
 
+            string progressBarTitle = "Parsing Upsets from GitHub repository";
+            int index = 0;
+
             List<Upset> upsetList = new List<Upset>();
+            EditorUtility.DisplayProgressBar(progressBarTitle, "Please wait a little bit while Uplift parses the Upset in the GitHub repository at " + urlField, (100f * (float)index) / upsetAssets.Length);
             foreach(GitHubAsset asset in upsetAssets)
             {
                 StrictXmlDeserializer<Upset> deserializer = new StrictXmlDeserializer<Upset>();
@@ -73,8 +78,14 @@ namespace Uplift.Schemas
                 Upset upset = deserializer.Deserialize(sr.BaseStream);
                 upset.MetaInformation.dirName = asset.name;
                 upsetList.Add(upset);
+                EditorUtility.DisplayProgressBar(
+                    progressBarTitle,
+                    "Parsing " + asset.name, 
+                    (100f * (float)(++index)) / upsetAssets.Length
+                );
             }
 
+            EditorUtility.ClearProgressBar();
             return upsetList.ToArray();
         }
 

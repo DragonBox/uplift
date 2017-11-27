@@ -79,18 +79,18 @@ namespace Uplift.Schemas
             {
                 StrictXmlDeserializer<Upset> deserializer = new StrictXmlDeserializer<Upset>();
                 
+                EditorUtility.DisplayProgressBar(
+                    progressBarTitle,
+                    "Parsing " + asset.name, 
+                    (float)(index++) / upsetAssets.Length
+                );
+                
                 using(StreamReader sr = new StreamReader(GitHub.GetAssetStream(asset, GetToken())))
                 {
                     Upset upset = deserializer.Deserialize(sr.BaseStream);
                     upset.MetaInformation.dirName = asset.name;
                     upsetList.Add(upset);
                 }
-                
-                EditorUtility.DisplayProgressBar(
-                    progressBarTitle,
-                    "Parsing " + asset.name, 
-                    (100f * (float)(++index)) / upsetAssets.Length
-                );
             }
 
             EditorUtility.ClearProgressBar();
@@ -120,7 +120,7 @@ namespace Uplift.Schemas
                     Array.Resize<string>(ref tagArray, tagListField.Length + 1);
                     tagArray[tagListField.Length] = "packages";
                 }
-                
+
                 releases = fetchedReleases.Where(rel => tagArray.Contains(rel.tag)).ToArray();
                 
                 if (releases == null)

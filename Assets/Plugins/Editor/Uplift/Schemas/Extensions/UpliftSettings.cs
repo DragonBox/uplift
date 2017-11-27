@@ -27,27 +27,37 @@ using System.IO;
 using System.Xml.Serialization;
 using UnityEngine;
 using Uplift.Common;
+using FileSystemUtil = Uplift.Common.FileSystemUtil;
 
 namespace Uplift.Schemas
 {
     public partial class UpliftSettings
     {
-        public static readonly string defaultName = ".Uplift.xml";
+        public static readonly string folderName = ".uplift";
+        public static readonly string defaultFileName = "settings.xml";
 
         internal UpliftSettings() {}
 
         public static UpliftSettings FromDefaultFile()
         {
-            return FromFile(defaultName);
+            return FromFile(defaultFileName);
         }
         
         public static UpliftSettings FromFile(string name)
         {
-            string source = System.IO.Path.Combine(GetHomePath(), name);
+            UpliftSettings result = new UpliftSettings { Repositories = new Repository[0], AuthenticationMethods = new RepositoryToken[0] };
+
+            string sourceDir = System.IO.Path.Combine(GetHomePath(), folderName);
+            string source = System.IO.Path.Combine(sourceDir, name);
+
+            if(!Directory.Exists(sourceDir) || !File.Exists(source))
+            {
+                Debug.Log("No local settings file detected.");
+                return result;
+            }
 
             StrictXmlDeserializer<UpliftSettings> deserializer = new StrictXmlDeserializer<UpliftSettings>();
 
-            UpliftSettings result = new UpliftSettings { Repositories = new Repository[0], AuthenticationMethods = new RepositoryToken[0] };
             using (FileStream fs = new FileStream(source, FileMode.Open))
             {
                 try
@@ -57,7 +67,7 @@ namespace Uplift.Schemas
                     foreach (Repository repo in result.Repositories)
                     {
                         if (repo is FileRepository)
-                            (repo as FileRepository).Path = Uplift.Common.FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
+                            (repo as FileRepository).Path = FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
                     }
                 }
                 catch (InvalidOperationException)

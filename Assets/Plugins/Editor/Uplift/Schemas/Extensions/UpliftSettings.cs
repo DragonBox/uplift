@@ -30,24 +30,24 @@ using Uplift.Common;
 
 namespace Uplift.Schemas
 {
-    public partial class DotUplift
+    public partial class UpliftSettings
     {
         public static readonly string defaultName = ".Uplift.xml";
 
-        internal DotUplift() {}
+        internal UpliftSettings() {}
 
-        public static DotUplift FromDefaultFile()
+        public static UpliftSettings FromDefaultFile()
         {
             return FromFile(defaultName);
         }
         
-        public static DotUplift FromFile(string name)
+        public static UpliftSettings FromFile(string name)
         {
             string source = System.IO.Path.Combine(GetHomePath(), name);
 
-            StrictXmlDeserializer<DotUplift> deserializer = new StrictXmlDeserializer<DotUplift>();
+            StrictXmlDeserializer<UpliftSettings> deserializer = new StrictXmlDeserializer<UpliftSettings>();
 
-            DotUplift result = new DotUplift { Repositories = new Repository[0], AuthenticationMethods = new RepositoryAuthentication[0] };
+            UpliftSettings result = new UpliftSettings { Repositories = new Repository[0], AuthenticationMethods = new RepositoryToken[0] };
             using (FileStream fs = new FileStream(source, FileMode.Open))
             {
                 try

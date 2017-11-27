@@ -242,35 +242,38 @@ namespace Uplift.Schemas
 
         public virtual void LoadOverrides()
         {
-            try
+            Repository[] overrides = GetRepositoryOverrides();
+            if (Repositories == null)
             {
-                Repository[] overrides = GetRepositoryOverrides();
-                if (Repositories == null)
-                {
-                    Repositories = overrides;
-                }
-                else if(overrides != null)
-                {
-                    int repositoriesSize = Repositories.Length + overrides.Length;
-
-                    Repository[] newRepositoryArray = new Repository[repositoriesSize];
-                    Array.Copy(Repositories, newRepositoryArray, Repositories.Length);
-                    Array.Copy(overrides, 0, newRepositoryArray, Repositories.Length, overrides.Length);
-
-                    Repositories = newRepositoryArray;
-                }
+                Repositories = overrides;
             }
-            catch (Exception e)
+            else if(overrides != null)
             {
-                Debug.LogError("Could not load repositories overrides from .Uplift file\n" + e);
+                int repositoriesSize = Repositories.Length + overrides.Length;
+
+                Repository[] newRepositoryArray = new Repository[repositoriesSize];
+                Array.Copy(Repositories, newRepositoryArray, Repositories.Length);
+                Array.Copy(overrides, 0, newRepositoryArray, Repositories.Length, overrides.Length);
+
+                Repositories = newRepositoryArray;
             }
         }
 
         internal Repository[] GetRepositoryOverrides()
         {
-            return string.IsNullOrEmpty(overridePath) ?
-                DotUplift.FromDefaultFile().Repositories :
-                DotUplift.FromFile(overridePath).Repositories;
+            Repository[] result = new Repository[0];
+            try
+            {
+                result = string.IsNullOrEmpty(overridePath) ?
+                    UpliftSettings.FromDefaultFile().Repositories :
+                    UpliftSettings.FromFile(overridePath).Repositories;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Could not load repositories overrides from .Uplift file\n" + e);
+            }
+
+            return result;
         }
 
         public string GetPackagesRootPath()

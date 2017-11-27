@@ -353,7 +353,7 @@ zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
             if(!string.IsNullOrEmpty(token))
                 request.Headers["Authorization"] = "token " + token;
             request.Accept = "application/octet-stream";
-            request.UserAgent = "curl/7.47.0";
+            request.UserAgent = "Uplift GithubRepository/1.0 - https://github.com/DragonBox/uplift";
             request.AllowAutoRedirect = false;
 
             ServicePointManager.ServerCertificateValidationCallback = GitHub.CertificateValidationCallback;
@@ -369,7 +369,7 @@ zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
 
             request = (HttpWebRequest)WebRequest.Create(address);
             request.Method = "GET";
-            request.UserAgent = "curl/7.47.0";
+            request.UserAgent = "Uplift GithubRepository/1.0 - https://github.com/DragonBox/uplift";
             HttpWebResponse finalResponse = (HttpWebResponse)request.GetResponse();
             responseStatus = finalResponse.StatusCode;
             if((int)finalResponse.StatusCode >= 200 && (int)finalResponse.StatusCode <= 299)

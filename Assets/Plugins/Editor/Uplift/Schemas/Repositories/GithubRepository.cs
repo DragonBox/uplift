@@ -52,9 +52,11 @@ namespace Uplift.Schemas
 
             GitHubAsset packageAsset = release.assets.First(asset => asset.name.Contains(sourceName));
             TemporaryDirectory td = new TemporaryDirectory();
-            StreamReader sr = new StreamReader(GitHub.GetAssetStream(packageAsset, GetToken()));
-            UnityPackage unityPackage = new UnityPackage();
-            unityPackage.Extract(sr.BaseStream, td.Path);
+            using(StreamReader sr = new StreamReader(GitHub.GetAssetStream(packageAsset, GetToken())))
+            {
+                UnityPackage unityPackage = new UnityPackage();
+                unityPackage.Extract(sr.BaseStream, td.Path);
+            }
             return td;
         }
 
@@ -68,16 +70,18 @@ namespace Uplift.Schemas
             int index = 0;
 
             List<Upset> upsetList = new List<Upset>();
-            EditorUtility.DisplayProgressBar(progressBarTitle, "Please wait a little bit while Uplift parses the Upset in the GitHub repository at " + urlField, (100f * (float)index) / upsetAssets.Length);
+            EditorUtility.DisplayProgressBar(progressBarTitle, "Please wait a little bit while Uplift parses the Upset in the GitHub repository at " + urlField, 0f);
             foreach(GitHubAsset asset in upsetAssets)
             {
                 StrictXmlDeserializer<Upset> deserializer = new StrictXmlDeserializer<Upset>();
                 
-                StreamReader sr = new StreamReader(GitHub.GetAssetStream(asset, GetToken()));
-                UnityPackage unityPackage = new UnityPackage();
-                Upset upset = deserializer.Deserialize(sr.BaseStream);
-                upset.MetaInformation.dirName = asset.name;
-                upsetList.Add(upset);
+                using(StreamReader sr = new StreamReader(GitHub.GetAssetStream(asset, GetToken())))
+                {
+                    Upset upset = deserializer.Deserialize(sr.BaseStream);
+                    upset.MetaInformation.dirName = asset.name;
+                    upsetList.Add(upset);
+                }
+                
                 EditorUtility.DisplayProgressBar(
                     progressBarTitle,
                     "Parsing " + asset.name, 
@@ -100,10 +104,11 @@ namespace Uplift.Schemas
                 if (releases == null)
                     throw new ApplicationException("This github repository does not have releases");
 
-                if (!releases.Any(rel => rel.tag == "packages"))
-                    throw new ApplicationException("This repository does not have a release untitled 'packages'");
+                release = releases.FirstOrDefault(rel => rel.tag == "packages");
+                
+                if (release == null)
+                    throw new ApplicationException("This repository does not have a release tagged as 'packages'");
 
-                release = releases.First(rel => rel.tag == "packages");
             }
 
             return release;    
@@ -111,7 +116,7 @@ namespace Uplift.Schemas
 
         private string GetToken()
         {
-            DotUplift dotUplift = DotUplift.FromDefaultFile();
+            UpliftSettings dotUplift = UpliftSettings.FromDefaultFile();
             if(dotUplift.AuthenticationMethods != null)
                 foreach(RepositoryAuthentication auth in dotUplift.AuthenticationMethods)
                 {

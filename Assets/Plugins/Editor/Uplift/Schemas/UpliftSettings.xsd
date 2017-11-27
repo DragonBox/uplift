@@ -6,9 +6,9 @@
   <xs:include schemaLocation="Common.xsd"/>
   <xs:include schemaLocation="RepositoryTypes.xsd"/>
 
-  <xs:element name="DotUplift" type="DotUplift"/>
+  <xs:element name="UpliftSettings" type="UpliftSettings"/>
 
-  <xs:complexType name="DotUplift">
+  <xs:complexType name="UpliftSettings">
     <xs:sequence>
       <xs:element type="RepositoriesList" name="Repositories" minOccurs="0" />
       <xs:element type="AuthenticationList" name="AuthenticationMethods" minOccurs="0" />
@@ -18,7 +18,7 @@
   <xs:complexType name="AuthenticationList">
     <xs:choice minOccurs="1" maxOccurs="unbounded">
       <xs:element type="RepositoryToken" name="RepositoryToken"/>
-      <xs:element type="RepositoryCredentials" name="RepositoryCredentials"/>
+      <!-- <xs:element type="RepositoryCredentials" name="RepositoryCredentials"/> -->
     </xs:choice>
   </xs:complexType>
 
@@ -36,6 +36,8 @@
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
+
+  <!-- TODO: Use me somewhere
   <xs:complexType name="RepositoryCredentials">
     <xs:simpleContent>
       <xs:extension base="RepositoryAuthentication">
@@ -44,4 +46,6 @@
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
+   -->
+
 </xs:schema>

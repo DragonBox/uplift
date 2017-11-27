@@ -128,7 +128,7 @@ namespace Uplift.Testing.Unit
         // public void LoadPresentOverrideTest()
         // {
         //     string upfilePath = Helper.PathCombine ("TestData", "UpfileTest", "Upfile.xml");
-        //     string upfileOverridePath = Helper.PathCombine ("TestData", "UpfileTest", "DotUplift.xml");
+        //     string upfileOverridePath = Helper.PathCombine ("TestData", "UpfileTest", "UpliftSettings.xml");
         //     Upfile upfile = Upfile.LoadXml(upfilePath);
         //     upfile.LoadOverrides(upfileOverridePath);
 
@@ -140,7 +140,7 @@ namespace Uplift.Testing.Unit
         // public void LoadAbsentOverrideTest()
         // {
         //     string upfilePath = Helper.PathCombine ("TestData", "UpfileTest", "Upfile.xml");
-        //     string upfileOverridePath = Helper.PathCombine ("TestData", "UpfileTest", "NoUpfileInIt", "DotUplift.xml");
+        //     string upfileOverridePath = Helper.PathCombine ("TestData", "UpfileTest", "NoUpfileInIt", "UpliftSettings.xml");
         //     Upfile upfile = Upfile.LoadXml(upfilePath);
         //     upfile.LoadOverrides(upfileOverridePath);
 

@@ -40,19 +40,21 @@ namespace Uplift.Schemas
 
         public static UpliftSettings FromDefaultFile()
         {
-            return FromFile(defaultFileName);
+            string sourceDir = System.IO.Path.Combine(GetHomePath(), folderName);
+            string source = System.IO.Path.Combine(sourceDir, defaultFileName);
+            
+            return FromFile(source);
         }
         
-        public static UpliftSettings FromFile(string name)
+        public static UpliftSettings FromFile(string source)
         {
             UpliftSettings result = new UpliftSettings { Repositories = new Repository[0], AuthenticationMethods = new RepositoryToken[0] };
 
             string sourceDir = System.IO.Path.Combine(GetHomePath(), folderName);
-            string source = System.IO.Path.Combine(sourceDir, name);
 
-            if(!Directory.Exists(sourceDir) || !File.Exists(source))
+            if(!File.Exists(source))
             {
-                Debug.Log("No local settings file detected.");
+                Debug.Log("No local settings file detected at " + source);
                 return result;
             }
 

@@ -82,11 +82,6 @@ namespace Uplift.Testing.Helpers
                 return upfile;
             }
         }
-
-        public override void LoadOverrides()
-        {
-            return;
-        }
     }
 }
 #endif

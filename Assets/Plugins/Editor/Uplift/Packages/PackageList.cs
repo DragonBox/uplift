@@ -80,16 +80,30 @@ namespace Uplift.Packages
 
         public void LoadPackages(Repository repository)
         {
-            PackageRepo pr;
-            foreach (Upset package in repository.ListPackages())
+            using(LogAggregator la = LogAggregator.InUnity(
+                "Packages successfully loaded from {0}",
+                "Packages successfully loaded from {0}, but warning were raised",
+                "Error(s) occured while loading packages from {0}",
+                repository.ToString()
+            ))
             {
-                pr = new PackageRepo
+                PackageRepo pr;
+                try
                 {
-                    Package = package,
-                    Repository = repository
-                };
-                Packages.Add(pr);
-
+                    foreach (Upset package in repository.ListPackages())
+                    {
+                        pr = new PackageRepo
+                        {
+                            Package = package,
+                            Repository = repository
+                        };
+                        Packages.Add(pr);
+                    }
+                }
+                catch(Exception e)
+                {
+                    Debug.LogException(e);
+                }
             }
         }
 

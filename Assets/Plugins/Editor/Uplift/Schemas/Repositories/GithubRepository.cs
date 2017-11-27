@@ -129,5 +129,10 @@ namespace Uplift.Schemas
             Debug.LogWarning("Could not find authentication method for repository at " + urlField);
             return null;
         }
+
+        public override string ToString()
+        {
+            return "GithubRepository: " + urlField;
+        }
     }
 }

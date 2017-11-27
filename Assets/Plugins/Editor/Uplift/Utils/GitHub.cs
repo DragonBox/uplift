@@ -239,6 +239,8 @@ zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
             {
                 Debug.LogError(www.error);
                 Debug.LogWarning(www.text);
+
+                yield return null;
             }
             else
             {

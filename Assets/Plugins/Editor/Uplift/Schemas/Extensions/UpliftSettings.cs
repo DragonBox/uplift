@@ -50,8 +50,6 @@ namespace Uplift.Schemas
         {
             UpliftSettings result = new UpliftSettings { Repositories = new Repository[0], AuthenticationMethods = new RepositoryToken[0] };
 
-            string sourceDir = System.IO.Path.Combine(GetHomePath(), folderName);
-
             if(!File.Exists(source))
             {
                 Debug.Log("No local settings file detected at " + source);

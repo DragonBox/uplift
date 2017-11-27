@@ -40,14 +40,16 @@ namespace Uplift.Schemas
 {
     public partial class GithubRepository : Repository
     {
-        private GitHubRelease release;
+        private GitHubRelease[] releases;
 
         public override TemporaryDirectory DownloadPackage(Upset package)
         {
             string sourceName = Regex.Replace(package.MetaInformation.dirName, ".Upset.xml$", ".unitypackage", RegexOptions.IgnoreCase);
 
-            release = GetPackagesRelease();
-            if(!release.assets.Any(asset => asset.name.Contains(sourceName)))
+            releases = GetPackagesReleases();
+            GitHubRelease release = releases.FirstOrDefault(rel => rel.assets.Any(asset => asset.name.Contains(sourceName)));
+
+            if(release == null)
                 throw new ArgumentException(string.Format("Package {0} is not present in this repository", package.PackageName));
 
             GitHubAsset packageAsset = release.assets.First(asset => asset.name.Contains(sourceName));
@@ -62,9 +64,11 @@ namespace Uplift.Schemas
 
         public override Upset[] ListPackages()
         {
-            release = GetPackagesRelease();
+            releases = GetPackagesReleases();
 
-            GitHubAsset[] upsetAssets = release.assets.Where(asset => asset.name.EndsWith("Upset.xml")).ToArray();
+            GitHubAsset[] upsetAssets = releases
+                .SelectMany<GitHubRelease, GitHubAsset>(rel => rel.assets.Where(asset => asset.name.EndsWith("Upset.xml")))
+                .ToArray();
 
             string progressBarTitle = "Parsing Upsets from GitHub repository";
             int index = 0;
@@ -93,25 +97,38 @@ namespace Uplift.Schemas
             return upsetList.ToArray();
         }
 
-        private GitHubRelease GetPackagesRelease()
+        private GitHubRelease[] GetPackagesReleases()
         {
-            if(release == null)
+            if(releases == null)
             {
                 IEnumerator e = GitHub.LoadReleases(urlField, GetToken());
                 do { Thread.Sleep(1000); } while (e.MoveNext());
 
-                GitHubRelease[] releases = (GitHubRelease[]) e.Current;
-                if (releases == null)
+                GitHubRelease[] fetchedReleases = (GitHubRelease[]) e.Current;
+
+                if (fetchedReleases == null)
                     throw new ApplicationException("This github repository does not have releases");
 
-                release = releases.FirstOrDefault(rel => rel.tag == "packages");
+                string[] tagArray;
+                if(tagListField == null || tagListField.Length == 0)
+                {
+                    tagArray = new string[] { "packages" };
+                }
+                else
+                {
+                    tagArray = tagListField;
+                    Array.Resize<string>(ref tagArray, tagListField.Length + 1);
+                    tagArray[tagListField.Length] = "packages";
+                }
                 
-                if (release == null)
-                    throw new ApplicationException("This repository does not have a release tagged as 'packages'");
+                releases = fetchedReleases.Where(rel => tagArray.Contains(rel.tag)).ToArray();
+                
+                if (releases == null)
+                    throw new ApplicationException("This repository does not have a release correctly tagged");
 
             }
 
-            return release;    
+            return releases;    
         }
 
         private string GetToken()

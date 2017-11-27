@@ -517,8 +517,6 @@ namespace Uplift.Schemas {
         
         private string extractPathField;
         
-        private string valueField;
-        
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ExtractPath {
@@ -529,18 +527,7 @@ namespace Uplift.Schemas {
                 this.extractPathField = value;
             }
         }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public string Value {
-            get {
-                return this.valueField;
             }
-            set {
-                this.valueField = value;
-            }
-        }
-    }
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.3038")]
@@ -570,7 +557,20 @@ namespace Uplift.Schemas {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class GithubRepository : Repository {
         
+        private string[] tagListField;
+        
         private string urlField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("Tag", IsNullable=false)]
+        public string[] TagList {
+            get {
+                return this.tagListField;
+            }
+            set {
+                this.tagListField = value;
+            }
+        }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute(DataType="anyURI")]

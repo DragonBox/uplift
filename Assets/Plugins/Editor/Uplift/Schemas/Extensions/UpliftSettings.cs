@@ -63,18 +63,19 @@ namespace Uplift.Schemas
                 try
                 {
                     result = deserializer.Deserialize(fs);
-
-                    foreach (Repository repo in result.Repositories)
-                    {
-                        if (repo is FileRepository)
-                            (repo as FileRepository).Path = FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
-                    }
                 }
                 catch (InvalidOperationException)
                 {
                     Debug.LogError(string.Format("Global Override file at {0} is not well formed", source));
+                    return result;
                 }
 
+                foreach (Repository repo in result.Repositories)
+                {
+                    if (repo is FileRepository)
+                        (repo as FileRepository).Path = FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
+                }
+                
                 return result;
             }
         }

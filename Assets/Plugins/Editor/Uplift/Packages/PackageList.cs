@@ -87,22 +87,26 @@ namespace Uplift.Packages
                 repository.ToString()
             ))
             {
-                PackageRepo pr;
+                Upset[] packages;
                 try
                 {
-                    foreach (Upset package in repository.ListPackages())
-                    {
-                        pr = new PackageRepo
-                        {
-                            Package = package,
-                            Repository = repository
-                        };
-                        Packages.Add(pr);
-                    }
+                    packages = repository.ListPackages();
                 }
                 catch(Exception e)
                 {
                     Debug.LogException(e);
+                    return;
+                }
+
+                PackageRepo pr;
+                foreach (Upset package in packages)
+                {
+                    pr = new PackageRepo
+                    {
+                        Package = package,
+                        Repository = repository
+                    };
+                    Packages.Add(pr);
                 }
             }
         }

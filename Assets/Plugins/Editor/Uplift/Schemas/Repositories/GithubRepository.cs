@@ -109,23 +109,26 @@ namespace Uplift.Schemas
                 if (fetchedReleases == null)
                     throw new ApplicationException("This github repository does not have releases");
 
-                string[] tagArray;
-                if(tagListField == null || tagListField.Length == 0)
-                {
-                    tagArray = new string[] { "packages" };
-                }
-                else
-                {
-                    tagArray = tagListField;
-                    Array.Resize<string>(ref tagArray, tagListField.Length + 1);
-                    tagArray[tagListField.Length] = "packages";
-                }
+                string[] tagArray = (tagListField == null || tagListField.Length == 0) ?
+                    new string[] { "packages" } :
+                    tagListField;
 
                 releases = fetchedReleases.Where(rel => tagArray.Contains(rel.tag)).ToArray();
                 
-                if (releases == null)
+                // Fail hard if no release could be found
+                if (releases.Length == 0)
                     throw new ApplicationException("This repository does not have a release correctly tagged");
 
+                // Logs missing tags if only some of them were found
+                if (releases.Length < tagArray.Length)
+                {
+                    string missingTags = string.Join(
+                        ", ",
+                        tagArray.Where(tag => !releases.Any(rel => rel.tag == tag)).ToArray()
+                    );
+
+                    Debug.LogWarningFormat("Could not find a matching release for all of your tags (missing {0})", missingTags);
+                }
             }
 
             return releases;    

@@ -6,38 +6,56 @@
 
   <!-- Make multiple repository types -->
   <xs:complexType name="WebRepository">
-    <xs:simpleContent>
+    <xs:complexContent>
       <xs:extension base="Repository">
         <xs:attribute type="xs:anyURI" name="Url" use="required"/>
       </xs:extension>
-    </xs:simpleContent>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="GithubRepository">
+    <xs:complexContent>
+      <xs:extension base="Repository">
+        <xs:sequence>
+          <xs:element type="RepositoryTagList" name="TagList" />
+        </xs:sequence>
+        <xs:attribute type="xs:anyURI" name="Url" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="GitRepository">
-    <xs:simpleContent>
+    <xs:complexContent>
       <xs:extension base="Repository">
         <xs:attribute type="xs:anyURI" name="Url" use="required"/>
       </xs:extension>
-    </xs:simpleContent>
+    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="FileRepository">
-    <xs:simpleContent>
+    <xs:complexContent>
       <xs:extension base="Repository">
         <xs:attribute type="xs:string" name="Path" use="required"/>
       </xs:extension>
-    </xs:simpleContent>
+    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="Repository">
-    <xs:simpleContent>
+    <xs:complexContent>
       <xs:extension base="xs:string">
         <xs:attribute type="xs:string" name="ExtractPath" use="optional"/>
       </xs:extension>
-    </xs:simpleContent>
+    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="RepositoriesList">
     <xs:choice minOccurs="1" maxOccurs="unbounded">
       <xs:element type="FileRepository" name="FileRepository" />
       <xs:element type="WebRepository" name="WebRepository"/>
       <xs:element type="GitRepository" name="GitRepository"/>
+      <xs:element type="GithubRepository" name="GithubRepository"/>
     </xs:choice>
   </xs:complexType>
+
+  <xs:complexType name="RepositoryTagList">
+    <xs:sequence>
+      <xs:element type="xs:string" name="Tag" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
 </xs:schema>

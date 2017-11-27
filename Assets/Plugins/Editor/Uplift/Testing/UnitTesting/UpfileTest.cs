@@ -128,9 +128,10 @@ namespace Uplift.Testing.Unit
         public void LoadPresentOverrideTest()
         {
             string upfilePath = Helper.PathCombine ("TestData", "UpfileTest", "Upfile.xml");
-            string upfileOverridePath = Helper.PathCombine ("TestData", "UpfileTest", "UpfileOverride.xml");
+            string upfileOverridePath = Helper.PathCombine ("TestData", "UpfileTest", "UpliftSettings.xml");
             Upfile upfile = Upfile.LoadXml(upfilePath);
-            upfile.LoadOverrides(upfileOverridePath);
+            upfile.overridePath = upfileOverridePath;
+            upfile.LoadOverrides();
 
             Assert.IsTrue(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, Helper.PathCombine("Path","To","Some","Repository"))), "Original repository not found");
             Assert.IsTrue(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, Helper.PathCombine("Path","To","Another","Repository"))), "Override repository not found");
@@ -140,9 +141,10 @@ namespace Uplift.Testing.Unit
         public void LoadAbsentOverrideTest()
         {
             string upfilePath = Helper.PathCombine ("TestData", "UpfileTest", "Upfile.xml");
-            string upfileOverridePath = Helper.PathCombine ("TestData", "UpfileTest", "NoUpfileInIt", "UpfileOverride.xml");
+            string upfileOverridePath = Helper.PathCombine ("TestData", "UpfileTest", "NoUpfileInIt", "UpliftSettings.xml");
             Upfile upfile = Upfile.LoadXml(upfilePath);
-            upfile.LoadOverrides(upfileOverridePath);
+            upfile.overridePath = upfileOverridePath;
+            upfile.LoadOverrides();
 
             Assert.IsTrue(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, Helper.PathCombine("Path","To","Some","Repository"))), "Original repository not found");
             Assert.IsFalse(upfile.Repositories.Any(repo => repo is FileRepository && string.Equals((repo as FileRepository).Path, Helper.PathCombine("Path","To","Another","Repository"))), "Loaded absent file");

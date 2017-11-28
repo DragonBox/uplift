@@ -117,12 +117,14 @@ task pre_release: %i[ensure_git_clean chdir] do
   pr_branch = "release_#{nextversion}"
   Rake::Task['prepare_git_pr'].invoke(pr_branch)
 
+  README.version = nextversion
+
   Rake::Task['changelog'].invoke
 
   UI.user_error! 'Pre release stopped by user.' unless UI.confirm("CHANGELOG PR for version #{nextversion}. Confirm?")
 
   msg = "Preparing release for #{nextversion}"
-  sh 'git add CHANGELOG.md'
+  sh 'git add CHANGELOG.md README.md'
   sh "git commit -m \"#{msg}\""
   sh "git push origin #{pr_branch}"
 
@@ -234,6 +236,25 @@ class GithubChangelogGenerator
         end
         File.write(PATH, lines.join("\n") + "\n")
       end
+  end
+end
+
+class README
+  PATH = 'README.md'.freeze
+  class << self
+    def version=(version)
+      s = File.read(PATH)
+      lines = s.split("\n").map do |line|
+
+        m = line.match(/\!\[Version\]\(https:\/\/img.shields.io\/badge\/version-.*.svg\)/)
+        if m
+          "![Version](https://img.shields.io/badge/version-#{version}-blue.svg)"
+        else
+          line
+        end
+      end
+      File.write(PATH, lines.join("\n") + "\n")
+    end
   end
 end
 

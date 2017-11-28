@@ -1,10 +1,18 @@
 # Change Log
 
+## [v1.0.0beta4](https://github.com/DragonBox/uplift/tree/v1.0.0beta4) (2017-11-28)
+[Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta3...v1.0.0beta4)
+
+**Implemented enhancements:**
+
+- Add GitHub repository [\#18](https://github.com/DragonBox/uplift/pull/18) ([niezbop](https://github.com/niezbop))
+
 ## [v1.0.0beta3](https://github.com/DragonBox/uplift/tree/v1.0.0beta3) (2017-11-16)
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta2...v1.0.0beta3)
 
 **Merged pull requests:**
 
+- Preparing release for 1.0.0beta3 [\#17](https://github.com/DragonBox/uplift/pull/17) ([niezbop](https://github.com/niezbop))
 - Remove dependency on Sharpcompress [\#16](https://github.com/DragonBox/uplift/pull/16) ([niezbop](https://github.com/niezbop))
 - Automate build and release of binaries on Github [\#15](https://github.com/DragonBox/uplift/pull/15) ([niezbop](https://github.com/niezbop))
 

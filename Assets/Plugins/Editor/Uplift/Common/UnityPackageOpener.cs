@@ -166,7 +166,6 @@ namespace Uplift.Common
                                 throw new Exception("Assumed a pathname would fit in a single read!");
                             string pathnameFileContents = Encoding.UTF8.GetString(readBuffer, 0, filesizeInt);
                             path = FormatPath(pathnameFileContents.Split(new char[] { '\n' })[0]);
-                            Debug.Log(path);
                         }
                         else if(extractRawMeta)
                         {

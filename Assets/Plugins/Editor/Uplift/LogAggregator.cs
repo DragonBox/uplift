@@ -30,7 +30,7 @@ using UnityEngine;
 
 namespace Uplift
 {
-#if (UNITY_5_3_OR_NEWER || UNITY_2017_1_OR_NEWER)
+#if UNITY_5_3_OR_NEWER
     class LogHandlerUtils {
         public static ILogHandler ReplaceLogHandler(ILogHandler newLogHandler) {
             ILogHandler currentLogHandler = Debug.logger.logHandler;

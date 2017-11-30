@@ -116,7 +116,8 @@ namespace Uplift.Common
                 prefix = prefix.TrimEnd(new char[] { (char)0 });
 
                 string fullname = prefix + filename;
-				if(fullname.StartsWith("./")) fullname = fullname.Substring(2);
+                // This handle a specific case where some .unitypackage have an 'index' starting with ./
+                if(fullname.StartsWith("./")) fullname = fullname.Substring(2);
                 Match hashMatch = hashPattern.Match(fullname);
 
                 bool extractPathName = false;

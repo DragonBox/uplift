@@ -61,6 +61,7 @@ namespace BuildTool {
 			Data.SdkLevel = 2;
 			Data.OutFile = UpliftDLL;
 			Data.useUnsafe = true;
+			Data.Defines = EditorUserBuildSettings.activeScriptCompilationDefines;
 
 			unity.BuildLibrary(Data);
 		}

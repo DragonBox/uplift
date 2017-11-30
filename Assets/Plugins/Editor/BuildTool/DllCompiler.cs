@@ -61,6 +61,10 @@ namespace BuildTool {
 			Data.SdkLevel = 2;
 			Data.OutFile = UpliftDLL;
 			Data.useUnsafe = true;
+			Data.Defines = new string[]
+			{
+				"UNITY_5_3_OR_NEWER"
+			};
 
 			unity.BuildLibrary(Data);
 		}

@@ -1,11 +1,28 @@
 # Change Log
 
+## [v1.0.0beta5](https://github.com/DragonBox/uplift/tree/v1.0.0beta5) (2017-11-30)
+[Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta4...v1.0.0beta5)
+
+**Fixed bugs:**
+
+- Some .unitypackage are not extracted correctly [\#23](https://github.com/DragonBox/uplift/issues/23)
+- Readme version not correctly updated when releasing [\#22](https://github.com/DragonBox/uplift/issues/22)
+- Log not aggregated on Unity 2017+ from the .unitypackage [\#20](https://github.com/DragonBox/uplift/issues/20)
+
+**Merged pull requests:**
+
+- Compiler: use defines to make sure that .unitypackage is built correctly [\#21](https://github.com/DragonBox/uplift/pull/21) ([niezbop](https://github.com/niezbop))
+
 ## [v1.0.0beta4](https://github.com/DragonBox/uplift/tree/v1.0.0beta4) (2017-11-28)
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta3...v1.0.0beta4)
 
 **Implemented enhancements:**
 
 - Add GitHub repository [\#18](https://github.com/DragonBox/uplift/pull/18) ([niezbop](https://github.com/niezbop))
+
+**Merged pull requests:**
+
+- Preparing release for 1.0.0beta4 [\#19](https://github.com/DragonBox/uplift/pull/19) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta3](https://github.com/DragonBox/uplift/tree/v1.0.0beta3) (2017-11-16)
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta2...v1.0.0beta3)

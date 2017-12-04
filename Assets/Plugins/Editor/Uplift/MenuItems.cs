@@ -186,5 +186,11 @@ namespace Uplift
         {
             Updater.CheckForUpdate(true);
         }
+
+        [MenuItem("Tools/Uplift/Edit settings", false, 2002)]
+        private static void EditSettings()
+        {
+            EditorWindow.GetWindow(typeof(SettingsWindow));
+        }
     }
 }

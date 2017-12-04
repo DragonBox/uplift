@@ -40,10 +40,13 @@ namespace Uplift.Schemas
 
         public static UpliftSettings FromDefaultFile()
         {
+            return FromFile(GetDefaultLocation());
+        }
+
+        public static string GetDefaultLocation()
+        {
             string sourceDir = System.IO.Path.Combine(GetHomePath(), folderName);
-            string source = System.IO.Path.Combine(sourceDir, defaultFileName);
-            
-            return FromFile(source);
+            return System.IO.Path.Combine(sourceDir, defaultFileName);
         }
         
         public static UpliftSettings FromFile(string source)

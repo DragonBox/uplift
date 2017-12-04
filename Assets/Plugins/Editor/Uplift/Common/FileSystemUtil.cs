@@ -171,11 +171,16 @@ namespace Uplift.Common
 			if(Application.dataPath.Contains(".app"))
 				return Application.dataPath + "/../../Data";
 			return Application.dataPath + "/../Data";
-		}
+        }
+
+        public static string GetAppDataPath()
+        {
+            return System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
+        }
 
 
-		public static List<string> RecursivelyListFiles(string dir, bool relative = false)
-		{
+        public static List<string> RecursivelyListFiles(string dir, bool relative = false)
+	    {
 
 			var files = new List<string>(Directory.GetFiles(dir));
 

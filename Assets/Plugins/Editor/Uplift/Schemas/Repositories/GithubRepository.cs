@@ -33,6 +33,7 @@ using UnityEditor;
 using UnityEngine;
 using Uplift.Common;
 using Uplift.GitHubModule;
+using Uplift.Extensions;
 
 namespace Uplift.Schemas
 {
@@ -89,10 +90,7 @@ namespace Uplift.Schemas
                     using (StreamReader sr = new StreamReader(GitHub.GetAssetStream(asset, GetToken())))
                     using (FileStream fs = new FileStream(assetPath, FileMode.Create))
                     {
-                        byte[] buffer = new byte[0x1000];
-                        int read;
-                        while ((read = sr.BaseStream.Read(buffer, 0, buffer.Length)) > 0)
-                            fs.Write(buffer, 0, read);
+                        sr.BaseStream.CopyTo(fs);
                     }
                 }
 

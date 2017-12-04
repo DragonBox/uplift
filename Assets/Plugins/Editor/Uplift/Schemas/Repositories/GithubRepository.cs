@@ -162,7 +162,7 @@ namespace Uplift.Schemas
         private bool TryGetCachedItem(string fileName, out string path)
         {
             path = Path.Combine(GetCachePath(), fileName);
-            return File.Exists(path) && (File.GetLastWriteTime(path) - DateTime.Now) <= TimeSpan.FromDays(1);
+            return File.Exists(path);
         }
 
         private string GetCachePath()

@@ -22,11 +22,10 @@
  */
 // --- END LICENSE BLOCK ---
 
-using System;
 using System.IO;
-using System.Text;
 using System.Xml;
 using UnityEngine;
+using Uplift.Schemas;
 
 namespace Uplift.Common
 {
@@ -118,6 +117,33 @@ namespace Uplift.Common
   -->
 </Upfile>";
 
+        internal static readonly string settings = @"<UpliftSettings>
+  <!-- SAMPLE REPOSITORIES BLOCK
+
+    <Repositories>
+      <FileRepository Path=""Path/To/Some/File/Repository"" />
+    </Repositories>
+
+  -->
+  <!-- 
+
+    The repositories in your settings file usually are local development repositories or ""manually"" synchronized shared repositories
+
+  -->
+  <Repositories>
+  </Repositories>
+
+  <!-- SAMPLE REPOSITORIES BLOCK
+
+    <AuthenticationMethods>
+      <RepositoryToken Repository=""https://api.github.com/repos/ME/MYREPO/releases"" Token=""mytokenhash"" />
+    </AuthenticationMethods>
+
+  -->
+  <AuthenticationMethods>
+  </AuthenticationMethods>
+</UpliftSettings>";
+
         public static void CreateSampleUpfile()
         {
             XmlDocument sampleFile = new XmlDocument();
@@ -125,6 +151,15 @@ namespace Uplift.Common
             sampleFile.InnerXml = string.Format(upfile, Application.unityVersion);
 
             sampleFile.Save("Upfile.xml");
+        }
+
+        public static void CreateSampleSettingsFile()
+        {
+            XmlDocument sampleFile = new XmlDocument();
+
+            sampleFile.InnerXml = settings;
+
+            sampleFile.Save(UpliftSettings.GetDefaultLocation());
         }
     }
 }

@@ -26,11 +26,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Uplift.Schemas;
 
 namespace Uplift.SourceControl
 {
-	public class GitIgnorer : ISourceControlHandler
+    public class GitIgnorer : ISourceControlHandler
 	{
 		public delegate void FileEdit(object sender, string path);
 		public event FileEdit OnEditGitignore = null;

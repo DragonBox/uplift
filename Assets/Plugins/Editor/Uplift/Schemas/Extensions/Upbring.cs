@@ -27,8 +27,6 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using Uplift.Packages;
-using Uplift.Common;
 
 namespace Uplift.Schemas
 {

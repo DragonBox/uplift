@@ -24,7 +24,6 @@
 // --- END LICENSE BLOCK ---
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -32,7 +31,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using Uplift.Extensions;
 
 namespace Uplift.Common
 {

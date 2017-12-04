@@ -25,7 +25,6 @@
 using UnityEngine;
 using UnityEditor;
 
-
 using Uplift.Schemas;
 
 using System.Collections.Generic;

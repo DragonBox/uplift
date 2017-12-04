@@ -26,11 +26,10 @@ using System;
 using UnityEngine;
 using System.IO;
 using System.Text;
-using System.Linq;
 
 namespace BuildTool
 {
-	public class Helper
+    public class Helper
 	{
 		public static bool IsMac() {
 			return Application.platform == RuntimePlatform.OSXEditor;

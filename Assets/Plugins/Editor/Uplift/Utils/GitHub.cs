@@ -32,8 +32,6 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using UnityEngine;
-using Uplift.Common;
-using Uplift.MiniJSON;
 
 namespace Uplift.GitHubModule
 {

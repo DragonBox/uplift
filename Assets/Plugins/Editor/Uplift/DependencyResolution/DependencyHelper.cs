@@ -22,8 +22,6 @@
  */
 // --- END LICENSE BLOCK ---
 
-using Uplift.Schemas;
-
 namespace Uplift.DependencyResolution
 {
     public class DependencyHelper

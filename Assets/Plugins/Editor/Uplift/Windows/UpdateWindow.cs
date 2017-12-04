@@ -22,12 +22,9 @@
  */
 // --- END LICENSE BLOCK ---
 
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using Uplift.Common;
-using Uplift.DependencyResolution;
-using Uplift.Packages;
 using Uplift.Schemas;
 
 namespace Uplift.Windows

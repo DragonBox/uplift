@@ -22,19 +22,16 @@
  */
 // --- END LICENSE BLOCK ---
 
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Security.Cryptography;
-using UnityEditor;
 using UnityEngine;
 
 namespace Uplift.Common
 {
-	public class FileSystemUtil
+    public class FileSystemUtil
 	{
 		public static string JoinPaths(params string[] parameters)
 		{

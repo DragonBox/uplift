@@ -129,10 +129,22 @@ namespace Uplift.Windows
         
         private Repository RepositoryField(Repository repository) 
         {
-            // FIXME: As we only support FileRepository for now, the cast is automatic
-            FileRepository temp = (FileRepository) repository;
-            temp.Path = EditorGUILayout.TextField("Path to file repository:", temp.Path);
-            return temp;
+            if(repository is FileRepository)
+            {
+                FileRepository temp = (FileRepository) repository;
+                temp.Path = EditorGUILayout.TextField("Path to file repository:", temp.Path);
+                return temp;
+            }
+
+            if(repository is GithubRepository)
+            {
+                GithubRepository temp = (GithubRepository) repository;
+                temp.Url = EditorGUILayout.TextField("Url of github repository", temp.Url);
+                return temp;
+            }
+
+            EditorGUILayout.HelpBox(string.Format("The repository {0} is not a known type of repository!"), MessageType.Error);
+            return repository;
         }
 
         private PathConfiguration PathField(string label, PathConfiguration path)

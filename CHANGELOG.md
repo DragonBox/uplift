@@ -1,5 +1,18 @@
 # Change Log
 
+## [v1.0.0beta6](https://github.com/DragonBox/uplift/tree/v1.0.0beta6) (2017-12-05)
+[Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta5...v1.0.0beta6)
+
+**Implemented enhancements:**
+
+- Remove unnecessary warning [\#28](https://github.com/DragonBox/uplift/pull/28) ([niezbop](https://github.com/niezbop))
+- Add very basic caching for Upset fetching in GithubRepository [\#27](https://github.com/DragonBox/uplift/pull/27) ([niezbop](https://github.com/niezbop))
+- Implement settings editor window [\#26](https://github.com/DragonBox/uplift/pull/26) ([niezbop](https://github.com/niezbop))
+
+**Merged pull requests:**
+
+- Cleanup: remove unused usings [\#29](https://github.com/DragonBox/uplift/pull/29) ([niezbop](https://github.com/niezbop))
+
 ## [v1.0.0beta5](https://github.com/DragonBox/uplift/tree/v1.0.0beta5) (2017-11-30)
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta4...v1.0.0beta5)
 
@@ -11,6 +24,7 @@
 
 **Merged pull requests:**
 
+- Preparing release for 1.0.0beta5 [\#25](https://github.com/DragonBox/uplift/pull/25) ([niezbop](https://github.com/niezbop))
 - Compiler: use defines to make sure that .unitypackage is built correctly [\#21](https://github.com/DragonBox/uplift/pull/21) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta4](https://github.com/DragonBox/uplift/tree/v1.0.0beta4) (2017-11-28)

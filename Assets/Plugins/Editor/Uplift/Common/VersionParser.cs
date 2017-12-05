@@ -84,7 +84,7 @@ namespace Uplift.Common
             return result;
         }
 
-        public static Version ParseIncompleteVersion(string version, bool verbose = true)
+        public static Version ParseIncompleteVersion(string version, bool warnFormat = true)
         {
             Version result = new Version
             {
@@ -95,19 +95,19 @@ namespace Uplift.Common
             };
 
             string rest = "";
-            result.Major = ParseBeginning(version, ref rest, verbose);
+            result.Major = ParseBeginning(version, ref rest, warnFormat);
             if(rest != "")
             {
                 string temp = rest;
-                result.Minor = ParseBeginning(temp, ref rest, verbose);
+                result.Minor = ParseBeginning(temp, ref rest, warnFormat);
                 if (rest != "")
                 {
                     temp = rest;
-                    result.Patch = ParseBeginning(temp, ref rest, verbose);
+                    result.Patch = ParseBeginning(temp, ref rest, warnFormat);
                     if (rest != "")
                     {
                         temp = rest;
-                        result.Optional = ParseBeginning(temp, ref rest, verbose);
+                        result.Optional = ParseBeginning(temp, ref rest, warnFormat);
                     }
                 }
             }
@@ -115,7 +115,7 @@ namespace Uplift.Common
             return result;
         }
 
-        private static int ParseBeginning(string input, ref string rest, bool verbose = true)
+        private static int ParseBeginning(string input, ref string rest, bool warnFormat = true)
         {
             const string matcher = @"(?<item>\d+)\.?(?<identifier>[a-zA-Z]+)?\.?(?<rest>[\w\.]+)?";
             Match matchObject = Regex.Match(input, matcher);
@@ -125,7 +125,7 @@ namespace Uplift.Common
             try
             {
                 string identifier = matchObject.Groups["identifier"].ToString();
-                if (!string.IsNullOrEmpty(identifier) && verbose) Debug.LogWarning(string.Format("Uplift does not support non-numeric identifiers such as {0}", identifier));
+                if (!string.IsNullOrEmpty(identifier) && warnFormat) Debug.LogWarning(string.Format("Uplift does not support non-numeric identifiers such as {0}", identifier));
             }
             catch (FormatException) { }
             try

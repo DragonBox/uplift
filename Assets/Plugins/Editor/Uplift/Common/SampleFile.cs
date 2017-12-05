@@ -22,7 +22,6 @@
  */
 // --- END LICENSE BLOCK ---
 
-using System.IO;
 using System.Xml;
 using UnityEngine;
 using Uplift.Schemas;

@@ -22,7 +22,6 @@
  */
 // --- END LICENSE BLOCK ---
 
-using System.Collections.Generic;
 using Uplift.Common;
 using Uplift.Packages;
 using Uplift.Schemas;

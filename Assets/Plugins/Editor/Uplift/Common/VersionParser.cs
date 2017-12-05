@@ -25,7 +25,6 @@
 using System;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using Uplift.Schemas;
 
 namespace Uplift.Common
 {

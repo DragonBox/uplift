@@ -25,17 +25,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Xml.Serialization;
-using Uplift.Extensions;
 using UnityEngine;
-using UnityEditor;
 using Uplift.Common;
 using Version = Uplift.Common.Version;
 using System.Text.RegularExpressions;
 
-namespace Uplift.Schemas {
+namespace Uplift.Schemas
+{
 
     public partial class FileRepository
     {

@@ -22,16 +22,15 @@
  */
 // --- END LICENSE BLOCK ---
 
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEditor;
 using Uplift.Common;
 using System.Linq;
 using System.IO;
 
-namespace BuildTool {
-	public class DllCompiler {
+namespace BuildTool
+{
+    public class DllCompiler {
 		static string UpliftDLL = "target/Uplift.dll";
 
 		[MenuItem("Tools/Uplift/Build/BuildAndExportDll", false, 311)]

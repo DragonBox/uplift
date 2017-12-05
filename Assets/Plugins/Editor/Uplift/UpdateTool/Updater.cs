@@ -26,7 +26,6 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Collections;
-using System.Collections.Generic;
 using Uplift.Common;
 using Uplift.GitHubModule;
 using Uplift.Windows;
@@ -34,9 +33,6 @@ using System.Net;
 using System.Linq;
 using System;
 using System.Globalization;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 
 namespace Uplift.Updating
 {

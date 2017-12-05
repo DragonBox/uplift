@@ -27,7 +27,6 @@ using UnityEngine;
 using Uplift.Common;
 using Uplift.Schemas;
 using Uplift.Updating;
-using System;
 
 namespace Uplift
 {

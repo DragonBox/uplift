@@ -22,18 +22,14 @@
  */
 // --- END LICENSE BLOCK ---
 
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.IO;
 using Uplift.Common;
-
-using System.Diagnostics;
-using System.Text;
 using System.Linq;
 
-namespace BuildTool {
-	public class UnityInstallation {
+namespace BuildTool
+{
+    public class UnityInstallation {
 		string rootPath;
 		BuildPaths buildPaths;
 

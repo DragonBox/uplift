@@ -33,8 +33,6 @@ using UnityEditor;
 using UnityEngine;
 using Uplift.Common;
 using Uplift.GitHubModule;
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Uplift.Schemas
 {

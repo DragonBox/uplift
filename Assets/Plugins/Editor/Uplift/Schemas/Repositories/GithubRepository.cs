@@ -33,6 +33,7 @@ using UnityEditor;
 using UnityEngine;
 using Uplift.Common;
 using Uplift.GitHubModule;
+using Uplift.Extensions;
 
 namespace Uplift.Schemas
 {
@@ -67,13 +68,14 @@ namespace Uplift.Schemas
             GitHubAsset[] upsetAssets = releases
                 .SelectMany<GitHubRelease, GitHubAsset>(rel => rel.assets.Where(asset => asset.name.EndsWith("Upset.xml")))
                 .ToArray();
-
+            
             string progressBarTitle = "Parsing Upsets from GitHub repository";
             int index = 0;
 
             List<Upset> upsetList = new List<Upset>();
             EditorUtility.DisplayProgressBar(progressBarTitle, "Please wait a little bit while Uplift parses the Upset in the GitHub repository at " + urlField, 0f);
-            foreach(GitHubAsset asset in upsetAssets)
+            string assetPath;
+            foreach (GitHubAsset asset in upsetAssets)
             {
                 StrictXmlDeserializer<Upset> deserializer = new StrictXmlDeserializer<Upset>();
                 
@@ -82,10 +84,19 @@ namespace Uplift.Schemas
                     "Parsing " + asset.name, 
                     (float)(index++) / upsetAssets.Length
                 );
-                
-                using(StreamReader sr = new StreamReader(GitHub.GetAssetStream(asset, GetToken())))
+
+                if (!TryGetCachedItem(asset.name, out assetPath))
                 {
-                    Upset upset = deserializer.Deserialize(sr.BaseStream);
+                    using (StreamReader sr = new StreamReader(GitHub.GetAssetStream(asset, GetToken())))
+                    using (FileStream fs = new FileStream(assetPath, FileMode.Create))
+                    {
+                        sr.BaseStream.CopyTo(fs);
+                    }
+                }
+
+                using (FileStream fs = new FileStream(assetPath, FileMode.Open))
+                {
+                    Upset upset = deserializer.Deserialize(fs);
                     upset.MetaInformation.dirName = asset.name;
                     upsetList.Add(upset);
                 }
@@ -146,6 +157,19 @@ namespace Uplift.Schemas
 
             Debug.LogWarning("Could not find authentication method for repository at " + urlField);
             return null;
+        }
+
+        private bool TryGetCachedItem(string fileName, out string path)
+        {
+            path = Path.Combine(GetCachePath(), fileName);
+            return File.Exists(path);
+        }
+
+        private string GetCachePath()
+        {
+            string path = Path.Combine(FileSystemUtil.GetAppDataPath(), "Uplift");
+            FileSystemUtil.EnsureDirExists(path);
+            return path;
         }
 
         public override string ToString()

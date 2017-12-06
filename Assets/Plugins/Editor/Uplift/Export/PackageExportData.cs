@@ -39,7 +39,7 @@ namespace Uplift.Export
         public  string    packageName     =  "";
         public  string    packageVersion  =  "";
         public  string    license         =  "";
-        public  Object    templateUpset   = new Object();
+        public  Object    templateUpsetFile   = new Object();
 
         [Header("Paths")]
         public  Object[]  pathsToExport   =  new Object[0];
@@ -62,11 +62,11 @@ namespace Uplift.Export
         {
             get
             {
-                if(templateUpset == null)
+                if(templateUpsetFile == null)
                 {
                     return null;
                 }
-                return AssetDatabase.GetAssetPath(templateUpset);
+                return AssetDatabase.GetAssetPath(templateUpsetFile);
             }
         }
 

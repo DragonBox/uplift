@@ -96,14 +96,31 @@ namespace Uplift.Export
 
         protected void WriteUpsetFile(string file)
         {
+            XmlSerializer serializer = new XmlSerializer(typeof(Upset));
+
+            Upset template;
+            if(string.IsNullOrEmpty(exportSpec.TemplateUpsetPath))
+            {
+                Debug.LogWarning("No template Upset specified, dependencies and configuration will not follow through");
+                template = new Upset();
+            }
+            else
+            {
+                using (FileStream fs = new FileStream(exportSpec.TemplateUpsetPath, FileMode.Open))
+                {
+                    template = serializer.Deserialize(fs) as Upset;
+                }
+            }
+
             var upset = new Upset() {
                 UnityVersion = Application.unityVersion,
                 PackageName = exportSpec.packageName,
                 PackageLicense = exportSpec.license,
-                PackageVersion = exportSpec.packageVersion
+                PackageVersion = exportSpec.packageVersion,
+                Dependencies = template.Dependencies,
+                Configuration = template.Configuration
             };
 
-            XmlSerializer serializer = new XmlSerializer(typeof(Upset));
             using (FileStream fs = new FileStream(file, FileMode.Create))
             {
                 using (StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8))

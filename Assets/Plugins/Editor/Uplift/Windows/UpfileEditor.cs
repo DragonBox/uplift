@@ -140,6 +140,17 @@ namespace Uplift.Windows
             {
                 GithubRepository temp = (GithubRepository) repository;
                 temp.Url = EditorGUILayout.TextField("Url of github repository", temp.Url);
+
+                if(temp.TagList != null)
+                {
+                    temp.TagList = ArrayField<string>(
+                        temp.TagList,
+                        "Fetch from tag",
+                        "Add another tag",
+                        "sometag",
+                        tag => EditorGUILayout.TextField(tag)
+                    );
+                }
                 return temp;
             }
 

@@ -1,5 +1,16 @@
 # Change Log
 
+## [v1.0.0beta7](https://github.com/DragonBox/uplift/tree/v1.0.0beta7) (2017-12-07)
+[Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta6...v1.0.0beta7)
+
+**Implemented enhancements:**
+
+- Add upset template to export package with [\#33](https://github.com/DragonBox/uplift/pull/33) ([niezbop](https://github.com/niezbop))
+
+**Fixed bugs:**
+
+- Fix lack of support for unknown repositories in Upfile Editor window [\#32](https://github.com/DragonBox/uplift/pull/32) ([niezbop](https://github.com/niezbop))
+
 ## [v1.0.0beta6](https://github.com/DragonBox/uplift/tree/v1.0.0beta6) (2017-12-05)
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta5...v1.0.0beta6)
 
@@ -11,6 +22,7 @@
 
 **Merged pull requests:**
 
+- Preparing release for 1.0.0beta6 [\#30](https://github.com/DragonBox/uplift/pull/30) ([niezbop](https://github.com/niezbop))
 - Cleanup: remove unused usings [\#29](https://github.com/DragonBox/uplift/pull/29) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta5](https://github.com/DragonBox/uplift/tree/v1.0.0beta5) (2017-11-30)

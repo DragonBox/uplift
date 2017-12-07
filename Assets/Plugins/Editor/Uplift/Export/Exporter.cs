@@ -33,23 +33,30 @@ using System.Xml.Serialization;
 
 
 
-namespace Uplift.Export {
-    class Exporter {
+namespace Uplift.Export
+{
+    class Exporter
+    {
         PackageExportData exportSpec;
 
-        public void Export() {
+        public void Export()
+        {
 
             // Prepare list of entries to export
             var exportEntries = new List<string>();
 
-            for(int i=0; i<exportSpec.paths.Length;i++) {
+            for(int i=0; i<exportSpec.paths.Length;i++)
+            {
 
                 string path = exportSpec.paths[i];
 
-                if(System.IO.File.Exists(path)) {
+                if(System.IO.File.Exists(path))
+                {
                     exportEntries.Add(path);
 
-                } else if (System.IO.Directory.Exists(path)) {
+                }
+                else if (System.IO.Directory.Exists(path))
+                {
                     string[] tFiles = System.IO.Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
                     string[] tDirectories = System.IO.Directory.GetDirectories(path, "*", SearchOption.AllDirectories);
 
@@ -64,7 +71,8 @@ namespace Uplift.Export {
             string packageBasename = string.Format("{0}~{1}", exportSpec.packageName, exportSpec.packageVersion);
 
             // Create Target Directory
-            if(!Directory.Exists(exportSpec.targetDir)) {
+            if(!Directory.Exists(exportSpec.targetDir))
+            {
                 Directory.CreateDirectory(exportSpec.targetDir);
             }
 
@@ -81,19 +89,38 @@ namespace Uplift.Export {
 
         }
 
-        public void SetExportSpec(PackageExportData exportSpec) {
+        public void SetExportSpec(PackageExportData exportSpec)
+        {
             this.exportSpec = exportSpec;
         }
 
-        protected void WriteUpsetFile(string file) {
+        protected void WriteUpsetFile(string file)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(Upset));
+
+            Upset template;
+            if(string.IsNullOrEmpty(exportSpec.TemplateUpsetPath))
+            {
+                Debug.LogWarning("No template Upset specified, dependencies and configuration will not follow through");
+                template = new Upset();
+            }
+            else
+            {
+                using (FileStream fs = new FileStream(exportSpec.TemplateUpsetPath, FileMode.Open))
+                {
+                    template = serializer.Deserialize(fs) as Upset;
+                }
+            }
+
             var upset = new Upset() {
                 UnityVersion = Application.unityVersion,
                 PackageName = exportSpec.packageName,
                 PackageLicense = exportSpec.license,
-                PackageVersion = exportSpec.packageVersion
+                PackageVersion = exportSpec.packageVersion,
+                Dependencies = template.Dependencies,
+                Configuration = template.Configuration
             };
 
-            XmlSerializer serializer = new XmlSerializer(typeof(Upset));
             using (FileStream fs = new FileStream(file, FileMode.Create))
             {
                 using (StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8))
@@ -107,17 +134,20 @@ namespace Uplift.Export {
         // Convenience method for packing everything according to
         // PackageExportData objects
 
-        public static void PackageEverything() {
+        public static void PackageEverything()
+        {
             var guids = AssetDatabase.FindAssets("t:PackageExportData");
 
-            if(guids.Length == 0) {
+            if(guids.Length == 0)
+            {
                 throw new System.Exception("PackageExportData doesn't exist. Create at least one using Uplift -> Create Export Spec.");
             }
 
 
             Debug.LogFormat("{0} Package Export Specification(s) found. Preparing for export.", guids.Length);
 
-            for(int i=0; i<guids.Length;i++) {
+            for(int i=0; i<guids.Length;i++)
+            {
 
                 string packageExportPath = AssetDatabase.GUIDToAssetPath(guids[i]);
 #if UNITY_5_6_OR_NEWER
@@ -139,10 +169,10 @@ namespace Uplift.Export {
                 // Export of set package
                 exporter.Export();
             }
-
         }
 
-        public static PackageExportData GetDefaultExportData() {
+        public static PackageExportData GetDefaultExportData()
+        {
                 PackageExportData defaultExportData = ScriptableObject.CreateInstance<PackageExportData>();
 
                 defaultExportData.packageName = PlayerSettings.productName;
@@ -152,8 +182,5 @@ namespace Uplift.Export {
                 return defaultExportData;
 
         }
-
-
     }
-
 }

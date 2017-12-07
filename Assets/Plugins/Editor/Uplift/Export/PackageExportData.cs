@@ -27,16 +27,19 @@ using UnityEditor;
 using System;
 using Object = UnityEngine.Object;
 
-namespace Uplift.Export {
+namespace Uplift.Export
+{
 #if UNITY_5_1_OR_NEWER
     [CreateAssetMenuAttribute(fileName = "PackageExport.asset", menuName = "Uplift/Package Export Definition", order = 250)]
 #endif
-    class PackageExportData : ScriptableObject, ICloneable {
+    class PackageExportData : ScriptableObject, ICloneable
+    {
 
         [Header("Basic Package Information")]
         public  string    packageName     =  "";
         public  string    packageVersion  =  "";
         public  string    license         =  "";
+        public  Object    templateUpsetFile   = new Object();
 
         [Header("Paths")]
         public  Object[]  pathsToExport   =  new Object[0];
@@ -46,49 +49,67 @@ namespace Uplift.Export {
 
         protected string[] rawPaths       = new string[0];
 
-        public string[] paths {
+        public string[] paths
+        {
             get { return PathsToStringArray(); }
-            set {
+            set
+            {
                 rawPaths = value;
             }
         }
 
-        protected string[] PathsToStringArray() {
+        public string TemplateUpsetPath
+        {
+            get
+            {
+                if(templateUpsetFile == null)
+                {
+                    return null;
+                }
+                return AssetDatabase.GetAssetPath(templateUpsetFile);
+            }
+        }
+
+        protected string[] PathsToStringArray()
+        {
             string[] result = new string[pathsToExport.Length + rawPaths.Length];
 
-            for(int i=0; i<pathsToExport.Length;i++) {
+            for(int i=0; i<pathsToExport.Length;i++)
+            {
                 result[i] = AssetDatabase.GetAssetPath(pathsToExport[i]);
             }
 
-            for(int i=0; i<rawPaths.Length;i++) {
+            for(int i=0; i<rawPaths.Length;i++)
+            {
                 result[pathsToExport.Length + i] = rawPaths[i];
             }
 
             return result;
         }
 
-        public object Clone() {
+        public object Clone()
+        {
             return UnityEngine.Object.Instantiate(this) as PackageExportData;
         }
 
-        public void SetOrCheckOverridenDefaults(PackageExportData defaults) {
+        public void SetOrCheckOverridenDefaults(PackageExportData defaults)
+        {
             string[] overridableDefaults = {"packageName", "packageVersion", "license", "targetDir"};
 
-            foreach(var fieldName in overridableDefaults) {
+            foreach(var fieldName in overridableDefaults)
+            {
                 System.Reflection.FieldInfo field = this.GetType().GetField(fieldName);
 
                 // I know those are strings, so...
                 var defaultValue = field.GetValue(defaults) as string;
                 var currentValue = field.GetValue(this) as string;
 
-                if(string.IsNullOrEmpty(currentValue) && currentValue != defaultValue) {
+                if(string.IsNullOrEmpty(currentValue) && currentValue != defaultValue)
+                {
                     Debug.LogFormat("NOTE: using default for Package Export Specification {0}: {1}", fieldName, defaultValue);
                     field.SetValue(this, defaultValue);
-
                 }
             }
-
         }
-
     }
 }

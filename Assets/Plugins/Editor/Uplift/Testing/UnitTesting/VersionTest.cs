@@ -28,7 +28,7 @@ using Uplift.Common;
 
 namespace Uplift.Testing.Unit
 {
-    namespace VersionRequirementTest
+    namespace VersionTest
     {
         [TestFixture]
         class VersionParserTest

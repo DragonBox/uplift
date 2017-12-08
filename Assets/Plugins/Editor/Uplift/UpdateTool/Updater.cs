@@ -106,7 +106,7 @@ namespace Uplift.Updating
             else
             {
                 UpdatePopup popup = EditorWindow.GetWindow(typeof(UpdatePopup), true) as UpdatePopup;
-                popup.SetReleases(releases.Where(release => VersionParser.GreaterThan(release.tag, About.Version)).ToArray());
+                popup.SetReleases(releases.Where(release => VersionParser.GreaterThan(release.tag, About.Version, true)).ToArray());
             }
             EditorApplication.update -= EditorUpdate;
             EditorPrefs.SetString(

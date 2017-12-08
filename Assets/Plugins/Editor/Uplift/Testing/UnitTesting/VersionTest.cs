@@ -163,7 +163,8 @@ namespace Uplift.Testing.Unit
             [Test]
             public void CompareUpliftBetaReleases()
             {
-                Assert.IsTrue(VersionParser.GreaterThan("1.0.0beta5", "1.0.0beta4"));
+                Assert.IsTrue(VersionParser.GreaterThan("1.0.0beta5", "1.0.0beta4", incomplete: true));
+                Assert.IsFalse(VersionParser.GreaterThan("1.0.0beta5", "1.0.0beta4", incomplete: false));
             }
         }
     }

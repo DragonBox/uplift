@@ -148,9 +148,11 @@ namespace Uplift.Common
             return result;
         }
 
-        public static bool GreaterThan(string a, string b)
+        public static bool GreaterThan(string a, string b, bool incomplete = false)
         {
-            return ParseVersion(a) > ParseVersion(b);
+            return incomplete ?
+                ParseIncompleteVersion(a) > ParseIncompleteVersion(b) :
+                ParseVersion(a) > ParseVersion(b);
         }
     }
 }

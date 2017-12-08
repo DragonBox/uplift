@@ -68,7 +68,7 @@ namespace Uplift.Export
             }
 
             // Calculate package file basename
-            string packageBasename = string.Format("{0}~{1}", exportSpec.packageName, exportSpec.packageVersion);
+            string packageBasename = string.Format("{0}-{1}", exportSpec.packageName, exportSpec.packageVersion);
 
             // Create Target Directory
             if(!Directory.Exists(exportSpec.targetDir))

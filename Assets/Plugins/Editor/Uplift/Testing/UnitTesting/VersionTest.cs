@@ -131,6 +131,28 @@ namespace Uplift.Testing.Unit
                     }
                 );
             }
+
+            [Test]
+            public void ParseCorrectUpliftVersions()
+            {
+                Assert.AreEqual(VersionParser.ParseIncompleteVersion("0.9.1"),
+                    new Version
+                    {
+                        Major = 0,
+                        Minor = 9,
+                        Patch = 1
+                    }
+                );
+                Assert.AreEqual(VersionParser.ParseIncompleteVersion("1.0.0beta3"),
+                    new Version
+                    {
+                        Major = 1,
+                        Minor = 0,
+                        Patch = 0,
+                        Optional = 3
+                    }
+                );
+            }
         }
     }
 }

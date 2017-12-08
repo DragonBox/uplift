@@ -87,16 +87,14 @@ namespace Uplift
             public bool transitive;
         }
         
-        public void InstallDependencies(InstallStrategy strategy = InstallStrategy.UPDATE_LOCKFILE, bool refresh = false)
+        public void InstallDependencies(InstallStrategy strategy = InstallStrategy.UPDATE_LOCKFILE)
         {
-            if (refresh) UpliftManager.ResetInstances();
             PackageRepo[] targets = GetTargets(GetDependencySolver(), strategy);
             InstallPackages(targets);
         }
 
-        public DependencyState[] GetDependenciesState(bool refresh = false)
+        public DependencyState[] GetDependenciesState()
         {
-            if (refresh) UpliftManager.ResetInstances();
             Upbring upbring = Upbring.Instance();
             PackageRepo[] targets = GetTargets(GetDependencySolver(), InstallStrategy.UPDATE_LOCKFILE, false);
 

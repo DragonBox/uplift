@@ -36,7 +36,8 @@ namespace Uplift.Windows
 
         public void Init()
         {
-            states = UpliftManager.Instance().GetDependenciesState(true);
+            UpliftManager.ResetInstances();
+            states = UpliftManager.Instance().GetDependenciesState();
             Repaint();
         }
 

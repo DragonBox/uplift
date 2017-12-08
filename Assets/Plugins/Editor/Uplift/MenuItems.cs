@@ -49,7 +49,7 @@ namespace Uplift
                 "Dependencies state:"
                 ))
             {
-                UpliftManager.DependencyState[] states = UpliftManager.Instance().GetDependenciesState(false);
+                UpliftManager.DependencyState[] states = UpliftManager.Instance().GetDependenciesState();
 
                 foreach(UpliftManager.DependencyState state in states)
                 {
@@ -95,7 +95,8 @@ namespace Uplift
         private static void InstallDependencies()
         {
             Debug.Log("Installing Upfile dependencies");
-            UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.INCOMPLETE_LOCKFILE, refresh: true);
+            UpliftManager.ResetInstances();
+            UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.INCOMPLETE_LOCKFILE);
             AssetDatabase.Refresh();
         }
 
@@ -167,7 +168,8 @@ namespace Uplift
         [MenuItem("Tools/Uplift/Debug/Install from lockfile", false, 1003)]
         private static void InstallLockfile()
         {
-            UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE, refresh: true);
+            UpliftManager.ResetInstances();
+            UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE);
             AssetDatabase.Refresh();
         }
 

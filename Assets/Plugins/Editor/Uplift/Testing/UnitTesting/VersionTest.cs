@@ -153,6 +153,18 @@ namespace Uplift.Testing.Unit
                     }
                 );
             }
+
+            [Test]
+            public void CompareUpliftReleases()
+            {
+                Assert.IsTrue(VersionParser.GreaterThan("3.0.0", "2.0.0"));
+            }
+
+            [Test]
+            public void CompareUpliftBetaReleases()
+            {
+                Assert.IsTrue(VersionParser.GreaterThan("1.0.0beta5", "1.0.0beta4"));
+            }
         }
     }
 }

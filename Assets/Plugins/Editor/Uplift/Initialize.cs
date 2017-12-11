@@ -45,7 +45,8 @@ namespace Uplift
             
             if(LockFileTracker.HasChanged())
             {
-                UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE, refresh: true);
+                UpliftManager.ResetInstances();
+                UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE);
                 LockFileTracker.SaveState();
             }
 

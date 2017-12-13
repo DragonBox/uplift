@@ -87,7 +87,7 @@ namespace Uplift.Windows
             {
                 EditorGUILayout.LabelField("Installed version: " + installed.Version);
 
-                if(installed.Version != bestMatch.Package.PackageVersion)
+                if(VersionParser.GreaterThan(bestMatch.Package.PackageVersion, installed.Version))
                 {
                     EditorGUILayout.HelpBox(
                         string.Format(

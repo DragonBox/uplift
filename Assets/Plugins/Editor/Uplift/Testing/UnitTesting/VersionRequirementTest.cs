@@ -137,6 +137,10 @@ namespace Uplift.Testing.Unit
                 loseRequirement = new LoseVersionRequirement("1.1");
                 Assert.AreSame(requirement.RestrictTo(loseRequirement), loseRequirement);
 
+                // When less detailed (1)
+                loseRequirement = new LoseVersionRequirement("1");
+                Assert.AreSame(requirement.RestrictTo(loseRequirement), requirement);
+
                 // When lesser (0.9)
                 loseRequirement = new LoseVersionRequirement("0.9");
                 Assert.Throws<IncompatibleRequirementException>(
@@ -226,6 +230,10 @@ namespace Uplift.Testing.Unit
                         requirement.RestrictTo(minimalRequirement);
                     }
                 );
+
+                // When more specific 1.0.4+
+                minimalRequirement = new MinimalVersionRequirement("1.0.4");
+                Assert.AreSame(requirement.RestrictTo(minimalRequirement), minimalRequirement);
 
                 // When lesser (0.9+)
                 minimalRequirement = new MinimalVersionRequirement("0.9");

@@ -232,6 +232,7 @@ namespace Uplift.Common
             else if (other is LoseVersionRequirement)
             {
                 if (minimal <= (other as LoseVersionRequirement).stub) return other;
+                if ((other as LoseVersionRequirement).IsMetBy(minimal)) return this;
             }
             else if (other is BoundedVersionRequirement)
             {

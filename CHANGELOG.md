@@ -1,5 +1,30 @@
 # Change Log
 
+## [v1.0.0beta8](https://github.com/DragonBox/uplift/tree/v1.0.0beta8) (2017-12-14)
+[Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta7...v1.0.0beta8)
+
+**Implemented enhancements:**
+
+- .gitignore generation with line ending [\#31](https://github.com/DragonBox/uplift/issues/31)
+- Settings: ensure .upfile exists before attempting to create sample [\#40](https://github.com/DragonBox/uplift/pull/40) ([lacostej](https://github.com/lacostej))
+- Change package~name to package-name [\#37](https://github.com/DragonBox/uplift/pull/37) ([niezbop](https://github.com/niezbop))
+
+**Fixed bugs:**
+
+- Upfile dependencies not refreshed before installation [\#38](https://github.com/DragonBox/uplift/issues/38)
+- Fix update window offering to update to old versions [\#44](https://github.com/DragonBox/uplift/pull/44) ([niezbop](https://github.com/niezbop))
+- Fix lose and minimal version requirement merge [\#42](https://github.com/DragonBox/uplift/pull/42) ([niezbop](https://github.com/niezbop))
+- Fix Updater not comparing beta versions correctly [\#36](https://github.com/DragonBox/uplift/pull/36) ([niezbop](https://github.com/niezbop))
+
+**Closed issues:**
+
+- GUI Update Window says outdated, while I have newer. [\#43](https://github.com/DragonBox/uplift/issues/43)
+- uplift self-update mechanism should handle optional field in version \(e.g. beta7\) [\#35](https://github.com/DragonBox/uplift/issues/35)
+
+**Merged pull requests:**
+
+- Fix upfile not refreshed before install [\#39](https://github.com/DragonBox/uplift/pull/39) ([niezbop](https://github.com/niezbop))
+
 ## [v1.0.0beta7](https://github.com/DragonBox/uplift/tree/v1.0.0beta7) (2017-12-07)
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta6...v1.0.0beta7)
 
@@ -10,6 +35,10 @@
 **Fixed bugs:**
 
 - Fix lack of support for unknown repositories in Upfile Editor window [\#32](https://github.com/DragonBox/uplift/pull/32) ([niezbop](https://github.com/niezbop))
+
+**Merged pull requests:**
+
+- Preparing release for 1.0.0beta7 [\#34](https://github.com/DragonBox/uplift/pull/34) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta6](https://github.com/DragonBox/uplift/tree/v1.0.0beta6) (2017-12-05)
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta5...v1.0.0beta6)

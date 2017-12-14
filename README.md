@@ -1,7 +1,7 @@
 # UPLIFT
 
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://github.com/DragonBox/uplift/blob/master/LICENSE)
-![Version](https://img.shields.io/badge/version-1.0.0beta7-blue.svg)
+![Version](https://img.shields.io/badge/version-1.0.0beta8-blue.svg)
 
 Uplift is a __package manager__ for the [Unity](https://unity3d.com/) game engine, built in __C#__, that provides a standard format for distributing Unity3d assets, and is designed to easily manage the installation of assets into your projects.
 

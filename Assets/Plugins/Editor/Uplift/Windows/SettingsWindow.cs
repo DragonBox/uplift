@@ -44,7 +44,11 @@ namespace Uplift.Windows
 #endif
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
 
-            if (!File.Exists(UpliftSettings.GetDefaultLocation()))
+            string settingsLocation = UpliftSettings.GetDefaultLocation();
+
+            FileSystemUtil.EnsureParentExists(settingsLocation);
+
+            if (!File.Exists(settingsLocation))
             {
                 EditorGUILayout.HelpBox("It seems that you do not have a settings.xml file under HOME/.uplift.", MessageType.Warning);
                 if(GUILayout.Button("Create a sample settings file"))
@@ -55,7 +59,7 @@ namespace Uplift.Windows
             else
             {
                 if (settingsText == null)
-                    settingsText = System.IO.File.ReadAllText(UpliftSettings.GetDefaultLocation());
+                    settingsText = System.IO.File.ReadAllText(settingsLocation);
 
                 settingsText = EditorGUILayout.TextArea(settingsText);
 
@@ -63,7 +67,7 @@ namespace Uplift.Windows
                 {
                     XmlDocument doc = new XmlDocument();
                     doc.InnerXml = settingsText;
-                    doc.Save(UpliftSettings.GetDefaultLocation());
+                    doc.Save(settingsLocation);
                     Repaint();
                 }
             }

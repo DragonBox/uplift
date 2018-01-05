@@ -99,14 +99,14 @@ namespace Uplift.Export
             XmlSerializer serializer = new XmlSerializer(typeof(Upset));
 
             Upset template;
-            if(string.IsNullOrEmpty(exportSpec.TemplateUpsetPath))
+            if(string.IsNullOrEmpty(exportSpec.templateUpsetPath))
             {
                 Debug.LogWarning("No template Upset specified, dependencies and configuration will not follow through");
                 template = new Upset();
             }
             else
             {
-                using (FileStream fs = new FileStream(exportSpec.TemplateUpsetPath, FileMode.Open))
+                using (FileStream fs = new FileStream(exportSpec.templateUpsetPath, FileMode.Open))
                 {
                     template = serializer.Deserialize(fs) as Upset;
                 }

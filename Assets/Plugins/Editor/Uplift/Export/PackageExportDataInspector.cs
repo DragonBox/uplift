@@ -10,13 +10,13 @@ namespace Uplift.Export
     public class PackageExportDataInspector : Editor
     {
         private PackageExportData packageExportData;
-        private bool showPaths = true;
+        private bool showPathspathsToExport = true;
 
         public void OnEnable()
         {
             packageExportData = (PackageExportData)target;
-            if(packageExportData.paths == null)
-                packageExportData.paths = new string[0];
+            if(packageExportData.pathsToExport == null)
+                packageExportData.pathsToExport = new string[0];
         }
 
         public override void OnInspectorGUI()
@@ -29,10 +29,10 @@ namespace Uplift.Export
             EditorGUILayout.Separator();
             EditorGUILayout.LabelField("Additional Package Information", EditorStyles.boldLabel);
             EditorGUILayout.HelpBox("The template upset file is used to get the dependencies and the configuration of the package", MessageType.Info);
-            packageExportData.templateUpsetPath = AssetDatabase.GetAssetPath(
+            packageExportData.templateUpsetFile = AssetDatabase.GetAssetPath(
                 EditorGUILayout.ObjectField(
                     "Template Upset file",
-                    AssetDatabase.LoadMainAssetAtPath(packageExportData.templateUpsetPath),
+                    AssetDatabase.LoadMainAssetAtPath(packageExportData.templateUpsetFile),
                     typeof(UnityEngine.Object),
                     false
                 )
@@ -41,26 +41,26 @@ namespace Uplift.Export
             EditorGUILayout.Separator();
             EditorGUILayout.LabelField("Export Settings", EditorStyles.boldLabel);
             packageExportData.targetDir = EditorGUILayout.TextField("Build destination directory", packageExportData.targetDir);
-            showPaths = EditorGUILayout.Foldout(showPaths, "Paths to export");
-            if(showPaths)
+            showPathspathsToExport = EditorGUILayout.Foldout(showPathspathsToExport, "Paths to export");
+            if(showPathspathsToExport)
             {
                 EditorGUI.indentLevel += 1;
-                for(int i = 0; i < packageExportData.paths.Length; i++)
+                for(int i = 0; i < packageExportData.pathsToExport.Length; i++)
                 {
                     EditorGUILayout.BeginHorizontal();
-                    packageExportData.paths[i] = AssetDatabase.GetAssetPath(
+                    packageExportData.pathsToExport[i] = AssetDatabase.GetAssetPath(
                         EditorGUILayout.ObjectField(
                             "Item to export",
-                            AssetDatabase.LoadMainAssetAtPath(packageExportData.paths[i]),
+                            AssetDatabase.LoadMainAssetAtPath(packageExportData.pathsToExport[i]),
                             typeof(UnityEngine.Object),
                             false
                         )
                     );
                     if(GUILayout.Button("X", GUILayout.Width(20.0f)))
                     {
-                        var tempPaths = new List<string>(packageExportData.paths);
-                        tempPaths.RemoveAt(i);
-                        packageExportData.paths = tempPaths.ToArray();
+                        var tempPathspathsToExport = new List<string>(packageExportData.pathsToExport);
+                        tempPathspathsToExport.RemoveAt(i);
+                        packageExportData.pathsToExport = tempPathspathsToExport.ToArray();
                         EditorUtility.SetDirty(packageExportData);
                     }
                     EditorGUILayout.EndHorizontal();
@@ -68,7 +68,7 @@ namespace Uplift.Export
                 EditorGUI.indentLevel -= 1;
                 if(GUILayout.Button("+"))
                 {
-                    Array.Resize<string>(ref packageExportData.paths, packageExportData.paths.Length + 1);
+                    Array.Resize<string>(ref packageExportData.pathsToExport, packageExportData.pathsToExport.Length + 1);
                     EditorUtility.SetDirty(packageExportData);
                 }
             }

@@ -45,7 +45,7 @@ namespace Uplift.Export
             // Prepare list of entries to export
             var exportEntries = new List<string>();
 
-            for(int i=0; i<exportSpec.paths.Length;i++)
+            for(int i = 0; i < exportSpec.paths.Length; i++)
             {
 
                 string path = exportSpec.paths[i];
@@ -146,7 +146,7 @@ namespace Uplift.Export
 
             Debug.LogFormat("{0} Package Export Specification(s) found. Preparing for export.", guids.Length);
 
-            for(int i=0; i<guids.Length;i++)
+            for(int i = 0; i < guids.Length; i++)
             {
 
                 string packageExportPath = AssetDatabase.GUIDToAssetPath(guids[i]);

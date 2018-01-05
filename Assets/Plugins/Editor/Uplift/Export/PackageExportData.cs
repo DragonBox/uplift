@@ -25,8 +25,6 @@
 using UnityEngine;
 using UnityEditor;
 using System;
-using Object = UnityEngine.Object;
-using Uplift.Schemas;
 
 namespace Uplift.Export
 {

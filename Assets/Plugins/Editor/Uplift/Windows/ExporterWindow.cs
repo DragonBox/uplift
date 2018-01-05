@@ -62,7 +62,7 @@ namespace Uplift.Windows
                 };
 
                 potentialPackages[i].exportSpec = new PackageExportData() {
-                    paths = new string[]{path},
+                    pathsToExport = new string[]{path},
                     packageName = System.IO.Path.GetFileName(path),
                     packageVersion = "0.0.1",
                     license = "Undefined"
@@ -81,9 +81,9 @@ namespace Uplift.Windows
             for(int i = 0; i < potentialPackages.Length; i++)
             {
 #if !UNITY_5_5_OR_NEWER
-                expanded[i] = EditorGUILayout.Foldout(expanded[i], potentialPackages[i].exportSpec.paths[0]);
+                expanded[i] = EditorGUILayout.Foldout(expanded[i], potentialPackages[i].exportSpec.pathsToExport[0]);
 #else
-                expanded[i] = EditorGUILayout.Foldout(expanded[i], potentialPackages[i].exportSpec.paths[0], true);
+                expanded[i] = EditorGUILayout.Foldout(expanded[i], potentialPackages[i].exportSpec.pathsToExport[0], true);
 #endif
                 if (expanded[i])
                 {

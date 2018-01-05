@@ -45,10 +45,10 @@ namespace Uplift.Export
             // Prepare list of entries to export
             var exportEntries = new List<string>();
 
-            for(int i=0; i<exportSpec.paths.Length;i++)
+            for(int i = 0; i < exportSpec.pathsToExport.Length; i++)
             {
 
-                string path = exportSpec.paths[i];
+                string path = exportSpec.pathsToExport[i];
 
                 if(System.IO.File.Exists(path))
                 {
@@ -99,14 +99,14 @@ namespace Uplift.Export
             XmlSerializer serializer = new XmlSerializer(typeof(Upset));
 
             Upset template;
-            if(string.IsNullOrEmpty(exportSpec.TemplateUpsetPath))
+            if(string.IsNullOrEmpty(exportSpec.templateUpsetFile))
             {
                 Debug.LogWarning("No template Upset specified, dependencies and configuration will not follow through");
                 template = new Upset();
             }
             else
             {
-                using (FileStream fs = new FileStream(exportSpec.TemplateUpsetPath, FileMode.Open))
+                using (FileStream fs = new FileStream(exportSpec.templateUpsetFile, FileMode.Open))
                 {
                     template = serializer.Deserialize(fs) as Upset;
                 }
@@ -146,7 +146,7 @@ namespace Uplift.Export
 
             Debug.LogFormat("{0} Package Export Specification(s) found. Preparing for export.", guids.Length);
 
-            for(int i=0; i<guids.Length;i++)
+            for(int i = 0; i < guids.Length; i++)
             {
 
                 string packageExportPath = AssetDatabase.GUIDToAssetPath(guids[i]);

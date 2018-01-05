@@ -25,7 +25,6 @@
 using UnityEngine;
 using UnityEditor;
 using System;
-using Object = UnityEngine.Object;
 
 namespace Uplift.Export
 {
@@ -34,58 +33,12 @@ namespace Uplift.Export
 #endif
     class PackageExportData : ScriptableObject, ICloneable
     {
-
-        [Header("Basic Package Information")]
         public  string    packageName     =  "";
         public  string    packageVersion  =  "";
         public  string    license         =  "";
-        public  Object    templateUpsetFile   = new Object();
-
-        [Header("Paths")]
-        public  Object[]  pathsToExport   =  new Object[0];
-
-        [Header("Export Settings")]
         public  string    targetDir       =  "target";
-
-        protected string[] rawPaths       = new string[0];
-
-        public string[] paths
-        {
-            get { return PathsToStringArray(); }
-            set
-            {
-                rawPaths = value;
-            }
-        }
-
-        public string TemplateUpsetPath
-        {
-            get
-            {
-                if(templateUpsetFile == null)
-                {
-                    return null;
-                }
-                return AssetDatabase.GetAssetPath(templateUpsetFile);
-            }
-        }
-
-        protected string[] PathsToStringArray()
-        {
-            string[] result = new string[pathsToExport.Length + rawPaths.Length];
-
-            for(int i=0; i<pathsToExport.Length;i++)
-            {
-                result[i] = AssetDatabase.GetAssetPath(pathsToExport[i]);
-            }
-
-            for(int i=0; i<rawPaths.Length;i++)
-            {
-                result[pathsToExport.Length + i] = rawPaths[i];
-            }
-
-            return result;
-        }
+        public string[] pathsToExport       = new string[0];
+        public string templateUpsetFile = "";
 
         public object Clone()
         {

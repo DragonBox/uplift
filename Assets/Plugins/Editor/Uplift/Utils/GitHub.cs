@@ -182,6 +182,35 @@ oVWNWlZopCJwqjyBcdmdqEU79OX2olHdx3ti6G8MdOu42vi/hw15UJGQmxg7kVkn
 8TUoE6smftX3eg==
 -----END CERTIFICATE-----
 ",
+@"-----BEGIN CERTIFICATE-----
+MIIEsTCCA5mgAwIBAgIQBOHnpNxc8vNtwCtCuF0VnzANBgkqhkiG9w0BAQsFADBs
+MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
+d3cuZGlnaWNlcnQuY29tMSswKQYDVQQDEyJEaWdpQ2VydCBIaWdoIEFzc3VyYW5j
+ZSBFViBSb290IENBMB4XDTEzMTAyMjEyMDAwMFoXDTI4MTAyMjEyMDAwMFowcDEL
+MAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3
+LmRpZ2ljZXJ0LmNvbTEvMC0GA1UEAxMmRGlnaUNlcnQgU0hBMiBIaWdoIEFzc3Vy
+YW5jZSBTZXJ2ZXIgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC2
+4C/CJAbIbQRf1+8KZAayfSImZRauQkCbztyfn3YHPsMwVYcZuU+UDlqUH1VWtMIC
+Kq/QmO4LQNfE0DtyyBSe75CxEamu0si4QzrZCwvV1ZX1QK/IHe1NnF9Xt4ZQaJn1
+itrSxwUfqJfJ3KSxgoQtxq2lnMcZgqaFD15EWCo3j/018QsIJzJa9buLnqS9UdAn
+4t07QjOjBSjEuyjMmqwrIw14xnvmXnG3Sj4I+4G3FhahnSMSTeXXkgisdaScus0X
+sh5ENWV/UyU50RwKmmMbGZJ0aAo3wsJSSMs5WqK24V3B3aAguCGikyZvFEohQcft
+bZvySC/zA/WiaJJTL17jAgMBAAGjggFJMIIBRTASBgNVHRMBAf8ECDAGAQH/AgEA
+MA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIw
+NAYIKwYBBQUHAQEEKDAmMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2Vy
+dC5jb20wSwYDVR0fBEQwQjBAoD6gPIY6aHR0cDovL2NybDQuZGlnaWNlcnQuY29t
+L0RpZ2lDZXJ0SGlnaEFzc3VyYW5jZUVWUm9vdENBLmNybDA9BgNVHSAENjA0MDIG
+BFUdIAAwKjAoBggrBgEFBQcCARYcaHR0cHM6Ly93d3cuZGlnaWNlcnQuY29tL0NQ
+UzAdBgNVHQ4EFgQUUWj/kK8CB3U8zNllZGKiErhZcjswHwYDVR0jBBgwFoAUsT7D
+aQP4v0cB1JgmGggC72NkK8MwDQYJKoZIhvcNAQELBQADggEBABiKlYkD5m3fXPwd
+aOpKj4PWUS+Na0QWnqxj9dJubISZi6qBcYRb7TROsLd5kinMLYBq8I4g4Xmk/gNH
+E+r1hspZcX30BJZr01lYPf7TMSVcGDiEo+afgv2MW5gxTs14nhr9hctJqvIni5ly
+/D6q1UEL2tU2ob8cbkdJf17ZSHwD2f2LSaCYJkJA69aSEaRkCldUxPUd1gJea6zu
+xICaEnL6VpPX/78whQYwvwt/Tv9XBZ0k7YXDK/umdaisLRbvfXknsuvCnQsH6qqF
+0wGjIChBWUMo0oHjqvbsezt3tkBigAVBRQHvFwY+3sAzm2fTYS5yh+Rp/BIAV0Ae
+cPUeybQ=
+-----END CERTIFICATE-----
+",
 // Amazon S3 (provider for the release download) *.s3.amazonaws.com
 @"-----BEGIN CERTIFICATE-----
 MIIFWjCCBEKgAwIBAgIQBVG1kvpTzyBSuLcPJ1zBWTANBgkqhkiG9w0BAQsFADBk
@@ -220,10 +249,12 @@ zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
 
         public static IEnumerator LoadReleases(string url, string authToken = null)
         {
+            string proxiedUrl = UpliftPreferences.UseGithubProxy(url);
+
             WWW www = string.IsNullOrEmpty(authToken) ?
-                new WWW (url) :
+                new WWW (proxiedUrl) :
                 new WWW (
-                    url,
+                    proxiedUrl,
                     null,
                     new Dictionary<string, string>
                     {
@@ -348,7 +379,9 @@ zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
         }
         public static Stream GetAssetStream(GitHubAsset asset, string token)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(asset.apiURL);
+            string proxiedUrl = UpliftPreferences.UseGithubProxy(asset.apiURL);
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(proxiedUrl);
             request.Method = "GET";
             if(!string.IsNullOrEmpty(token))
                 request.Headers["Authorization"] = "token " + token;
@@ -367,7 +400,7 @@ zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
                 address = new Uri(response.GetResponseHeader("Location"));
             }
 
-            request = (HttpWebRequest)WebRequest.Create(address);
+            request = (HttpWebRequest)WebRequest.Create(UpliftPreferences.UseGithubProxy(address.OriginalString));
             request.Method = "GET";
             request.UserAgent = "Uplift GithubRepository/1.0 - https://github.com/DragonBox/uplift";
             HttpWebResponse finalResponse = (HttpWebResponse)request.GetResponse();

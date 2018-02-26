@@ -74,31 +74,41 @@ namespace Uplift.Schemas
 
             List<Upset> upsetList = new List<Upset>();
             EditorUtility.DisplayProgressBar(progressBarTitle, "Please wait a little bit while Uplift parses the Upset in the GitHub repository at " + urlField, 0f);
+
             string assetPath;
             foreach (GitHubAsset asset in upsetAssets)
             {
-                StrictXmlDeserializer<Upset> deserializer = new StrictXmlDeserializer<Upset>();
-                
-                EditorUtility.DisplayProgressBar(
-                    progressBarTitle,
-                    "Parsing " + asset.name, 
-                    (float)(index++) / upsetAssets.Length
-                );
-
-                if (!TryGetCachedItem(asset.name, out assetPath))
+                try
                 {
-                    using (StreamReader sr = new StreamReader(GitHub.GetAssetStream(asset, GetToken())))
-                    using (FileStream fs = new FileStream(assetPath, FileMode.Create))
+                    StrictXmlDeserializer<Upset> deserializer = new StrictXmlDeserializer<Upset>();
+
+                    EditorUtility.DisplayProgressBar(
+                        progressBarTitle,
+                        "Parsing " + asset.name,
+                        (float)(index++) / upsetAssets.Length
+                    );
+
+                    if (!TryGetCachedItem(asset.name, out assetPath))
                     {
-                        sr.BaseStream.CopyTo(fs);
+                        using (StreamReader sr = new StreamReader(GitHub.GetAssetStream(asset, GetToken())))
+                        using (FileStream fs = new FileStream(assetPath, FileMode.Create))
+                        {
+                            sr.BaseStream.CopyTo(fs);
+                        }
+                    }
+
+                    using (FileStream fs = new FileStream(assetPath, FileMode.Open))
+                    {
+                        Upset upset = deserializer.Deserialize(fs);
+                        upset.MetaInformation.dirName = asset.name;
+                        upsetList.Add(upset);
                     }
                 }
-
-                using (FileStream fs = new FileStream(assetPath, FileMode.Open))
+                catch(Exception e)
                 {
-                    Upset upset = deserializer.Deserialize(fs);
-                    upset.MetaInformation.dirName = asset.name;
-                    upsetList.Add(upset);
+                    Debug.LogErrorFormat("An error occured while trying to get asset {0} ({1}, {2}) from GithubRepository", asset.name, asset.htmlURL, asset.apiURL);
+                    EditorUtility.ClearProgressBar();
+                    throw e;
                 }
             }
 

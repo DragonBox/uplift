@@ -48,7 +48,7 @@ end
 
 desc 'Build the Uplift DLL and the unitypackage contain the DLL and its dependencies'
 task :build, [:unity_version] => [:chdir] do |_t, args|
-  args.with_defaults(unity_version: '5.6.0f3')
+  args.with_defaults(unity_version: '5.6.5f1')
   unity_version = args[:unity_version]
   File.write('ProjectSettings/ProjectVersion.txt', "m_EditorVersion: #{unity_version}")
   FileUtils.cp('ProjectSettings/ProjectVersion.txt', 'Build/ProjectSettings/ProjectVersion.txt')
@@ -67,7 +67,7 @@ end
 
 # DEPLOYMENT
 
-artifact_targets = ['5.6.0f3', '2017.1.2f1']
+artifact_targets = ['5.6.5f1', '2017.1.2f1']
 repository = 'uplift'
 owner = 'Dragonbox'
 

@@ -22,6 +22,8 @@
  */
 // --- END LICENSE BLOCK ---
 
+using System;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -32,9 +34,13 @@ namespace Uplift
         private static bool prefsLoaded = false;
         private static readonly string useExperimentalFeaturesKey = "UpliftExperimentalFeatures";
         private static readonly string trustUnknownCertificatesKey = "UpliftUnknownCertificates";
+        private static readonly string githubProxyUseKey = "UpliftGithubProxyUseKey";
+        private static readonly string githubProxyUrlKey = "UpliftGithubProxyUrlKey";
 
         private static bool useExperimentalFeatures;
         private static bool trustUnknownCertificates;
+        private static bool useGithubProxy;
+        private static string githubProxyUrl;
 
         [PreferenceItem("Uplift")]
         public static void PreferencesGUI()
@@ -43,6 +49,8 @@ namespace Uplift
             {
                 useExperimentalFeatures = EditorPrefs.GetBool(useExperimentalFeaturesKey, false);
                 trustUnknownCertificates = EditorPrefs.GetBool(trustUnknownCertificatesKey, false);
+                useGithubProxy = EditorPrefs.GetBool(githubProxyUseKey, false);
+                githubProxyUrl = EditorPrefs.GetString(githubProxyUrlKey, "");
                 prefsLoaded = true;
             }
             EditorGUILayout.LabelField("SSL Certificates:", EditorStyles.boldLabel);
@@ -60,10 +68,28 @@ namespace Uplift
             );
             useExperimentalFeatures = EditorGUILayout.Toggle("Use experimental features", useExperimentalFeatures);
 
-            if(GUI.changed)
+            EditorGUILayout.LabelField("Github related:", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(
+                "Github does not support TLS versions 1.0 and 1.1 as of 22/02/2018, and TLS 1.2 is available in Unity only with Mono 4.8. If you want to use a Github Repository, it will need to be behind a proxy",
+                MessageType.Info
+            );
+            useGithubProxy = EditorGUILayout.Toggle("Use Github proxy", useGithubProxy);
+            GUI.enabled = useGithubProxy;
+            if (useGithubProxy)
+                EditorGUILayout.HelpBox(
+                    "The proxy URL will replace 'https://api.github.com'",
+                    MessageType.Info
+                );
+            githubProxyUrl = EditorGUILayout.TextField("Proxy URL", githubProxyUrl);
+            githubProxyUrl = Regex.Replace(githubProxyUrl, "/$", "");
+            GUI.enabled = true;
+
+            if (GUI.changed)
             {
                 EditorPrefs.SetBool(useExperimentalFeaturesKey, useExperimentalFeatures);
                 EditorPrefs.SetBool(trustUnknownCertificatesKey, trustUnknownCertificates);
+                EditorPrefs.SetBool(githubProxyUseKey, useGithubProxy);
+                EditorPrefs.SetString(githubProxyUrlKey, githubProxyUrl);
             }
         }
 
@@ -75,6 +101,14 @@ namespace Uplift
         public static bool TrustUnknownCertificates()
         {
             return EditorPrefs.GetBool(trustUnknownCertificatesKey, false);
+        }
+
+        public static string UseGithubProxy(string url)
+        {
+            if (!useGithubProxy || string.IsNullOrEmpty(githubProxyUrl))
+                return url;
+
+            return url.Replace("https://api.github.com", githubProxyUrl);
         }
     }
 }

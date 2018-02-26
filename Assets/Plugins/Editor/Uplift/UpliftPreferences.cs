@@ -23,6 +23,7 @@
 // --- END LICENSE BLOCK ---
 
 using System;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -72,7 +73,7 @@ namespace Uplift
                 "Github does not support TLS versions 1.0 and 1.1 as of 22/02/2018, and TLS 1.2 is available in Unity only with Mono 4.8. If you want to use a Github Repository, it will need to be behind a proxy",
                 MessageType.Info
             );
-            useGithubProxy = EditorGUILayout.Toggle("Use experimental features", useGithubProxy);
+            useGithubProxy = EditorGUILayout.Toggle("Use Github proxy", useGithubProxy);
             GUI.enabled = useGithubProxy;
             if (useGithubProxy)
                 EditorGUILayout.HelpBox(
@@ -80,6 +81,7 @@ namespace Uplift
                     MessageType.Info
                 );
             githubProxyUrl = EditorGUILayout.TextField("Proxy URL", githubProxyUrl);
+            githubProxyUrl = Regex.Replace(githubProxyUrl, "/$", "");
             GUI.enabled = true;
 
             if (GUI.changed)

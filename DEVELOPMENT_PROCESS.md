@@ -34,4 +34,4 @@ _NOTES:_
 
 . The release is only drafted and you need to accept it before it is available to the public
 
-. Because we build on several targets, git may not be clean as Unity could have updated some scripts when switching API (this is for example the case between `5.6.0f3` and `2017.1.2f1`). You will probably need to `git checkout` some modifications!
+. Because we build on several targets, git may not be clean as Unity could have updated some scripts when switching API (this is for example the case between `5.6.5f1` and `2017.1.2f1`). You will probably need to `git checkout` some modifications!

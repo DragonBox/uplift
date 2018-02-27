@@ -45,14 +45,7 @@ namespace Uplift
         [PreferenceItem("Uplift")]
         public static void PreferencesGUI()
         {
-            if(!prefsLoaded)
-            {
-                useExperimentalFeatures = EditorPrefs.GetBool(useExperimentalFeaturesKey, false);
-                trustUnknownCertificates = EditorPrefs.GetBool(trustUnknownCertificatesKey, false);
-                useGithubProxy = EditorPrefs.GetBool(githubProxyUseKey, false);
-                githubProxyUrl = EditorPrefs.GetString(githubProxyUrlKey, "");
-                prefsLoaded = true;
-            }
+            EnsurePrefsLoaded();
             EditorGUILayout.LabelField("SSL Certificates:", EditorStyles.boldLabel);
             EditorGUILayout.HelpBox("Uplift uses SSL certificates when updating itself, as it fetches its update from Github with HTTPS", MessageType.Info);
             EditorGUILayout.HelpBox(
@@ -93,21 +86,37 @@ namespace Uplift
             }
         }
 
+        private static void EnsurePrefsLoaded()
+        {
+            if (!prefsLoaded)
+            {
+                useExperimentalFeatures = EditorPrefs.GetBool(useExperimentalFeaturesKey, false);
+                trustUnknownCertificates = EditorPrefs.GetBool(trustUnknownCertificatesKey, false);
+                useGithubProxy = EditorPrefs.GetBool(githubProxyUseKey, false);
+                githubProxyUrl = EditorPrefs.GetString(githubProxyUrlKey, "");
+                prefsLoaded = true;
+            }
+        }
+
         public static bool UseExperimental()
         {
+            EnsurePrefsLoaded();
             return EditorPrefs.GetBool(useExperimentalFeaturesKey, false);
         }
 
         public static bool TrustUnknownCertificates()
         {
+            EnsurePrefsLoaded();
             return EditorPrefs.GetBool(trustUnknownCertificatesKey, false);
         }
 
         public static string UseGithubProxy(string url)
         {
+            EnsurePrefsLoaded();
             if (!useGithubProxy || string.IsNullOrEmpty(githubProxyUrl))
                 return url;
 
+            Debug.Log("Proxying github api with " + githubProxyUrl);
             return url.Replace("https://api.github.com", githubProxyUrl);
         }
     }

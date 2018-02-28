@@ -36,7 +36,7 @@ namespace Uplift
     {
         static Initialize()
         {
-            Debug.Log("Upfile loading...");
+            Debug.Log("Using Uplift version " + About.Version);
             if (!Upfile.CheckForUpfile())
             {
                 Debug.Log("No Upfile was found at the root of your project, Uplift created a sample one for you to start working on");

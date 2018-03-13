@@ -369,6 +369,7 @@ namespace Uplift
                     }
                     else
                     {
+                        UnityEngine.Debug.LogError("Could not find a repository while loading lockfile for " + match.Groups[1].Value);
                         installableList.Add(new PackageRepo
                         {
                             Package = new Upset 

@@ -191,7 +191,7 @@ namespace Uplift.Common
     {
         public static bool IsMetBy(this IVersionRequirement requirement, string version)
         {
-            return requirement.IsMetBy(VersionParser.ParseVersion(version));
+            return requirement.IsMetBy(VersionParser.ParseIncompleteVersion(version));
         }
     }
 

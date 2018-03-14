@@ -4,6 +4,14 @@ This document is to guide anyone allowed to write to the main Uplift repository 
 
 ## RELEASING A NEWER VERSION
 
+- __Prerequisite__:
+
+You need the following environment variables set to be able to make the release:
+
+| Key                 | Expected value                                                      | Description                                                                 |
+|---------------------|---------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| UPLIFT_GITHUB_TOKEN | A valid Github token with read permission for the Uplift repository | This is the token used to create the release PR, and the release on Github. |
+
 - __Bumping__ the version:
 
 ```shell

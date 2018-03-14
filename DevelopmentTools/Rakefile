@@ -90,6 +90,7 @@ desc 'Bump the version number to the version entered interactively; pushes a com
 task bump: %i[ensure_git_clean chdir] do
   nextversion = UI.input 'Next version will be:'
   UI.user_error! 'Bump version stopped by user' unless UI.confirm("Next version will be #{nextversion}. Confirm?")
+  UI.user_error! "Version #{nextversion} is already the current one" unless UpliftCode.version != nextversion
   UpliftCode.version = nextversion
   GithubChangelogGenerator.future_release = nextversion
   sh 'git add .github_changelog_generator Assets/Plugins/Editor/Uplift/About.cs'

@@ -1,5 +1,31 @@
 # Change Log
 
+## [v1.0.0beta10](https://github.com/DragonBox/uplift/tree/v1.0.0beta10) (2018-03-14)
+[Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta9...v1.0.0beta10)
+
+**Implemented enhancements:**
+
+- Log current Uplift version on Initialize [\#54](https://github.com/DragonBox/uplift/pull/54) ([niezbop](https://github.com/niezbop))
+
+**Fixed bugs:**
+
+- Fix: Better optional parameter parsing [\#56](https://github.com/DragonBox/uplift/pull/56) ([niezbop](https://github.com/niezbop))
+- Make sure that the preferences are loaded before using them [\#55](https://github.com/DragonBox/uplift/pull/55) ([niezbop](https://github.com/niezbop))
+
+## [v1.0.0beta9](https://github.com/DragonBox/uplift/tree/v1.0.0beta9) (2018-02-26)
+[Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta8...v1.0.0beta9)
+
+**Implemented enhancements:**
+
+- Refactor ExportPackage definition [\#46](https://github.com/DragonBox/uplift/pull/46) ([niezbop](https://github.com/niezbop))
+
+**Merged pull requests:**
+
+- Release 1.0.0beta9 [\#53](https://github.com/DragonBox/uplift/pull/53) ([niezbop](https://github.com/niezbop))
+- Use Unity 5.6.5f1 [\#52](https://github.com/DragonBox/uplift/pull/52) ([niezbop](https://github.com/niezbop))
+- Allows to specify a proxy for GithubRepository [\#51](https://github.com/DragonBox/uplift/pull/51) ([niezbop](https://github.com/niezbop))
+- Cleaner failure when trying to download an asset [\#50](https://github.com/DragonBox/uplift/pull/50) ([niezbop](https://github.com/niezbop))
+
 ## [v1.0.0beta8](https://github.com/DragonBox/uplift/tree/v1.0.0beta8) (2017-12-14)
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta7...v1.0.0beta8)
 
@@ -23,6 +49,7 @@
 
 **Merged pull requests:**
 
+- Preparing release for 1.0.0beta8 [\#45](https://github.com/DragonBox/uplift/pull/45) ([niezbop](https://github.com/niezbop))
 - Fix upfile not refreshed before install [\#39](https://github.com/DragonBox/uplift/pull/39) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta7](https://github.com/DragonBox/uplift/tree/v1.0.0beta7) (2017-12-07)

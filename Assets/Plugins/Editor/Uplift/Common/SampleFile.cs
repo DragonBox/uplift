@@ -97,6 +97,8 @@ namespace Uplift.Common
     <EditorPluginPath   Location=""Assets/Plugins/Editor""  SkipPackageStructure=""true"" />
     <!-- Path where gizmos are unpacked                           -->
     <GizmoPath          Location=""Assets/Gizmos""          SkipPackageStructure=""true"" />
+	<!-- Path where editor default resources are unpacked         -->
+	<EditorDefaultResourcePath Location=""Editor Default Resources"" SkipPackageStructure=""true"" />
 
   </Configuration>
 

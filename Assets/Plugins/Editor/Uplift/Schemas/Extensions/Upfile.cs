@@ -148,6 +148,7 @@ namespace Uplift.Schemas
             SetPathConfiguration(doc,   "MediaPath",        Configuration.MediaPath);
             SetPathConfiguration(doc,   "PluginPath",       Configuration.PluginPath);
             SetPathConfiguration(doc,   "RepositoryPath",   Configuration.RepositoryPath);
+			SetPathConfiguration(doc,   "EditorDefaultResourcePath", Configuration.EditorDefaultResourcePath);
 
             // Set Dependencies
             foreach(DependencyDefinition def in Dependencies)
@@ -317,6 +318,7 @@ namespace Uplift.Schemas
             yield return Configuration.MediaPath;
             yield return Configuration.PluginPath;
             yield return Configuration.RepositoryPath;
+			yield return Configuration.EditorDefaultResourcePath;
         }
 
         public PathConfiguration GetDestinationFor(InstallSpec spec)
@@ -338,6 +340,10 @@ namespace Uplift.Schemas
                 case (InstallSpecType.EditorPlugin):
                     PH = Configuration.EditorPluginPath;
                     break;
+
+				case (InstallSpecType.EditorDefaultResource):
+					PH = Configuration.EditorDefaultResourcePath;
+					break;
 
                 case (InstallSpecType.Examples):
                     PH = Configuration.ExamplesPath;

@@ -90,8 +90,17 @@ namespace Uplift
                 }
             }
         }
+        
 
-        [MenuItem("Tools/Uplift/Install Dependencies", false, 2)]
+        [MenuItem("Tools/Uplift/Install exact dependencies", false, 2)]
+        private static void InstallLockfile()
+        {
+            UpliftManager.ResetInstances();
+            UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE);
+            AssetDatabase.Refresh();
+        }
+
+        [MenuItem("Tools/Uplift/Install and upgrade dependencies", false, 3)]
         private static void InstallDependencies()
         {
             Debug.Log("Installing Upfile dependencies");
@@ -100,13 +109,13 @@ namespace Uplift
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Tools/Uplift/Show Update Window (experimental)", true, 3)]
+        [MenuItem("Tools/Uplift/Show Update Window (experimental)", true, 4)]
         private static bool EnableShowUpdateWindow()
         {
             return UpliftPreferences.UseExperimental();
         }
 
-        [MenuItem("Tools/Uplift/Show Update Window (experimental)", false, 3)]
+        [MenuItem("Tools/Uplift/Show Update Window (experimental)", false, 4)]
         private static void ShowUpdateWindow()
         {
             UpdateUtility window = EditorWindow.GetWindow(typeof(UpdateUtility)) as UpdateUtility;
@@ -161,15 +170,6 @@ namespace Uplift
         {
             Debug.LogWarning("Nuking all packages!");
             UpliftManager.Instance().NukeAllPackages();
-            AssetDatabase.Refresh();
-        }
-        
-
-        [MenuItem("Tools/Uplift/Debug/Install from lockfile", false, 1003)]
-        private static void InstallLockfile()
-        {
-            UpliftManager.ResetInstances();
-            UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE);
             AssetDatabase.Refresh();
         }
 

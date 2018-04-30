@@ -58,6 +58,7 @@
       <xs:enumeration value="Docs"/>
       <xs:enumeration value="Examples"/>
       <xs:enumeration value="Gizmo"/>
+      <xs:enumeration value="EditorDefaultResource"/>
     </xs:restriction>
   </xs:simpleType>
   

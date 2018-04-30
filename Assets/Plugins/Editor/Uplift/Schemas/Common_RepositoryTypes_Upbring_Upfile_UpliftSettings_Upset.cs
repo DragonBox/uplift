@@ -198,6 +198,9 @@ namespace Uplift.Schemas {
         
         /// <remarks/>
         Gizmo,
+        
+        /// <remarks/>
+        EditorDefaultResource,
     }
     
     /// <remarks/>
@@ -342,6 +345,8 @@ namespace Uplift.Schemas {
         
         private PathConfiguration editorPluginPathField;
         
+        private PathConfiguration editorDefaultResourcePathField;
+        
         /// <remarks/>
         public PathConfiguration RepositoryPath {
             get {
@@ -419,6 +424,16 @@ namespace Uplift.Schemas {
             }
             set {
                 this.editorPluginPathField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PathConfiguration EditorDefaultResourcePath {
+            get {
+                return this.editorDefaultResourcePathField;
+            }
+            set {
+                this.editorDefaultResourcePathField = value;
             }
         }
     }
@@ -527,7 +542,7 @@ namespace Uplift.Schemas {
                 this.extractPathField = value;
             }
         }
-            }
+    }
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.3038")]

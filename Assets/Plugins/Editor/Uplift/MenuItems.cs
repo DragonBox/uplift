@@ -92,7 +92,7 @@ namespace Uplift
         }
         
 
-        [MenuItem("Tools/Uplift/Install exact dependencies", false, 2)]
+        [MenuItem("Tools/Uplift/Install dependencies (as specified in lockfile)", false, 2)]
         private static void InstallLockfile()
         {
             UpliftManager.ResetInstances();
@@ -100,7 +100,7 @@ namespace Uplift
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Tools/Uplift/Install and upgrade dependencies", false, 3)]
+        [MenuItem("Tools/Uplift/Update dependencies", false, 3)]
         private static void InstallDependencies()
         {
             Debug.Log("Installing Upfile dependencies");

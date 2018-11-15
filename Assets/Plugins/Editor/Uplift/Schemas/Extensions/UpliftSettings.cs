@@ -24,6 +24,7 @@
 
 using System;
 using System.IO;
+using System.Xml.Serialization;
 using UnityEngine;
 using Uplift.Common;
 using FileSystemUtil = Uplift.Common.FileSystemUtil;
@@ -41,12 +42,6 @@ namespace Uplift.Schemas
         {
             return FromFile(GetDefaultLocation());
         }
-
-        public static string GetDefaultLocation()
-        {
-            string sourceDir = System.IO.Path.Combine(GetHomePath(), folderName);
-            return System.IO.Path.Combine(sourceDir, defaultFileName);
-        }
         
         public static UpliftSettings FromFile(string source)
         {
@@ -54,7 +49,8 @@ namespace Uplift.Schemas
 
             if(!File.Exists(source))
             {
-                Debug.Log("No local settings file detected at " + source);
+                Debug.LogFormat("No local settings file detected at {0}, creating a template one for you!", source);
+                result.SaveToFile(source);
                 return result;
             }
 
@@ -77,9 +73,30 @@ namespace Uplift.Schemas
                     if (repo is FileRepository)
                         (repo as FileRepository).Path = FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
                 }
-                
+
                 return result;
             }
+        }
+
+        public void SaveToDefaultFile()
+        {
+            SaveToFile(GetDefaultLocation());
+        }
+
+        public void SaveToFile(string destination)
+        {
+            Debug.Log("Saving file!");
+            using (FileStream fs = new FileStream(destination, FileMode.Create))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(UpliftSettings));
+                serializer.Serialize(fs, this);
+            }
+        }
+
+        public static string GetDefaultLocation()
+        {
+            string sourceDir = System.IO.Path.Combine(GetHomePath(), folderName);
+            return System.IO.Path.Combine(sourceDir, defaultFileName);
         }
 
         public static string GetHomePath()
@@ -89,7 +106,5 @@ namespace Uplift.Schemas
                 ? Environment.GetEnvironmentVariable("HOME")
                 : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
         }
-
-
     }
 }

@@ -83,7 +83,6 @@ namespace Uplift.Schemas
 
         public void SaveToFile(string destination)
         {
-            Debug.Log("Saving file!");
             using (FileStream fs = new FileStream(destination, FileMode.Create))
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(UpliftSettings));

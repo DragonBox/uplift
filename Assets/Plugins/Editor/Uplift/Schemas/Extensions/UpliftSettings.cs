@@ -36,8 +36,6 @@ namespace Uplift.Schemas
         public static readonly string folderName = ".uplift";
         public static readonly string defaultFileName = "settings.xml";
 
-        internal UpliftSettings() {}
-
         public static UpliftSettings FromDefaultFile()
         {
             return FromFile(GetDefaultLocation());

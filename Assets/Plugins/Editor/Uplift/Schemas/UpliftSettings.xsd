@@ -12,6 +12,10 @@
     <xs:sequence>
       <xs:element type="RepositoriesList" name="Repositories" minOccurs="0" />
       <xs:element type="AuthenticationList" name="AuthenticationMethods" minOccurs="0" />
+      <xs:element type="xs:boolean" name="UseExperimentalFeatures" default="false" />
+      <xs:element type="xs:boolean" name="TrustUnknowCertificates" default="false" />
+      <xs:element type="xs:boolean" name="UseGithubProxy" default="false" />
+      <xs:element type="xs:string" name="GithubProxyUrl" />
     </xs:sequence>
   </xs:complexType>
   

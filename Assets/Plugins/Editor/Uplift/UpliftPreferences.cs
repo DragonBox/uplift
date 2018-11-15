@@ -26,98 +26,85 @@ using System;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
+using Uplift.Schemas;
 
 namespace Uplift
 {
     public class UpliftPreferences : MonoBehaviour
     {
-        private static bool prefsLoaded = false;
-        private static readonly string useExperimentalFeaturesKey = "UpliftExperimentalFeatures";
-        private static readonly string trustUnknownCertificatesKey = "UpliftUnknownCertificates";
-        private static readonly string githubProxyUseKey = "UpliftGithubProxyUseKey";
-        private static readonly string githubProxyUrlKey = "UpliftGithubProxyUrlKey";
+        private const string useExperimentalFeaturesKey = "UpliftExperimentalFeatures";
+        private const string trustUnknownCertificatesKey = "UpliftUnknownCertificates";
+        private const string githubProxyUseKey = "UpliftGithubProxyUseKey";
+        private const string githubProxyUrlKey = "UpliftGithubProxyUrlKey";
 
-        private static bool useExperimentalFeatures;
-        private static bool trustUnknownCertificates;
-        private static bool useGithubProxy;
-        private static string githubProxyUrl;
-
-        [PreferenceItem("Uplift")]
-        public static void PreferencesGUI()
+        private static UpliftSettings settingsCached = null;
+        private static UpliftSettings GetSettings(bool refresh = false)
         {
-            EnsurePrefsLoaded();
-            EditorGUILayout.LabelField("SSL Certificates:", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox("Uplift uses SSL certificates when updating itself, as it fetches its update from Github with HTTPS", MessageType.Info);
-            EditorGUILayout.HelpBox(
-                "Unknown certificates could be the result of our registered certificates being outdated or the result of a potential attack. Trusting unknown certificates could lead to security breaches. Use at your own risk!",
-                MessageType.Warning
-            );
-            trustUnknownCertificates = EditorGUILayout.Toggle("Trust unknown certificates", trustUnknownCertificates);
+            if (refresh || settingsCached == null)
+                settingsCached = UpliftSettings.FromDefaultFile();
 
-            EditorGUILayout.LabelField("Experimental features:", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox(
-                "Experimental features are not thoroughly tested and could induce bugs. Use at your own risk!",
-                MessageType.Warning
-            );
-            useExperimentalFeatures = EditorGUILayout.Toggle("Use experimental features", useExperimentalFeatures);
+            bool changed = false;
 
-            EditorGUILayout.LabelField("Github related:", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox(
-                "Github does not support TLS versions 1.0 and 1.1 as of 22/02/2018, and TLS 1.2 is available in Unity only with Mono 4.8. If you want to use a Github Repository, it will need to be behind a proxy",
-                MessageType.Info
-            );
-            useGithubProxy = EditorGUILayout.Toggle("Use Github proxy", useGithubProxy);
-            GUI.enabled = useGithubProxy;
-            if (useGithubProxy)
-                EditorGUILayout.HelpBox(
-                    "The proxy URL will replace 'https://api.github.com'",
-                    MessageType.Info
-                );
-            githubProxyUrl = EditorGUILayout.TextField("Proxy URL", githubProxyUrl);
-            githubProxyUrl = Regex.Replace(githubProxyUrl, "/$", "");
-            GUI.enabled = true;
+            changed &= LoadLegacy(settingsCached.UseExperimentalFeatures, useExperimentalFeaturesKey);
+            changed &= LoadLegacy(settingsCached.TrustUnknowCertificates, trustUnknownCertificatesKey);
+            changed &= LoadLegacy(settingsCached.UseGithubProxy, githubProxyUseKey);
+            changed &= LoadLegacy(settingsCached.GithubProxyUrl, githubProxyUrlKey);
 
-            if (GUI.changed)
-            {
-                EditorPrefs.SetBool(useExperimentalFeaturesKey, useExperimentalFeatures);
-                EditorPrefs.SetBool(trustUnknownCertificatesKey, trustUnknownCertificates);
-                EditorPrefs.SetBool(githubProxyUseKey, useGithubProxy);
-                EditorPrefs.SetString(githubProxyUrlKey, githubProxyUrl);
-            }
-        }
+            if (changed)
+                settingsCached.SaveToDefaultFile();
 
-        private static void EnsurePrefsLoaded()
-        {
-            if (!prefsLoaded)
-            {
-                useExperimentalFeatures = EditorPrefs.GetBool(useExperimentalFeaturesKey, false);
-                trustUnknownCertificates = EditorPrefs.GetBool(trustUnknownCertificatesKey, false);
-                useGithubProxy = EditorPrefs.GetBool(githubProxyUseKey, false);
-                githubProxyUrl = EditorPrefs.GetString(githubProxyUrlKey, "");
-                prefsLoaded = true;
-            }
+            return settingsCached;
         }
 
         public static bool UseExperimental()
         {
-            EnsurePrefsLoaded();
-            return EditorPrefs.GetBool(useExperimentalFeaturesKey, false);
+            return GetSettings().UseExperimentalFeatures;
         }
 
         public static bool TrustUnknownCertificates()
         {
-            EnsurePrefsLoaded();
-            return EditorPrefs.GetBool(trustUnknownCertificatesKey, false);
+            return GetSettings().TrustUnknowCertificates;
         }
 
         public static string UseGithubProxy(string url)
         {
-            EnsurePrefsLoaded();
-            if (!useGithubProxy || string.IsNullOrEmpty(githubProxyUrl))
+            var settings = GetSettings();
+
+            if (!settings.UseGithubProxy || string.IsNullOrEmpty(settings.GithubProxyUrl))
                 return url;
 
-            Debug.Log("Proxying github api with " + githubProxyUrl);
-            return url.Replace("https://api.github.com", githubProxyUrl);
+            Debug.Log("Proxying github api with " + settings.GithubProxyUrl);
+            return url.Replace("https://api.github.com", settings.GithubProxyUrl);
+        }
+
+        private static bool LoadLegacy(bool variable, string legacyKey)
+        {
+            if (EditorPrefs.HasKey(legacyKey))
+            {
+                var legacyValue = EditorPrefs.GetBool(legacyKey);
+                if(legacyValue != variable)
+                {
+                    variable = legacyValue;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool LoadLegacy(string variable, string legacyKey)
+        {
+            if(EditorPrefs.HasKey(legacyKey))
+            {
+                var legacyValue = EditorPrefs.GetString(legacyKey);
+                if (!string.IsNullOrEmpty(legacyValue) && legacyValue != variable)
+                {
+                    variable = legacyValue;
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

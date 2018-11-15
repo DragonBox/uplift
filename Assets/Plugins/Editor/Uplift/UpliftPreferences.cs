@@ -41,17 +41,10 @@ namespace Uplift
         private static UpliftSettings GetSettings(bool refresh = false)
         {
             if (refresh || settingsCached == null)
+            {
                 settingsCached = UpliftSettings.FromDefaultFile();
-
-            bool changed = false;
-
-            changed &= LoadLegacy(settingsCached.UseExperimentalFeatures, useExperimentalFeaturesKey);
-            changed &= LoadLegacy(settingsCached.TrustUnknowCertificates, trustUnknownCertificatesKey);
-            changed &= LoadLegacy(settingsCached.UseGithubProxy, githubProxyUseKey);
-            changed &= LoadLegacy(settingsCached.GithubProxyUrl, githubProxyUrlKey);
-
-            if (changed)
-                settingsCached.SaveToDefaultFile();
+                OverrideSettingsWithLegacy(settingsCached);
+            }
 
             return settingsCached;
         }
@@ -77,34 +70,71 @@ namespace Uplift
             return url.Replace("https://api.github.com", settings.GithubProxyUrl);
         }
 
-        private static bool LoadLegacy(bool variable, string legacyKey)
+        private static bool TryLoadLegacy(string legacyKey, out bool legacyValue)
         {
+            legacyValue = false;
+
             if (EditorPrefs.HasKey(legacyKey))
             {
-                var legacyValue = EditorPrefs.GetBool(legacyKey);
-                if(legacyValue != variable)
-                {
-                    variable = legacyValue;
-                    return true;
-                }
+                legacyValue = EditorPrefs.GetBool(legacyKey);
+                return true;
             }
 
             return false;
         }
 
-        private static bool LoadLegacy(string variable, string legacyKey)
+        private static bool TryLoadLegacy(string legacyKey, out string legacyValue)
         {
+            legacyValue = string.Empty;
+
             if(EditorPrefs.HasKey(legacyKey))
             {
-                var legacyValue = EditorPrefs.GetString(legacyKey);
-                if (!string.IsNullOrEmpty(legacyValue) && legacyValue != variable)
-                {
-                    variable = legacyValue;
-                    return true;
-                }
+                legacyValue = EditorPrefs.GetString(legacyKey);
+                return !string.IsNullOrEmpty(legacyValue);
             }
 
             return false;
+        }
+
+        private static void OverrideSettingsWithLegacy(UpliftSettings settings)
+        {
+            bool legacyUseExperimentalFeatures;
+            bool legacyTrustUnknowCertificates;
+            bool legacyUseGithubProxy;
+            string legacyGithubProxyUrl;
+
+            bool overriden = false;
+
+            if (TryLoadLegacy(useExperimentalFeaturesKey, out legacyUseExperimentalFeatures) &&
+                settings.UseExperimentalFeatures != legacyUseExperimentalFeatures)
+            {
+                settings.UseExperimentalFeatures = legacyUseExperimentalFeatures;
+                overriden = true;
+            }
+
+            if (TryLoadLegacy(trustUnknownCertificatesKey, out legacyTrustUnknowCertificates) &&
+                settings.TrustUnknowCertificates != legacyTrustUnknowCertificates)
+            {
+                settings.TrustUnknowCertificates = legacyTrustUnknowCertificates;
+                overriden = true;
+            }
+
+            if (TryLoadLegacy(githubProxyUseKey, out legacyUseGithubProxy) &&
+                settings.UseGithubProxy != legacyUseGithubProxy)
+            {
+                settings.UseGithubProxy = legacyUseGithubProxy;
+                overriden = true;
+            }
+
+            if(TryLoadLegacy(githubProxyUrlKey, out legacyGithubProxyUrl) &&
+                !string.Equals(settings.GithubProxyUrl, legacyGithubProxyUrl))
+            {
+                settings.GithubProxyUrl = legacyGithubProxyUrl;
+                overriden = true;
+            }
+
+            if (overriden)
+                settings.SaveToDefaultFile();
         }
     }
 }

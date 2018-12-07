@@ -26,6 +26,7 @@ using UnityEditor;
 using UnityEngine;
 using Uplift.Windows;
 using Uplift.Common;
+using Uplift.Schemas;
 using Uplift.Updating;
 
 using Uplift.Export;
@@ -112,7 +113,7 @@ namespace Uplift
         [MenuItem("Tools/Uplift/Show Update Window (experimental)", true, 4)]
         private static bool EnableShowUpdateWindow()
         {
-            return UpliftPreferences.UseExperimental();
+            return UpliftPreferences.FromDefaultFile().UseExperimentalFeatures;
         }
 
         [MenuItem("Tools/Uplift/Show Update Window (experimental)", false, 4)]
@@ -125,8 +126,8 @@ namespace Uplift
         [MenuItem("Tools/Uplift/Edit Upfile (experimental)", true, 101)]
         private static bool EnableEditUpfile()
         {
-            return UpliftPreferences.UseExperimental();
-        }
+            return UpliftPreferences.FromDefaultFile().UseExperimentalFeatures;
+		}
         
         [MenuItem("Tools/Uplift/Edit Upfile (experimental)", false, 101)]
         private static void EditUpfile()

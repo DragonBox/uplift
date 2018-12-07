@@ -32,6 +32,7 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using UnityEngine;
+using Uplift.Schemas;
 
 namespace Uplift.GitHubModule
 {
@@ -249,7 +250,7 @@ zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
 
         public static IEnumerator LoadReleases(string url, string authToken = null)
         {
-            string proxiedUrl = UpliftPreferences.UseGithubProxy(url);
+			string proxiedUrl = UpliftPreferences.FromDefaultFile().GetProxiedUrl(url);
 
             WWW www = string.IsNullOrEmpty(authToken) ?
                 new WWW (proxiedUrl) :
@@ -346,7 +347,7 @@ zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
             
             X509Certificate[] githubCertificates = GetCertificates();
             
-            if(!(githubCertificates.Any(cert => cert.GetCertHashString() == certificate.GetCertHashString()) || UpliftPreferences.TrustUnknownCertificates()))
+            if(!(githubCertificates.Any(cert => cert.GetCertHashString() == certificate.GetCertHashString()) || UpliftPreferences.FromDefaultFile().TrustUnknowCertificates))
             {
                 Debug.LogErrorFormat("The received certificate ({0}) is not known by Uplift. We cannot download the update package. You could update Uplift manually, or go to Preferences and set 'Trust unknown certificates' to true.", certificate.GetCertHashString());
                 Debug.Log("Known certificates are:");
@@ -379,9 +380,9 @@ zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
         }
         public static Stream GetAssetStream(GitHubAsset asset, string token)
         {
-            string proxiedUrl = UpliftPreferences.UseGithubProxy(asset.apiURL);
+			string proxiedUrl = UpliftPreferences.FromDefaultFile().GetProxiedUrl(asset.apiURL);
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(proxiedUrl);
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(proxiedUrl);
             request.Method = "GET";
             if(!string.IsNullOrEmpty(token))
                 request.Headers["Authorization"] = "token " + token;
@@ -400,7 +401,7 @@ zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
                 address = new Uri(response.GetResponseHeader("Location"));
             }
 
-            request = (HttpWebRequest)WebRequest.Create(UpliftPreferences.UseGithubProxy(address.OriginalString));
+            request = (HttpWebRequest)WebRequest.Create(UpliftPreferences.FromDefaultFile().GetProxiedUrl(address.OriginalString));
             request.Method = "GET";
             request.UserAgent = "Uplift GithubRepository/1.0 - https://github.com/DragonBox/uplift";
             HttpWebResponse finalResponse = (HttpWebResponse)request.GetResponse();

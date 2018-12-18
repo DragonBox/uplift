@@ -127,7 +127,7 @@ namespace Uplift
         private static bool EnableEditUpfile()
         {
             return UpliftPreferences.FromDefaultFile().UseExperimentalFeatures;
-		}
+        }
         
         [MenuItem("Tools/Uplift/Edit Upfile (experimental)", false, 101)]
         private static void EditUpfile()

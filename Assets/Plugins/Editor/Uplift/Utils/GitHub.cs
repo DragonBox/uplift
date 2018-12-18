@@ -250,7 +250,7 @@ zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
 
         public static IEnumerator LoadReleases(string url, string authToken = null)
         {
-			string proxiedUrl = UpliftPreferences.FromDefaultFile().GetProxiedUrl(url);
+            string proxiedUrl = UpliftPreferences.FromDefaultFile().GetProxiedUrl(url);
 
             WWW www = string.IsNullOrEmpty(authToken) ?
                 new WWW (proxiedUrl) :
@@ -380,9 +380,9 @@ zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
         }
         public static Stream GetAssetStream(GitHubAsset asset, string token)
         {
-			string proxiedUrl = UpliftPreferences.FromDefaultFile().GetProxiedUrl(asset.apiURL);
+            string proxiedUrl = UpliftPreferences.FromDefaultFile().GetProxiedUrl(asset.apiURL);
 
-			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(proxiedUrl);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(proxiedUrl);
             request.Method = "GET";
             if(!string.IsNullOrEmpty(token))
                 request.Headers["Authorization"] = "token " + token;

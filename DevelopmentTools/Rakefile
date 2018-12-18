@@ -67,7 +67,7 @@ end
 
 # DEPLOYMENT
 
-artifact_targets = ['5.6.5f1', '2017.1.2f1']
+artifact_targets = ['5.6.5f1', '2017.1.2f1', '2017.2.1f1']
 repository = 'uplift'
 owner = 'Dragonbox'
 

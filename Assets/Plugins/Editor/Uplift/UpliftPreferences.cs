@@ -29,30 +29,41 @@ using Uplift.Common;
 
 namespace Uplift.Schemas
 {
-	public partial class UpliftPreferences : MonoBehaviour
+	public partial class UpliftPreferences
 	{
 		public static readonly string folderName = ".uplift";
 		public static readonly string defaultFileName = "preferences.xml";
 
 		public static UpliftPreferences FromDefaultFile()
 		{
-			return FromFile(GetDefaultLocation());
+			UpliftPreferences result;
+			//if (TryLoadFromFile(GetProjectLocation(), out result))
+			//	return result;
+			if (TryLoadFromFile(GetGlobalLocation(), out result))
+				return result;
+
+			return new UpliftPreferences();
 		}
 
-		public static string GetDefaultLocation()
+		public static string GetGlobalLocation()
 		{
 			string sourceDir = System.IO.Path.Combine(GetHomePath(), folderName);
 			return System.IO.Path.Combine(sourceDir, defaultFileName);
 		}
 
-		public static UpliftPreferences FromFile(string source)
+		public static string GetProjectLocation()
 		{
-			UpliftPreferences result = new UpliftPreferences();
+			throw new NotImplementedException();
+		}
+
+		public static bool TryLoadFromFile(string source, out UpliftPreferences result)
+		{
+			result = new UpliftPreferences();
 
 			if (!File.Exists(source))
 			{
-				Debug.Log("No local settings file detected at " + source);
-				return result;
+				Debug.Log("No preferences file at " + source);
+				return false;
 			}
 
 			StrictXmlDeserializer<UpliftPreferences> deserializer = new StrictXmlDeserializer<UpliftPreferences>();
@@ -66,10 +77,10 @@ namespace Uplift.Schemas
 				catch (InvalidOperationException)
 				{
 					Debug.LogError(string.Format("Global Override file at {0} is not well formed", source));
-					return result;
+					return false;
 				}
 
-				return result;
+				return true;
 			}
 		}
 

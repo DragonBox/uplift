@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    attributeFormDefault="unqualified" elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    >
+  <xs:include schemaLocation="Common.xsd"/>
+  <xs:include schemaLocation="RepositoryTypes.xsd"/>
+
+  <xs:element name="UpliftPreferences" type="UpliftPreferences"/>
+
+  <xs:complexType name="UpliftPreferences">
+    <xs:sequence>
+      <xs:element type="xs:boolean" name="UseExperimentalFeatures" default="false" />
+      <xs:element type="xs:boolean" name="TrustUnknowCertificates" default="false" />
+      <xs:element type="xs:boolean" name="UseGithubProxy" default="false" />
+      <xs:element type="xs:string" name="GithubProxyUrl" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

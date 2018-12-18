@@ -24,6 +24,7 @@
 
 using System;
 using System.IO;
+using System.Xml.Serialization;
 using UnityEngine;
 using Uplift.Common;
 
@@ -66,13 +67,13 @@ namespace Uplift.Schemas
 				return false;
 			}
 
-			StrictXmlDeserializer<UpliftPreferences> deserializer = new StrictXmlDeserializer<UpliftPreferences>();
+			XmlSerializer deserializer = new XmlSerializer(typeof(UpliftPreferences));
 
 			using (FileStream fs = new FileStream(source, FileMode.Open))
 			{
 				try
 				{
-					result = deserializer.Deserialize(fs);
+					result = deserializer.Deserialize(fs) as UpliftPreferences;
 				}
 				catch (InvalidOperationException)
 				{
@@ -82,6 +83,7 @@ namespace Uplift.Schemas
 
 				return true;
 			}
+
 		}
 
 		public static string GetHomePath()

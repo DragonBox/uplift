@@ -208,6 +208,7 @@ namespace Uplift.Testing.Unit
                 Assert.IsTrue(requirement.IsMetBy("1.0"));
                 Assert.IsTrue(requirement.IsMetBy("1.0.0"));
                 Assert.IsTrue(requirement.IsMetBy("1.0.1"));
+                Assert.IsFalse(requirement.IsMetBy("1.1.0"));
                 Assert.IsFalse(requirement.IsMetBy("2.0.0"));
             }
 

@@ -52,7 +52,7 @@ namespace Uplift.Testing.Unit
             {
                 IVersionRequirement parsed = VersionParser.ParseRequirement("1.2");
                 Assert.IsTrue(parsed is LoseVersionRequirement);
-                Assert.AreEqual((parsed as LoseVersionRequirement).stub, new Version { Major = 1, Minor = 2 });
+                Assert.AreEqual((parsed as LoseVersionRequirement).lower, new Version { Major = 1, Minor = 2 });
             }
 
             [Test]
@@ -60,7 +60,7 @@ namespace Uplift.Testing.Unit
             {
                 IVersionRequirement parsed = VersionParser.ParseRequirement("1.2.*");
                 Assert.IsTrue(parsed is BoundedVersionRequirement);
-                Assert.AreEqual((parsed as BoundedVersionRequirement).lowerBound, new Version { Major = 1, Minor = 2 });
+                Assert.AreEqual((parsed as BoundedVersionRequirement).lower, new Version { Major = 1, Minor = 2 });
             }
 
             [Test]

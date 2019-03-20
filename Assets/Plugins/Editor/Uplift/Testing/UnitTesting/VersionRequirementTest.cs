@@ -139,7 +139,8 @@ namespace Uplift.Testing.Unit
 
                 // When less detailed (1)
                 loseRequirement = new LoseVersionRequirement("1");
-                Assert.AreSame(requirement.RestrictTo(loseRequirement), requirement);
+                IVersionRequirement targetRequirement = new RangeVersionRequirement("1.0", "2");
+                Assert.AreEqual(requirement.RestrictTo(loseRequirement), targetRequirement);
 
                 // When lesser (0.9)
                 loseRequirement = new LoseVersionRequirement("0.9");
@@ -234,7 +235,9 @@ namespace Uplift.Testing.Unit
 
                 // When more specific 1.0.4+
                 minimalRequirement = new MinimalVersionRequirement("1.0.4");
-                Assert.AreSame(requirement.RestrictTo(minimalRequirement), minimalRequirement);
+                // Restricts to a new, more restrictive range
+                IVersionRequirement targetRequirement = new RangeVersionRequirement("1.0.4", "1.1");
+                Assert.AreEqual(requirement.RestrictTo(minimalRequirement), targetRequirement);
 
                 // When lesser (0.9+)
                 minimalRequirement = new MinimalVersionRequirement("0.9");

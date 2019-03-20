@@ -282,7 +282,7 @@ namespace Uplift.Common
         public override IVersionRequirement RestrictTo(IVersionRequirement other) {
             if(other is LoseVersionRequirement)
             {
-                return other.RestrictTo(this);
+                return (other as LoseVersionRequirement).RestrictTo(this as BoundedVersionRequirement);
             }
             return base.RestrictTo(other);
         }
@@ -322,8 +322,21 @@ namespace Uplift.Common
             else if(other is RangeVersionRequirement)
             {
                 var otherRange = other as RangeVersionRequirement;
+                // self include other?
                 if (IsMetBy(otherRange.lower) && IsMetBy(otherRange.upper)) return other;
+                // other include self?
                 if (other.IsMetBy(lower) && other.IsMetBy(upper)) return this;
+                // They are overlapping or not intersecting
+                // overlap top?
+                if (IsMetBy(otherRange.lower) && other.IsMetBy(upper)) return new RangeVersionRequirement(
+                    otherRange.lower,
+                    this.upper
+                );
+                // overlap bottom?
+                if (IsMetBy(otherRange.upper) && other.IsMetBy(lower)) return new RangeVersionRequirement(
+                    this.lower,
+                    otherRange.upper
+                );
             }
             else if(other is ExactVersionRequirement)
             {

@@ -322,6 +322,7 @@ namespace Uplift.Common
             else if(other is RangeVersionRequirement)
             {
                 var otherRange = other as RangeVersionRequirement;
+                if (lower == otherRange.lower && upper == otherRange.upper) return this;
                 // self include other?
                 if (IsMetBy(otherRange.lower) && IsMetBy(otherRange.upper)) return other;
                 // other include self?

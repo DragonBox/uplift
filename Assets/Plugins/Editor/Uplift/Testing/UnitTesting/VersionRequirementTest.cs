@@ -586,8 +586,8 @@ namespace Uplift.Testing.Unit
             {
                 BoundedVersionRequirement loseRequirement;
                 IVersionRequirement targetRequirement;
-                // When greater (4.0)
-                loseRequirement = new BoundedVersionRequirement("4.0.*");
+                // When greater (4.0.*)
+                loseRequirement = new BoundedVersionRequirement("4.0");
                 Assert.Throws<IncompatibleRequirementException>(
                     delegate
                     {
@@ -595,12 +595,12 @@ namespace Uplift.Testing.Unit
                     }
                 );
 
-                // When in between (2.0)
-                loseRequirement = new BoundedVersionRequirement("2.0.*");
+                // When in between (2.0.*)
+                loseRequirement = new BoundedVersionRequirement("2.0");
                 Assert.AreEqual(requirement.RestrictTo(loseRequirement), loseRequirement);
 
-                // When lesser (0.9)
-                loseRequirement = new BoundedVersionRequirement("0.9.*");
+                // When lesser (0.9.*)
+                loseRequirement = new BoundedVersionRequirement("0.9");
                 Assert.Throws<IncompatibleRequirementException>(
                     delegate
                     {
@@ -609,13 +609,13 @@ namespace Uplift.Testing.Unit
                 );
 
                 // When overlapping bottom
-                loseRequirement = new BoundedVersionRequirement("1.0");
-                targetRequirement = new RangeVersionRequirement("1.5", "2.0");
+                loseRequirement = new BoundedVersionRequirement("1");
+                targetRequirement = new RangeVersionRequirement("1.5", "2");
                 Assert.AreEqual(requirement.RestrictTo(loseRequirement), targetRequirement);
 
                 // When overlapping top
-                loseRequirement = new BoundedVersionRequirement("3.0");
-                targetRequirement = new RangeVersionRequirement("3.0", "3.5");
+                loseRequirement = new BoundedVersionRequirement("3");
+                targetRequirement = new RangeVersionRequirement("3", "3.5");
                 Assert.AreEqual(requirement.RestrictTo(loseRequirement), targetRequirement);
             }
 

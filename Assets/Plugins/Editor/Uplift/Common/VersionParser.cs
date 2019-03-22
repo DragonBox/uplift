@@ -36,6 +36,12 @@ namespace Uplift.Common
             {
                 return new NoRequirement();
             }
+            else if (requirement.Contains(","))
+            {
+                string[] parts = requirement.Split(',');
+                if(parts.Length == 2)
+                    return new RangeVersionRequirement(parts[0], parts[1]);
+            }
             else if (requirement.EndsWith("!"))
             {
                 return new ExactVersionRequirement(requirement.TrimEnd('!'));

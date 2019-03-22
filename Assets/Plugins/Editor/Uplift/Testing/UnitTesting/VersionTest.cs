@@ -52,7 +52,7 @@ namespace Uplift.Testing.Unit
             {
                 IVersionRequirement parsed = VersionParser.ParseRequirement("1.2");
                 Assert.IsTrue(parsed is LoseVersionRequirement);
-                Assert.AreEqual((parsed as LoseVersionRequirement).stub, new Version { Major = 1, Minor = 2 });
+                Assert.AreEqual((parsed as LoseVersionRequirement).lower, new Version { Major = 1, Minor = 2 });
             }
 
             [Test]
@@ -60,7 +60,7 @@ namespace Uplift.Testing.Unit
             {
                 IVersionRequirement parsed = VersionParser.ParseRequirement("1.2.*");
                 Assert.IsTrue(parsed is BoundedVersionRequirement);
-                Assert.AreEqual((parsed as BoundedVersionRequirement).lowerBound, new Version { Major = 1, Minor = 2 });
+                Assert.AreEqual((parsed as BoundedVersionRequirement).lower, new Version { Major = 1, Minor = 2 });
             }
 
             [Test]
@@ -69,6 +69,26 @@ namespace Uplift.Testing.Unit
                 IVersionRequirement parsed = VersionParser.ParseRequirement("1.2.3!");
                 Assert.IsTrue(parsed is ExactVersionRequirement);
                 Assert.AreEqual((parsed as ExactVersionRequirement).expected, new Version { Major = 1, Minor = 2, Patch = 3 });
+            }
+
+            [Test]
+            public void ParseRangeRequirement()
+            {
+                IVersionRequirement parsed = VersionParser.ParseRequirement("1.2,3.4");
+                Assert.IsTrue(parsed is RangeVersionRequirement);
+                Assert.AreEqual((parsed as RangeVersionRequirement).lower, new Version { Major = 1, Minor = 2 });
+                Assert.AreEqual((parsed as RangeVersionRequirement).upper, new Version { Major = 3, Minor = 4 });
+            }
+
+            [Test]
+            public void DoNotParseInvertedRangeRequirement()
+            {
+                Assert.Throws<System.ArgumentException>(
+                    delegate
+                    {
+                       VersionParser.ParseRequirement("3.4,1.2");
+                    }
+                );
             }
 
             [Test]

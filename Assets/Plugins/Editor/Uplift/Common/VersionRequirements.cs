@@ -229,14 +229,12 @@ namespace Uplift.Common
             {
                 return minimal >= (other as MinimalVersionRequirement).minimal ? this : other;
             }
-            else if (other is LoseVersionRequirement)
+            else if (other is RangeVersionRequirement)
             {
-                if (minimal <= (other as LoseVersionRequirement).stub) return other;
-                if ((other as LoseVersionRequirement).IsMetBy(minimal)) return this;
-            }
-            else if (other is BoundedVersionRequirement)
-            {
-                if (minimal <= (other as BoundedVersionRequirement).lowerBound) return other;
+                if (minimal <= (other as RangeVersionRequirement).lower) return other;
+                if (other.IsMetBy(minimal)) return new RangeVersionRequirement(
+                    minimal,
+                    (other as RangeVersionRequirement).upper);
             }
             else if (other is ExactVersionRequirement)
             {
@@ -252,79 +250,93 @@ namespace Uplift.Common
     }
 
     // When stub is specified
-    public class LoseVersionRequirement : IVersionRequirement
+    public class LoseVersionRequirement : RangeVersionRequirement
     {
-        public Version stub;
-        private Version limit;
-
         public LoseVersionRequirement(string stub) : this(VersionParser.ParseIncompleteVersion(stub)) { }
-        public LoseVersionRequirement(Version stub)
-        {
-            this.stub = stub;
-            limit = stub.Next;
+        public LoseVersionRequirement(Version stub) : base(stub, stub.Next) { }
+
+        public override IVersionRequirement RestrictTo(IVersionRequirement other) {
+            if(other is BoundedVersionRequirement)
+            {
+                if(IsMetBy((other as BoundedVersionRequirement).lower)) return other;
+            }
+            return base.RestrictTo(other);
         }
 
-        public bool IsMetBy(Version version)
+        public override string ToString()
         {
-            return version >= stub && version < limit;
+            return lower.ToString();
+        }
+    }
+
+    public class BoundedVersionRequirement : RangeVersionRequirement
+    {
+        public BoundedVersionRequirement(string lowerBound) : this(VersionParser.ParseIncompleteVersion(lowerBound)) { }
+        public BoundedVersionRequirement(Version lowerBound) : base(lowerBound, lowerBound.Next) { }
+
+        public override bool IsMetBy(Version version)
+        {
+            return version > lower && version < upper;
         }
 
-        public IVersionRequirement RestrictTo(IVersionRequirement other)
+        public override IVersionRequirement RestrictTo(IVersionRequirement other) {
+            if(other is LoseVersionRequirement)
+            {
+                return (other as LoseVersionRequirement).RestrictTo(this as BoundedVersionRequirement);
+            }
+            return base.RestrictTo(other);
+        }
+
+        public override string ToString()
+        {
+            return lower.ToString() + ".*";
+        }
+    }
+
+    public class RangeVersionRequirement : IVersionRequirement
+    {
+        public Version lower;
+        public Version upper;
+
+        public RangeVersionRequirement(string lower, string upper) : this(
+            VersionParser.ParseIncompleteVersion(lower),
+            VersionParser.ParseIncompleteVersion(upper)) { }
+        public RangeVersionRequirement(Version lower, Version upper)
+        {
+            if(lower >= upper) throw new ArgumentException("Upper version of a RangeVersionRequirement cannot be inferior to its lower version");
+            this.lower = lower;
+            this.upper = upper;
+        }
+
+        public virtual bool IsMetBy(Version version)
+        {
+            return version >= lower && version < upper;
+        }
+
+        public virtual IVersionRequirement RestrictTo(IVersionRequirement other)
         {
             if (other is NoRequirement || other is MinimalVersionRequirement)
             {
                 return other.RestrictTo(this);
-            }
-            else if (other is LoseVersionRequirement)
-            {
-                if (IsMetBy((other as LoseVersionRequirement).stub)) return other;
-                if ((other as LoseVersionRequirement).IsMetBy(stub)) return this;
-            }
-            else if(other is BoundedVersionRequirement)
-            {
-                if (IsMetBy((other as BoundedVersionRequirement).lowerBound)) return other;
-                if ((other as BoundedVersionRequirement).IsMetBy(stub)) return this;
-            }
-            else if(other is ExactVersionRequirement)
-            {
-                if (IsMetBy((other as ExactVersionRequirement).expected)) return other;
-            }
-            throw new IncompatibleRequirementException(this, other);
-        }
-
-        public override string ToString()
-        {
-            return stub.ToString();
-        }
-    }
-
-    public class BoundedVersionRequirement : IVersionRequirement
-    {
-        public Version lowerBound;
-        private Version upperBound;
-
-        public BoundedVersionRequirement(string lowerBound) : this(VersionParser.ParseIncompleteVersion(lowerBound)) { }
-        public BoundedVersionRequirement(Version lowerBound)
-        {
-            this.lowerBound = lowerBound;
-            upperBound = lowerBound.Next;
-        }
-
-        public bool IsMetBy(Version version)
-        {
-            return version > lowerBound && version < upperBound;
-        }
-
-        public IVersionRequirement RestrictTo(IVersionRequirement other)
-        {
-            if (other is NoRequirement || other is MinimalVersionRequirement || other is LoseVersionRequirement)
-            {
-                return other.RestrictTo(this);
             }   
-            else if(other is BoundedVersionRequirement)
+            else if(other is RangeVersionRequirement)
             {
-                if (IsMetBy((other as BoundedVersionRequirement).lowerBound)) return other;
-                if ((other as BoundedVersionRequirement).IsMetBy(lowerBound)) return this;
+                var otherRange = other as RangeVersionRequirement;
+                // self include other?
+                if (IsMetBy(otherRange.lower) && IsMetBy(otherRange.upper)) return other;
+                // other include self?
+                if (other.IsMetBy(lower) && other.IsMetBy(upper)) return this;
+                // They are overlapping or not intersecting
+                // overlap top?
+                if (IsMetBy(otherRange.lower) && other.IsMetBy(upper)) return new RangeVersionRequirement(
+                    otherRange.lower,
+                    this.upper
+                );
+                // overlap bottom?
+                if (IsMetBy(otherRange.upper) && other.IsMetBy(lower)) return new RangeVersionRequirement(
+                    this.lower,
+                    otherRange.upper
+                );
             }
             else if(other is ExactVersionRequirement)
             {
@@ -335,7 +347,20 @@ namespace Uplift.Common
 
         public override string ToString()
         {
-            return lowerBound.ToString() + ".*";
+            return lower.ToString() + "," + upper.ToString();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if(!(obj is RangeVersionRequirement)) return false;
+            var otherRange = obj as RangeVersionRequirement;
+
+            return upper == otherRange.upper && lower == otherRange.lower;
+        }
+
+        public override int GetHashCode()
+        {
+            return lower.GetHashCode() & upper.GetHashCode();
         }
     }
 

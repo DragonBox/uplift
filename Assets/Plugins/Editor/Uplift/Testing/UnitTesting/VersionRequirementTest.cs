@@ -139,7 +139,8 @@ namespace Uplift.Testing.Unit
 
                 // When less detailed (1)
                 loseRequirement = new LoseVersionRequirement("1");
-                Assert.AreSame(requirement.RestrictTo(loseRequirement), requirement);
+                IVersionRequirement targetRequirement = new RangeVersionRequirement("1.0", "2");
+                Assert.AreEqual(requirement.RestrictTo(loseRequirement), targetRequirement);
 
                 // When lesser (0.9)
                 loseRequirement = new LoseVersionRequirement("0.9");
@@ -208,6 +209,7 @@ namespace Uplift.Testing.Unit
                 Assert.IsTrue(requirement.IsMetBy("1.0"));
                 Assert.IsTrue(requirement.IsMetBy("1.0.0"));
                 Assert.IsTrue(requirement.IsMetBy("1.0.1"));
+                Assert.IsFalse(requirement.IsMetBy("1.1.0"));
                 Assert.IsFalse(requirement.IsMetBy("2.0.0"));
             }
 
@@ -233,7 +235,9 @@ namespace Uplift.Testing.Unit
 
                 // When more specific 1.0.4+
                 minimalRequirement = new MinimalVersionRequirement("1.0.4");
-                Assert.AreSame(requirement.RestrictTo(minimalRequirement), minimalRequirement);
+                // Restricts to a new, more restrictive range
+                IVersionRequirement targetRequirement = new RangeVersionRequirement("1.0.4", "1.1");
+                Assert.AreEqual(requirement.RestrictTo(minimalRequirement), targetRequirement);
 
                 // When lesser (0.9+)
                 minimalRequirement = new MinimalVersionRequirement("0.9");
@@ -443,6 +447,169 @@ namespace Uplift.Testing.Unit
 
                 // When comparable (1.0.7!)
                 exactRequirement = new ExactVersionRequirement("1.0.7");
+                Assert.AreSame(requirement.RestrictTo(exactRequirement), exactRequirement);
+
+                // When lesser (0.9.9!)
+                exactRequirement = new ExactVersionRequirement("0.9.9");
+                Assert.Throws<IncompatibleRequirementException>(
+                    delegate
+                    {
+                        requirement.RestrictTo(exactRequirement);
+                    }
+                );
+            }
+        }
+
+        [TestFixture]
+        class RangeVersionRequirementTest
+        {
+            IVersionRequirement requirement;
+
+            [OneTimeSetUp]
+            protected void Given()
+            {
+                // 1.5,3.5
+                requirement = new RangeVersionRequirement("1.5", "3.5");
+            }
+
+            [Test]
+            public void IsMetBy()
+            {
+                Assert.IsFalse(requirement.IsMetBy("0.0.0"));
+                Assert.IsFalse(requirement.IsMetBy("1.4.9"));
+                Assert.IsTrue(requirement.IsMetBy("1.5"));
+                Assert.IsTrue(requirement.IsMetBy("1.5.1"));
+                Assert.IsTrue(requirement.IsMetBy("1.6"));
+                Assert.IsTrue(requirement.IsMetBy("1.6.1"));
+                Assert.IsTrue(requirement.IsMetBy("2"));
+                Assert.IsTrue(requirement.IsMetBy("2.9"));
+                Assert.IsTrue(requirement.IsMetBy("2.9.9"));
+                Assert.IsFalse(requirement.IsMetBy("3.5"));
+                Assert.IsFalse(requirement.IsMetBy("3.5.0"));
+            }
+
+            [Test]
+            public void ResrictToNoRequirement()
+            {
+                NoRequirement noRequirement = new NoRequirement();
+                Assert.AreSame(requirement.RestrictTo(noRequirement), requirement);
+            }
+
+            [Test]
+            public void ResrictToMinimalRequirement()
+            {
+                MinimalVersionRequirement minimalRequirement;
+                IVersionRequirement targetRequirement;
+                // When greater (4.0+)
+                minimalRequirement = new MinimalVersionRequirement("4.0");
+                Assert.Throws<IncompatibleRequirementException>(
+                    delegate
+                    {
+                        requirement.RestrictTo(minimalRequirement);
+                    }
+                );
+
+                // When in between (2.0+)
+                minimalRequirement = new MinimalVersionRequirement("2.0");
+                targetRequirement = new RangeVersionRequirement("2.0", "3.5");
+                Assert.AreEqual(requirement.RestrictTo(minimalRequirement), targetRequirement);
+
+                // When lesser (0.9+)
+                minimalRequirement = new MinimalVersionRequirement("0.9");
+                Assert.AreSame(requirement.RestrictTo(minimalRequirement), requirement);
+            }
+
+            [Test]
+            public void RestrictToLoseRequirement()
+            {
+                LoseVersionRequirement loseRequirement;
+                IVersionRequirement targetRequirement;
+                // When greater (4.0)
+                loseRequirement = new LoseVersionRequirement("4.0");
+                Assert.Throws<IncompatibleRequirementException>(
+                    delegate
+                    {
+                        requirement.RestrictTo(loseRequirement);
+                    }
+                );
+
+                // When in between (2.0)
+                loseRequirement = new LoseVersionRequirement("2.0");
+                Assert.AreEqual(requirement.RestrictTo(loseRequirement), loseRequirement);
+
+                // When lesser (0.9)
+                loseRequirement = new LoseVersionRequirement("0.9");
+                Assert.Throws<IncompatibleRequirementException>(
+                    delegate
+                    {
+                        requirement.RestrictTo(loseRequirement);
+                    }
+                );
+
+                // When overlapping bottom
+                loseRequirement = new LoseVersionRequirement("1");
+                targetRequirement = new RangeVersionRequirement("1.5", "2");
+                Assert.AreEqual(requirement.RestrictTo(loseRequirement), targetRequirement);
+
+                // When overlapping top
+                loseRequirement = new LoseVersionRequirement("3");
+                targetRequirement = new RangeVersionRequirement("3", "3.5");
+                Assert.AreEqual(requirement.RestrictTo(loseRequirement), targetRequirement);
+            }
+
+            [Test]
+            public void RestrictToBoundedRequirement()
+            {
+                BoundedVersionRequirement loseRequirement;
+                IVersionRequirement targetRequirement;
+                // When greater (4.0)
+                loseRequirement = new BoundedVersionRequirement("4.0.*");
+                Assert.Throws<IncompatibleRequirementException>(
+                    delegate
+                    {
+                        requirement.RestrictTo(loseRequirement);
+                    }
+                );
+
+                // When in between (2.0)
+                loseRequirement = new BoundedVersionRequirement("2.0.*");
+                Assert.AreEqual(requirement.RestrictTo(loseRequirement), loseRequirement);
+
+                // When lesser (0.9)
+                loseRequirement = new BoundedVersionRequirement("0.9.*");
+                Assert.Throws<IncompatibleRequirementException>(
+                    delegate
+                    {
+                        requirement.RestrictTo(loseRequirement);
+                    }
+                );
+
+                // When overlapping bottom
+                loseRequirement = new BoundedVersionRequirement("1.0");
+                targetRequirement = new RangeVersionRequirement("1.5", "2.0");
+                Assert.AreEqual(requirement.RestrictTo(loseRequirement), targetRequirement);
+
+                // When overlapping top
+                loseRequirement = new BoundedVersionRequirement("3.0");
+                targetRequirement = new RangeVersionRequirement("3.0", "3.5");
+                Assert.AreEqual(requirement.RestrictTo(loseRequirement), targetRequirement);
+            }
+
+            [Test]
+            public void RestrictToExactRequirement()
+            {
+                ExactVersionRequirement exactRequirement;
+                // When greater (3.5.1!)
+                exactRequirement = new ExactVersionRequirement("3.5.1");
+                Assert.Throws<IncompatibleRequirementException>(
+                    delegate
+                    {
+                        requirement.RestrictTo(exactRequirement);
+                    }
+                );
+
+                // When in between (2.0!)
+                exactRequirement = new ExactVersionRequirement("2.0");
                 Assert.AreSame(requirement.RestrictTo(exactRequirement), exactRequirement);
 
                 // When lesser (0.9.9!)

@@ -110,6 +110,12 @@ namespace Uplift.Testing.Unit
             }
 
             [Test]
+            public void RestrictToItself()
+            {
+                Assert.AreSame(requirement.RestrictTo(requirement), requirement);
+            }
+
+            [Test]
             public void ResrictToNoRequirement()
             {
                 NoRequirement noRequirement = new NoRequirement();
@@ -211,6 +217,12 @@ namespace Uplift.Testing.Unit
                 Assert.IsTrue(requirement.IsMetBy("1.0.1"));
                 Assert.IsFalse(requirement.IsMetBy("1.1.0"));
                 Assert.IsFalse(requirement.IsMetBy("2.0.0"));
+            }
+
+            [Test]
+            public void RestrictToItself()
+            {
+                Assert.AreSame(requirement.RestrictTo(requirement), requirement);
             }
 
             [Test]
@@ -350,6 +362,12 @@ namespace Uplift.Testing.Unit
             }
 
             [Test]
+            public void RestrictToItself()
+            {
+                Assert.AreSame(requirement.RestrictTo(requirement), requirement);
+            }
+
+            [Test]
             public void ResrictToNoRequirement()
             {
                 NoRequirement noRequirement = new NoRequirement();
@@ -486,6 +504,12 @@ namespace Uplift.Testing.Unit
                 Assert.IsTrue(requirement.IsMetBy("2.9.9"));
                 Assert.IsFalse(requirement.IsMetBy("3.5"));
                 Assert.IsFalse(requirement.IsMetBy("3.5.0"));
+            }
+
+            [Test]
+            public void RestrictToItself()
+            {
+                Assert.AreSame(requirement.RestrictTo(requirement), requirement);
             }
 
             [Test]
@@ -644,6 +668,12 @@ namespace Uplift.Testing.Unit
                 Assert.IsTrue(requirement.IsMetBy("1.0"));
                 Assert.IsFalse(requirement.IsMetBy("1.0.1"));
                 Assert.IsFalse(requirement.IsMetBy("2.0.0"));
+            }
+
+            [Test]
+            public void RestrictToItself()
+            {
+                Assert.AreSame(requirement.RestrictTo(requirement), requirement);
             }
 
             [Test]

@@ -30,66 +30,65 @@ using FileSystemUtil = Uplift.Common.FileSystemUtil;
 
 namespace Uplift.Schemas
 {
-    public partial class UpliftSettings
-    {
-        public static readonly string folderName = ".uplift";
-        public static readonly string defaultFileName = "settings.xml";
+	public partial class UpliftSettings
+	{
+		public static readonly string folderName = ".uplift";
+		public static readonly string defaultFileName = "settings.xml";
 
-        internal UpliftSettings() {}
+		internal UpliftSettings() { }
 
-        public static UpliftSettings FromDefaultFile()
-        {
-            return FromFile(GetDefaultLocation());
-        }
+		public static UpliftSettings FromDefaultFile()
+		{
+			return FromFile(GetDefaultLocation());
+		}
 
-        public static string GetDefaultLocation()
-        {
-            string sourceDir = System.IO.Path.Combine(GetHomePath(), folderName);
-            return System.IO.Path.Combine(sourceDir, defaultFileName);
-        }
-        
-        public static UpliftSettings FromFile(string source)
-        {
-            UpliftSettings result = new UpliftSettings { Repositories = new Repository[0], AuthenticationMethods = new RepositoryToken[0] };
+		public static string GetDefaultLocation()
+		{
+			string sourceDir = System.IO.Path.Combine(GetHomePath(), folderName);
+			return System.IO.Path.Combine(sourceDir, defaultFileName);
+		}
 
-            if(!File.Exists(source))
-            {
-                Debug.Log("No local settings file detected at " + source);
-                return result;
-            }
+		public static UpliftSettings FromFile(string source)
+		{
+			UpliftSettings result = new UpliftSettings { Repositories = new Repository[0], AuthenticationMethods = new RepositoryToken[0] };
 
-            StrictXmlDeserializer<UpliftSettings> deserializer = new StrictXmlDeserializer<UpliftSettings>();
+			if (!File.Exists(source))
+			{
+				Debug.Log("No local settings file detected at " + source);
+				return result;
+			}
 
-            using (FileStream fs = new FileStream(source, FileMode.Open))
-            {
-                try
-                {
-                    result = deserializer.Deserialize(fs);
-                }
-                catch (InvalidOperationException)
-                {
-                    Debug.LogError(string.Format("Global Override file at {0} is not well formed", source));
-                    return result;
-                }
+			StrictXmlDeserializer<UpliftSettings> deserializer = new StrictXmlDeserializer<UpliftSettings>();
 
-                foreach (Repository repo in result.Repositories)
-                {
-                    if (repo is FileRepository)
-                        (repo as FileRepository).Path = FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
-                }
-                
-                return result;
-            }
-        }
+			using (FileStream fs = new FileStream(source, FileMode.Open))
+			{
+				try
+				{
+					result = deserializer.Deserialize(fs);
+				}
+				catch (InvalidOperationException)
+				{
+					Debug.LogError(string.Format("Global Override file at {0} is not well formed", source));
+					return result;
+				}
 
-        public static string GetHomePath()
-        {
-            return (Environment.OSVersion.Platform == PlatformID.Unix ||
-                               Environment.OSVersion.Platform == PlatformID.MacOSX)
-                ? Environment.GetEnvironmentVariable("HOME")
-                : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
-        }
+				foreach (Repository repo in result.Repositories)
+				{
+					if (repo is FileRepository)
+						(repo as FileRepository).Path = FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
+				}
 
+				return result;
+			}
+		}
 
-    }
+		public static string GetHomePath()
+		{
+			return (Environment.OSVersion.Platform == PlatformID.Unix ||
+					Environment.OSVersion.Platform == PlatformID.MacOSX) ?
+				Environment.GetEnvironmentVariable("HOME") :
+				Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
+		}
+
+	}
 }

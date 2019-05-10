@@ -33,369 +33,369 @@ using Uplift.Packages;
 
 namespace Uplift.Schemas
 {
-    public partial class Upfile
-    {
-        // --- SINGLETON DECLARATION ---
-        protected static Upfile instance;
+	public partial class Upfile
+	{
+		// --- SINGLETON DECLARATION ---
+		protected static Upfile instance;
 
-        internal Upfile() { }
+		internal Upfile() { }
 
-        public static Upfile Instance()
-        {
-            if (instance == null)
-            {
-                InitializeInstance();
-            }
+		public static Upfile Instance()
+		{
+			if (instance == null)
+			{
+				InitializeInstance();
+			}
 
-            return instance;
-        }
+			return instance;
+		}
 
-        public static void ResetInstance()
-        {
-            instance = null;
-            InitializeInstance();
-        }
+		public static void ResetInstance()
+		{
+			instance = null;
+			InitializeInstance();
+		}
 
-        internal static void InitializeInstance()
-        {
-            instance = null;
-            if (!CheckForUpfile())
-            {
-                Debug.Log("No Upfile in this project");
-                return;
-            }
+		internal static void InitializeInstance()
+		{
+			instance = null;
+			if (!CheckForUpfile())
+			{
+				Debug.Log("No Upfile in this project");
+				return;
+			}
 
-            instance = LoadXml();
-            instance.CheckUnityVersion();
-            instance.LoadPackageList();
-        }
+			instance = LoadXml();
+			instance.CheckUnityVersion();
+			instance.LoadPackageList();
+		}
 
-        // --- CLASS DECLARATION ---
-        public static readonly string upfilePath = "Upfile.xml";
-        public string overridePath;
+		// --- CLASS DECLARATION ---
+		public static readonly string upfilePath = "Upfile.xml";
+		public string overridePath;
 
-        public static bool CheckForUpfile()
-        {
-            return File.Exists(upfilePath);
-        }
+		public static bool CheckForUpfile()
+		{
+			return File.Exists(upfilePath);
+		}
 
-        internal static Upfile LoadXml()
-        {
-            return LoadXml(upfilePath);
-        }
+		internal static Upfile LoadXml()
+		{
+			return LoadXml(upfilePath);
+		}
 
-        internal static Upfile LoadXml(string path)
-        {
-            try
-            {
-                StrictXmlDeserializer<Upfile> deserializer = new StrictXmlDeserializer<Upfile>();
+		internal static Upfile LoadXml(string path)
+		{
+			try
+			{
+				StrictXmlDeserializer<Upfile> deserializer = new StrictXmlDeserializer<Upfile>();
 
-                using (FileStream fs = new FileStream(path, FileMode.Open))
-                {
-                    Upfile upfile = deserializer.Deserialize(fs);
+				using (FileStream fs = new FileStream(path, FileMode.Open))
+				{
+					Upfile upfile = deserializer.Deserialize(fs);
 
-                    upfile.MakePathConfigurationsOSFriendly();
-                    upfile.LoadOverrides();
+					upfile.MakePathConfigurationsOSFriendly();
+					upfile.LoadOverrides();
 
-                    if (upfile.Repositories != null)
-                    {
-                        foreach (Repository repo in upfile.Repositories)
-                        {
-                            if (repo is FileRepository)
-                                (repo as FileRepository).Path = Uplift.Common.FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
-                        }
-                    }
+					if (upfile.Repositories != null)
+					{
+						foreach (Repository repo in upfile.Repositories)
+						{
+							if (repo is FileRepository)
+								(repo as FileRepository).Path = Uplift.Common.FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path);
+						}
+					}
 
-                    Debug.Log("Upfile was successfully loaded");
-                    return upfile;
-                }
-            }
-            catch (Exception e)
-            {
-                throw new ApplicationException("Uplift: Could not load Upfile", e);
-            }
-        }
+					Debug.Log("Upfile was successfully loaded");
+					return upfile;
+				}
+			}
+			catch (Exception e)
+			{
+				throw new ApplicationException("Uplift: Could not load Upfile", e);
+			}
+		}
 
-        public void SaveFile()
-        {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(upfilePath);
-            XmlElement root = doc.DocumentElement;
+		public void SaveFile()
+		{
+			XmlDocument doc = new XmlDocument();
+			doc.Load(upfilePath);
+			XmlElement root = doc.DocumentElement;
 
-            // Set Unity Version
-            root.SelectSingleNode("UnityVersion").InnerText = UnityVersion;
+			// Set Unity Version
+			root.SelectSingleNode("UnityVersion").InnerText = UnityVersion;
 
-            // Set Repositories
-            foreach(Repository repo in Repositories)
-                if(!GetRepositoryOverrides().Any(extraRepo =>
-                    extraRepo is FileRepository &&
-                    Uplift.Common.FileSystemUtil.MakePathOSFriendly((extraRepo as FileRepository).Path) == Uplift.Common.FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path)
-                ))
-                    AddOrReplaceRepository(doc, repo);
+			// Set Repositories
+			foreach (Repository repo in Repositories)
+				if (!GetRepositoryOverrides().Any(extraRepo =>
+					  extraRepo is FileRepository &&
+					  Uplift.Common.FileSystemUtil.MakePathOSFriendly((extraRepo as FileRepository).Path) == Uplift.Common.FileSystemUtil.MakePathOSFriendly((repo as FileRepository).Path)
+					))
+					AddOrReplaceRepository(doc, repo);
 
-            foreach(XmlNode node in root.SelectSingleNode("Repositories").SelectNodes("FileRepository"))
-            {
-                if(!Repositories.Any(repo => (repo as FileRepository).Path == node.Attributes["Path"].Value))
-                    root.SelectSingleNode("Repositories").RemoveChild(node);
-            }
+			foreach (XmlNode node in root.SelectSingleNode("Repositories").SelectNodes("FileRepository"))
+			{
+				if (!Repositories.Any(repo => (repo as FileRepository).Path == node.Attributes["Path"].Value))
+					root.SelectSingleNode("Repositories").RemoveChild(node);
+			}
 
-            // Set Configuration
-            SetPathConfiguration(doc,   "BaseInstallPath",  Configuration.BaseInstallPath);
-            SetPathConfiguration(doc,   "DocsPath",         Configuration.DocsPath);
-            SetPathConfiguration(doc,   "EditorPluginPath", Configuration.EditorPluginPath);
-            SetPathConfiguration(doc,   "ExamplesPath",     Configuration.ExamplesPath);
-            SetPathConfiguration(doc,   "GizmoPath",        Configuration.GizmoPath);
-            SetPathConfiguration(doc,   "MediaPath",        Configuration.MediaPath);
-            SetPathConfiguration(doc,   "PluginPath",       Configuration.PluginPath);
-            SetPathConfiguration(doc,   "RepositoryPath",   Configuration.RepositoryPath);
-            SetPathConfiguration(doc,   "EditorDefaultResourcePath", Configuration.EditorDefaultResourcePath);
+			// Set Configuration
+			SetPathConfiguration(doc, "BaseInstallPath", Configuration.BaseInstallPath);
+			SetPathConfiguration(doc, "DocsPath", Configuration.DocsPath);
+			SetPathConfiguration(doc, "EditorPluginPath", Configuration.EditorPluginPath);
+			SetPathConfiguration(doc, "ExamplesPath", Configuration.ExamplesPath);
+			SetPathConfiguration(doc, "GizmoPath", Configuration.GizmoPath);
+			SetPathConfiguration(doc, "MediaPath", Configuration.MediaPath);
+			SetPathConfiguration(doc, "PluginPath", Configuration.PluginPath);
+			SetPathConfiguration(doc, "RepositoryPath", Configuration.RepositoryPath);
+			SetPathConfiguration(doc, "EditorDefaultResourcePath", Configuration.EditorDefaultResourcePath);
 
-            // Set Dependencies
-            foreach(DependencyDefinition def in Dependencies)
-                AddOrReplaceDependency(doc, def);
+			// Set Dependencies
+			foreach (DependencyDefinition def in Dependencies)
+				AddOrReplaceDependency(doc, def);
 
-            foreach(XmlNode node in root.SelectSingleNode("Dependencies").SelectNodes("Package"))
-            {
-                if(!Dependencies.Any(def => def.Name == node.Attributes["Name"].Value))
-                    root.SelectSingleNode("Dependencies").RemoveChild(node);
-            }
+			foreach (XmlNode node in root.SelectSingleNode("Dependencies").SelectNodes("Package"))
+			{
+				if (!Dependencies.Any(def => def.Name == node.Attributes["Name"].Value))
+					root.SelectSingleNode("Dependencies").RemoveChild(node);
+			}
 
-            doc.Save(upfilePath);   
-        }
+			doc.Save(upfilePath);
+		}
 
-        private void AddOrReplaceRepository(XmlDocument document, Repository repository)
-        {
-            XmlNode main = document.DocumentElement.SelectSingleNode("Repositories");
-            // FIXME: support other repositories when necessary
-            XmlNodeList repositoryList = main.SelectNodes("FileRepository");
-            foreach(XmlNode node in repositoryList)
-            if(node.Attributes["Path"].Value == (repository as FileRepository).Path)
-                {
-                    main.RemoveChild(node);
-                    break;
-                }
+		private void AddOrReplaceRepository(XmlDocument document, Repository repository)
+		{
+			XmlNode main = document.DocumentElement.SelectSingleNode("Repositories");
+			// FIXME: support other repositories when necessary
+			XmlNodeList repositoryList = main.SelectNodes("FileRepository");
+			foreach (XmlNode node in repositoryList)
+				if (node.Attributes["Path"].Value == (repository as FileRepository).Path)
+				{
+					main.RemoveChild(node);
+					break;
+				}
 
-            XmlElement repo = document.CreateElement("FileRepository");
-            repo.SetAttribute("Path", Uplift.Common.FileSystemUtil.MakePathUnix((repository as FileRepository).Path));
-            
-            main.AppendChild(repo);
-        }
+			XmlElement repo = document.CreateElement("FileRepository");
+			repo.SetAttribute("Path", Uplift.Common.FileSystemUtil.MakePathUnix((repository as FileRepository).Path));
 
-        private void SetPathConfiguration(XmlDocument document, string nodeName, PathConfiguration pc)
-        {
-            XmlNode original = document.DocumentElement.SelectSingleNode("Configuration").SelectSingleNode(nodeName);
-            XmlNode temp = original;
+			main.AppendChild(repo);
+		}
 
-            temp.Attributes["Location"].Value = Uplift.Common.FileSystemUtil.MakePathUnix(pc.Location);
-            if(pc.SkipPackageStructureSpecified)
-            {
-                if(temp.Attributes["SkipPackageStructure"] == null)
-                    temp.Attributes.Append(document.CreateAttribute("SkipPackageStructure"));
+		private void SetPathConfiguration(XmlDocument document, string nodeName, PathConfiguration pc)
+		{
+			XmlNode original = document.DocumentElement.SelectSingleNode("Configuration").SelectSingleNode(nodeName);
+			XmlNode temp = original;
 
-                temp.Attributes["SkipPackageStructure"].Value = pc.SkipPackageStructure.ToString().ToLower();
-            }
-            else
-                temp.Attributes.RemoveNamedItem("SkipPackageStructure");
+			temp.Attributes["Location"].Value = Uplift.Common.FileSystemUtil.MakePathUnix(pc.Location);
+			if (pc.SkipPackageStructureSpecified)
+			{
+				if (temp.Attributes["SkipPackageStructure"] == null)
+					temp.Attributes.Append(document.CreateAttribute("SkipPackageStructure"));
 
-            document.DocumentElement.SelectSingleNode("Configuration").ReplaceChild(original, temp);
-        }
+				temp.Attributes["SkipPackageStructure"].Value = pc.SkipPackageStructure.ToString().ToLower();
+			}
+			else
+				temp.Attributes.RemoveNamedItem("SkipPackageStructure");
 
-        private void AddOrReplaceDependency(XmlDocument document, DependencyDefinition def)
-        {
-            XmlNode main = document.DocumentElement.SelectSingleNode("Dependencies");
-            XmlNodeList dependencyList = main.SelectNodes("Package");
-            foreach(XmlNode node in dependencyList)
-                if(node.Attributes["Name"].Value == def.Name)
-                {
-                    main.RemoveChild(node);
-                    break;
-                }
-            
-            XmlElement dependency = document.CreateElement("Package");
-            dependency.SetAttribute("Name", def.Name);
-            dependency.SetAttribute("Version", def.Version);
-            if(def.OverrideDestination != null)
-            {
-                XmlElement overrideNode = document.CreateElement("OverrideDestination");
-                foreach(OverrideDestinationSpec spec in def.OverrideDestination)
-                {
-                    XmlElement over = document.CreateElement("Override");
-                    over.SetAttribute("Type", spec.Type.ToString());
-                    over.SetAttribute("Location", spec.Location);
-                    overrideNode.AppendChild(over);
-                }
-                dependency.AppendChild(overrideNode);
-            }
-            if(def.SkipInstall != null)
-            {
-                XmlElement skipNode = document.CreateElement("SkipInstall");
-                foreach(SkipInstallSpec spec in def.SkipInstall)
-                {
-                    XmlElement skip = document.CreateElement("Skip");
-                    skip.SetAttribute("Type", spec.Type.ToString());
-                    skipNode.AppendChild(skip);
-                }
-                dependency.AppendChild(skipNode);
-            }
-            main.AppendChild(dependency);
-        }
+			document.DocumentElement.SelectSingleNode("Configuration").ReplaceChild(original, temp);
+		}
 
-        public virtual void LoadOverrides()
-        {
-            Repository[] overrides = GetRepositoryOverrides();
-            if (Repositories == null)
-            {
-                Repositories = overrides;
-            }
-            else if(overrides != null)
-            {
-                int repositoriesSize = Repositories.Length + overrides.Length;
+		private void AddOrReplaceDependency(XmlDocument document, DependencyDefinition def)
+		{
+			XmlNode main = document.DocumentElement.SelectSingleNode("Dependencies");
+			XmlNodeList dependencyList = main.SelectNodes("Package");
+			foreach (XmlNode node in dependencyList)
+				if (node.Attributes["Name"].Value == def.Name)
+				{
+					main.RemoveChild(node);
+					break;
+				}
 
-                Repository[] newRepositoryArray = new Repository[repositoriesSize];
-                Array.Copy(Repositories, newRepositoryArray, Repositories.Length);
-                Array.Copy(overrides, 0, newRepositoryArray, Repositories.Length, overrides.Length);
+			XmlElement dependency = document.CreateElement("Package");
+			dependency.SetAttribute("Name", def.Name);
+			dependency.SetAttribute("Version", def.Version);
+			if (def.OverrideDestination != null)
+			{
+				XmlElement overrideNode = document.CreateElement("OverrideDestination");
+				foreach (OverrideDestinationSpec spec in def.OverrideDestination)
+				{
+					XmlElement over = document.CreateElement("Override");
+					over.SetAttribute("Type", spec.Type.ToString());
+					over.SetAttribute("Location", spec.Location);
+					overrideNode.AppendChild(over);
+				}
+				dependency.AppendChild(overrideNode);
+			}
+			if (def.SkipInstall != null)
+			{
+				XmlElement skipNode = document.CreateElement("SkipInstall");
+				foreach (SkipInstallSpec spec in def.SkipInstall)
+				{
+					XmlElement skip = document.CreateElement("Skip");
+					skip.SetAttribute("Type", spec.Type.ToString());
+					skipNode.AppendChild(skip);
+				}
+				dependency.AppendChild(skipNode);
+			}
+			main.AppendChild(dependency);
+		}
 
-                Repositories = newRepositoryArray;
-            }
-        }
+		public virtual void LoadOverrides()
+		{
+			Repository[] overrides = GetRepositoryOverrides();
+			if (Repositories == null)
+			{
+				Repositories = overrides;
+			}
+			else if (overrides != null)
+			{
+				int repositoriesSize = Repositories.Length + overrides.Length;
 
-        internal Repository[] GetRepositoryOverrides()
-        {
-            Repository[] result = new Repository[0];
-            try
-            {
-                result = string.IsNullOrEmpty(overridePath) ?
-                    UpliftSettings.FromDefaultFile().Repositories :
-                    UpliftSettings.FromFile(overridePath).Repositories;
-            }
-            catch (Exception e)
-            {
-                Debug.LogError("Could not load repositories overrides from .Uplift file\n" + e);
-            }
+				Repository[] newRepositoryArray = new Repository[repositoriesSize];
+				Array.Copy(Repositories, newRepositoryArray, Repositories.Length);
+				Array.Copy(overrides, 0, newRepositoryArray, Repositories.Length, overrides.Length);
 
-            return result;
-        }
+				Repositories = newRepositoryArray;
+			}
+		}
 
-        public string GetPackagesRootPath()
-        {
-            return Configuration.RepositoryPath.Location;
-        }
+		internal Repository[] GetRepositoryOverrides()
+		{
+			Repository[] result = new Repository[0];
+			try
+			{
+				result = string.IsNullOrEmpty(overridePath) ?
+					UpliftSettings.FromDefaultFile().Repositories :
+					UpliftSettings.FromFile(overridePath).Repositories;
+			}
+			catch (Exception e)
+			{
+				Debug.LogError("Could not load repositories overrides from .Uplift file\n" + e);
+			}
 
-        public void LoadPackageList()
-        {
-            PackageList pList = PackageList.Instance();
-            pList.LoadPackages(Repositories, true);
-        }
+			return result;
+		}
 
-        //FIXME: Prepare proper version checker
-        public virtual void CheckUnityVersion()
-        {
-            string environmentVersion = Application.unityVersion;
-            if(VersionParser.ParseUnityVersion(environmentVersion) < VersionParser.ParseUnityVersion(UnityVersion))
-            {
-                Debug.LogError(string.Format("Upfile.xml Unity Version ({0}) targets a higher version of Unity than you are currently using ({1})",
-                    UnityVersion, environmentVersion));
-            }
-        }
+		public string GetPackagesRootPath()
+		{
+			return Configuration.RepositoryPath.Location;
+		}
 
-        public void MakePathConfigurationsOSFriendly()
-        {
-            foreach(PathConfiguration path in PathConfigurations())
-            {
-                if (!(path == null))
-                    path.Location = Uplift.Common.FileSystemUtil.MakePathOSFriendly(path.Location);
-            }
-        }
+		public void LoadPackageList()
+		{
+			PackageList pList = PackageList.Instance();
+			pList.LoadPackages(Repositories, true);
+		}
 
-        public IEnumerable<PathConfiguration> PathConfigurations()
-        {
-            if (Configuration == null) yield break;
-            yield return Configuration.BaseInstallPath;
-            yield return Configuration.DocsPath;
-            yield return Configuration.EditorPluginPath;
-            yield return Configuration.ExamplesPath;
-            yield return Configuration.GizmoPath;
-            yield return Configuration.MediaPath;
-            yield return Configuration.PluginPath;
-            yield return Configuration.RepositoryPath;
-            yield return Configuration.EditorDefaultResourcePath;
-        }
+		//FIXME: Prepare proper version checker
+		public virtual void CheckUnityVersion()
+		{
+			string environmentVersion = Application.unityVersion;
+			if (VersionParser.ParseUnityVersion(environmentVersion) < VersionParser.ParseUnityVersion(UnityVersion))
+			{
+				Debug.LogError(string.Format("Upfile.xml Unity Version ({0}) targets a higher version of Unity than you are currently using ({1})",
+					UnityVersion, environmentVersion));
+			}
+		}
 
-        public PathConfiguration GetDestinationFor(InstallSpec spec)
-        {
-            PathConfiguration PH;
+		public void MakePathConfigurationsOSFriendly()
+		{
+			foreach (PathConfiguration path in PathConfigurations())
+			{
+				if (!(path == null))
+					path.Location = Uplift.Common.FileSystemUtil.MakePathOSFriendly(path.Location);
+			}
+		}
 
-            var specType = spec.Type;
+		public IEnumerable<PathConfiguration> PathConfigurations()
+		{
+			if (Configuration == null) yield break;
+			yield return Configuration.BaseInstallPath;
+			yield return Configuration.DocsPath;
+			yield return Configuration.EditorPluginPath;
+			yield return Configuration.ExamplesPath;
+			yield return Configuration.GizmoPath;
+			yield return Configuration.MediaPath;
+			yield return Configuration.PluginPath;
+			yield return Configuration.RepositoryPath;
+			yield return Configuration.EditorDefaultResourcePath;
+		}
 
-            switch (specType)
-            {
-                case (InstallSpecType.Base):
-                    PH = Configuration.BaseInstallPath;
-                    break;
+		public PathConfiguration GetDestinationFor(InstallSpec spec)
+		{
+			PathConfiguration PH;
 
-                case (InstallSpecType.Docs):
-                    PH = Configuration.DocsPath;
-                    break;
+			var specType = spec.Type;
 
-                case (InstallSpecType.EditorPlugin):
-                    PH = Configuration.EditorPluginPath;
-                    break;
+			switch (specType)
+			{
+				case (InstallSpecType.Base):
+					PH = Configuration.BaseInstallPath;
+					break;
 
-                case (InstallSpecType.EditorDefaultResource):
-                    PH = Configuration.EditorDefaultResourcePath;
-                    break;
+				case (InstallSpecType.Docs):
+					PH = Configuration.DocsPath;
+					break;
 
-                case (InstallSpecType.Examples):
-                    PH = Configuration.ExamplesPath;
-                    break;
+				case (InstallSpecType.EditorPlugin):
+					PH = Configuration.EditorPluginPath;
+					break;
 
-                case (InstallSpecType.Gizmo):
-                    PH = Configuration.GizmoPath;
-                    break;
+				case (InstallSpecType.EditorDefaultResource):
+					PH = Configuration.EditorDefaultResourcePath;
+					break;
 
-                case (InstallSpecType.Media):
-                    PH = Configuration.MediaPath;
-                    break;
+				case (InstallSpecType.Examples):
+					PH = Configuration.ExamplesPath;
+					break;
 
-                case (InstallSpecType.Plugin):
-                    PH = Configuration.PluginPath;
+				case (InstallSpecType.Gizmo):
+					PH = Configuration.GizmoPath;
+					break;
 
-                    // Platform as string
-                    string platformAsString;
+				case (InstallSpecType.Media):
+					PH = Configuration.MediaPath;
+					break;
 
-                    switch (spec.Platform)
-                    {
-                        case (PlatformType.All): // It means, that we just need to point to "Plugins" folder.
-                            platformAsString = "";
-                            break;
-                        case (PlatformType.iOS):
-                            platformAsString = "ios";
-                            break;
-                        default:
-                            platformAsString = "UNKNOWN";
-                            break;
-                    }
-                    PH.Location = Path.Combine(PH.Location, platformAsString);
-                    break;
+				case (InstallSpecType.Plugin):
+					PH = Configuration.PluginPath;
 
-                default:
-                    PH = Configuration.BaseInstallPath;
-                    break;
-            }
+					// Platform as string
+					string platformAsString;
 
-            return PH;
-        }
+					switch (spec.Platform)
+					{
+						case (PlatformType.All): // It means, that we just need to point to "Plugins" folder.
+							platformAsString = "";
+							break;
+						case (PlatformType.iOS):
+							platformAsString = "ios";
+							break;
+						default:
+							platformAsString = "UNKNOWN";
+							break;
+					}
+					PH.Location = Path.Combine(PH.Location, platformAsString);
+					break;
 
-        public IEnumerable<Upset> ListPackages()
-        {
-            if (Repositories == null) yield break;
-            foreach(Repository repository in Repositories)
-            {
-                foreach(Upset package in repository.ListPackages())
-                {
-                    yield return package;
-                }
-            }
-        }
-    }
+				default:
+					PH = Configuration.BaseInstallPath;
+					break;
+			}
+
+			return PH;
+		}
+
+		public IEnumerable<Upset> ListPackages()
+		{
+			if (Repositories == null) yield break;
+			foreach (Repository repository in Repositories)
+			{
+				foreach (Upset package in repository.ListPackages())
+				{
+					yield return package;
+				}
+			}
+		}
+	}
 }

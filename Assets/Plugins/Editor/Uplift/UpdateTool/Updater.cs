@@ -22,97 +22,98 @@
  */
 // --- END LICENSE BLOCK ---
 
-using UnityEngine;
-using UnityEditor;
-using System.IO;
+using System;
 using System.Collections;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net;
+using UnityEditor;
+using UnityEngine;
 using Uplift.Common;
 using Uplift.GitHubModule;
 using Uplift.Windows;
-using System.Net;
-using System.Linq;
-using System;
-using System.Globalization;
 
 namespace Uplift.Updating
 {
-    public class Updater : MonoBehaviour
-    {
-        private static readonly string dateFormat = @"MM\/dd\/yyyy HH:mm";
-        private static readonly CultureInfo provider = CultureInfo.InvariantCulture;
-        private static readonly string lastUpdateCheckKey = "UpliftLastUpdateCheck";
-        private static IEnumerator updateCoroutine;
+	public class Updater : MonoBehaviour
+	{
+		private static readonly string dateFormat = @"MM\/dd\/yyyy HH:mm";
+		private static readonly CultureInfo provider = CultureInfo.InvariantCulture;
+		private static readonly string lastUpdateCheckKey = "UpliftLastUpdateCheck";
+		private static IEnumerator updateCoroutine;
 
-        public static void UpdateUplift(string url)
-        {
-            string unitypackageName = url.Split('/').Last();
-            DirectoryInfo assetsPath = new DirectoryInfo(Application.dataPath);
-            string destination = Path.Combine(assetsPath.Parent.FullName, unitypackageName);
-            
-            ServicePointManager.ServerCertificateValidationCallback = GitHub.CertificateValidationCallback;
-            using (var client = new WebClient())
-            {
-                client.DownloadFile(url, destination);
-            }
+		public static void UpdateUplift(string url)
+		{
+			string unitypackageName = url.Split('/').Last();
+			DirectoryInfo assetsPath = new DirectoryInfo(Application.dataPath);
+			string destination = Path.Combine(assetsPath.Parent.FullName, unitypackageName);
 
-            AssetDatabase.ImportPackage(destination, false);
-        }
+			ServicePointManager.ServerCertificateValidationCallback = GitHub.CertificateValidationCallback;
+			using (var client = new WebClient())
+			{
+				client.DownloadFile(url, destination);
+			}
 
-        public static void CheckForUpdate(bool forceCheck = false)
-        {
-            if(forceCheck || ShouldCheck())
-            {
-                EditorApplication.update += EditorUpdate;
-                updateCoroutine = CheckForUpdateRoutine();
-            }
-        }
-        
-        private static void EditorUpdate()
-        {
-            updateCoroutine.MoveNext();
-        }
+			AssetDatabase.ImportPackage(destination, false);
+		}
 
-        private static bool ShouldCheck()
-        {
-            string lastCheck = EditorPrefs.GetString(lastUpdateCheckKey);
-            if(string.IsNullOrEmpty(lastCheck)) return true;
-            
-            try
-            {
-                TimeSpan timeFromLastCheck = DateTime.UtcNow - DateTime.ParseExact(lastCheck, dateFormat, provider);
-                return timeFromLastCheck > TimeSpan.FromDays(1);
-            }
-            catch(FormatException e)
-            {
-                Debug.LogErrorFormat("The date stored for the last check of Uplift ({0}) is not in the correct format:\n{1}", lastCheck, e);
-            }
-            return true;
-        }
-        
-        private static IEnumerator CheckForUpdateRoutine() {
-            IEnumerator e = GitHub.LoadReleases("https://api.github.com/repos/DragonBox/uplift/releases");
-            while (e.MoveNext()) yield return e.Current;
+		public static void CheckForUpdate(bool forceCheck = false)
+		{
+			if (forceCheck || ShouldCheck())
+			{
+				EditorApplication.update += EditorUpdate;
+				updateCoroutine = CheckForUpdateRoutine();
+			}
+		}
 
-            GitHubRelease[] releases = (GitHubRelease[]) e.Current;
+		private static void EditorUpdate()
+		{
+			updateCoroutine.MoveNext();
+		}
 
-            if (releases == null)
-            {
-                Debug.LogError ("Unable to check for Uplift updates");
-            }
-            else if(!releases.Any(release => VersionParser.GreaterThan(release.tag, About.Version)))
-            {
-                Debug.Log("No udpate for Uplift available");
-            }
-            else
-            {
-                UpdatePopup popup = EditorWindow.GetWindow(typeof(UpdatePopup), true) as UpdatePopup;
-                popup.SetReleases(releases.Where(release => VersionParser.GreaterThan(release.tag, About.Version, true)).ToArray());
-            }
-            EditorApplication.update -= EditorUpdate;
-            EditorPrefs.SetString(
-                lastUpdateCheckKey,
-                DateTime.UtcNow.ToString(dateFormat, provider)
-            );
-        }
-    }
+		private static bool ShouldCheck()
+		{
+			string lastCheck = EditorPrefs.GetString(lastUpdateCheckKey);
+			if (string.IsNullOrEmpty(lastCheck)) return true;
+
+			try
+			{
+				TimeSpan timeFromLastCheck = DateTime.UtcNow - DateTime.ParseExact(lastCheck, dateFormat, provider);
+				return timeFromLastCheck > TimeSpan.FromDays(1);
+			}
+			catch (FormatException e)
+			{
+				Debug.LogErrorFormat("The date stored for the last check of Uplift ({0}) is not in the correct format:\n{1}", lastCheck, e);
+			}
+			return true;
+		}
+
+		private static IEnumerator CheckForUpdateRoutine()
+		{
+			IEnumerator e = GitHub.LoadReleases("https://api.github.com/repos/DragonBox/uplift/releases");
+			while (e.MoveNext()) yield return e.Current;
+
+			GitHubRelease[] releases = (GitHubRelease[])e.Current;
+
+			if (releases == null)
+			{
+				Debug.LogError("Unable to check for Uplift updates");
+			}
+			else if (!releases.Any(release => VersionParser.GreaterThan(release.tag, About.Version)))
+			{
+				Debug.Log("No udpate for Uplift available");
+			}
+			else
+			{
+				UpdatePopup popup = EditorWindow.GetWindow(typeof(UpdatePopup), true) as UpdatePopup;
+				popup.SetReleases(releases.Where(release => VersionParser.GreaterThan(release.tag, About.Version, true)).ToArray());
+			}
+			EditorApplication.update -= EditorUpdate;
+			EditorPrefs.SetString(
+				lastUpdateCheckKey,
+				DateTime.UtcNow.ToString(dateFormat, provider)
+			);
+		}
+	}
 }

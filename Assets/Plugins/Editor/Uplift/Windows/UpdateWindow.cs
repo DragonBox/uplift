@@ -29,107 +29,107 @@ using Uplift.Schemas;
 
 namespace Uplift.Windows
 {
-    internal class UpdateUtility : EditorWindow
-    {
-        private Vector2 scrollPosition;
-        private UpliftManager.DependencyState[] states = new UpliftManager.DependencyState[0];
+	internal class UpdateUtility : EditorWindow
+	{
+		private Vector2 scrollPosition;
+		private UpliftManager.DependencyState[] states = new UpliftManager.DependencyState[0];
 
-        public void Init()
-        {
-            UpliftManager.ResetInstances();
-            states = UpliftManager.Instance().GetDependenciesState();
-            Repaint();
-        }
+		public void Init()
+		{
+			UpliftManager.ResetInstances();
+			states = UpliftManager.Instance().GetDependenciesState();
+			Repaint();
+		}
 
-        protected void OnGUI()
-        {
+		protected void OnGUI()
+		{
 #if UNITY_5_1_OR_NEWER
-            titleContent.text = "Update Utility";
+			titleContent.text = "Update Utility";
 #endif
-            EditorGUILayout.HelpBox("Please note that this window is not currently supported, and still experimental. Using it may cause unexpected issues. Use with care.", MessageType.Warning);
-            
-            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-            foreach(UpliftManager.DependencyState state in states)
-            {
-                if(state.transitive)
-                {
-                    EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.Space();
-                    EditorGUILayout.BeginVertical();
-                }
+			EditorGUILayout.HelpBox("Please note that this window is not currently supported, and still experimental. Using it may cause unexpected issues. Use with care.", MessageType.Warning);
 
-                DependencyStateBlock(
-                    state.definition,
-                    state.bestMatch,
-                    state.latest,
-                    state.installed
-                );
+			scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+			foreach (UpliftManager.DependencyState state in states)
+			{
+				if (state.transitive)
+				{
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.Space();
+					EditorGUILayout.BeginVertical();
+				}
 
-                if(state.transitive)
-                {
-                    EditorGUILayout.EndVertical();
-                    EditorGUILayout.EndHorizontal();
-                }
-            }
-            EditorGUILayout.EndScrollView();
-        }
+				DependencyStateBlock(
+					state.definition,
+					state.bestMatch,
+					state.latest,
+					state.installed
+				);
 
-        private void DependencyStateBlock(
-            DependencyDefinition definition,
-            PackageRepo bestMatch,
-            PackageRepo latest,
-            InstalledPackage installed
-        )
-        {
-            EditorGUILayout.LabelField(definition.Name + ":", EditorStyles.boldLabel);
-            EditorGUILayout.LabelField("Requirement: " + definition.Requirement.ToString());
-            if(installed != null)
-            {
-                EditorGUILayout.LabelField("Installed version: " + installed.Version);
+				if (state.transitive)
+				{
+					EditorGUILayout.EndVertical();
+					EditorGUILayout.EndHorizontal();
+				}
+			}
+			EditorGUILayout.EndScrollView();
+		}
 
-                if(VersionParser.GreaterThan(bestMatch.Package.PackageVersion, installed.Version))
-                {
-                    EditorGUILayout.HelpBox(
-                        string.Format(
-                            "Package is outdated. You can update it to {0} (from {1})",
-                            bestMatch.Package.PackageVersion,
-                            bestMatch.Repository.ToString()
-                        ),
-                        MessageType.Info
-                    );
-                    if(GUILayout.Button("Update to version " + bestMatch.Package.PackageVersion))
-                    {
-                        UpliftManager.Instance().UpdatePackage(bestMatch);
-                        Init();
-                        Repaint();
-                    }
-                }
-                else
-                    EditorGUILayout.HelpBox("Package is up to date!", MessageType.Info);
+		private void DependencyStateBlock(
+			DependencyDefinition definition,
+			PackageRepo bestMatch,
+			PackageRepo latest,
+			InstalledPackage installed
+		)
+		{
+			EditorGUILayout.LabelField(definition.Name + ":", EditorStyles.boldLabel);
+			EditorGUILayout.LabelField("Requirement: " + definition.Requirement.ToString());
+			if (installed != null)
+			{
+				EditorGUILayout.LabelField("Installed version: " + installed.Version);
 
-                if(!definition.Requirement.IsMetBy(installed.Version))
-                    EditorGUILayout.HelpBox(
-                        "The version of the package currently installed does not match the requirements of your project!",
-                        installed.Version != bestMatch.Package.PackageVersion ? MessageType.Warning : MessageType.Error
-                    );
-            }
-            else
-                EditorGUILayout.LabelField("Not yet installed");
+				if (VersionParser.GreaterThan(bestMatch.Package.PackageVersion, installed.Version))
+				{
+					EditorGUILayout.HelpBox(
+						string.Format(
+							"Package is outdated. You can update it to {0} (from {1})",
+							bestMatch.Package.PackageVersion,
+							bestMatch.Repository.ToString()
+						),
+						MessageType.Info
+					);
+					if (GUILayout.Button("Update to version " + bestMatch.Package.PackageVersion))
+					{
+						UpliftManager.Instance().UpdatePackage(bestMatch);
+						Init();
+						Repaint();
+					}
+				}
+				else
+					EditorGUILayout.HelpBox("Package is up to date!", MessageType.Info);
 
-            if(latest.Package.PackageVersion != bestMatch.Package.PackageVersion)
-                EditorGUILayout.HelpBox(
-                    string.Format(
-                        "Note: there is a more recent version of the package ({0} from {1}), but it doesn't match your requirement",
-                        latest.Package.PackageVersion,
-                        bestMatch.Repository.ToString()
-                    ),
-                    MessageType.Info
-                );
-        }
+				if (!definition.Requirement.IsMetBy(installed.Version))
+					EditorGUILayout.HelpBox(
+						"The version of the package currently installed does not match the requirements of your project!",
+						installed.Version != bestMatch.Package.PackageVersion ? MessageType.Warning : MessageType.Error
+					);
+			}
+			else
+				EditorGUILayout.LabelField("Not yet installed");
 
-        public void OnInspectorUpdate()
-        {
-            this.Repaint();
-        }
-    }
+			if (latest.Package.PackageVersion != bestMatch.Package.PackageVersion)
+				EditorGUILayout.HelpBox(
+					string.Format(
+						"Note: there is a more recent version of the package ({0} from {1}), but it doesn't match your requirement",
+						latest.Package.PackageVersion,
+						bestMatch.Repository.ToString()
+					),
+					MessageType.Info
+				);
+		}
+
+		public void OnInspectorUpdate()
+		{
+			this.Repaint();
+		}
+	}
 }

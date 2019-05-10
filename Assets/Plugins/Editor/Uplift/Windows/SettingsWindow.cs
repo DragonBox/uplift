@@ -22,57 +22,57 @@
  */
 // --- END LICENSE BLOCK ---
 
-using Uplift.Schemas;
-using Uplift.Common;
-using UnityEngine;
-using UnityEditor;
 using System.IO;
 using System.Xml;
+using UnityEditor;
+using UnityEngine;
+using Uplift.Common;
+using Uplift.Schemas;
 
 namespace Uplift.Windows
 {
-    public class SettingsWindow : EditorWindow
-    {
-        private UpliftSettings settings;
-        private Vector2 scrollPosition;
-        private string settingsText;
+	public class SettingsWindow : EditorWindow
+	{
+		private UpliftSettings settings;
+		private Vector2 scrollPosition;
+		private string settingsText;
 
-        protected void OnGUI()
-        {
+		protected void OnGUI()
+		{
 #if UNITY_5_1_OR_NEWER
-            titleContent.text = "Edit settings";
+			titleContent.text = "Edit settings";
 #endif
-            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+			scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
 
-            string settingsLocation = UpliftSettings.GetDefaultLocation();
+			string settingsLocation = UpliftSettings.GetDefaultLocation();
 
-            FileSystemUtil.EnsureParentExists(settingsLocation);
+			FileSystemUtil.EnsureParentExists(settingsLocation);
 
-            if (!File.Exists(settingsLocation))
-            {
-                EditorGUILayout.HelpBox("It seems that you do not have a settings.xml file under HOME/.uplift.", MessageType.Warning);
-                if(GUILayout.Button("Create a sample settings file"))
-                {
-                    SampleFile.CreateSampleSettingsFile();
-                }
-            }
-            else
-            {
-                if (settingsText == null)
-                    settingsText = System.IO.File.ReadAllText(settingsLocation);
+			if (!File.Exists(settingsLocation))
+			{
+				EditorGUILayout.HelpBox("It seems that you do not have a settings.xml file under HOME/.uplift.", MessageType.Warning);
+				if (GUILayout.Button("Create a sample settings file"))
+				{
+					SampleFile.CreateSampleSettingsFile();
+				}
+			}
+			else
+			{
+				if (settingsText == null)
+					settingsText = System.IO.File.ReadAllText(settingsLocation);
 
-                settingsText = EditorGUILayout.TextArea(settingsText);
+				settingsText = EditorGUILayout.TextArea(settingsText);
 
-                if (GUILayout.Button("Save settings file"))
-                {
-                    XmlDocument doc = new XmlDocument();
-                    doc.InnerXml = settingsText;
-                    doc.Save(settingsLocation);
-                    Repaint();
-                }
-            }
+				if (GUILayout.Button("Save settings file"))
+				{
+					XmlDocument doc = new XmlDocument();
+					doc.InnerXml = settingsText;
+					doc.Save(settingsLocation);
+					Repaint();
+				}
+			}
 
-            EditorGUILayout.EndScrollView();
-        }
-    }
+			EditorGUILayout.EndScrollView();
+		}
+	}
 }

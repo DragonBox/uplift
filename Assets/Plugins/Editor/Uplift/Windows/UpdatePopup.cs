@@ -25,52 +25,52 @@
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using Uplift.Updating;
 using Uplift.GitHubModule;
+using Uplift.Updating;
 
 namespace Uplift.Windows
 {
-    public class UpdatePopup : EditorWindow
-    {
-        private GitHubRelease[] releases;
-        private Vector2 scrollPosition;
-        private readonly string updateMessage = @"Uplift has been updated!
+	public class UpdatePopup : EditorWindow
+	{
+		private GitHubRelease[] releases;
+		private Vector2 scrollPosition;
+		private readonly string updateMessage = @"Uplift has been updated!
 We have detected that you run an outdated version of Uplift, and you can update it.";
 
-        public void SetReleases(GitHubRelease[] releases)
-        {
-            this.releases = releases;
-            Repaint();
-        }
+		public void SetReleases(GitHubRelease[] releases)
+		{
+			this.releases = releases;
+			Repaint();
+		}
 
-        public void OnGUI()
-        {
+		public void OnGUI()
+		{
 #if UNITY_5_1_OR_NEWER
-            titleContent.text = "Update Uplift";
+			titleContent.text = "Update Uplift";
 #endif
-            EditorGUILayout.LabelField("Update available", EditorStyles.largeLabel, GUILayout.Height(25f));
-            EditorGUILayout.HelpBox(updateMessage, MessageType.Warning);
+			EditorGUILayout.LabelField("Update available", EditorStyles.largeLabel, GUILayout.Height(25f));
+			EditorGUILayout.HelpBox(updateMessage, MessageType.Warning);
 
-            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-            foreach(GitHubRelease release in releases)
-            {
-                EditorGUILayout.LabelField("Release notes for version " + release.tag, EditorStyles.boldLabel);
-                EditorGUILayout.HelpBox(release.body, MessageType.None);
+			scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+			foreach (GitHubRelease release in releases)
+			{
+				EditorGUILayout.LabelField("Release notes for version " + release.tag, EditorStyles.boldLabel);
+				EditorGUILayout.HelpBox(release.body, MessageType.None);
 
-                if(release.assets != null && release.assets.Any(asset => asset.name.EndsWith(".unitypackage")))
-                {
-                    if(GUILayout.Button("Update to this version"))
-                    {
-                        Updater.UpdateUplift(release.assets.First(asset => asset.name.EndsWith(".unitypackage")).htmlURL);
-                    }
-                }
-                else 
-                {
-                    EditorGUILayout.HelpBox("This release seems to have no .unitypackage attached to it", MessageType.Info);
-                }
-                EditorGUILayout.Space();
-            }
-            EditorGUILayout.EndScrollView();
-        }
-    }
+				if (release.assets != null && release.assets.Any(asset => asset.name.EndsWith(".unitypackage")))
+				{
+					if (GUILayout.Button("Update to this version"))
+					{
+						Updater.UpdateUplift(release.assets.First(asset => asset.name.EndsWith(".unitypackage")).htmlURL);
+					}
+				}
+				else
+				{
+					EditorGUILayout.HelpBox("This release seems to have no .unitypackage attached to it", MessageType.Info);
+				}
+				EditorGUILayout.Space();
+			}
+			EditorGUILayout.EndScrollView();
+		}
+	}
 }

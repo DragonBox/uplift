@@ -22,165 +22,160 @@
  */
 // --- END LICENSE BLOCK ---
 
-using UnityEngine;
-using UnityEditor;
-
-using Uplift.Schemas;
-
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-
-
+using UnityEditor;
+using UnityEngine;
+using Uplift.Schemas;
 
 namespace Uplift.Export
 {
-    class Exporter
-    {
-        PackageExportData exportSpec;
+	class Exporter
+	{
+		PackageExportData exportSpec;
 
-        public void Export()
-        {
+		public void Export()
+		{
 
-            // Prepare list of entries to export
-            var exportEntries = new List<string>();
+			// Prepare list of entries to export
+			var exportEntries = new List<string>();
 
-            for(int i = 0; i < exportSpec.pathsToExport.Length; i++)
-            {
+			for (int i = 0; i < exportSpec.pathsToExport.Length; i++)
+			{
 
-                string path = exportSpec.pathsToExport[i];
+				string path = exportSpec.pathsToExport[i];
 
-                if(System.IO.File.Exists(path))
-                {
-                    exportEntries.Add(path);
+				if (System.IO.File.Exists(path))
+				{
+					exportEntries.Add(path);
 
-                }
-                else if (System.IO.Directory.Exists(path))
-                {
-                    string[] tFiles = System.IO.Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
-                    string[] tDirectories = System.IO.Directory.GetDirectories(path, "*", SearchOption.AllDirectories);
+				}
+				else if (System.IO.Directory.Exists(path))
+				{
+					string[] tFiles = System.IO.Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
+					string[] tDirectories = System.IO.Directory.GetDirectories(path, "*", SearchOption.AllDirectories);
 
-                    exportEntries.AddRange(tFiles);
-                    exportEntries.AddRange(tDirectories);
-                }
+					exportEntries.AddRange(tFiles);
+					exportEntries.AddRange(tDirectories);
+				}
 
+			}
 
-            }
+			// Calculate package file basename
+			string packageBasename = string.Format("{0}-{1}", exportSpec.packageName, exportSpec.packageVersion);
 
-            // Calculate package file basename
-            string packageBasename = string.Format("{0}-{1}", exportSpec.packageName, exportSpec.packageVersion);
+			// Create Target Directory
+			if (!Directory.Exists(exportSpec.targetDir))
+			{
+				Directory.CreateDirectory(exportSpec.targetDir);
+			}
 
-            // Create Target Directory
-            if(!Directory.Exists(exportSpec.targetDir))
-            {
-                Directory.CreateDirectory(exportSpec.targetDir);
-            }
+			// Write things to disk
+			// Upset
+			WriteUpsetFile(Path.Combine(exportSpec.targetDir, packageBasename) + ".Upset.xml");
 
-            // Write things to disk
-            // Upset
-            WriteUpsetFile(Path.Combine(exportSpec.targetDir, packageBasename) + ".Upset.xml");
+			// .unitypackage file
+			AssetDatabase.ExportPackage(
+				exportEntries.ToArray(),
+				Path.Combine(exportSpec.targetDir, packageBasename) + ".unitypackage",
+				ExportPackageOptions.Default
+			);
 
-            // .unitypackage file
-            AssetDatabase.ExportPackage(
-                                        exportEntries.ToArray(),
-                                        Path.Combine(exportSpec.targetDir,packageBasename) + ".unitypackage",
-                                        ExportPackageOptions.Default
-                                        );
+		}
 
-        }
+		public void SetExportSpec(PackageExportData exportSpec)
+		{
+			this.exportSpec = exportSpec;
+		}
 
-        public void SetExportSpec(PackageExportData exportSpec)
-        {
-            this.exportSpec = exportSpec;
-        }
+		protected void WriteUpsetFile(string file)
+		{
+			XmlSerializer serializer = new XmlSerializer(typeof(Upset));
 
-        protected void WriteUpsetFile(string file)
-        {
-            XmlSerializer serializer = new XmlSerializer(typeof(Upset));
+			Upset template;
+			if (string.IsNullOrEmpty(exportSpec.templateUpsetFile))
+			{
+				Debug.LogWarning("No template Upset specified, dependencies and configuration will not follow through");
+				template = new Upset();
+			}
+			else
+			{
+				using (FileStream fs = new FileStream(exportSpec.templateUpsetFile, FileMode.Open))
+				{
+					template = serializer.Deserialize(fs) as Upset;
+				}
+			}
 
-            Upset template;
-            if(string.IsNullOrEmpty(exportSpec.templateUpsetFile))
-            {
-                Debug.LogWarning("No template Upset specified, dependencies and configuration will not follow through");
-                template = new Upset();
-            }
-            else
-            {
-                using (FileStream fs = new FileStream(exportSpec.templateUpsetFile, FileMode.Open))
-                {
-                    template = serializer.Deserialize(fs) as Upset;
-                }
-            }
+			var upset = new Upset()
+			{
+				UnityVersion = Application.unityVersion,
+				PackageName = exportSpec.packageName,
+				PackageLicense = exportSpec.license,
+				PackageVersion = exportSpec.packageVersion,
+				Dependencies = template.Dependencies,
+				Configuration = template.Configuration
+			};
 
-            var upset = new Upset() {
-                UnityVersion = Application.unityVersion,
-                PackageName = exportSpec.packageName,
-                PackageLicense = exportSpec.license,
-                PackageVersion = exportSpec.packageVersion,
-                Dependencies = template.Dependencies,
-                Configuration = template.Configuration
-            };
+			using (FileStream fs = new FileStream(file, FileMode.Create))
+			{
+				using (StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8))
+				{
+					serializer.Serialize(sw, upset);
+				}
+			}
 
-            using (FileStream fs = new FileStream(file, FileMode.Create))
-            {
-                using (StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.UTF8))
-                {
-                    serializer.Serialize(sw, upset);
-                }
-            }
+		}
 
-        }
+		// Convenience method for packing everything according to
+		// PackageExportData objects
 
-        // Convenience method for packing everything according to
-        // PackageExportData objects
+		public static void PackageEverything()
+		{
+			var guids = AssetDatabase.FindAssets("t:PackageExportData");
 
-        public static void PackageEverything()
-        {
-            var guids = AssetDatabase.FindAssets("t:PackageExportData");
+			if (guids.Length == 0)
+			{
+				throw new System.Exception("PackageExportData doesn't exist. Create at least one using Uplift -> Create Export Spec.");
+			}
 
-            if(guids.Length == 0)
-            {
-                throw new System.Exception("PackageExportData doesn't exist. Create at least one using Uplift -> Create Export Spec.");
-            }
+			Debug.LogFormat("{0} Package Export Specification(s) found. Preparing for export.", guids.Length);
 
+			for (int i = 0; i < guids.Length; i++)
+			{
 
-            Debug.LogFormat("{0} Package Export Specification(s) found. Preparing for export.", guids.Length);
-
-            for(int i = 0; i < guids.Length; i++)
-            {
-
-                string packageExportPath = AssetDatabase.GUIDToAssetPath(guids[i]);
+				string packageExportPath = AssetDatabase.GUIDToAssetPath(guids[i]);
 #if UNITY_5_6_OR_NEWER
-                PackageExportData packageExportData = AssetDatabase.LoadAssetAtPath<PackageExportData>(packageExportPath);
+				PackageExportData packageExportData = AssetDatabase.LoadAssetAtPath<PackageExportData>(packageExportPath);
 #else
-                PackageExportData packageExportData = (PackageExportData)AssetDatabase.LoadAssetAtPath(packageExportPath, typeof(PackageExportData));
+				PackageExportData packageExportData = (PackageExportData) AssetDatabase.LoadAssetAtPath (packageExportPath, typeof (PackageExportData));
 #endif
-                Debug.LogFormat("Export {0}/{1} using {2}", i+1, guids.Length, packageExportPath);
+				Debug.LogFormat("Export {0}/{1} using {2}", i + 1, guids.Length, packageExportPath);
 
-                // Preparing exporter instance
-                Exporter exporter = new Exporter();
+				// Preparing exporter instance
+				Exporter exporter = new Exporter();
 
-                // Checking which defaults had been overriden
-                packageExportData.SetOrCheckOverridenDefaults(GetDefaultExportData());
+				// Checking which defaults had been overriden
+				packageExportData.SetOrCheckOverridenDefaults(GetDefaultExportData());
 
-                // Setting exporter spec
-                exporter.SetExportSpec(packageExportData);
+				// Setting exporter spec
+				exporter.SetExportSpec(packageExportData);
 
-                // Export of set package
-                exporter.Export();
-            }
-        }
+				// Export of set package
+				exporter.Export();
+			}
+		}
 
-        public static PackageExportData GetDefaultExportData()
-        {
-                PackageExportData defaultExportData = ScriptableObject.CreateInstance<PackageExportData>();
+		public static PackageExportData GetDefaultExportData()
+		{
+			PackageExportData defaultExportData = ScriptableObject.CreateInstance<PackageExportData>();
 
-                defaultExportData.packageName = PlayerSettings.productName;
-                defaultExportData.packageVersion = PlayerSettings.bundleVersion;
-                defaultExportData.license = "undefined";
+			defaultExportData.packageName = PlayerSettings.productName;
+			defaultExportData.packageVersion = PlayerSettings.bundleVersion;
+			defaultExportData.license = "undefined";
 
-                return defaultExportData;
+			return defaultExportData;
 
-        }
-    }
+		}
+	}
 }

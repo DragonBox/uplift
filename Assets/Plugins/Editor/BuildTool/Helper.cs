@@ -23,30 +23,35 @@
 // --- END LICENSE BLOCK ---
 
 using System;
-using UnityEngine;
 using System.IO;
 using System.Text;
+using UnityEngine;
 
 namespace BuildTool
 {
-    public class Helper
+	public class Helper
 	{
-		public static bool IsMac() {
+		public static bool IsMac()
+		{
 			return Application.platform == RuntimePlatform.OSXEditor;
 		}
 
-		public static bool IsWindows() {
+		public static bool IsWindows()
+		{
 			return Application.platform == RuntimePlatform.WindowsEditor;
 		}
 
-		public static string PathCombine(params string[] values) {
-			return string.Join (Path.DirectorySeparatorChar.ToString (), values);
+		public static string PathCombine(params string[] values)
+		{
+			return string.Join(Path.DirectorySeparatorChar.ToString(), values);
 		}
 
-		public static string ArgEscape(string s) {
-			if (s.Contains (" ")) {
+		public static string ArgEscape(string s)
+		{
+			if (s.Contains(" "))
+			{
 				string temp;
-				if(Helper.IsWindows())
+				if (Helper.IsWindows())
 				{
 					temp = "\"" + s + "\"";
 				}
@@ -59,8 +64,9 @@ namespace BuildTool
 			return s;
 		}
 
-		public static void RunProcess(string exeName, string[] args) {
-			if(Helper.IsWindows())
+		public static void RunProcess(string exeName, string[] args)
+		{
+			if (Helper.IsWindows())
 				RunCommand(
 					"cmd.exe",
 					new string[] { "/c \"" + exeName + " " + string.Join(" ", args) + "\"" }
@@ -70,9 +76,11 @@ namespace BuildTool
 				RunCommand(exeName, args);
 			}
 		}
-	
-		public static void RunCommand(string exeName, string[] args) {
-			using (var process = new System.Diagnostics.Process ()) {
+
+		public static void RunCommand(string exeName, string[] args)
+		{
+			using (var process = new System.Diagnostics.Process())
+			{
 				process.StartInfo.FileName = exeName;
 				process.StartInfo.Arguments = string.Join(" ", args);
 				process.StartInfo.RedirectStandardError = true;
@@ -80,39 +88,42 @@ namespace BuildTool
 				process.StartInfo.UseShellExecute = false;
 				process.StartInfo.CreateNoWindow = true;
 
-				StringBuilder stdout = new StringBuilder ();
-				StringBuilder stderr = new StringBuilder ();
+				StringBuilder stdout = new StringBuilder();
+				StringBuilder stderr = new StringBuilder();
 
-				process.OutputDataReceived += (sender, e) => {
+				process.OutputDataReceived += (sender, e) =>
+				{
 					if (e.Data == null)
 						return;
-					stdout.Append (e.Data).Append ("\n");
+					stdout.Append(e.Data).Append("\n");
 				};
-				process.ErrorDataReceived += (sender, e) => {
+				process.ErrorDataReceived += (sender, e) =>
+				{
 					if (e.Data == null)
 						return;
-					stderr.Append (e.Data).Append ("\n");
+					stderr.Append(e.Data).Append("\n");
 				};
 				process.EnableRaisingEvents = true;
 
-				Debug.Log ("Running " + process.StartInfo.FileName + " " + process.StartInfo.Arguments);
+				Debug.Log("Running " + process.StartInfo.FileName + " " + process.StartInfo.Arguments);
 
-				process.Start ();
+				process.Start();
 
-				process.BeginOutputReadLine ();
-				process.BeginErrorReadLine ();
+				process.BeginOutputReadLine();
+				process.BeginErrorReadLine();
 
-				process.WaitForExit ();
+				process.WaitForExit();
 
-				string output = stdout.ToString ();
+				string output = stdout.ToString();
 				if (output.Length > 0)
-					Debug.Log ("** output: \n" + output);
-				string error = stderr.ToString ();
+					Debug.Log("** output: \n" + output);
+				string error = stderr.ToString();
 				if (error.Length > 0)
-					Debug.Log ("** error: \n" + error);
+					Debug.Log("** error: \n" + error);
 
-				if (process.ExitCode != 0) {
-					throw new Exception ("Failed running " + exeName + " error: " + process.ExitCode + " : " + error);
+				if (process.ExitCode != 0)
+				{
+					throw new Exception("Failed running " + exeName + " error: " + process.ExitCode + " : " + error);
 				}
 			}
 		}

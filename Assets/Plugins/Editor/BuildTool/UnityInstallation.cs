@@ -24,67 +24,81 @@
 
 using System.Collections.Generic;
 using System.IO;
-using Uplift.Common;
 using System.Linq;
+using Uplift.Common;
 
 namespace BuildTool
 {
-    public class UnityInstallation {
+	public class UnityInstallation
+	{
 		string rootPath;
 		BuildPaths buildPaths;
 
-		public UnityInstallation(string rootPath) {
+		public UnityInstallation(string rootPath)
+		{
 			this.rootPath = rootPath;
 		}
 
-		public string RootPath {
-			get {
+		public string RootPath
+		{
+			get
+			{
 				return rootPath;
 			}
 		}
 
-		public BuildPaths Paths() {
-			if (buildPaths == null) {
-				buildPaths = new BuildPaths (this);
+		public BuildPaths Paths()
+		{
+			if (buildPaths == null)
+			{
+				buildPaths = new BuildPaths(this);
 			}
 			return buildPaths;
 		}
 
-		public void BuildLibrary(BuildLibraryData data) {
-			FileSystemUtil.EnsureParentExists (data.OutFile);
+		public void BuildLibrary(BuildLibraryData data)
+		{
+			FileSystemUtil.EnsureParentExists(data.OutFile);
 
 			string ReferenceString = string.Join(",", data.References.Select(s => Helper.ArgEscape(s)).ToArray());
 
 			List<string> args = new List<string>();
-			args.Add ("-r:" + ReferenceString);
-			args.Add ("-target:library");
-			args.Add ("-sdk:" + data.SdkLevel.ToString ());
-			args.Add ("-out:" + data.OutFile);
-			if(data.Defines != null && data.Defines.Length > 0)
+			args.Add("-r:" + ReferenceString);
+			args.Add("-target:library");
+			args.Add("-sdk:" + data.SdkLevel.ToString());
+			args.Add("-out:" + data.OutFile);
+			if (data.Defines != null && data.Defines.Length > 0)
 				args.Add("-define:" + string.Join(";", data.Defines));
-			if(data.useUnsafe)
-			    args.Add ("-unsafe");
-			args.AddRange (data.Files);
+			if (data.useUnsafe)
+				args.Add("-unsafe");
+			args.AddRange(data.Files);
 
-			Helper.RunProcess (Helper.ArgEscape(Paths().Mcs ()), args.ToArray ()); 
+			Helper.RunProcess(Helper.ArgEscape(Paths().Mcs()), args.ToArray());
 			UnityEngine.Debug.LogFormat("Library '{0}' built!", data.OutFile);
 		}
 	}
 
-	public class UnityInstallationUtils {
-		public static UnityInstallation Current() {
-			string exe = System.Environment.GetCommandLineArgs ()[0];
+	public class UnityInstallationUtils
+	{
+		public static UnityInstallation Current()
+		{
+			string exe = System.Environment.GetCommandLineArgs()[0];
 			string RootPath;
-			if (Helper.IsMac()) {
+			if (Helper.IsMac())
+			{
 				RootPath = exe.Substring(0, exe.IndexOf("/Unity.app"));
-			} else if (Helper.IsWindows()) {
+			}
+			else if (Helper.IsWindows())
+			{
 				DirectoryInfo exeInfo = new DirectoryInfo(exe);
 				RootPath = exeInfo.Parent.Parent.FullName;
-			} else {
-				throw new System.Exception ("TODO: Implement RootPath finder from " + exe);
 			}
-			UnityEngine.Debug.Log ("RootPath: " + RootPath);
-			return new UnityInstallation (RootPath);
+			else
+			{
+				throw new System.Exception("TODO: Implement RootPath finder from " + exe);
+			}
+			UnityEngine.Debug.Log("RootPath: " + RootPath);
+			return new UnityInstallation(RootPath);
 		}
 	}
 

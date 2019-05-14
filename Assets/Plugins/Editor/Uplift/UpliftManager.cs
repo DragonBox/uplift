@@ -515,12 +515,12 @@ namespace Uplift
 
 				foreach (InstallSpecPath spec in specArray)
 				{
-					if (dependencyDefinition.SkipInstall != null && dependencyDefinition.SkipInstall.Any(skip => skip.Type == spec.Type)) continue;
+					if (dependencyDefinition != null && dependencyDefinition.SkipInstall != null && dependencyDefinition.SkipInstall.Any(skip => skip.Type == spec.Type)) continue;
 
 					var sourcePath = Uplift.Common.FileSystemUtil.JoinPaths(td.Path, spec.Path);
 
 					PathConfiguration PH = upfile.GetDestinationFor(spec);
-					if (dependencyDefinition.OverrideDestination != null && dependencyDefinition.OverrideDestination.Any(over => over.Type == spec.Type))
+					if (dependencyDefinition != null && dependencyDefinition.OverrideDestination != null && dependencyDefinition.OverrideDestination.Any(over => over.Type == spec.Type))
 					{
 						PH.Location = Uplift.Common.FileSystemUtil.MakePathOSFriendly(dependencyDefinition.OverrideDestination.First(over => over.Type == spec.Type).Location);
 					}
@@ -670,7 +670,7 @@ namespace Uplift
 		{
 			NukePackage(package.PackageName);
 
-			DependencyDefinition definition = Upfile.Instance().Dependencies.First(dep => dep.Name == package.PackageName);
+			DependencyDefinition definition = Upfile.Instance().Dependencies.FirstOrDefault(dep => dep.Name == package.PackageName);
 			InstallPackage(package, td, definition, true);
 		}
 

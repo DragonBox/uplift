@@ -1,0 +1,40 @@
+{
+	"csharpextensions.reFormatAfterChange": true,
+	"files.exclude": {
+		"*.csproj": true,
+		".env*": true,
+		"**/.DS_Store": true,
+		"**/.git": true,
+		"**/.gitignore": false,
+		"**/.gitmodules": true,
+		"**/*.booproj": true,
+		"**/*.pidb": true,
+		"**/*.suo": true,
+		"**/*.user": true,
+		"**/*.userprefs": true,
+		"**/*.unityproj": true,
+		"**/*.meta": true,
+		"[Ll]ibrary/": true,
+		"[Oo]bj/": true,
+		"[Tt]emp/": true,
+		"UPackages": true
+	},
+	"files.associations": {
+		"*.asset": "yaml",
+		"*.meta": "yaml",
+		"*.prefab": "yaml",
+		"*.unity": "yaml"
+	},
+	"[csharp]": {
+		"editor.formatOnSave": true,
+		"editor.detectIndentation": false,
+		"editor.insertSpaces": false,
+		"editor.tabSize": 4
+	},
+	"[ruby]": {
+		"editor.formatOnSave": true,
+		"editor.detectIndentation": true,
+		"editor.insertSpaces": true,
+		"editor.tabSize": 2
+	}
+}

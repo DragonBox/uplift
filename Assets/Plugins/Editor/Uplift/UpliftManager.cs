@@ -670,7 +670,15 @@ namespace Uplift
 		{
 			NukePackage(package.PackageName);
 
+			// First or default returns the first DependencyDefinition which satistfies dep.Name == package.PackageName
+			// If no elements meets this condition a Default value for DependencyDefinition is returned which, for our implementation, is null. 
 			DependencyDefinition definition = Upfile.Instance().Dependencies.FirstOrDefault(dep => dep.Name == package.PackageName);
+
+			if (definition == null)
+			{
+				definition = new DependencyDefinition() { Name = package.PackageName, Version = package.PackageVersion };
+			}
+
 			InstallPackage(package, td, definition, true);
 		}
 

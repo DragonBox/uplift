@@ -22,6 +22,7 @@
  */
 // --- END LICENSE BLOCK ---
 
+using System;
 using System.IO;
 using System.Linq;
 using Uplift.Common;
@@ -473,6 +474,11 @@ namespace Uplift
 		// This should be contained using kinds of destinations.
 		private void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition, bool updateLockfile = false)
 		{
+			if (dependencyDefinition == null)
+			{
+				throw new ArgumentNullException("Failed to install package " + package.PackageName + ". Dependency Definition is null.");
+			}
+
 			GitIgnorer VCSHandler = new GitIgnorer();
 
 			using (LogAggregator LA = LogAggregator.InUnity(
@@ -515,12 +521,12 @@ namespace Uplift
 
 				foreach (InstallSpecPath spec in specArray)
 				{
-					if (dependencyDefinition != null && dependencyDefinition.SkipInstall != null && dependencyDefinition.SkipInstall.Any(skip => skip.Type == spec.Type)) continue;
+					if (dependencyDefinition.SkipInstall != null && dependencyDefinition.SkipInstall.Any(skip => skip.Type == spec.Type)) continue;
 
 					var sourcePath = Uplift.Common.FileSystemUtil.JoinPaths(td.Path, spec.Path);
 
 					PathConfiguration PH = upfile.GetDestinationFor(spec);
-					if (dependencyDefinition != null && dependencyDefinition.OverrideDestination != null && dependencyDefinition.OverrideDestination.Any(over => over.Type == spec.Type))
+					if (dependencyDefinition.OverrideDestination != null && dependencyDefinition.OverrideDestination.Any(over => over.Type == spec.Type))
 					{
 						PH.Location = Uplift.Common.FileSystemUtil.MakePathOSFriendly(dependencyDefinition.OverrideDestination.First(over => over.Type == spec.Type).Location);
 					}

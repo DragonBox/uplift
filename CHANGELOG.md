@@ -1,6 +1,14 @@
 # Change Log
 
-## [v1.0.0beta12](https://github.com/DragonBox/uplift/tree/v1.0.0beta12) (2019-03-25)
+## [v1.0.0beta13](https://github.com/DragonBox/uplift/tree/v1.0.0beta13) (2019-05-20)
+[Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta12...v1.0.0beta13)
+
+**Merged pull requests:**
+
+- Format files according to wwtk templates [\#71](https://github.com/DragonBox/uplift/pull/71) ([scassard](https://github.com/scassard))
+- Correct update package function to prevent error in First method [\#70](https://github.com/DragonBox/uplift/pull/70) ([scassard](https://github.com/scassard))
+
+## [v1.0.0beta12](https://github.com/DragonBox/uplift/tree/v1.0.0beta12) (2019-03-26)
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta11...v1.0.0beta12)
 
 **Fixed bugs:**
@@ -9,6 +17,8 @@
 
 **Merged pull requests:**
 
+- Add github\_changelog\_generator as a dependency in the Gemfile [\#69](https://github.com/DragonBox/uplift/pull/69) ([niezbop](https://github.com/niezbop))
+- Preparing release for 1.0.0beta12 [\#68](https://github.com/DragonBox/uplift/pull/68) ([niezbop](https://github.com/niezbop))
 - Introduce Range version requirement [\#67](https://github.com/DragonBox/uplift/pull/67) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta11](https://github.com/DragonBox/uplift/tree/v1.0.0beta11) (2018-12-18)

@@ -37,7 +37,6 @@ namespace Uplift.Export
 
 		public void Export()
 		{
-
 			// Prepare list of entries to export
 			var exportEntries = new List<string>();
 
@@ -45,20 +44,23 @@ namespace Uplift.Export
 			{
 
 				string path = exportSpec.pathsToExport[i];
+				Debug.Log("===== Exporting path : " + path);
+				//Detecter uplift pkg here
 
 				if (System.IO.File.Exists(path))
 				{
 					exportEntries.Add(path);
-
 				}
 				else if (System.IO.Directory.Exists(path))
 				{
 					string[] tFiles = System.IO.Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
 					string[] tDirectories = System.IO.Directory.GetDirectories(path, "*", SearchOption.AllDirectories);
-
+					Debug.Log("===== Add files : " + tFiles);
 					exportEntries.AddRange(tFiles);
+					Debug.Log("===== Add dir : " + tDirectories);
 					exportEntries.AddRange(tDirectories);
 				}
+
 
 			}
 
@@ -77,11 +79,10 @@ namespace Uplift.Export
 
 			// .unitypackage file
 			AssetDatabase.ExportPackage(
-				exportEntries.ToArray(),
-				Path.Combine(exportSpec.targetDir, packageBasename) + ".unitypackage",
-				ExportPackageOptions.Default
-			);
-
+										exportEntries.ToArray(),
+										Path.Combine(exportSpec.targetDir, packageBasename) + ".unitypackage",
+										ExportPackageOptions.Default
+										);
 		}
 
 		public void SetExportSpec(PackageExportData exportSpec)
@@ -138,6 +139,7 @@ namespace Uplift.Export
 			{
 				throw new System.Exception("PackageExportData doesn't exist. Create at least one using Uplift -> Create Export Spec.");
 			}
+
 
 			Debug.LogFormat("{0} Package Export Specification(s) found. Preparing for export.", guids.Length);
 

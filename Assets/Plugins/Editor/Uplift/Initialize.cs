@@ -30,27 +30,27 @@ using Uplift.Updating;
 
 namespace Uplift
 {
-    [InitializeOnLoad]
-    [ExecuteInEditMode]
-    public class Initialize : MonoBehaviour
-    {
-        static Initialize()
-        {
-            Debug.Log("Using Uplift version " + About.Version);
-            if (!Upfile.CheckForUpfile())
-            {
-                Debug.Log("No Upfile was found at the root of your project, Uplift created a sample one for you to start working on");
-                SampleFile.CreateSampleUpfile();
-            }
-            
-            if(LockFileTracker.HasChanged())
-            {
-                UpliftManager.ResetInstances();
-                UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE);
-                LockFileTracker.SaveState();
-            }
+	[InitializeOnLoad]
+	[ExecuteInEditMode]
+	public class Initialize : MonoBehaviour
+	{
+		static Initialize()
+		{
+			Debug.Log("Using Uplift version " + About.Version);
+			if (!Upfile.CheckForUpfile())
+			{
+				Debug.Log("No Upfile was found at the root of your project, Uplift created a sample one for you to start working on");
+				SampleFile.CreateSampleUpfile();
+			}
 
-            Updater.CheckForUpdate();
-        }
-    }
+			if (LockFileTracker.HasChanged())
+			{
+				UpliftManager.ResetInstances();
+				UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE);
+				LockFileTracker.SaveState();
+			}
+
+			Updater.CheckForUpdate();
+		}
+	}
 }

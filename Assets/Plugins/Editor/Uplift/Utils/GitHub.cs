@@ -36,12 +36,11 @@ using Uplift.Schemas;
 
 namespace Uplift.GitHubModule
 {
-    public class GitHub
-    {
-        private static readonly string[] githubCertificatesString = new string[]
-        {
-// github.com
-@"-----BEGIN CERTIFICATE-----
+	public class GitHub
+	{
+		private static readonly string[] githubCertificatesString = new string[] {
+			// github.com
+			@"-----BEGIN CERTIFICATE-----
 MIIHeTCCBmGgAwIBAgIQC/20CQrXteZAwwsWyVKaJzANBgkqhkiG9w0BAQsFADB1
 MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
 d3cuZGlnaWNlcnQuY29tMTQwMgYDVQQDEytEaWdpQ2VydCBTSEEyIEV4dGVuZGVk
@@ -84,8 +83,8 @@ FrBHTFxqIP6kDnxiLElBrZngtY07ietaYZVLQN/ETyqLQftsf8TecwTklbjvm8NT
 JqbaIVifYwqwNN+4lRxS3F5lNlA/il12IOgbRioLI62o8G0DaEUQgHNf8vSG
 -----END CERTIFICATE-----
 ",
-// api.github.com
-@"-----BEGIN CERTIFICATE-----
+			// api.github.com
+			@"-----BEGIN CERTIFICATE-----
 MIIHTTCCBjWgAwIBAgIQDZ3d58+sYZrDhm+uNUWKlDANBgkqhkiG9w0BAQsFADBw
 MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
 d3cuZGlnaWNlcnQuY29tMS8wLQYDVQQDEyZEaWdpQ2VydCBTSEEyIEhpZ2ggQXNz
@@ -128,8 +127,8 @@ HOODLNzVAw63zfJqCJvPtaCr+/KXKrqfjk9Z+e7Nmg+IxOf4M/Mxbox4KJvLlX8p
 wQ==
 -----END CERTIFICATE-----
 ",
-// DigiCert High Assurance EV Root CA
-@"-----BEGIN CERTIFICATE-----
+			// DigiCert High Assurance EV Root CA
+			@"-----BEGIN CERTIFICATE-----
 MIIDxTCCAq2gAwIBAgIQAqxcJmoLQJuPC3nyrkYldzANBgkqhkiG9w0BAQUFADBs
 MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
 d3cuZGlnaWNlcnQuY29tMSswKQYDVQQDEyJEaWdpQ2VydCBIaWdoIEFzc3VyYW5j
@@ -153,8 +152,8 @@ vEsXCS+0yx5DaMkHJ8HSXPfqIbloEpw8nL+e/IBcm2PN7EeqJSdnoDfzAIJ9VNep
 +OkuE6N36B9K
 -----END CERTIFICATE-----
 ",
-// DigiCert SHA2 Extended Validation Server CA
-@"-----BEGIN CERTIFICATE-----
+			// DigiCert SHA2 Extended Validation Server CA
+			@"-----BEGIN CERTIFICATE-----
 MIIEtjCCA56gAwIBAgIQDHmpRLCMEZUgkmFf4msdgzANBgkqhkiG9w0BAQsFADBs
 MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
 d3cuZGlnaWNlcnQuY29tMSswKQYDVQQDEyJEaWdpQ2VydCBIaWdoIEFzc3VyYW5j
@@ -183,7 +182,7 @@ oVWNWlZopCJwqjyBcdmdqEU79OX2olHdx3ti6G8MdOu42vi/hw15UJGQmxg7kVkn
 8TUoE6smftX3eg==
 -----END CERTIFICATE-----
 ",
-@"-----BEGIN CERTIFICATE-----
+			@"-----BEGIN CERTIFICATE-----
 MIIEsTCCA5mgAwIBAgIQBOHnpNxc8vNtwCtCuF0VnzANBgkqhkiG9w0BAQsFADBs
 MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
 d3cuZGlnaWNlcnQuY29tMSswKQYDVQQDEyJEaWdpQ2VydCBIaWdoIEFzc3VyYW5j
@@ -212,8 +211,8 @@ xICaEnL6VpPX/78whQYwvwt/Tv9XBZ0k7YXDK/umdaisLRbvfXknsuvCnQsH6qqF
 cPUeybQ=
 -----END CERTIFICATE-----
 ",
-// Amazon S3 (provider for the release download) *.s3.amazonaws.com
-@"-----BEGIN CERTIFICATE-----
+			// Amazon S3 (provider for the release download) *.s3.amazonaws.com
+			@"-----BEGIN CERTIFICATE-----
 MIIFWjCCBEKgAwIBAgIQBVG1kvpTzyBSuLcPJ1zBWTANBgkqhkiG9w0BAQsFADBk
 MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
 d3cuZGlnaWNlcnQuY29tMSMwIQYDVQQDExpEaWdpQ2VydCBCYWx0aW1vcmUgQ0Et
@@ -245,190 +244,191 @@ m4skA/WsUsMCfsZY27RiZ+B162+laDD0oRiovOx5zKrzG/3yAFVutz2Bfud3QenU
 zSJW0aSi1DadkZsifpr65AwgSuN5uGEhQas0glsN
 -----END CERTIFICATE-----
 "
-        };
+		};
 
+		public static IEnumerator LoadReleases(string url, string authToken = null)
+		{
+			string proxiedUrl = UpliftPreferences.FromDefaultFile().GetProxiedUrl(url);
 
-        public static IEnumerator LoadReleases(string url, string authToken = null)
-        {
-            string proxiedUrl = UpliftPreferences.FromDefaultFile().GetProxiedUrl(url);
+			WWW www = string.IsNullOrEmpty(authToken) ?
+				new WWW(proxiedUrl) :
+				new WWW(
+					proxiedUrl,
+					null,
+					new Dictionary<string, string> { { "Authorization", "token " + authToken }
+					});
+			while (www.isDone == false)
+				yield return null;
+			yield return www;
 
-            WWW www = string.IsNullOrEmpty(authToken) ?
-                new WWW (proxiedUrl) :
-                new WWW (
-                    proxiedUrl,
-                    null,
-                    new Dictionary<string, string>
-                    {
-                        { "Authorization", "token " + authToken }
-                    });
-            while (www.isDone == false)
-                yield return null;
-            yield return www;
+			if (!string.IsNullOrEmpty(www.error))
+			{
+				Debug.LogError(www.error);
+				Debug.LogWarning(www.text);
 
-            if(!string.IsNullOrEmpty(www.error))
-            {
-                Debug.LogError(www.error);
-                Debug.LogWarning(www.text);
+				yield return null;
+			}
+			else
+			{
+				yield return ParseReleases(www.text);
+			}
+		}
 
-                yield return null;
-            }
-            else
-            {
-                yield return ParseReleases(www.text);
-            }
-        }
+		private static GitHubRelease[] ParseReleases(string jsonString)
+		{
+			if (jsonString == null) return null;
 
-        private static GitHubRelease[] ParseReleases(string jsonString)
-        {
-            if (jsonString == null) return null;
-            
-            List<GitHubRelease> releaseList = new List<GitHubRelease>();
+			List<GitHubRelease> releaseList = new List<GitHubRelease>();
 
-            System.Object obj = MiniJSON.Json.Deserialize (jsonString);
-            List<System.Object> releases = (List<System.Object>)obj;
+			System.Object obj = MiniJSON.Json.Deserialize(jsonString);
+			List<System.Object> releases = (List<System.Object>)obj;
 
-            foreach (Dictionary<string, object> releaseObject in releases)
-            {
-                GitHubRelease release = new GitHubRelease
-                {
-                    tag = (string)releaseObject["tag_name"],
-                    body = (string)releaseObject["body"],
-                    id = (long)releaseObject["id"]
-                };
-                release.assets = ExtractAssets(releaseObject);
-                releaseList.Add(release);
-            }
+			foreach (Dictionary<string, object> releaseObject in releases)
+			{
+				GitHubRelease release = new GitHubRelease
+				{
+					tag = (string)releaseObject["tag_name"],
+					body = (string)releaseObject["body"],
+					id = (long)releaseObject["id"]
+				};
+				release.assets = ExtractAssets(releaseObject);
+				releaseList.Add(release);
+			}
 
-            releaseList.Sort((relA, relB) => relA.id.CompareTo(relB.id));
-            return releaseList.ToArray();
-        }
+			releaseList.Sort((relA, relB) => relA.id.CompareTo(relB.id));
+			return releaseList.ToArray();
+		}
 
-        private static GitHubAsset[] ExtractAssets(Dictionary<string, object> release)
-        {
-            if (release["assets"] == null) return null;
+		private static GitHubAsset[] ExtractAssets(Dictionary<string, object> release)
+		{
+			if (release["assets"] == null) return null;
 
-            List<GitHubAsset> assetList = new List<GitHubAsset>();
+			List<GitHubAsset> assetList = new List<GitHubAsset>();
 
-            List<System.Object> assets = (List<System.Object>)release["assets"];
-            foreach (Dictionary<string, object> asset in assets) {
-                assetList.Add(new GitHubAsset
-                {
-                    apiURL = (string)asset["url"],
-                    htmlURL = (string)asset["browser_download_url"],
-                    name = (string)asset["name"],
-                    contentType = (string)asset["content_type"]
-                });
-            }
+			List<System.Object> assets = (List<System.Object>)release["assets"];
+			foreach (Dictionary<string, object> asset in assets)
+			{
+				assetList.Add(new GitHubAsset
+				{
+					apiURL = (string)asset["url"],
+					htmlURL = (string)asset["browser_download_url"],
+					name = (string)asset["name"],
+					contentType = (string)asset["content_type"]
+				});
+			}
 
-            return assetList.ToArray();
-        }
-        
-        public static X509Certificate[] GetCertificates()
-        {
-            X509Certificate[] githubCertificates = new X509Certificate[githubCertificatesString.Length];
-            for(int i = 0; i < githubCertificatesString.Length; i++)
-            {
-                githubCertificates[i] = new X509Certificate();
-                githubCertificates[i].Import(Encoding.ASCII.GetBytes(githubCertificatesString[i]));
-            }     
+			return assetList.ToArray();
+		}
 
-            return githubCertificates;
-        }
+		public static X509Certificate[] GetCertificates()
+		{
+			X509Certificate[] githubCertificates = new X509Certificate[githubCertificatesString.Length];
+			for (int i = 0; i < githubCertificatesString.Length; i++)
+			{
+				githubCertificates[i] = new X509Certificate();
+				githubCertificates[i].Import(Encoding.ASCII.GetBytes(githubCertificatesString[i]));
+			}
 
-        public static bool CertificateValidationCallback(
-            System.Object sender,
-            X509Certificate certificate,
-            X509Chain chain,
-            SslPolicyErrors sslPolicyErrors
-        )
-        {
-            bool correct = true;
-            if(sslPolicyErrors == SslPolicyErrors.None) return true;       
-            
-            X509Certificate[] githubCertificates = GetCertificates();
-            
-            if(!(githubCertificates.Any(cert => cert.GetCertHashString() == certificate.GetCertHashString()) || UpliftPreferences.FromDefaultFile().TrustUnknowCertificates))
-            {
-                Debug.LogErrorFormat("The received certificate ({0}) is not known by Uplift. We cannot download the update package. You could update Uplift manually, or go to Preferences and set 'Trust unknown certificates' to true.", certificate.GetCertHashString());
-                Debug.Log("Known certificates are:");
-                foreach(X509Certificate cert in githubCertificates)
-                    Debug.Log(" -- " + cert.GetCertHashString());
-                return false;
-            }
+			return githubCertificates;
+		}
 
-            for (int i=0; i < chain.ChainStatus.Length; i++) {
-                if (chain.ChainStatus[i].Status == X509ChainStatusFlags.RevocationStatusUnknown) {
-                    continue;
-                }
-                chain.ChainPolicy.RevocationFlag = X509RevocationFlag.EntireChain;
-                chain.ChainPolicy.RevocationMode = X509RevocationMode.Online;
-                chain.ChainPolicy.UrlRetrievalTimeout = new TimeSpan (0, 1, 0);
-                chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllFlags;
-                bool chainIsValid = chain.Build ((X509Certificate2)certificate);
-                if (!chainIsValid) {
-                    correct = false;
-                    break;
-                }
-            }
+		public static bool CertificateValidationCallback(
+			System.Object sender,
+			X509Certificate certificate,
+			X509Chain chain,
+			SslPolicyErrors sslPolicyErrors
+		)
+		{
+			bool correct = true;
+			if (sslPolicyErrors == SslPolicyErrors.None) return true;
 
-            return correct;
-        }
+			X509Certificate[] githubCertificates = GetCertificates();
 
-        public static Stream GetAssetStream(GitHubAsset asset)
-        {
-            return GetAssetStream(asset, "");
-        }
-        public static Stream GetAssetStream(GitHubAsset asset, string token)
-        {
-            string proxiedUrl = UpliftPreferences.FromDefaultFile().GetProxiedUrl(asset.apiURL);
+			if (!(githubCertificates.Any(cert => cert.GetCertHashString() == certificate.GetCertHashString()) || UpliftPreferences.FromDefaultFile().TrustUnknowCertificates))
+			{
+				Debug.LogErrorFormat("The received certificate ({0}) is not known by Uplift. We cannot download the update package. You could update Uplift manually, or go to Preferences and set 'Trust unknown certificates' to true.", certificate.GetCertHashString());
+				Debug.Log("Known certificates are:");
+				foreach (X509Certificate cert in githubCertificates)
+					Debug.Log(" -- " + cert.GetCertHashString());
+				return false;
+			}
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(proxiedUrl);
-            request.Method = "GET";
-            if(!string.IsNullOrEmpty(token))
-                request.Headers["Authorization"] = "token " + token;
-            request.Accept = "application/octet-stream";
-            request.UserAgent = "Uplift GithubRepository/1.0 - https://github.com/DragonBox/uplift";
-            request.AllowAutoRedirect = false;
+			for (int i = 0; i < chain.ChainStatus.Length; i++)
+			{
+				if (chain.ChainStatus[i].Status == X509ChainStatusFlags.RevocationStatusUnknown)
+				{
+					continue;
+				}
+				chain.ChainPolicy.RevocationFlag = X509RevocationFlag.EntireChain;
+				chain.ChainPolicy.RevocationMode = X509RevocationMode.Online;
+				chain.ChainPolicy.UrlRetrievalTimeout = new TimeSpan(0, 1, 0);
+				chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllFlags;
+				bool chainIsValid = chain.Build((X509Certificate2)certificate);
+				if (!chainIsValid)
+				{
+					correct = false;
+					break;
+				}
+			}
 
-            ServicePointManager.ServerCertificateValidationCallback = GitHub.CertificateValidationCallback;
-            Uri address;
-            HttpStatusCode responseStatus;
-            using(HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            {
-                responseStatus = response.StatusCode;
-                if((int)response.StatusCode < 300 || (int)response.StatusCode > 399)
-                    throw new ApplicationException("Request should be redirected");
-                address = new Uri(response.GetResponseHeader("Location"));
-            }
+			return correct;
+		}
 
-            request = (HttpWebRequest)WebRequest.Create(UpliftPreferences.FromDefaultFile().GetProxiedUrl(address.OriginalString));
-            request.Method = "GET";
-            request.UserAgent = "Uplift GithubRepository/1.0 - https://github.com/DragonBox/uplift";
-            HttpWebResponse finalResponse = (HttpWebResponse)request.GetResponse();
-            responseStatus = finalResponse.StatusCode;
-            if((int)finalResponse.StatusCode >= 200 && (int)finalResponse.StatusCode <= 299)
-            {
-                return finalResponse.GetResponseStream();
-            }
+		public static Stream GetAssetStream(GitHubAsset asset)
+		{
+			return GetAssetStream(asset, "");
+		}
+		public static Stream GetAssetStream(GitHubAsset asset, string token)
+		{
+			string proxiedUrl = UpliftPreferences.FromDefaultFile().GetProxiedUrl(asset.apiURL);
 
-            throw new ApplicationException("Could not get asset at " + asset.apiURL);
-        }
-    }
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(proxiedUrl);
+			request.Method = "GET";
+			if (!string.IsNullOrEmpty(token))
+				request.Headers["Authorization"] = "token " + token;
+			request.Accept = "application/octet-stream";
+			request.UserAgent = "Uplift GithubRepository/1.0 - https://github.com/DragonBox/uplift";
+			request.AllowAutoRedirect = false;
 
-    // Based on https://developer.github.com/v3/repos/releases/
-    public class GitHubRelease
-    {
-        public string tag;
-        public string body;
-        public long id;
-        public GitHubAsset[] assets;
-    }
+			ServicePointManager.ServerCertificateValidationCallback = GitHub.CertificateValidationCallback;
+			Uri address;
+			HttpStatusCode responseStatus;
+			using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+			{
+				responseStatus = response.StatusCode;
+				if ((int)response.StatusCode < 300 || (int)response.StatusCode > 399)
+					throw new ApplicationException("Request should be redirected");
+				address = new Uri(response.GetResponseHeader("Location"));
+			}
 
-    public class GitHubAsset
-    {
-        public string htmlURL;
-        public string apiURL;
-        public string name;
-        public string contentType;
-    }
+			request = (HttpWebRequest)WebRequest.Create(UpliftPreferences.FromDefaultFile().GetProxiedUrl(address.OriginalString));
+			request.Method = "GET";
+			request.UserAgent = "Uplift GithubRepository/1.0 - https://github.com/DragonBox/uplift";
+			HttpWebResponse finalResponse = (HttpWebResponse)request.GetResponse();
+			responseStatus = finalResponse.StatusCode;
+			if ((int)finalResponse.StatusCode >= 200 && (int)finalResponse.StatusCode <= 299)
+			{
+				return finalResponse.GetResponseStream();
+			}
+
+			throw new ApplicationException("Could not get asset at " + asset.apiURL);
+		}
+	}
+
+	// Based on https://developer.github.com/v3/repos/releases/
+	public class GitHubRelease
+	{
+		public string tag;
+		public string body;
+		public long id;
+		public GitHubAsset[] assets;
+	}
+
+	public class GitHubAsset
+	{
+		public string htmlURL;
+		public string apiURL;
+		public string name;
+		public string contentType;
+	}
 }

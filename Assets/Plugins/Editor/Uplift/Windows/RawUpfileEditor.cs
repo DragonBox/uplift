@@ -22,42 +22,42 @@
  */
 // --- END LICENSE BLOCK ---
 
-using Uplift.Schemas;
-using UnityEngine;
-using UnityEditor;
 using System.IO;
 using System.Xml.Serialization;
+using UnityEditor;
+using UnityEngine;
+using Uplift.Schemas;
 
 namespace Uplift.Windows
 {
-    public class RawUpfileEditor : EditorWindow
-    {
-        private Upfile upfile;
-        private Vector2 scrollPosition;
-        private string upfileText;
+	public class RawUpfileEditor : EditorWindow
+	{
+		private Upfile upfile;
+		private Vector2 scrollPosition;
+		private string upfileText;
 
-        protected void OnGUI()
-        {
+		protected void OnGUI()
+		{
 #if UNITY_5_1_OR_NEWER
-            titleContent.text = "Edit Upfile (raw)";
+			titleContent.text = "Edit Upfile (raw)";
 #endif
-            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-            
-            if(upfileText == null)
-                upfileText = System.IO.File.ReadAllText(Upfile.upfilePath);
+			scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
 
-            upfileText = EditorGUILayout.TextArea(upfileText);
+			if (upfileText == null)
+				upfileText = System.IO.File.ReadAllText(Upfile.upfilePath);
 
-            EditorGUILayout.EndScrollView();
-            
-            if(GUILayout.Button("Save Upfile"))
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
-                using(StringReader reader = new StringReader(upfileText))
-                {
-                    (serializer.Deserialize(reader) as Upfile).SaveFile();
-                }
-            }
-        }
-    }
+			upfileText = EditorGUILayout.TextArea(upfileText);
+
+			EditorGUILayout.EndScrollView();
+
+			if (GUILayout.Button("Save Upfile"))
+			{
+				XmlSerializer serializer = new XmlSerializer(typeof(Upfile));
+				using (StringReader reader = new StringReader(upfileText))
+				{
+					(serializer.Deserialize(reader) as Upfile).SaveFile();
+				}
+			}
+		}
+	}
 }

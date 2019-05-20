@@ -22,47 +22,47 @@
  */
 // --- END LICENSE BLOCK ---
 
-using UnityEngine;
-using UnityEditor;
 using System;
+using UnityEditor;
+using UnityEngine;
 
 namespace Uplift.Export
 {
 #if UNITY_5_1_OR_NEWER
-    [CreateAssetMenuAttribute(fileName = "PackageExport.asset", menuName = "Uplift/Package Export Definition", order = 250)]
+	[CreateAssetMenuAttribute (fileName = "PackageExport.asset", menuName = "Uplift/Package Export Definition", order = 250)]
 #endif
-    class PackageExportData : ScriptableObject, ICloneable
-    {
-        public  string    packageName     =  "";
-        public  string    packageVersion  =  "";
-        public  string    license         =  "";
-        public  string    targetDir       =  "target";
-        public string[] pathsToExport       = new string[0];
-        public string templateUpsetFile = "";
+	class PackageExportData : ScriptableObject, ICloneable
+	{
+		public string packageName = "";
+		public string packageVersion = "";
+		public string license = "";
+		public string targetDir = "target";
+		public string[] pathsToExport = new string[0];
+		public string templateUpsetFile = "";
 
-        public object Clone()
-        {
-            return UnityEngine.Object.Instantiate(this) as PackageExportData;
-        }
+		public object Clone()
+		{
+			return UnityEngine.Object.Instantiate(this) as PackageExportData;
+		}
 
-        public void SetOrCheckOverridenDefaults(PackageExportData defaults)
-        {
-            string[] overridableDefaults = {"packageName", "packageVersion", "license", "targetDir"};
+		public void SetOrCheckOverridenDefaults(PackageExportData defaults)
+		{
+			string[] overridableDefaults = { "packageName", "packageVersion", "license", "targetDir" };
 
-            foreach(var fieldName in overridableDefaults)
-            {
-                System.Reflection.FieldInfo field = this.GetType().GetField(fieldName);
+			foreach (var fieldName in overridableDefaults)
+			{
+				System.Reflection.FieldInfo field = this.GetType().GetField(fieldName);
 
-                // I know those are strings, so...
-                var defaultValue = field.GetValue(defaults) as string;
-                var currentValue = field.GetValue(this) as string;
+				// I know those are strings, so...
+				var defaultValue = field.GetValue(defaults) as string;
+				var currentValue = field.GetValue(this) as string;
 
-                if(string.IsNullOrEmpty(currentValue) && currentValue != defaultValue)
-                {
-                    Debug.LogFormat("NOTE: using default for Package Export Specification {0}: {1}", fieldName, defaultValue);
-                    field.SetValue(this, defaultValue);
-                }
-            }
-        }
-    }
+				if (string.IsNullOrEmpty(currentValue) && currentValue != defaultValue)
+				{
+					Debug.LogFormat("NOTE: using default for Package Export Specification {0}: {1}", fieldName, defaultValue);
+					field.SetValue(this, defaultValue);
+				}
+			}
+		}
+	}
 }

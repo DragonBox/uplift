@@ -89,9 +89,9 @@ namespace Uplift.Schemas
 		public static string GetHomePath()
 		{
 			return (Environment.OSVersion.Platform == PlatformID.Unix ||
-							   Environment.OSVersion.Platform == PlatformID.MacOSX)
-				? Environment.GetEnvironmentVariable("HOME")
-				: Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
+					Environment.OSVersion.Platform == PlatformID.MacOSX) ?
+				Environment.GetEnvironmentVariable("HOME") :
+				Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
 		}
 
 		public string GetProxiedUrl(string url)

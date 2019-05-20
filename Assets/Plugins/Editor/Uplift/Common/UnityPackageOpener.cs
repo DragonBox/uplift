@@ -34,230 +34,236 @@ using UnityEngine;
 
 namespace Uplift.Common
 {
-    public class UnityPackage
-    {
-        /// <summary>
-        /// Extracts a package at archivePath, and unpacks it at the same location
-        /// </summary>
-        public void Extract(string archivePath)
-        {
-            Extract(
-                archivePath,
-                Path.GetDirectoryName(archivePath)
-            );
-        }
-        
-        /// <summary>
-        /// Extracts a package from archivePath, and unpacks it at destinationPath
-        /// </summary>
-        public void Extract(string archivePath, string destinationPath)
-        {
-            using (FileStream compressedFileStream = File.OpenRead(archivePath))
-            {
-                Extract(compressedFileStream, destinationPath);
-            }
-        }
+	public class UnityPackage
+	{
+		/// <summary>
+		/// Extracts a package at archivePath, and unpacks it at the same location
+		/// </summary>
+		public void Extract(string archivePath)
+		{
+			Extract(
+				archivePath,
+				Path.GetDirectoryName(archivePath)
+			);
+		}
 
-        // From https://github.com/Unity-Technologies/dotpackage-assistant/blob/master/DotPackageAssistant.cs
+		/// <summary>
+		/// Extracts a package from archivePath, and unpacks it at destinationPath
+		/// </summary>
+		public void Extract(string archivePath, string destinationPath)
+		{
+			using (FileStream compressedFileStream = File.OpenRead(archivePath))
+			{
+				Extract(compressedFileStream, destinationPath);
+			}
+		}
 
-        /// <summary>
-        /// Extracts a package from the input stream, and unpacks it at destinationPath
-        /// </summary>
-        public void Extract(Stream stream, string destinationPath)
-        {
-            GZipStream gzipFileStream = new GZipStream(stream, CompressionMode.Decompress);
-            BinaryReader reader = new BinaryReader(gzipFileStream);
-            int readBufferSize = 1024 * 1024 * 10;
-            int tarBlockSize = 512;
-            byte[] readBuffer = new byte[readBufferSize];
-            Regex hashPattern = new Regex(@"^([a-f\d]{20,})\/");
+		// From https://github.com/Unity-Technologies/dotpackage-assistant/blob/master/DotPackageAssistant.cs
 
-            byte[] rawAsset = null;
-            byte[] rawMeta = null;
-            string path = null;
+		/// <summary>
+		/// Extracts a package from the input stream, and unpacks it at destinationPath
+		/// </summary>
+		public void Extract(Stream stream, string destinationPath)
+		{
+			GZipStream gzipFileStream = new GZipStream(stream, CompressionMode.Decompress);
+			BinaryReader reader = new BinaryReader(gzipFileStream);
+			int readBufferSize = 1024 * 1024 * 10;
+			int tarBlockSize = 512;
+			byte[] readBuffer = new byte[readBufferSize];
+			Regex hashPattern = new Regex(@"^([a-f\d]{20,})\/");
 
-            while (true)
-            {
-                byte[] headerBuffer = reader.ReadBytes(tarBlockSize);   //We want the header, but the header is padded to a blocksize
-                if (headerBuffer.All(x => x == 0))
-                {
-                    //Reached end of stream
-                    break;
-                }
-                GCHandle handle = GCHandle.Alloc(headerBuffer, GCHandleType.Pinned);
-                TarHeader header;
-                header = (TarHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(TarHeader));
-                handle.Free();
+			byte[] rawAsset = null;
+			byte[] rawMeta = null;
+			string path = null;
 
-                string filename;
-                unsafe
-                {
-                    filename = Marshal.PtrToStringAnsi((IntPtr)header.filename, 100);
-                }
-                filename = filename.Trim();
-                filename = filename.TrimEnd(new char[] { (char)0 });
+			while (true)
+			{
+				byte[] headerBuffer = reader.ReadBytes(tarBlockSize); //We want the header, but the header is padded to a blocksize
+				if (headerBuffer.All(x => x == 0))
+				{
+					//Reached end of stream
+					break;
+				}
+				GCHandle handle = GCHandle.Alloc(headerBuffer, GCHandleType.Pinned);
+				TarHeader header;
+				header = (TarHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(TarHeader));
+				handle.Free();
 
-                string ustar;
-                unsafe
-                {
-                    ustar = Marshal.PtrToStringAnsi((IntPtr)header.ustar, 6);
-                }
-                string prefix = string.Empty;
-                if (ustar.Equals("ustar"))
-                {
-                    unsafe
-                    {
-                        prefix = Marshal.PtrToStringAnsi((IntPtr)header.prefix, 155);
-                    }
-                }
-                prefix = prefix.Trim();
-                prefix = prefix.TrimEnd(new char[] { (char)0 });
+				string filename;
+				unsafe
+				{
+					filename = Marshal.PtrToStringAnsi((IntPtr)header.filename, 100);
+				}
+				filename = filename.Trim();
+				filename = filename.TrimEnd(new char[] {
+					(char) 0
+				});
 
-                string fullname = prefix + filename;
-                // This handle a specific case where some .unitypackage have an 'index' starting with ./
-                if(fullname.StartsWith("./")) fullname = fullname.Substring(2);
-                Match hashMatch = hashPattern.Match(fullname);
+				string ustar;
+				unsafe
+				{
+					ustar = Marshal.PtrToStringAnsi((IntPtr)header.ustar, 6);
+				}
+				string prefix = string.Empty;
+				if (ustar.Equals("ustar"))
+				{
+					unsafe
+					{
+						prefix = Marshal.PtrToStringAnsi((IntPtr)header.prefix, 155);
+					}
+				}
+				prefix = prefix.Trim();
+				prefix = prefix.TrimEnd(new char[] {
+					(char) 0
+				});
 
-                bool extractPathName = false;
-                bool extractRawMeta = false;
-                bool extractRawAsset = false;
+				string fullname = prefix + filename;
+				// This handle a specific case where some .unitypackage have an 'index' starting with ./
+				if (fullname.StartsWith("./")) fullname = fullname.Substring(2);
+				Match hashMatch = hashPattern.Match(fullname);
 
-                if (hashMatch.Success)
-                {
-                    if (fullname.EndsWith("/asset.meta"))
-                    {
-                        extractRawMeta = true;
-                    }
-                    if (fullname.EndsWith("/asset"))
-                    {
-                        extractRawAsset = true;
-                    }
-                    if (fullname.EndsWith("/pathname"))
-                    {
-                        extractPathName = true;
-                    }
-                }
+				bool extractPathName = false;
+				bool extractRawMeta = false;
+				bool extractRawAsset = false;
 
-                string rawFilesize;
-                unsafe
-                {
-                    rawFilesize = Marshal.PtrToStringAnsi((IntPtr)header.filesize, 12);
-                }
-                string filesize = rawFilesize.Trim();
-                filesize = filesize.TrimEnd(new char[] { (char)0 });
+				if (hashMatch.Success)
+				{
+					if (fullname.EndsWith("/asset.meta"))
+					{
+						extractRawMeta = true;
+					}
+					if (fullname.EndsWith("/asset"))
+					{
+						extractRawAsset = true;
+					}
+					if (fullname.EndsWith("/pathname"))
+					{
+						extractPathName = true;
+					}
+				}
 
-                //Convert the octal string to a decimal number
-                try
-                {
-                    int filesizeInt = Convert.ToInt32(filesize, 8);
-                    int toRead = filesizeInt;
-                    int toWrite = filesizeInt;
-                    int modulus = filesizeInt % tarBlockSize;
-                    if (modulus > 0)
-                        toRead += (tarBlockSize - modulus);    //Read the file and assume it's also 512 byte padded
-                    while (toRead > 0)
-                    {
-                        int readThisTime = Math.Min(readBufferSize, toRead);
-                        int writeThisTime = Math.Min(readBufferSize, toWrite);
-                        readBuffer = reader.ReadBytes(readThisTime);
-                        if (extractPathName)
-                        {
-                            if (toRead > readThisTime)
-                                throw new Exception("Assumed a pathname would fit in a single read!");
-                            string pathnameFileContents = Encoding.UTF8.GetString(readBuffer, 0, filesizeInt);
-                            path = FormatPath(pathnameFileContents.Split(new char[] { '\n' })[0]);
-                        }
-                        else if(extractRawMeta)
-                        {
-                            if(rawMeta == null) rawMeta = new byte[0];
-                            int rawLength = rawMeta.Length;
-                            Array.Resize<byte>(ref rawMeta, rawLength + writeThisTime);
-                            Array.Copy(readBuffer, 0, rawMeta, rawLength, writeThisTime);
-                        }
-                        else if(extractRawAsset)
-                        {
-                            if(rawAsset == null) rawAsset = new byte[0];
-                            int rawLength = rawAsset.Length;
-                            Array.Resize<byte>(ref rawAsset, rawLength + writeThisTime);
-                            Array.Copy(readBuffer, 0, rawAsset, rawLength, writeThisTime);
-                        }
-                        toRead -= readThisTime;
-                        toWrite -= writeThisTime;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.Log(String.Format("Caught Exception converting octal string to int: {0}", ex.Message));
-                    foreach (byte fsChar in filesize)
-                    {
-                        Debug.Log(fsChar);
-                    }
-                    throw;
-                }
+				string rawFilesize;
+				unsafe
+				{
+					rawFilesize = Marshal.PtrToStringAnsi((IntPtr)header.filesize, 12);
+				}
+				string filesize = rawFilesize.Trim();
+				filesize = filesize.TrimEnd(new char[] {
+					(char) 0
+				});
 
-                // Path has been read, write to file system
-                if(path != null)
-                {
-                    string target = Path.Combine(destinationPath, path);
-                    Uplift.Common.FileSystemUtil.EnsureParentExists(target);
+				//Convert the octal string to a decimal number
+				try
+				{
+					int filesizeInt = Convert.ToInt32(filesize, 8);
+					int toRead = filesizeInt;
+					int toWrite = filesizeInt;
+					int modulus = filesizeInt % tarBlockSize;
+					if (modulus > 0)
+						toRead += (tarBlockSize - modulus); //Read the file and assume it's also 512 byte padded
+					while (toRead > 0)
+					{
+						int readThisTime = Math.Min(readBufferSize, toRead);
+						int writeThisTime = Math.Min(readBufferSize, toWrite);
+						readBuffer = reader.ReadBytes(readThisTime);
+						if (extractPathName)
+						{
+							if (toRead > readThisTime)
+								throw new Exception("Assumed a pathname would fit in a single read!");
+							string pathnameFileContents = Encoding.UTF8.GetString(readBuffer, 0, filesizeInt);
+							path = FormatPath(pathnameFileContents.Split(new char[] { '\n' })[0]);
+						}
+						else if (extractRawMeta)
+						{
+							if (rawMeta == null) rawMeta = new byte[0];
+							int rawLength = rawMeta.Length;
+							Array.Resize<byte>(ref rawMeta, rawLength + writeThisTime);
+							Array.Copy(readBuffer, 0, rawMeta, rawLength, writeThisTime);
+						}
+						else if (extractRawAsset)
+						{
+							if (rawAsset == null) rawAsset = new byte[0];
+							int rawLength = rawAsset.Length;
+							Array.Resize<byte>(ref rawAsset, rawLength + writeThisTime);
+							Array.Copy(readBuffer, 0, rawAsset, rawLength, writeThisTime);
+						}
+						toRead -= readThisTime;
+						toWrite -= writeThisTime;
+					}
+				}
+				catch (Exception ex)
+				{
+					Debug.Log(String.Format("Caught Exception converting octal string to int: {0}", ex.Message));
+					foreach (byte fsChar in filesize)
+					{
+						Debug.Log(fsChar);
+					}
+					throw;
+				}
 
-                    // Asset or not? (ie directory)
-                    if(rawAsset == null)
-                    {
-                        Directory.CreateDirectory(target);
-                    }
-                    else
-                    {
-                        using(var tw = new StreamWriter(target, false, new UTF8Encoding(false)))
-                        {
-                            tw.BaseStream.Write(rawAsset, 0, rawAsset.Length);
-                        }
-                        rawAsset = null;
-                    }
+				// Path has been read, write to file system
+				if (path != null)
+				{
+					string target = Path.Combine(destinationPath, path);
+					Uplift.Common.FileSystemUtil.EnsureParentExists(target);
 
-                    // Create meta
-                    if(rawMeta != null)
-                    {
-                        using(var tw = new StreamWriter(target + ".meta", false, new UTF8Encoding(false)))
-                        {
-                            tw.BaseStream.Write(rawMeta, 0, rawMeta.Length);
-                        }
-                        rawMeta = null;
-                    }
+					// Asset or not? (ie directory)
+					if (rawAsset == null)
+					{
+						Directory.CreateDirectory(target);
+					}
+					else
+					{
+						using (var tw = new StreamWriter(target, false, new UTF8Encoding(false)))
+						{
+							tw.BaseStream.Write(rawAsset, 0, rawAsset.Length);
+						}
+						rawAsset = null;
+					}
 
-                    path = null;
-                }
-            }
-        }
+					// Create meta
+					if (rawMeta != null)
+					{
+						using (var tw = new StreamWriter(target + ".meta", false, new UTF8Encoding(false)))
+						{
+							tw.BaseStream.Write(rawMeta, 0, rawMeta.Length);
+						}
+						rawMeta = null;
+					}
 
-        private string FormatPath(string path)
-        {
-            string outPath = path.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).TrimStart(new char[] { '/' });
-            if (outPath.StartsWith("./"))
-                outPath = outPath.Substring(2);
-            return outPath;
-        }
-        
-        [StructLayout(LayoutKind.Sequential)]
-        private unsafe struct TarHeader
-        {
-            public fixed byte filename[100];
-            public fixed byte filemode[8];
-            public fixed byte uid[8];
-            public fixed byte gid[8];
-            public fixed byte filesize[12]; //Octal
-            public fixed byte modtime[12];
-            public fixed byte checksum[8];
-            public byte linkIndicator;      //OR Type flag in UStar format
-            public fixed byte linkname[100];
-            //USTAR fields
-            public fixed byte ustar[6];
-            public fixed byte ustarVersion[2];
-            public fixed byte uname[32];
-            public fixed byte ugroupname[32];
-            public fixed byte major[8];
-            public fixed byte minor[8];
-            public fixed byte prefix[155];
-        };
-    }
+					path = null;
+				}
+			}
+		}
+
+		private string FormatPath(string path)
+		{
+			string outPath = path.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).TrimStart(new char[] { '/' });
+			if (outPath.StartsWith("./"))
+				outPath = outPath.Substring(2);
+			return outPath;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		private unsafe struct TarHeader
+		{
+			public fixed byte filename[100];
+			public fixed byte filemode[8];
+			public fixed byte uid[8];
+			public fixed byte gid[8];
+			public fixed byte filesize[12]; //Octal
+			public fixed byte modtime[12];
+			public fixed byte checksum[8];
+			public byte linkIndicator; //OR Type flag in UStar format
+			public fixed byte linkname[100];
+			//USTAR fields
+			public fixed byte ustar[6];
+			public fixed byte ustarVersion[2];
+			public fixed byte uname[32];
+			public fixed byte ugroupname[32];
+			public fixed byte major[8];
+			public fixed byte minor[8];
+			public fixed byte prefix[155];
+		};
+	}
 }

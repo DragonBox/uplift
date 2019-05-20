@@ -24,12 +24,13 @@
 
 namespace BuildTool
 {
-    public class BuildLibraryData {
-        public string[] References;
-        public string[] Files;
-        public string[] Defines;
-        public int SdkLevel;
-        public string OutFile;
-        public bool useUnsafe = false;
-    }
+	public class BuildLibraryData
+	{
+		public string[] References;
+		public string[] Files;
+		public string[] Defines;
+		public int SdkLevel;
+		public string OutFile;
+		public bool useUnsafe = false;
+	}
 }

@@ -26,56 +26,73 @@ using System.IO;
 
 namespace BuildTool
 {
-    public class BuildPaths {
+	public class BuildPaths
+	{
 		private UnityInstallation unity;
 
-		public BuildPaths(UnityInstallation unity) {
+		public BuildPaths(UnityInstallation unity)
+		{
 			this.unity = unity;
 		}
 
-		public string Managed(string file) {
+		public string Managed(string file)
+		{
 			string RootPath = ManagedPath();
 			string Path = Helper.PathCombine(RootPath, file);
-			EnsureFilePath (Path);
+			EnsureFilePath(Path);
 			return Path;
 		}
 
-		private void EnsureFilePath(string path) {
-			if (!File.Exists(path)) {
+		private void EnsureFilePath(string path)
+		{
+			if (!File.Exists(path))
+			{
 				throw new System.Exception("File " + path + " not found.");
 			}
 		}
-		private void EnsureDirPath(string path) {
-			if (!Directory.Exists(path)) {
+		private void EnsureDirPath(string path)
+		{
+			if (!Directory.Exists(path))
+			{
 				throw new System.Exception("Directory " + path + " not found.");
 			}
 		}
 
-		public string ManagedPath() {
+		public string ManagedPath()
+		{
 			string ManagedPath;
-			if (Helper.IsMac ()) {
+			if (Helper.IsMac())
+			{
 				ManagedPath = Helper.PathCombine(unity.RootPath, "Unity.app", "Contents", "Managed");
-				if (!Directory.Exists(ManagedPath)) { // Pre 5.6
+				if (!Directory.Exists(ManagedPath))
+				{ // Pre 5.6
 					ManagedPath = Helper.PathCombine(unity.RootPath, "Unity.app", "Contents", "Frameworks", "Managed");
 				}
-			} else {
+			}
+			else
+			{
 				ManagedPath = Helper.PathCombine(unity.RootPath, "Editor", "Data", "Managed");
 			}
-			EnsureDirPath (ManagedPath);
+			EnsureDirPath(ManagedPath);
 			return ManagedPath;
 		}
 
-		public string Mcs() {
+		public string Mcs()
+		{
 			string ManagedPath;
-			if (Helper.IsMac ()) {
+			if (Helper.IsMac())
+			{
 				ManagedPath = Helper.PathCombine(unity.RootPath, "Unity.app", "Contents", "MonoBleedingEdge", "bin", "mcs");
-				if (!File.Exists(ManagedPath)) { // Pre 5.6
+				if (!File.Exists(ManagedPath))
+				{ // Pre 5.6
 					ManagedPath = Helper.PathCombine(unity.RootPath, "Unity.app", "Contents", "Frameworks", "MonoBleedingEdge", "bin", "mcs");
 				}
-			} else {
+			}
+			else
+			{
 				ManagedPath = Helper.PathCombine(unity.RootPath, "Editor", "Data", "MonoBleedingEdge", "bin", "mcs");
 			}
-			EnsureFilePath (ManagedPath);
+			EnsureFilePath(ManagedPath);
 			return ManagedPath;
 		}
 	}

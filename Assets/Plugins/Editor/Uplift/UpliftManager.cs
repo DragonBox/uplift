@@ -22,6 +22,7 @@
  */
 // --- END LICENSE BLOCK ---
 
+using System;
 using System.IO;
 using System.Linq;
 using Uplift.Common;
@@ -473,6 +474,11 @@ namespace Uplift
 		// This should be contained using kinds of destinations.
 		private void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition, bool updateLockfile = false)
 		{
+			if (dependencyDefinition == null)
+			{
+				throw new ArgumentNullException("Failed to install package " + package.PackageName + ". Dependency Definition is null.");
+			}
+
 			GitIgnorer VCSHandler = new GitIgnorer();
 
 			using (LogAggregator LA = LogAggregator.InUnity(
@@ -670,7 +676,15 @@ namespace Uplift
 		{
 			NukePackage(package.PackageName);
 
-			DependencyDefinition definition = Upfile.Instance().Dependencies.First(dep => dep.Name == package.PackageName);
+			// First or default returns the first DependencyDefinition which satistfies dep.Name == package.PackageName
+			// If no elements meets this condition a Default value for DependencyDefinition is returned which, for our implementation, is null. 
+			DependencyDefinition definition = Upfile.Instance().Dependencies.FirstOrDefault(dep => dep.Name == package.PackageName);
+
+			if (definition == null)
+			{
+				definition = new DependencyDefinition() { Name = package.PackageName, Version = package.PackageVersion };
+			}
+
 			InstallPackage(package, td, definition, true);
 		}
 

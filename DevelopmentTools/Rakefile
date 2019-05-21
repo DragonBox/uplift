@@ -25,8 +25,8 @@
 # Please refrain from expanding this file unless really necessary
 
 require 'fileutils'
-require 'github_api'
 require 'u3d'
+require 'octokit'
 
 UI = U3dCore::UI
 
@@ -131,11 +131,11 @@ task pre_release: %i[ensure_git_clean chdir] do
   sh "git push origin #{pr_branch}"
 
   github = MyGithub.github
-  github.pull_requests.create owner, repository,
-                              title: msg,
-                              body: 'This is automatically generated to prepare for the new version',
-                              head: pr_branch,
-                              base: 'master'
+  github.create_pull_request("#{owner}/#{repository}",
+                              master,
+                              pr_branch,
+                              msg,
+                              'This is automatically generated to prepare for the new version')
 
   sh 'git checkout master'
   sh "git branch -D #{pr_branch}"
@@ -172,14 +172,18 @@ task release_notes: %i[chdir] do
                      .split(/## \[.*\]\(.*\) \(.*\).*\n\s*\[Full Changelog\]\(.*\).*\n/)[1].chomp
   end
 
+  client = Octokit::Client.new(:access_token => "<your 40 char token>")
+
   github = MyGithub.github
-  release = github.repos.releases.create owner, repository,
-                                         tag_name: tag_name,
-                                         target_commitish: 'master',
-                                         name: "Version #{tag_name}",
-                                         body: release_notes,
-                                         draft: true,
-                                         prelease: false
+  release = github.create_release("#{owner}/#{repository}", 
+                                   tag_name,
+                                   {
+                                      target_commitish: 'master',
+                                      name: "Version #{tag_name}",
+                                      body: release_notes,
+                                      draft: true,
+                                      prelease: false
+                                    })
 
   Rake::Task['artifacts'].invoke(release['id'])
 end
@@ -295,7 +299,7 @@ end
 class MyGithub
   @github
   def self.github
-    @github = Github.new oauth_token: ENV['UPLIFT_GITHUB_TOKEN'] unless @github
+    @github = Octokit::Client.new(:access_token => ENV['UPLIFT_GITHUB_TOKEN']) unless @github
     @github
   end
 end

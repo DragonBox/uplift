@@ -25,15 +25,22 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-using UnityEditor;
-using UnityEngine;
-using Uplift.Schemas;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Uplift.Export
 {
 	class Exporter
 	{
 		PackageExportData exportSpec;
+
+		private bool PathIsUplift(string path)
+		{
+			char[] sep = { '/', '\\' };
+			List<string> splittedPath = path.Split(sep).ToList();
+
+			return splittedPath.Contains("Uplift");
+		}
 
 		public void Export()
 		{
@@ -42,26 +49,20 @@ namespace Uplift.Export
 
 			for (int i = 0; i < exportSpec.pathsToExport.Length; i++)
 			{
-
 				string path = exportSpec.pathsToExport[i];
-				Debug.Log("===== Exporting path : " + path);
-				//Detecter uplift pkg here
 
 				if (System.IO.File.Exists(path))
 				{
-					exportEntries.Add(path);
+					if (!PathIsUplift(path)) exportEntries.Add(path);
 				}
 				else if (System.IO.Directory.Exists(path))
 				{
 					string[] tFiles = System.IO.Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
 					string[] tDirectories = System.IO.Directory.GetDirectories(path, "*", SearchOption.AllDirectories);
-					Debug.Log("===== Add files : " + tFiles);
-					exportEntries.AddRange(tFiles);
-					Debug.Log("===== Add dir : " + tDirectories);
-					exportEntries.AddRange(tDirectories);
+
+					exportEntries.AddRange(tFiles.Where(p => !PathIsUplift(p)));
+					exportEntries.AddRange(tDirectories.Where(p => !PathIsUplift(p)));
 				}
-
-
 			}
 
 			// Calculate package file basename

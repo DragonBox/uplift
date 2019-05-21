@@ -143,15 +143,20 @@ end
 
 desc 'Release the new version and generate artifacts to attach to it'
 task release: %i[ensure_git_clean chdir] do
-  nextversion = UpliftCode.version
-
-  tag_name = 'v' + nextversion
-
   artifact_targets.each do |target|
     puts "--- #{target} ---"
     Rake::Task['build'].invoke(target)
     Rake::Task['build'].reenable
   end
+
+  Rake::Task['release_notes']
+end
+
+desc 'Create release notes on github'
+task release_notes: %i[chdir] do
+  nextversion = UpliftCode.version
+
+  tag_name = 'v' + nextversion
 
   release_notes = "# Release notes:\n"
 

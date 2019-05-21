@@ -28,7 +28,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
-using UnityEngine;
 using Uplift.Common;
 using Uplift.DependencyResolution;
 using Uplift.Packages;

@@ -28,6 +28,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
+using UnityEngine;
 using Uplift.Common;
 using Uplift.DependencyResolution;
 using Uplift.Packages;
@@ -91,9 +92,9 @@ namespace Uplift
 
 		public void InstallDependencies(InstallStrategy strategy = InstallStrategy.UPDATE_LOCKFILE)
 		{
-			bool isNotOnlyLockFile = (strategy != InstallStrategy.ONLY_LOCKFILE);
-			PackageRepo[] targets = GetTargets(GetDependencySolver(), strategy, isNotOnlyLockFile);
-			InstallPackages(targets, isNotOnlyLockFile);
+			bool canUpdatePackages = (strategy != InstallStrategy.ONLY_LOCKFILE);
+			PackageRepo[] targets = GetTargets(GetDependencySolver(), strategy, canUpdatePackages);
+			InstallPackages(targets, canUpdatePackages);
 		}
 
 		public DependencyState[] GetDependenciesState()

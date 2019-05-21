@@ -23,9 +23,13 @@
 // --- END LICENSE BLOCK ---
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
+using UnityEditor;
 using Uplift.Common;
+using Uplift.DependencyResolution;
 using Uplift.Packages;
 using Uplift.Schemas;
 using Uplift.SourceControl;

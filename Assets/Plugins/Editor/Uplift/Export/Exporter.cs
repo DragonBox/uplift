@@ -25,7 +25,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-using System.Text.RegularExpressions;
 using System.Linq;
 
 namespace Uplift.Export
@@ -178,7 +177,6 @@ namespace Uplift.Export
 			defaultExportData.license = "undefined";
 
 			return defaultExportData;
-
 		}
 	}
 }

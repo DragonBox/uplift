@@ -25,9 +25,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-using UnityEditor;
-using UnityEngine;
-using Uplift.Schemas;
+using System.Linq;
 
 namespace Uplift.Export
 {
@@ -35,31 +33,35 @@ namespace Uplift.Export
 	{
 		PackageExportData exportSpec;
 
+		private bool PathIsUplift(string path)
+		{
+			char[] sep = { '/', '\\' };
+			List<string> splittedPath = path.Split(sep).ToList();
+
+			return splittedPath.Contains("Uplift");
+		}
+
 		public void Export()
 		{
-
 			// Prepare list of entries to export
 			var exportEntries = new List<string>();
 
 			for (int i = 0; i < exportSpec.pathsToExport.Length; i++)
 			{
-
 				string path = exportSpec.pathsToExport[i];
 
 				if (System.IO.File.Exists(path))
 				{
-					exportEntries.Add(path);
-
+					if (!PathIsUplift(path)) exportEntries.Add(path);
 				}
 				else if (System.IO.Directory.Exists(path))
 				{
 					string[] tFiles = System.IO.Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
 					string[] tDirectories = System.IO.Directory.GetDirectories(path, "*", SearchOption.AllDirectories);
 
-					exportEntries.AddRange(tFiles);
-					exportEntries.AddRange(tDirectories);
+					exportEntries.AddRange(tFiles.Where(p => !PathIsUplift(p)));
+					exportEntries.AddRange(tDirectories.Where(p => !PathIsUplift(p)));
 				}
-
 			}
 
 			// Calculate package file basename
@@ -77,11 +79,10 @@ namespace Uplift.Export
 
 			// .unitypackage file
 			AssetDatabase.ExportPackage(
-				exportEntries.ToArray(),
-				Path.Combine(exportSpec.targetDir, packageBasename) + ".unitypackage",
-				ExportPackageOptions.Default
-			);
-
+										exportEntries.ToArray(),
+										Path.Combine(exportSpec.targetDir, packageBasename) + ".unitypackage",
+										ExportPackageOptions.Default
+										);
 		}
 
 		public void SetExportSpec(PackageExportData exportSpec)
@@ -139,6 +140,7 @@ namespace Uplift.Export
 				throw new System.Exception("PackageExportData doesn't exist. Create at least one using Uplift -> Create Export Spec.");
 			}
 
+
 			Debug.LogFormat("{0} Package Export Specification(s) found. Preparing for export.", guids.Length);
 
 			for (int i = 0; i < guids.Length; i++)
@@ -175,7 +177,6 @@ namespace Uplift.Export
 			defaultExportData.license = "undefined";
 
 			return defaultExportData;
-
 		}
 	}
 }

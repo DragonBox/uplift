@@ -91,8 +91,9 @@ namespace Uplift
 
 		public void InstallDependencies(InstallStrategy strategy = InstallStrategy.UPDATE_LOCKFILE)
 		{
+			PackageRepo[] targets = GetTargets(GetDependencySolver(), strategy);
+
 			bool canUpdatePackages = (strategy != InstallStrategy.ONLY_LOCKFILE);
-			PackageRepo[] targets = GetTargets(GetDependencySolver(), strategy, canUpdatePackages);
 			InstallPackages(targets, canUpdatePackages);
 		}
 

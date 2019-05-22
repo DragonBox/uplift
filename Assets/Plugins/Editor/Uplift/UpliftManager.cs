@@ -92,7 +92,9 @@ namespace Uplift
 		public void InstallDependencies(InstallStrategy strategy = InstallStrategy.UPDATE_LOCKFILE)
 		{
 			PackageRepo[] targets = GetTargets(GetDependencySolver(), strategy);
-			InstallPackages(targets);
+
+			bool canUpdatePackages = (strategy != InstallStrategy.ONLY_LOCKFILE);
+			InstallPackages(targets, canUpdatePackages);
 		}
 
 		public DependencyState[] GetDependenciesState()
@@ -395,7 +397,7 @@ namespace Uplift
 			return result;
 		}
 
-		public void InstallPackages(PackageRepo[] targets)
+		public void InstallPackages(PackageRepo[] targets, bool allowPackagesToUpdate)
 		{
 			using (LogAggregator LA = LogAggregator.InUnity(
 				"Successfully installed dependencies ({0} actions were done)",
@@ -417,7 +419,7 @@ namespace Uplift
 				{
 					if (pr.Repository != null)
 					{
-						if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == pr.Package.PackageName))
+						if (allowPackagesToUpdate && Upbring.Instance().InstalledPackage.Any(ip => ip.Name == pr.Package.PackageName))
 						{
 							UpdatePackage(pr);
 						}

@@ -46,7 +46,7 @@ namespace Uplift
 				"Dependencies state:",
 				"Dependencies state:",
 				"Dependencies state:"
-			))
+				))
 			{
 				UpliftManager.DependencyState[] states = UpliftManager.Instance().GetDependenciesState();
 
@@ -89,6 +89,7 @@ namespace Uplift
 				}
 			}
 		}
+
 
 		[MenuItem("Tools/Uplift/Install dependencies (as specified in lockfile)", false, 2)]
 		private static void InstallLockfile()
@@ -141,6 +142,8 @@ namespace Uplift
 			AssetDatabase.CreateAsset(asset, "Assets/PackageExport.asset");
 			AssetDatabase.SaveAssets();
 
+			//Show Asset in Inspector
+			Selection.activeObject = AssetDatabase.LoadMainAssetAtPath("Assets/PackageExport.asset");
 		}
 
 		[MenuItem("Tools/Uplift/Packaging/Export Defined Packages", false, 202)]
@@ -156,6 +159,7 @@ namespace Uplift
 			window.Init();
 			window.Show();
 		}
+
 
 		[MenuItem("Tools/Uplift/Debug/Refresh Upfile", false, 1001)]
 		private static void RefreshUpfile()

@@ -28,6 +28,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
+using UnityEngine;
 using Uplift.Common;
 using Uplift.DependencyResolution;
 using Uplift.Packages;
@@ -58,6 +59,7 @@ namespace Uplift
 
 		public static void ResetInstances()
 		{
+			Debug.Log("---> Resetting instances : ");
 			instance = null;
 			Upfile.ResetInstance();
 			Upbring.ResetInstance();
@@ -91,7 +93,10 @@ namespace Uplift
 
 		public void InstallDependencies(InstallStrategy strategy = InstallStrategy.UPDATE_LOCKFILE)
 		{
+			Debug.Log("---> Install Dependenies with strategy " + strategy);
+			Debug.Log("====  Get Targets  ====");
 			PackageRepo[] targets = GetTargets(GetDependencySolver(), strategy);
+			Debug.Log("==== Install Packages ====");
 			InstallPackages(targets);
 		}
 
@@ -162,16 +167,21 @@ namespace Uplift
 			if (strategy == InstallStrategy.UPDATE_LOCKFILE || (strategy == InstallStrategy.INCOMPLETE_LOCKFILE && !present))
 			{
 				if (updateLockfile)
+				{
+					Debug.Log("===> Update Lockfile");
 					GenerateLockfile(new LockfileSnapshot
 					{
 						upfileDependencies = upfileDependencies,
 						installableDependencies = installableDependencies
 					});
+				}
+				Debug.Log("===> Targets = installableDependencies");
 				targets = installableDependencies;
 			}
 			else if (strategy == InstallStrategy.INCOMPLETE_LOCKFILE)
 			{
 				// Case where the file does not exist is already covered
+				Debug.Log("===> Load Lockfile Lockfile");
 				LockfileSnapshot snapshot = LoadLockfile();
 
 				DependencyDefinition[] modifiedDependencies =
@@ -180,10 +190,16 @@ namespace Uplift
 						d => d.Name == def.Name && d.Version == def.Version
 						))
 					.ToArray();
+
 				if (modifiedDependencies.Length == 0)
+				{
+					Debug.Log("===> No modified dependencies");
+					Debug.Log("===> Targets = installableDependencies");
 					targets = installableDependencies;
+				}
 				else
 				{
+					Debug.Log("===> Found modified dependencies");
 					// Fetch all the PackageRepo for the unmodified packages
 					List<PackageRepo> unmodifiableList = new List<PackageRepo>();
 					Queue<PackageRepo> scanningQueue = new Queue<PackageRepo>();
@@ -206,36 +222,44 @@ namespace Uplift
 							))
 						.ToArray();
 
+					Debug.Log("===> Solve modified dependencies");
 					DependencyDefinition[] solvedModified = solver.SolveDependencies(modifiedDependencies);
+					Debug.Log("===> Check conflicts");
 					DependencyDefinition[] conflicting = solvedModified.Where(def => unmodifiable.Any(pr => pr.Package.PackageName == def.Name)).ToArray();
 					if (conflicting.Length != 0)
 					{
+						Debug.Log("||===> Conflicts found !");
 						foreach (DependencyDefinition def in conflicting)
 						{
 							if (!def.Requirement.IsMetBy(unmodifiable.First(pr => pr.Package.PackageName == def.Name).Package.PackageVersion))
 								throw new ApplicationException("Existing dependency on " + def.Name + " would be broken when installing. Please update it manually.");
 						}
-
+						Debug.Log("||===> Solve modified dependencies by selecting only unconflicting dependencies");
 						solvedModified = solvedModified.Where(def => !conflicting.Contains(def)).ToArray();
 					}
 					PackageRepo[] installableModified = IdentifyInstallable(solvedModified);
 					targets = new PackageRepo[unmodifiable.Length + installableModified.Length];
 					Array.Copy(unmodifiable, targets, unmodifiable.Length);
 					Array.Copy(installableModified, 0, targets, unmodifiable.Length, installableModified.Length);
+					Debug.Log("===> Targets = installable dependencies with solved dependencies + unmodifiable dependencies");
 				}
 
 				if (updateLockfile)
+				{
+					Debug.Log("Update lockfile according to targets");
 					GenerateLockfile(new LockfileSnapshot
 					{
 						upfileDependencies = upfileDependencies,
 						installableDependencies = targets
 					});
+				}
 			}
 			else if (strategy == InstallStrategy.ONLY_LOCKFILE)
 			{
 				if (!present)
 					throw new ApplicationException("Uplift cannot install dependencies in strategy ONLY_LOCKFILE if there is no lockfile");
 
+				Debug.Log("===> targets = installable dependencies in logfile");
 				targets = LoadLockfile().installableDependencies;
 			}
 			else
@@ -243,6 +267,11 @@ namespace Uplift
 				throw new ArgumentException("Unknown install strategy: " + strategy);
 			}
 
+			foreach (var item in targets)
+			{
+				Debug.Log("|| -- " + item.Package.PackageName + " " + item.Package.PackageVersion);
+			}
+			Debug.Log("||___");
 			return targets;
 		}
 
@@ -287,6 +316,7 @@ namespace Uplift
 
 		private void GenerateLockfile(LockfileSnapshot snapshot)
 		{
+			Debug.Log("generating a new lockfile : ");
 			string result = "# UPFILE DEPENDENCIES\n";
 			foreach (DependencyDefinition def in snapshot.upfileDependencies)
 			{
@@ -305,7 +335,7 @@ namespace Uplift
 						result += string.Format("\t{0} ({1})\n", dependency.Name, dependency.Version);
 					}
 			}
-
+			Debug.Log(result);
 			using (StreamWriter file = new StreamWriter(lockfilePath, false))
 			{
 				file.WriteLine(result);
@@ -367,6 +397,7 @@ namespace Uplift
 
 					if (temp.Package != null && temp.Repository != null)
 					{
+						Debug.Log("==> The line : [" + line + "] was added as : " + temp.Package.PackageName + " " + temp.Package.PackageVersion);
 						installableList.Add(temp);
 					}
 					else
@@ -405,11 +436,13 @@ namespace Uplift
 				))
 			{
 				// Remove installed dependencies that are no longer in the dependency tree
+
 				foreach (InstalledPackage ip in Upbring.Instance().InstalledPackage)
 				{
 					if (targets.Any(tar => tar.Package.PackageName == ip.Name)) continue;
 
 					UnityEngine.Debug.Log("Removing unused dependency on " + ip.Name);
+
 					NukePackage(ip.Name);
 				}
 
@@ -419,6 +452,7 @@ namespace Uplift
 					{
 						if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == pr.Package.PackageName))
 						{
+							Debug.Log("||===> update " + pr.Package.PackageName);
 							UpdatePackage(pr);
 						}
 						else
@@ -429,6 +463,7 @@ namespace Uplift
 
 							using (TemporaryDirectory td = pr.Repository.DownloadPackage(pr.Package))
 							{
+								Debug.Log("||===> install " + pr.Package.PackageName);
 								InstallPackage(pr.Package, td, def);
 							}
 						}
@@ -439,7 +474,6 @@ namespace Uplift
 					}
 				}
 			}
-
 			UnityHacks.BuildSettingsEnforcer.EnforceAssetSave();
 		}
 
@@ -478,6 +512,7 @@ namespace Uplift
 		// This should be contained using kinds of destinations.
 		private void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition, bool updateLockfile = false)
 		{
+			Debug.Log("======> Installing package " + package.PackageName + " " + package.PackageVersion);
 			if (dependencyDefinition == null)
 			{
 				throw new ArgumentNullException("Failed to install package " + package.PackageName + ". Dependency Definition is null.");
@@ -593,6 +628,8 @@ namespace Uplift
 
 				if (updateLockfile)
 				{
+					Debug.Log("======> Updating Lockfile entry for " + package.PackageName);
+
 					LockfileSnapshot snapshot = LoadLockfile();
 					int index;
 					bool found = false;
@@ -601,11 +638,17 @@ namespace Uplift
 						if (snapshot.installableDependencies[index].Package.PackageName == package.PackageName)
 						{
 							found = true;
+							Debug.Log("||--> Change " + snapshot.installableDependencies[index].Package.PackageName
+									+ " " + snapshot.installableDependencies[index].Package.PackageVersion);
 							break;
 						}
 					}
 					if (found)
+					{
 						snapshot.installableDependencies[index].Package = package;
+						Debug.Log("||-----> for " + snapshot.installableDependencies[index].Package.PackageName
+									+ " " + snapshot.installableDependencies[index].Package.PackageVersion);
+					}
 					else
 					{
 						Array.Resize<PackageRepo>(ref snapshot.installableDependencies, snapshot.installableDependencies.Length + 1);
@@ -678,6 +721,7 @@ namespace Uplift
 
 		private void UpdatePackage(Upset package, TemporaryDirectory td)
 		{
+			Debug.Log("/!\\ Will nuke " + package.PackageName + " " + package.PackageVersion + "(Nuking all version ?)");
 			NukePackage(package.PackageName);
 
 			// First or default returns the first DependencyDefinition which satistfies dep.Name == package.PackageName
@@ -706,12 +750,14 @@ namespace Uplift
 			{
 				using (TemporaryDirectory td = newer.Repository.DownloadPackage(newer.Package))
 				{
+					Debug.Log("Requiered version is not installed, updating package");
 					UpdatePackage(newer.Package, td);
 				}
 			}
 
 			if (updateDependencies)
 			{
+				Debug.Log("Update dependencies enabled, starting update :");
 				DependencyDefinition[] packageDependencies = PackageList.Instance().ListDependenciesRecursively(
 					GetDependencySolver()
 					.SolveDependencies(upfile.Dependencies)
@@ -739,6 +785,7 @@ namespace Uplift
 		// Nuke doesn't care for dependencies (if present)
 		public void NukePackage(string packageName)
 		{
+			Debug.Log("Nuking " + packageName);
 			Upbring upbring = Upbring.Instance();
 			InstalledPackage package = upbring.GetInstalledPackage(packageName);
 			package.Nuke();

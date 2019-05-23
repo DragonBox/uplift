@@ -45,6 +45,8 @@ namespace Uplift
 
 			if (LockFileTracker.HasChanged())
 			{
+				Debug.Log("Initialize");
+				Debug.Log("Lockfile has changed !");
 				UpliftManager.ResetInstances();
 				UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE);
 				LockFileTracker.SaveState();

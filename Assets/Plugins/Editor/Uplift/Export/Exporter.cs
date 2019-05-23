@@ -26,6 +26,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using System.Linq;
+using UnityEditor;
+using UnityEngine;
+using Uplift.Schemas;
 
 namespace Uplift.Export
 {

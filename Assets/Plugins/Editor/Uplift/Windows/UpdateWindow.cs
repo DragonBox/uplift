@@ -99,7 +99,7 @@ namespace Uplift.Windows
 					);
 					if (GUILayout.Button("Update to version " + bestMatch.Package.PackageVersion))
 					{
-						UpliftManager.Instance().UpdatePackage(bestMatch, true);
+						UpliftManager.Instance().UpdatePackage(bestMatch, updateLockfile: true);
 						Init();
 						Repaint();
 					}

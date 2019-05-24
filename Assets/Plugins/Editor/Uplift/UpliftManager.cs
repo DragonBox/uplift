@@ -100,7 +100,9 @@ namespace Uplift
 		public DependencyState[] GetDependenciesState()
 		{
 			Upbring upbring = Upbring.Instance();
-			PackageRepo[] targets = GetTargets(GetDependencySolver(), InstallStrategy.UPDATE_LOCKFILE, false);
+			PackageRepo[] targets = GetTargets(GetDependencySolver(),
+											   InstallStrategy.UPDATE_LOCKFILE,
+											   updateLockfile: false);
 
 			bool anyInstalled =
 						upbring.InstalledPackage != null &&
@@ -397,7 +399,7 @@ namespace Uplift
 			return result;
 		}
 
-		public void InstallPackages(PackageRepo[] targets, bool updateLockfile)
+		public void InstallPackages(PackageRepo[] targets, bool updateLockfile = true)
 		{
 			using (LogAggregator LA = LogAggregator.InUnity(
 				"Successfully installed dependencies ({0} actions were done)",
@@ -478,7 +480,7 @@ namespace Uplift
 
 		//FIXME: This is super unsafe right now, as we can copy down into the FS.
 		// This should be contained using kinds of destinations.
-		private void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition, bool updateLockfile = false)
+		private void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition, bool updateLockfile)
 		{
 			if (dependencyDefinition == null)
 			{
@@ -694,7 +696,7 @@ namespace Uplift
 			InstallPackage(package, td, definition, updateLockfile);
 		}
 
-		public void UpdatePackage(PackageRepo newer, bool updateLockfile, bool updateDependencies = true)
+		public void UpdatePackage(PackageRepo newer, bool updateLockfile = true, bool updateDependencies = true)
 		{
 			InstalledPackage installed = Upbring.Instance().InstalledPackage.First(ip => ip.Name == newer.Package.PackageName);
 
@@ -724,13 +726,18 @@ namespace Uplift
 					PackageRepo dependencyPR = PackageList.Instance().FindPackageAndRepository(def);
 					if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == def.Name))
 					{
-						UpdatePackage(dependencyPR, true, false);
+						UpdatePackage(dependencyPR,
+									  updateLockfile: true,
+									  updateDependencies: false);
 					}
 					else
 					{
 						using (TemporaryDirectory td = dependencyPR.Repository.DownloadPackage(dependencyPR.Package))
 						{
-							InstallPackage(dependencyPR.Package, td, def, true);
+							InstallPackage(dependencyPR.Package,
+										   td,
+										   def,
+										   updateLockfile: true);
 						}
 					}
 				}

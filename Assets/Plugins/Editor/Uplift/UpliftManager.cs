@@ -316,7 +316,7 @@ namespace Uplift
 
 		private void GenerateLockfile(LockfileSnapshot snapshot)
 		{
-			Debug.Log("generating a new lockfile : ");
+			Debug.Log("Generating a new lockfile : ");
 			string result = "# UPFILE DEPENDENCIES\n";
 			foreach (DependencyDefinition def in snapshot.upfileDependencies)
 			{
@@ -397,7 +397,7 @@ namespace Uplift
 
 					if (temp.Package != null && temp.Repository != null)
 					{
-						Debug.Log("==> The line : [" + line + "] was added as : " + temp.Package.PackageName + " " + temp.Package.PackageVersion);
+						Debug.Log("==> The line : " + temp.Package.PackageName + " " + temp.Package.PackageVersion + "was written in lockfile.");
 						installableList.Add(temp);
 					}
 					else
@@ -721,7 +721,6 @@ namespace Uplift
 
 		private void UpdatePackage(Upset package, TemporaryDirectory td)
 		{
-			Debug.Log("/!\\ Will nuke " + package.PackageName + " " + package.PackageVersion + "(Nuking all version ?)");
 			NukePackage(package.PackageName);
 
 			// First or default returns the first DependencyDefinition which satistfies dep.Name == package.PackageName

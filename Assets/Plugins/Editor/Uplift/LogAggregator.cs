@@ -65,7 +65,7 @@ namespace Uplift
 		public static LogAggregator InUnity(string onSuccess, string onWarning, string onError)
 		{
 			LogAggregator LA = new LogAggregator(onSuccess, onWarning, onError);
-			//LA.StartAggregating();
+			LA.StartAggregating();
 			return LA;
 		}
 
@@ -148,7 +148,7 @@ namespace Uplift
 		{
 			if (!started) return;
 			LogHandlerUtils.ReplaceLogHandler(originalHandler);
-			//FinishAggregating();
+			FinishAggregating();
 		}
 	}
 }

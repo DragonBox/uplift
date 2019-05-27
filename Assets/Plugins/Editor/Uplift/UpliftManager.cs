@@ -423,7 +423,7 @@ namespace Uplift
 					{
 						if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == pr.Package.PackageName))
 						{
-							UpdatePackage(pr, updateLockfile);
+							UpdatePackage(pr, updateLockfile: updateLockfile);
 						}
 						else
 						{
@@ -696,7 +696,7 @@ namespace Uplift
 			InstallPackage(package, td, definition, updateLockfile);
 		}
 
-		public void UpdatePackage(PackageRepo newer, bool updateLockfile = true, bool updateDependencies = true)
+		public void UpdatePackage(PackageRepo newer, bool updateDependencies = true, bool updateLockfile = true)
 		{
 			InstalledPackage installed = Upbring.Instance().InstalledPackage.First(ip => ip.Name == newer.Package.PackageName);
 
@@ -727,8 +727,9 @@ namespace Uplift
 					if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == def.Name))
 					{
 						UpdatePackage(dependencyPR,
-									  updateLockfile: true,
-									  updateDependencies: false);
+									  updateDependencies: false,
+									  updateLockfile: true
+									  );
 					}
 					else
 					{

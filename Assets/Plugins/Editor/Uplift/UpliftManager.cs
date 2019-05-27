@@ -728,7 +728,7 @@ namespace Uplift
 					{
 						UpdatePackage(dependencyPR,
 									  updateDependencies: false,
-									  updateLockfile: true
+									  updateLockfile: updateLockfile
 									  );
 					}
 					else
@@ -738,7 +738,7 @@ namespace Uplift
 							InstallPackage(dependencyPR.Package,
 										   td,
 										   def,
-										   updateLockfile: true);
+										   updateLockfile: updateLockfile);
 						}
 					}
 				}

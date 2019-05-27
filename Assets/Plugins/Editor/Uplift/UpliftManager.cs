@@ -96,7 +96,7 @@ namespace Uplift
 		{
 			using (LogHandler LH = new LogHandler(appendToCurrentLogFile: true, showStackTrace: false))
 			{
-				Debug.Log("Install Dependenies with strategy " + strategy);
+				Debug.Log("Install Dependencies with strategy " + strategy);
 				Debug.Log("Get Targets");
 				PackageRepo[] targets = GetTargets(GetDependencySolver(), strategy);
 				Debug.Log("Install Packages");
@@ -748,7 +748,7 @@ namespace Uplift
 			{
 				using (TemporaryDirectory td = newer.Repository.DownloadPackage(newer.Package))
 				{
-					Debug.Log("Requiered version is not installed, updating package");
+					Debug.Log("Required version is not installed, updating package");
 					UpdatePackage(newer.Package, td);
 				}
 			}

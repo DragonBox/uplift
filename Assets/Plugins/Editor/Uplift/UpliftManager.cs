@@ -94,12 +94,10 @@ namespace Uplift
 
 		public void InstallDependencies(InstallStrategy strategy = InstallStrategy.UPDATE_LOCKFILE)
 		{
-			using (LogHandler LH = new LogHandler(appendToCurrentLogFile: true, showStackTrace: false))
+			using (LogHandler LH = new LogHandler(appendToCurrentLogFile: true, showStack: false))
 			{
 				Debug.Log("Install Dependencies with strategy " + strategy);
-				Debug.Log("Get Targets");
 				PackageRepo[] targets = GetTargets(GetDependencySolver(), strategy);
-				Debug.Log("Install Packages");
 				InstallPackages(targets);
 			}
 		}
@@ -162,6 +160,7 @@ namespace Uplift
 
 		private PackageRepo[] GetTargets(IDependencySolver solver, InstallStrategy strategy, bool updateLockfile = true)
 		{
+			Debug.Log("Get Targets");
 			DependencyDefinition[] upfileDependencies = upfile.Dependencies;
 			DependencyDefinition[] solvedDependencies = solver.SolveDependencies(upfileDependencies);
 			PackageRepo[] installableDependencies = IdentifyInstallable(solvedDependencies);
@@ -431,6 +430,7 @@ namespace Uplift
 
 		public void InstallPackages(PackageRepo[] targets)
 		{
+			Debug.Log("Install Packages");
 			using (LogAggregator LA = LogAggregator.InUnity(
 				"Successfully installed dependencies ({0} actions were done)",
 				"Successfully installed dependencies ({0} actions were done) but warnings were raised",

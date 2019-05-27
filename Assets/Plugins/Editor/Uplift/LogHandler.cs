@@ -40,7 +40,7 @@ public class LogHandler : IDisposable
 		output = logString;
 		stack = stackTrace;
 
-		OutputStream.WriteLine(output);
+		OutputStream.WriteLine("[" + type + "]" + output);
 		OutputStream.Flush();
 
 		if (ShowStackTrace)

@@ -53,7 +53,6 @@ namespace Uplift
 
 	class LogAggregator : ILogHandler, IDisposable
 	{
-		//TODO reactivate Log aggregator
 		private List<string> logs;
 		private ILogHandler originalHandler;
 		private LogType aggregatedLevel;

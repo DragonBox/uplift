@@ -6,18 +6,18 @@ using System;
 
 public class LogHandler : IDisposable
 {
-	public bool ShowStackTrace = false;
-	public string LogFileName = "log.txt";
+	public bool showStackTrace = false;
+	public string logFileName = "log.txt";
 
 	private string output = "";
 	private string stack = "";
 
 	private StreamWriter OutputStream;
 
-	public LogHandler(string logFileName = "uplift.log", bool appendToCurrentLogFile = false, bool showStackTrace = false)
+	public LogHandler(string fileName = "uplift.log", bool appendToCurrentLogFile = false, bool showStack = false)
 	{
-		ShowStackTrace = showStackTrace;
-		LogFileName = logFileName;
+		showStackTrace = showStack;
+		logFileName = fileName;
 
 		OutputStream = new StreamWriter(logFileName, appendToCurrentLogFile);
 
@@ -43,7 +43,7 @@ public class LogHandler : IDisposable
 		OutputStream.WriteLine("[" + type + "]" + output);
 		OutputStream.Flush();
 
-		if (ShowStackTrace)
+		if (showStackTrace)
 		{
 			OutputStream.WriteLine("[--> Stack Trace <--]");
 			OutputStream.WriteLine(stack + "[-------------------]\n");

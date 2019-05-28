@@ -101,8 +101,8 @@ namespace Uplift
 		{
 			Upbring upbring = Upbring.Instance();
 			PackageRepo[] targets = GetTargets(GetDependencySolver(),
-											   InstallStrategy.UPDATE_LOCKFILE,
-											   updateLockfile: false);
+												InstallStrategy.UPDATE_LOCKFILE,
+												updateLockfile: false);
 
 			bool anyInstalled =
 						upbring.InstalledPackage != null &&
@@ -727,18 +727,18 @@ namespace Uplift
 					if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == def.Name))
 					{
 						UpdatePackage(dependencyPR,
-									  updateDependencies: false,
-									  updateLockfile: updateLockfile
-									  );
+										updateDependencies: false,
+										updateLockfile: updateLockfile
+										);
 					}
 					else
 					{
 						using (TemporaryDirectory td = dependencyPR.Repository.DownloadPackage(dependencyPR.Package))
 						{
 							InstallPackage(dependencyPR.Package,
-										   td,
-										   def,
-										   updateLockfile: updateLockfile);
+											td,
+											def,
+											updateLockfile: updateLockfile);
 						}
 					}
 				}

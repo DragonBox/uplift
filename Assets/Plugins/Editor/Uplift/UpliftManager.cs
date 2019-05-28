@@ -92,13 +92,17 @@ namespace Uplift
 		public void InstallDependencies(InstallStrategy strategy = InstallStrategy.UPDATE_LOCKFILE)
 		{
 			PackageRepo[] targets = GetTargets(GetDependencySolver(), strategy);
-			InstallPackages(targets);
+
+			bool updateLockfile = (strategy != InstallStrategy.ONLY_LOCKFILE);
+			InstallPackages(targets, updateLockfile);
 		}
 
 		public DependencyState[] GetDependenciesState()
 		{
 			Upbring upbring = Upbring.Instance();
-			PackageRepo[] targets = GetTargets(GetDependencySolver(), InstallStrategy.UPDATE_LOCKFILE, false);
+			PackageRepo[] targets = GetTargets(GetDependencySolver(),
+											   InstallStrategy.UPDATE_LOCKFILE,
+											   updateLockfile: false);
 
 			bool anyInstalled =
 						upbring.InstalledPackage != null &&
@@ -395,7 +399,7 @@ namespace Uplift
 			return result;
 		}
 
-		public void InstallPackages(PackageRepo[] targets)
+		public void InstallPackages(PackageRepo[] targets, bool updateLockfile = true)
 		{
 			using (LogAggregator LA = LogAggregator.InUnity(
 				"Successfully installed dependencies ({0} actions were done)",
@@ -419,7 +423,7 @@ namespace Uplift
 					{
 						if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == pr.Package.PackageName))
 						{
-							UpdatePackage(pr);
+							UpdatePackage(pr, updateLockfile: updateLockfile);
 						}
 						else
 						{
@@ -429,7 +433,7 @@ namespace Uplift
 
 							using (TemporaryDirectory td = pr.Repository.DownloadPackage(pr.Package))
 							{
-								InstallPackage(pr.Package, td, def);
+								InstallPackage(pr.Package, td, def, updateLockfile);
 							}
 						}
 					}
@@ -476,7 +480,7 @@ namespace Uplift
 
 		//FIXME: This is super unsafe right now, as we can copy down into the FS.
 		// This should be contained using kinds of destinations.
-		private void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition, bool updateLockfile = false)
+		private void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition, bool updateLockfile)
 		{
 			if (dependencyDefinition == null)
 			{
@@ -676,7 +680,7 @@ namespace Uplift
 			throw new InvalidDataException(string.Format("File {0} does not contain guid information", path));
 		}
 
-		private void UpdatePackage(Upset package, TemporaryDirectory td)
+		private void UpdatePackage(Upset package, TemporaryDirectory td, bool updateLockfile)
 		{
 			NukePackage(package.PackageName);
 
@@ -689,10 +693,10 @@ namespace Uplift
 				definition = new DependencyDefinition() { Name = package.PackageName, Version = package.PackageVersion };
 			}
 
-			InstallPackage(package, td, definition, true);
+			InstallPackage(package, td, definition, updateLockfile);
 		}
 
-		public void UpdatePackage(PackageRepo newer, bool updateDependencies = true)
+		public void UpdatePackage(PackageRepo newer, bool updateDependencies = true, bool updateLockfile = true)
 		{
 			InstalledPackage installed = Upbring.Instance().InstalledPackage.First(ip => ip.Name == newer.Package.PackageName);
 
@@ -706,7 +710,7 @@ namespace Uplift
 			{
 				using (TemporaryDirectory td = newer.Repository.DownloadPackage(newer.Package))
 				{
-					UpdatePackage(newer.Package, td);
+					UpdatePackage(newer.Package, td, updateLockfile);
 				}
 			}
 
@@ -722,13 +726,20 @@ namespace Uplift
 					PackageRepo dependencyPR = PackageList.Instance().FindPackageAndRepository(def);
 					if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == def.Name))
 					{
-						UpdatePackage(dependencyPR, false);
+						UpdatePackage(dependencyPR,
+									  updateDependencies: false,
+									  updateLockfile: updateLockfile
+									 );
 					}
 					else
 					{
 						using (TemporaryDirectory td = dependencyPR.Repository.DownloadPackage(dependencyPR.Package))
 						{
-							InstallPackage(dependencyPR.Package, td, def, true);
+							InstallPackage(dependencyPR.Package,
+										   td,
+										   def,
+										   updateLockfile: updateLockfile
+										  );
 						}
 					}
 				}

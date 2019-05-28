@@ -49,7 +49,7 @@ namespace Uplift.Common
 			string packageName = LastArgument();
 
 			PackageRepo pr = PackageList.Instance().GetLatestPackage(packageName);
-			UpliftManager.Instance().UpdatePackage(pr);
+			UpliftManager.Instance().UpdatePackage(pr, updateLockfile: true);
 		}
 
 		public static void NukePackage()

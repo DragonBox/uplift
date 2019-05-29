@@ -1,10 +1,19 @@
 # Change Log
 
-## [v1.0.0beta13](https://github.com/DragonBox/uplift/tree/v1.0.0beta13) (2019-05-20)
-[Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta12...v1.0.0beta13)
+## [v1.0.0beta14](https://github.com/DragonBox/uplift/tree/v1.0.0beta14) (2019-05-29)
+[Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta12...v1.0.0beta14)
 
 **Merged pull requests:**
 
+- Debug/add a log handler [\#84](https://github.com/DragonBox/uplift/pull/84) ([scassard](https://github.com/scassard))
+- Fix/lockfile/prevent editing of transitive dependency when installing from lockfile [\#83](https://github.com/DragonBox/uplift/pull/83) ([scassard](https://github.com/scassard))
+- Add missing usings [\#82](https://github.com/DragonBox/uplift/pull/82) ([scassard](https://github.com/scassard))
+- Revert "Fix/lockfile/fix lockfile modifications when installing from lockfile" [\#80](https://github.com/DragonBox/uplift/pull/80) ([niezbop](https://github.com/niezbop))
+- Display PackageExport.asset after its creation [\#78](https://github.com/DragonBox/uplift/pull/78) ([scassard](https://github.com/scassard))
+- Fix/lockfile/fix lockfile modifications when installing from lockfile [\#77](https://github.com/DragonBox/uplift/pull/77) ([scassard](https://github.com/scassard))
+- Fix/export/prevent uplift installing itself [\#74](https://github.com/DragonBox/uplift/pull/74) ([scassard](https://github.com/scassard))
+- Build: split Rakefile for testing the release notes upload [\#73](https://github.com/DragonBox/uplift/pull/73) ([lacostej](https://github.com/lacostej))
+- Preparing release for 1.0.0beta13 [\#72](https://github.com/DragonBox/uplift/pull/72) ([jenkinswwtk](https://github.com/jenkinswwtk))
 - Format files according to wwtk templates [\#71](https://github.com/DragonBox/uplift/pull/71) ([scassard](https://github.com/scassard))
 - Correct update package function to prevent error in First method [\#70](https://github.com/DragonBox/uplift/pull/70) ([scassard](https://github.com/scassard))
 

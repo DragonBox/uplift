@@ -94,17 +94,21 @@ namespace Uplift
 		[MenuItem("Tools/Uplift/Install dependencies (as specified in lockfile)", false, 2)]
 		private static void InstallLockfile()
 		{
+			Debug.Log("Installing from Lockfile : ");
 			UpliftManager.ResetInstances();
 			UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.ONLY_LOCKFILE);
+
+			Debug.Log("-> Resfreshing AssetDatabase");
 			AssetDatabase.Refresh();
 		}
 
 		[MenuItem("Tools/Uplift/Update dependencies", false, 3)]
 		private static void InstallDependencies()
 		{
-			Debug.Log("Installing Upfile dependencies");
 			UpliftManager.ResetInstances();
 			UpliftManager.Instance().InstallDependencies(strategy: UpliftManager.InstallStrategy.INCOMPLETE_LOCKFILE);
+
+			Debug.Log("-> Resfreshing AssetDatabase");
 			AssetDatabase.Refresh();
 		}
 

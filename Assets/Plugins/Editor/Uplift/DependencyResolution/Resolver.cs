@@ -32,29 +32,113 @@ namespace Uplift.DependencyResolution
 
 	class Resolver : IDependencySolver
 	{
-		//--> parameters
+		// --> parameters
 		// SpecificationProvider
 		// -- Base of dependency graph (aka a node ?)
 		// DependencyGraph base  
 		// DependencyDefinition[] originalDependencies
 
-		//--> In a separate file ?
-		//Class conflict
-		//Class PossibilitySet
+		// --> In a separate files ?
+		// Class PossibilitySet
+		// ResolutionStates[] states
+		// ??? activated;
 
-		//--> Unwinding in DependencyBacktracking.cs 
-		//				   DependencyUnwinding.cs
-		// 
 
-		//--> methods
-		//Initialize(specification provider, originalDependencies, base)
+
+		// --> methods
+		// Initialize(specification provider, originalDependencies, base)
 		// |__ Affect class parameters 
+
+		// Start resolution process
+		void StartResolution()
+		{
+			//startedAt = Time.now;
+			//Print stuff for user ?
+			//pushInitialState
+		}
+
+		// Ends the resolution process
+		void EndResolution()
+		{
+			//Print stuff for user ?
+		}
 
 		DependencyDefinition[] SolveDependencies(DependencyDefinition[] dependencies)
 		{
-			//Call resolution and returns dependencies
+			StartResolution();
 			/*
-				Resolution.new([...]).SolveDependencies
+			While states is not empty{
+   				//requirements = https://github.com/CocoaPods/Molinillo/blob/master/lib/molinillo/dependency_graph/vertex.rb
+				if state has requirements
+				{
+					if (state is DependencyState)
+					{
+						pop off a PossibilityState
+						if (PossibilityState != null)
+						{
+							push PossibilityState to states
+							activated.tag(PossibilityState)
+						}
+					}
+					processTopMostState();
+				}else{
+					continue
+				}
+				resolveActivatedSpecs()
+			}
+			EndResolution();
+			*/
+		}
+
+		void processTopMostState()
+		{
+			/*
+				try
+				{
+					if (PossibilitySet.possibilities.last != null)
+					{
+						attemptToActivate();
+					}
+					else
+					{
+						Conflict conflict = new Conflict([...]);
+						unwindForConflict(conflict);
+					}
+				}
+				catch (CircularDependencyError underlyingError)
+				{
+					create_conflict(underlyingError);
+					unwindForConflict;
+				}
+			*/
+		}
+
+		void resolveActivatedSpecs()
+		{
+			for (each vertex in activated.nodes)
+			{
+				if (vertex.payload == null)
+				{
+					continue;
+				}
+				else
+				{
+					latestVersion =
+				}
+
+			}
+
+			/*
+				activated.vertices.each do |_, vertex|
+					next unless vertex.payload
+
+					latest_version = vertex.payload.possibilities.reverse_each.find do |possibility|
+					vertex.requirements.all? { |req| requirement_satisfied_by?(req, activated, possibility) }
+					end
+
+					activated.set_payload(vertex.name, latest_version)
+				end
+				activated.freeze
 			 */
 		}
 	}

@@ -97,10 +97,10 @@ namespace Uplift
 			using (LogHandler LH = new LogHandler(appendToCurrentLogFile: true, showStack: false))
 			{
 				Debug.Log("Install Dependencies with strategy " + strategy);
-			  PackageRepo[] targets = GetTargets(GetDependencySolver(), strategy);
+				PackageRepo[] targets = GetTargets(GetDependencySolver(), strategy);
 
-			  bool updateLockfile = (strategy != InstallStrategy.ONLY_LOCKFILE);
-			  InstallPackages(targets, updateLockfile);
+				bool updateLockfile = (strategy != InstallStrategy.ONLY_LOCKFILE);
+				InstallPackages(targets, updateLockfile);
 			}
 		}
 
@@ -752,7 +752,7 @@ namespace Uplift
 			{
 				using (TemporaryDirectory td = newer.Repository.DownloadPackage(newer.Package))
 				{
-          Debug.Log("Required version is not installed, updating package");
+					Debug.Log("Required version is not installed, updating package");
 					UpdatePackage(newer.Package, td, updateLockfile);
 				}
 			}

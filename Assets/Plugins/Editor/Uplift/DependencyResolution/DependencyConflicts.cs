@@ -26,13 +26,56 @@
 using Uplift.Common;
 using Uplift.Packages;
 using Uplift.Schemas;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Uplift.DependencyResolution
 {
-	class Conflict
+	public class Conflict
 	{
-		// struct UnwindDetails
-		//--> Unwinding in DependencyBacktracking.cs ??
-		//				   DependencyUnwinding.cs    ??
+		public DependencyDefinition requirement;
+		public List<PossibilitySet> possibilities;
+		public DependencyGraph activated;
+
+		public Conflict(DependencyDefinition requirement, List<PossibilitySet> possibilities, DependencyGraph activated)
+		{
+			this.requirement = requirement;
+			this.possibilities = possibilities;
+			this.activated = activated;
+		}
+
+		override public string ToString()
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.AppendLine(requirement.Name + " " + requirement.Version + " conflicts with state :");
+			sb.AppendLine(activated.ToString());
+			return sb.ToString();
+		}
+
+		/* 
+				public static void CheckForConflict(State currentState)
+				{
+					//Check possibilities
+					if (currentState.possibilities.Count > 1)
+					{
+						// Not in possibility state
+					}
+					else if (currentState.possibilities.Count == 0)
+					{
+						// Conflict !
+					}
+					else
+					{
+						// no conflict
+					}
+
+					//returns a conflict item
+					//Empty if no conflicts
+				}
+
+				// struct UnwindDetails
+				//--> Unwinding in DependencyBacktracking.cs ??
+				//				   DependencyUnwinding.cs    ??
+		*/
 	}
 }

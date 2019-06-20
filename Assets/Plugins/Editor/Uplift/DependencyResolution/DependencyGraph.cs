@@ -23,12 +23,13 @@
 // --- END LICENSE BLOCK ---
 
 using System.Collections.Generic;
+using System.Text;
 using Uplift.Packages;
 using Uplift.Schemas;
 
 namespace Uplift.DependencyResolution
 {
-	class DependencyGraph
+	public class DependencyGraph
 	{
 		public List<DependencyNode> nodeList;
 
@@ -102,6 +103,23 @@ namespace Uplift.DependencyResolution
 					}
 				}
 			}
+		}
+
+		//TODO add a tag method
+
+		public override string ToString()
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.AppendLine("=== Dependency graph : ===");
+			foreach (DependencyNode node in nodeList)
+			{
+				sb.AppendLine(" * " + node.Name + " : " + node.Requirement.ToString());
+				foreach (DependencyNode depNode in node.Dependencies)
+				{
+					sb.Append(depNode.Name + " | ");
+				}
+			}
+			return sb.ToString();
 		}
 	}
 }

@@ -62,41 +62,202 @@ namespace Uplift.DependencyResolution
 			pushInitialState();
 		}
 
+		//Creates and pushes the initial state for the resolution, based upon the
+		//{#requested} dependencies
+		//@return [void]
+
+		public void pushInitialState()
+		{
+			Debug.Log("Push initial state");
+			DependencyGraph dg = new DependencyGraph();
+			foreach (DependencyDefinition requested in originalDependencies)
+			{
+				DependencyNode node = new DependencyNode(requested);
+				//vertex.explicit_requirements << requested
+				dg.AddNode(node);
+			}
+			//dg.tag(:initial_state)
+
+			Stack<DependencyDefinition> currentDependencies = originalDependencies;
+			List<PossibilitySet> possibilities = GeneratePossibilities(currentDependencies);
+
+			Dictionary<string, Conflict> conflicts = new Dictionary<string, Conflict>();
+
+			//Create state
+			DependencyState initialState = new DependencyState("initial state",
+																currentDependencies,
+																dg,
+																possibilities, //possibilities
+																0,
+																conflicts //conflicts
+																);
+
+			//Push state
+			stateStack.Push(initialState);
+			Debug.Log("===> Initial state : ");
+			Debug.Log(initialState);
+		}
+
+		List<PossibilitySet> GeneratePossibilities(Stack<DependencyDefinition> requirements)
+		{
+			List<PossibilitySet> possibilities = new List<PossibilitySet>();
+			foreach (DependencyDefinition dependency in requirements)
+			{
+				PossibilitySet possibilitySet = new PossibilitySet();
+				possibilitySet.name = dependency.Name;
+
+				List<Upset> validPackages = new List<Upset>();
+				foreach (Upset pkg in packageRepoStub.GetPackages(dependency.Name))
+				{
+					if (dependency.Requirement.IsMetBy(pkg.PackageVersion))
+					{
+						Debug.Log("--[/] Package " + possibilitySet.name + " " + "[" + pkg.PackageVersion + "]" + " matches requirement : " + dependency.Requirement.ToString());
+						validPackages.Add(pkg);
+					}
+					else
+					{
+						Debug.Log("--[X] Package " + possibilitySet.name + " " + "[" + pkg.PackageVersion + "]" + " does not match requirement : " + dependency.Requirement.ToString());
+					}
+				}
+				//TODO check if same subdependencies
+				possibilitySet.packages = validPackages;
+				possibilities.Add(possibilitySet);
+			}
+			return possibilities;
+		}
+
+		/*
+			  // Pushes a new {DependencyState} that encapsulates both existing and new
+			  // requirements
+			  def push_state_for_requirements(new_requirements, requires_sort = true, new_activated = activated)
+				new_requirements = sort_dependencies(new_requirements.uniq, new_activated, conflicts) if requires_sort
+				new_requirement = nil
+				loop do
+				  new_requirement = new_requirements.shift
+				  break if new_requirement.nil? || states.none? { |s| s.requirement == new_requirement }
+				end
+				new_name = new_requirement ? name_for(new_requirement) : ''.freeze
+				possibilities = possibilities_for_requirement(new_requirement)
+				handle_missing_or_push_dependency_state DependencyState.new(
+				  new_name, new_requirements, new_activated,
+				  new_requirement, possibilities, depth, conflicts.dup, unused_unwind_options.dup
+				)
+			  end
+		 */
+
 		// Ends the resolution process
 		void EndResolution()
 		{
 			Debug.Log("Ending resolution");
 		}
 
-		DependencyDefinition[] SolveDependencies(DependencyDefinition[] dependencies)
+		void ShowStateStack()
 		{
+			StringBuilder sb = new StringBuilder();
+			sb.AppendLine("==== State Stack ====");
+			foreach (var state in stateStack)
+			{
+				sb.AppendLine("[ " + state.GetType().ToString() + " ]");
+			}
+			sb.AppendLine("================");
+			Debug.Log(sb.ToString());
+		}
+		public List<Upset> SolveDependencies()
+		{
+			//FIXME Clean code here and split in sub methods
+			Debug.Log("Solve dependencies");
 			StartResolution();
-			/*
-			While states is not empty{
-   				//requirements = https://github.com/CocoaPods/Molinillo/blob/master/lib/molinillo/dependency_graph/vertex.rb
-				if state has requirements
+
+			List<Upset> resolution = new List<Upset>();
+
+			int i = 100;
+			while (i > 0)//stateStack.Count > 0)
+			{
+				if (stateStack.Count == 0)
 				{
-					if (state is DependencyState)
+					break;
+				}
+
+				i--;
+				ShowStateStack();
+				State currentState = stateStack.Peek();
+
+				if (currentState.GetType() == typeof(DependencyState))
+				{
+					Debug.Log("Current state is dependency state !");
+					currentState.possibilities = GeneratePossibilities(currentState.requirements); //FIXME maybe this can be optimized
+
+
+					if (currentState.requirements.Count == 0)
 					{
-						pop off a PossibilityState
-						if (PossibilityState != null)
+						Debug.Log("No more requirements to match, getting solutions : ");
+						resolution = ((DependencyState)currentState).GetResolution();
+						break;
+					}
+					else
+					{
+						PossibilityState newPossibilityState = ((DependencyState)currentState).PopPossibilityState();
+						if (newPossibilityState != null)
 						{
-							push PossibilityState to states
-							activated.tag(PossibilityState)
+							Debug.Log("Add new possibility state in stack");
+							stateStack.Push(newPossibilityState);
 						}
 					}
-					processTopMostState();
-				}else{
-					continue
+
 				}
-				resolveActivatedSpecs()
+				else if (currentState.GetType() == typeof(PossibilityState))
+				{
+					Debug.Log("Current state is possibility state !");
+					DependencyState newState = ((PossibilityState)currentState).SolveState();
+
+					//Debug.Log("Pop possibility state");
+					//stateStack.Pop();
+
+					Debug.Log("Push new dependency state in stack");
+					stateStack.Push(newState);
+				}
+				else
+				{
+					Debug.LogError("Error : Current state is neither possibility or dependency state");
+				}
+				//resolveActivatedSpecs()
 			}
+
 			EndResolution();
+			Debug.Log("===== Final resolution : =====");
+			foreach (Upset pkg in resolution)
+			{
+				Debug.Log(pkg.PackageName + " : " + pkg.PackageVersion);
+			}
+			return resolution;
+
+			/*
+				While states is not empty{
+					//requirements = https://github.com/CocoaPods/Molinillo/blob/master/lib/molinillo/dependency_graph/vertex.rb
+					if state has requirements
+					{
+						if (state is DependencyState)
+						{
+							pop off a PossibilityState
+							if (PossibilityState != null)
+							{
+								push PossibilityState to states
+								activated.tag(PossibilityState)
+							}
+						}
+						processTopMostState();
+					}else{
+						continue
+					}
+					resolveActivatedSpecs()
+				}
+				EndResolution();
 			*/
 		}
 
 		void processTopMostState()
 		{
+			//TODO use it to simplify the method above ?
 			/*
 				try
 				{
@@ -120,7 +281,8 @@ namespace Uplift.DependencyResolution
 
 		void resolveActivatedSpecs()
 		{
-			for (each vertex in activated.nodes)
+			/*
+			foreach( vertex in activated.nodes)
 			{
 				if (vertex.payload == null)
 				{
@@ -128,11 +290,10 @@ namespace Uplift.DependencyResolution
 				}
 				else
 				{
-					latestVersion =
+					//latestVersion =
 				}
-
 			}
-
+			 */
 			/*
 				activated.vertices.each do |_, vertex|
 					next unless vertex.payload
@@ -147,6 +308,4 @@ namespace Uplift.DependencyResolution
 			 */
 		}
 	}
-
-
 }

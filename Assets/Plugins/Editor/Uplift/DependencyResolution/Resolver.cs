@@ -26,41 +26,46 @@
 using Uplift.Common;
 using Uplift.Packages;
 using Uplift.Schemas;
+using System.Collections.Generic;
+using UnityEngine;
+using System.Text;
 
 namespace Uplift.DependencyResolution
 {
-
-	class Resolver : IDependencySolver
+	class Resolver //: IDependencySolver
 	{
+		public PackageRepoStub packageRepoStub;
 		// --> parameters
 		// SpecificationProvider
+
 		// -- Base of dependency graph (aka a node ?)
-		// DependencyGraph base  
-		// DependencyDefinition[] originalDependencies
-
-		// --> In a separate files ?
-		// Class PossibilitySet
-		// ResolutionStates[] states
-		// ??? activated;
-
-
+		DependencyGraph baseGraph;
+		Stack<DependencyDefinition> originalDependencies;
+		Stack<State> stateStack = new Stack<State>();
 
 		// --> methods
-		// Initialize(specification provider, originalDependencies, base)
-		// |__ Affect class parameters 
+
+		// Initialize(specification provider, originalDependencies, graphRoots)
+		// |__ Affect class parameters
+
+		public Resolver(Stack<DependencyDefinition> originalDependencies, DependencyGraph baseGraph)
+		{
+			this.originalDependencies = originalDependencies;
+			this.baseGraph = baseGraph;
+		}
 
 		// Start resolution process
 		void StartResolution()
 		{
+			Debug.Log("Start Resolution");
 			//startedAt = Time.now;
-			//Print stuff for user ?
-			//pushInitialState
+			pushInitialState();
 		}
 
 		// Ends the resolution process
 		void EndResolution()
 		{
-			//Print stuff for user ?
+			Debug.Log("Ending resolution");
 		}
 
 		DependencyDefinition[] SolveDependencies(DependencyDefinition[] dependencies)

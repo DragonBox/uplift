@@ -25,6 +25,8 @@
 using System.Collections.Generic;
 using Uplift.Common;
 using Uplift.Schemas;
+using UnityEngine;
+
 
 namespace Uplift.DependencyResolution
 {
@@ -36,6 +38,8 @@ namespace Uplift.DependencyResolution
 		protected List<DependencyNode> dependencies;
 		protected int index;
 		protected int lowlink;
+
+		public List<PossibilitySet> matchingPossibilities = new List<PossibilitySet>();
 		public SkipInstallSpec[] skips;
 		public OverrideDestinationSpec[] overrides;
 
@@ -134,6 +138,53 @@ namespace Uplift.DependencyResolution
 			set
 			{
 				lowlink = value;
+			}
+		}
+
+		private void UpdateNodeRequirements(DependencyDefinition newRequirements)
+		{
+			//TODO write a test for this
+			Debug.Log("Updating " + this.name + " requirement " + requirement);
+			requirement = requirement.RestrictTo(newRequirements.Requirement);
+			Debug.Log("New requirement is : " + requirement);
+			//FIXME Maybe add test if null value in foreach loops...
+
+			Debug.Log("Updating node possibilities according to new requirements");
+			foreach (PossibilitySet pos in matchingPossibilities)
+			{
+				foreach (Upset package in pos.packages)
+				{
+					if (!requirement.IsMetBy(package.PackageVersion))
+					{
+						Debug.Log("Package " + package.PackageName + " " + package.PackageVersion + " is no longer met by new requirement.");
+						pos.packages.Remove(package);
+					}
+				}
+			}
+		}
+
+		public void AddDependencies(DependencyDefinition[] requirements, DependencyGraph activated)
+		{
+			if (requirements != null && requirements.Length > 0)
+			{
+				foreach (DependencyDefinition dd in requirements)
+				{
+					Debug.Log("Depends on " + dd.Name);
+					if (dd != null)
+					{
+						if (!activated.Contains(dd.Name))
+						{
+							Debug.Log("Node added for " + dd.Name);
+							DependencyNode childNode = new DependencyNode(dd);
+							activated.AddDependency(this, childNode); //activated.AddNode(childNode);
+						}
+						else
+						{
+							Debug.Log("Node for " + dd.Name + " already in tree.");
+							activated.FindByName(dd.Name).UpdateNodeRequirements(dd);
+						}
+					}
+				}
 			}
 		}
 	}

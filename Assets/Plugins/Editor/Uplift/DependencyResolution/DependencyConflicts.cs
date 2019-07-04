@@ -34,13 +34,11 @@ namespace Uplift.DependencyResolution
 	public class Conflict
 	{
 		public DependencyDefinition requirement;
-		public List<PossibilitySet> possibilities;
 		public DependencyGraph activated;
 
-		public Conflict(DependencyDefinition requirement, List<PossibilitySet> possibilities, DependencyGraph activated)
+		public Conflict(DependencyDefinition requirement, DependencyGraph activated)
 		{
 			this.requirement = requirement;
-			this.possibilities = possibilities;
 			this.activated = activated;
 		}
 

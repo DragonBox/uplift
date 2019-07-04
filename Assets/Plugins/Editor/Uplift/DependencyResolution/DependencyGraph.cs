@@ -68,6 +68,7 @@ namespace Uplift.DependencyResolution
 		{
 			parent.Dependencies.Add(child);
 			AddNode(child);
+			child.isChildNode = true;
 		}
 
 		public void LoadDependencies(DependencyDefinition dependency, PackageList packageList, DependencyHelper.ConflictChecker checkConflict, out DependencyNode node)
@@ -114,8 +115,8 @@ namespace Uplift.DependencyResolution
 		public List<DependencyNode> FindNodesWithGivenDependency(string name)
 		{
 			List<DependencyNode> matchingNodes = new List<DependencyNode>();
-			//FIXME : redundant algo, only child explored multiple time...
-			foreach (DependencyNode node in nodeList)
+
+			foreach (DependencyNode node in nodeList.FindAll(node => node.isChildNode))
 			{
 				//Check if depends on given dependency name
 				DependencyDefinition[] dependencies = node.selectedPossibilitySet.GetDependencies();

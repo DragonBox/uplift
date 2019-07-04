@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using Uplift.Common;
 using Uplift.Schemas;
 using UnityEngine;
-
+using System;
 
 namespace Uplift.DependencyResolution
 {
@@ -67,7 +67,6 @@ namespace Uplift.DependencyResolution
 			this.dependencies = dependencies;
 			this.skips = skips;
 			this.overrides = overrides;
-
 			index = -1;
 			lowlink = -1;
 		}
@@ -183,7 +182,33 @@ namespace Uplift.DependencyResolution
 			}
 		}
 
-		public void AddDependencies(DependencyDefinition[] requirements, DependencyGraph activated)
+		public IVersionRequirement ComputeRequirement()
+		{
+			requirement = new NoRequirement();
+			foreach (IVersionRequirement versionRequirement in restrictions.Values)
+			{
+				requirement = requirement.RestrictTo(versionRequirement);
+			}
+			return requirement;
+		}
+
+		public void UpdateSelectedPossibilitySet()
+		{
+			if (matchingPossibilities.Count > 0)
+			{
+				//FIXME change the selecting method to take the most recent possibilitySet
+				//FIXME Ensure that possibilitySet is complete regardless of the requirement
+				selectedPossibilitySet = PossibilitySet.GetMostRecentPossibilitySetFromList(matchingPossibilities);
+				Debug.Log("SelectedPossibility is set to " + selectedPossibilitySet);
+			}
+			else
+			{
+				Debug.Log("selectedPossibility is set to null because matchingPossibility is empty");
+				selectedPossibilitySet = null;
+			}
+		}
+
+		public void AddDependencies(DependencyDefinition[] requirements, DependencyGraph activated, string restrictor)
 		{
 			if (requirements != null && requirements.Length > 0)
 			{
@@ -192,16 +217,18 @@ namespace Uplift.DependencyResolution
 					Debug.Log("Depends on " + dd.Name);
 					if (dd != null)
 					{
-						if (!activated.Contains(dd.Name))
+						if (!activated.Contains(dd.Name))//FIXME does contains method explore childnodes ?
 						{
 							Debug.Log("Node added for " + dd.Name);
 							DependencyNode childNode = new DependencyNode(dd);
+							Debug.Log(restrictor + " adds first restriction on new dep node " + dd.Name);
+							childNode.restrictions[restrictor] = dd.Requirement;
 							activated.AddDependency(this, childNode); //activated.AddNode(childNode);
 						}
 						else
 						{
 							Debug.Log("Node for " + dd.Name + " already in tree.");
-							activated.FindByName(dd.Name).UpdateNodeRequirements(dd);
+							activated.FindByName(dd.Name).UpdateNodeRequirements(dd, restrictor);
 						}
 					}
 				}

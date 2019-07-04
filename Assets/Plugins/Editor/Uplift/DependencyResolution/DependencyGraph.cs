@@ -109,6 +109,63 @@ namespace Uplift.DependencyResolution
 			}
 		}
 
+
+		//Check if node has a childnode with the given name in parameter and return his parent
+		public List<DependencyNode> FindNodesWithGivenDependency(string name)
+		{
+			List<DependencyNode> matchingNodes = new List<DependencyNode>();
+			//FIXME : redundant algo, only child explored multiple time...
+			foreach (DependencyNode node in nodeList)
+			{
+				//Check if depends on given dependency name
+				DependencyDefinition[] dependencies = node.selectedPossibilitySet.GetDependencies();
+				if (dependencies != null && dependencies.Length > 0)
+				{
+					foreach (DependencyDefinition dep in dependencies)
+					{
+						if (dep.Name == name)
+						{
+							matchingNodes.Add(node);
+						}
+					}
+					//If has childnodes, explore them
+					if (node.dependencies.Count > 0)
+					{
+						foreach (var childNode in node.dependencies)
+						{
+							matchingNodes.AddRange(FindNodesWithGivenDependencyReq(name, childNode));
+						}
+					}
+				}
+			}
+			return matchingNodes;
+		}
+
+		private List<DependencyNode> FindNodesWithGivenDependencyReq(string name, DependencyNode startingNode)
+		{
+			List<DependencyNode> matchingNodes = new List<DependencyNode>();
+			foreach (DependencyNode node in startingNode.dependencies)
+			{
+				//Check if depends on given dependency name
+				foreach (DependencyDefinition dep in node.selectedPossibilitySet.GetDependencies())
+				{
+					if (dep.Name == name)
+					{
+						matchingNodes.Add(node);
+					}
+				}
+				//If has childnodes, explore them
+				if (node.dependencies.Count > 0)
+				{
+					foreach (var childNode in node.dependencies)
+					{
+						matchingNodes.AddRange(FindNodesWithGivenDependencyReq(name, childNode));
+					}
+				}
+			}
+			return matchingNodes;
+		}
+
 		//TODO add a tag method
 
 		public override string ToString()

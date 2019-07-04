@@ -146,11 +146,26 @@ namespace Uplift.DependencyResolution
 			}
 		}
 
-		private void UpdateNodeRequirements(DependencyDefinition newRequirements)
+		private void UpdateNodeRequirements(DependencyDefinition newRequirements, string restrictor)
 		{
 			//TODO write a test for this
 			Debug.Log("Updating " + this.name + " requirement " + requirement);
-			requirement = requirement.RestrictTo(newRequirements.Requirement);
+
+			Debug.Log(restrictor + " adds new restriction on " + name);
+
+			restrictions[restrictor] = newRequirements.Requirement;
+
+			try
+			{
+				this.requirement = requirement.RestrictTo(restrictions[restrictor]);
+			}
+			catch (IncompatibleRequirementException e)
+			{
+				conflictingRequirementOnNode = newRequirements;
+				return;
+			}
+
+			Debug.Log("Requirement updated");
 			Debug.Log("New requirement is : " + requirement);
 			//FIXME Maybe add test if null value in foreach loops...
 

@@ -58,7 +58,6 @@ namespace Uplift.DependencyResolution
 		void StartResolution()
 		{
 			Debug.Log("Start Resolution");
-			//startedAt = Time.now;
 			pushInitialState();
 		}
 
@@ -68,7 +67,7 @@ namespace Uplift.DependencyResolution
 
 		public void pushInitialState()
 		{
-			Debug.Log("Push initial state");
+			Debug.Log("Pushing initial state");
 			DependencyGraph dg = new DependencyGraph();
 			foreach (DependencyDefinition requested in originalDependencies)
 			{
@@ -76,14 +75,12 @@ namespace Uplift.DependencyResolution
 				//vertex.explicit_requirements << requested
 				dg.AddNode(node);
 			}
-			//dg.tag(:initial_state)
 
 			Stack<DependencyDefinition> currentDependencies = originalDependencies;
 			List<PossibilitySet> possibilities = GeneratePossibilities(currentDependencies);
 
 			Dictionary<string, Conflict> conflicts = new Dictionary<string, Conflict>();
 
-			//Create state
 			DependencyState initialState = new DependencyState("initial state",
 																currentDependencies,
 																dg,
@@ -91,8 +88,6 @@ namespace Uplift.DependencyResolution
 																0,
 																conflicts //conflicts
 																);
-
-			//Push state
 			stateStack.Push(initialState);
 			Debug.Log("===> Initial state : ");
 			Debug.Log(initialState);
@@ -155,9 +150,9 @@ namespace Uplift.DependencyResolution
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine("==== State Stack ====");
-			foreach (var state in stateStack)
+			foreach (State state in stateStack)
 			{
-				sb.AppendLine("[ " + state.GetType().ToString() + " ]");
+				sb.AppendLine("[ (" + state.depth.ToString() + ") " + state.GetType().ToString() + " ]");
 			}
 			sb.AppendLine("================");
 			Debug.Log(sb.ToString());

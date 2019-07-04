@@ -230,82 +230,9 @@ namespace Uplift.DependencyResolution
 				Debug.Log(pkg.PackageName + " : " + pkg.PackageVersion);
 			}
 			return resolution;
-
-			/*
-				While states is not empty{
-					//requirements = https://github.com/CocoaPods/Molinillo/blob/master/lib/molinillo/dependency_graph/vertex.rb
-					if state has requirements
-					{
-						if (state is DependencyState)
-						{
-							pop off a PossibilityState
-							if (PossibilityState != null)
-							{
-								push PossibilityState to states
-								activated.tag(PossibilityState)
-							}
-						}
-						processTopMostState();
-					}else{
-						continue
-					}
-					resolveActivatedSpecs()
-				}
-				EndResolution();
-			*/
 		}
 
-		void processTopMostState()
-		{
-			//TODO use it to simplify the method above ?
-			/*
-				try
-				{
-					if (PossibilitySet.possibilities.last != null)
-					{
-						attemptToActivate();
-					}
-					else
-					{
-						Conflict conflict = new Conflict([...]);
-						unwindForConflict(conflict);
-					}
-				}
-				catch (CircularDependencyError underlyingError)
-				{
-					create_conflict(underlyingError);
-					unwindForConflict;
-				}
-			*/
-		}
+		void processTopMostState() { }
 
-		void resolveActivatedSpecs()
-		{
-			/*
-			foreach( vertex in activated.nodes)
-			{
-				if (vertex.payload == null)
-				{
-					continue;
-				}
-				else
-				{
-					//latestVersion =
-				}
-			}
-			 */
-			/*
-				activated.vertices.each do |_, vertex|
-					next unless vertex.payload
-
-					latest_version = vertex.payload.possibilities.reverse_each.find do |possibility|
-					vertex.requirements.all? { |req| requirement_satisfied_by?(req, activated, possibility) }
-					end
-
-					activated.set_payload(vertex.name, latest_version)
-				end
-				activated.freeze
-			 */
-		}
 	}
 }

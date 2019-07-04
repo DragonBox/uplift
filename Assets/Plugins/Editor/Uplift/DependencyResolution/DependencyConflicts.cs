@@ -49,31 +49,5 @@ namespace Uplift.DependencyResolution
 			sb.AppendLine(activated.ToString());
 			return sb.ToString();
 		}
-
-		/* 
-				public static void CheckForConflict(State currentState)
-				{
-					//Check possibilities
-					if (currentState.possibilities.Count > 1)
-					{
-						// Not in possibility state
-					}
-					else if (currentState.possibilities.Count == 0)
-					{
-						// Conflict !
-					}
-					else
-					{
-						// no conflict
-					}
-
-					//returns a conflict item
-					//Empty if no conflicts
-				}
-
-				// struct UnwindDetails
-				//--> Unwinding in DependencyBacktracking.cs ??
-				//				   DependencyUnwinding.cs    ??
-		*/
 	}
 }

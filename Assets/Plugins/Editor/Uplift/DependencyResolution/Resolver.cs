@@ -34,7 +34,7 @@ namespace Uplift.DependencyResolution
 {
 	class Resolver //: IDependencySolver
 	{
-		public PackageRepoStub packageRepoStub;
+		public static PackageRepoStub packageRepoStub;
 		// --> parameters
 		// SpecificationProvider
 

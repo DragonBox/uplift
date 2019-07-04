@@ -35,18 +35,10 @@ namespace Uplift.DependencyResolution
 	class Resolver //: IDependencySolver
 	{
 		public static PackageRepoStub packageRepoStub;
-		// --> parameters
-		// SpecificationProvider
 
-		// -- Base of dependency graph (aka a node ?)
 		DependencyGraph baseGraph;
 		Stack<DependencyDefinition> originalDependencies;
 		Stack<State> stateStack = new Stack<State>();
-
-		// --> methods
-
-		// Initialize(specification provider, originalDependencies, graphRoots)
-		// |__ Affect class parameters
 
 		public Resolver(Stack<DependencyDefinition> originalDependencies, DependencyGraph baseGraph)
 		{
@@ -61,14 +53,11 @@ namespace Uplift.DependencyResolution
 			pushInitialState();
 		}
 
-		//Creates and pushes the initial state for the resolution, based upon the
-		//{#requested} dependencies
-		//@return [void]
-
 		public void pushInitialState()
 		{
 			Debug.Log("Pushing initial state");
 			DependencyGraph dg = new DependencyGraph();
+
 			foreach (DependencyDefinition requested in originalDependencies)
 			{
 				DependencyNode node = new DependencyNode(requested);
@@ -77,12 +66,7 @@ namespace Uplift.DependencyResolution
 			}
 
 			Stack<DependencyDefinition> currentDependencies = originalDependencies;
-
-			//FIXME Use a Dictionary instead ? [module] -> List<PossibilitySet>
-			//List<PossibilitySet> possibilities = GeneratePossibilitySets(currentDependencies);
-
 			List<Conflict> conflicts = new List<Conflict>();
-
 			DependencyState initialState = new DependencyState("initial state",
 																currentDependencies,
 																dg,
@@ -97,7 +81,6 @@ namespace Uplift.DependencyResolution
 
 		List<PossibilitySet> GeneratePossibilitySets(State state)
 		{
-			//TODO test this
 			List<PossibilitySet> possibilities = state.possibilities;
 			foreach (DependencyDefinition dependency in state.requirements)
 			{
@@ -107,30 +90,9 @@ namespace Uplift.DependencyResolution
 					possibilities.AddRange(PossibilitySet.GetPossibilitySetsForGivenPackage(dependency.Name));
 				}
 			}
-			//FIXME Print possibilitySets here ?
 			return possibilities;
 		}
 
-		/*
-			  // Pushes a new {DependencyState} that encapsulates both existing and new
-			  // requirements
-			  def push_state_for_requirements(new_requirements, requires_sort = true, new_activated = activated)
-				new_requirements = sort_dependencies(new_requirements.uniq, new_activated, conflicts) if requires_sort
-				new_requirement = nil
-				loop do
-				  new_requirement = new_requirements.shift
-				  break if new_requirement.nil? || states.none? { |s| s.requirement == new_requirement }
-				end
-				new_name = new_requirement ? name_for(new_requirement) : ''.freeze
-				possibilities = possibilities_for_requirement(new_requirement)
-				handle_missing_or_push_dependency_state DependencyState.new(
-				  new_name, new_requirements, new_activated,
-				  new_requirement, possibilities, depth, conflicts.dup, unused_unwind_options.dup
-				)
-			  end
-		 */
-
-		// Ends the resolution process
 		void EndResolution()
 		{
 			Debug.Log("Ending resolution");
@@ -171,10 +133,9 @@ namespace Uplift.DependencyResolution
 				{
 					Debug.Log("Current state is dependency state !");
 					List<PossibilitySet> possibilitySets = GeneratePossibilitySets(currentState);
+					currentState.possibilities = possibilitySets;
 
-					currentState.possibilities = possibilitySets;//FIXME maybe this can be optimized
-																 //FIXME add matching possibilitySet ?
-																 //TODO this is for debug
+					//TODO For debug
 					foreach (PossibilitySet possibilitySet in possibilitySets)
 					{
 						Debug.Log(possibilitySet);
@@ -220,7 +181,6 @@ namespace Uplift.DependencyResolution
 				{
 					Debug.LogError("Error : Current state is neither possibility or dependency state");
 				}
-				//resolveActivatedSpecs()
 			}
 
 			EndResolution();
@@ -231,8 +191,5 @@ namespace Uplift.DependencyResolution
 			}
 			return resolution;
 		}
-
-		void processTopMostState() { }
-
 	}
 }

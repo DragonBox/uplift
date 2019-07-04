@@ -197,8 +197,6 @@ namespace Uplift.DependencyResolution
 		{
 			if (matchingPossibilities.Count > 0)
 			{
-				//FIXME change the selecting method to take the most recent possibilitySet
-				//FIXME Ensure that possibilitySet is complete regardless of the requirement
 				selectedPossibilitySet = PossibilitySet.GetMostRecentPossibilitySetFromList(matchingPossibilities);
 				Debug.Log("SelectedPossibility is set to " + selectedPossibilitySet);
 			}

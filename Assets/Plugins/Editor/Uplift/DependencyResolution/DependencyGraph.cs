@@ -167,8 +167,6 @@ namespace Uplift.DependencyResolution
 			return matchingNodes;
 		}
 
-		//TODO add a tag method
-
 		public override string ToString()
 		{
 			StringBuilder sb = new StringBuilder();

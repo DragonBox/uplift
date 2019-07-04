@@ -38,6 +38,7 @@ namespace Uplift.DependencyResolution
 		protected int index;
 		protected int lowlink;
 
+		public Boolean isChildNode = false;
 		public List<DependencyNode> dependencies;
 		public PossibilitySet selectedPossibilitySet;
 		public List<PossibilitySet> matchingPossibilities = new List<PossibilitySet>();

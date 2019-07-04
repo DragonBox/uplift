@@ -28,9 +28,13 @@ namespace Uplift.DependencyResolution
 		public List<Upset> GetPackages(string requirementName)
 		{
 			List<Upset> listPackages = new List<Upset>();
-			foreach (Upset pkg in packageRepo[requirementName])
+			//Check if package is in repo
+			if (packageRepo[requirementName] != null)
 			{
-				listPackages.Add(pkg);
+				foreach (Upset pkg in packageRepo[requirementName])
+				{
+					listPackages.Add(pkg);
+				}
 			}
 			return listPackages;
 		}

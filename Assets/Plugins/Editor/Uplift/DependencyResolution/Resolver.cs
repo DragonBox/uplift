@@ -72,19 +72,21 @@ namespace Uplift.DependencyResolution
 			foreach (DependencyDefinition requested in originalDependencies)
 			{
 				DependencyNode node = new DependencyNode(requested);
-				//vertex.explicit_requirements << requested
+				node.restrictions["initial"] = requested.Requirement;
 				dg.AddNode(node);
 			}
 
 			Stack<DependencyDefinition> currentDependencies = originalDependencies;
-			List<PossibilitySet> possibilities = GeneratePossibilities(currentDependencies);
 
-			Dictionary<string, Conflict> conflicts = new Dictionary<string, Conflict>();
+			//FIXME Use a Dictionary instead ? [module] -> List<PossibilitySet>
+			//List<PossibilitySet> possibilities = GeneratePossibilitySets(currentDependencies);
+
+			List<Conflict> conflicts = new List<Conflict>();
 
 			DependencyState initialState = new DependencyState("initial state",
 																currentDependencies,
 																dg,
-																possibilities, //possibilities
+																new List<PossibilitySet>(), //possibilities
 																0,
 																conflicts //conflicts
 																);
@@ -93,31 +95,19 @@ namespace Uplift.DependencyResolution
 			Debug.Log(initialState);
 		}
 
-		List<PossibilitySet> GeneratePossibilities(Stack<DependencyDefinition> requirements)
+		List<PossibilitySet> GeneratePossibilitySets(State state)
 		{
-			List<PossibilitySet> possibilities = new List<PossibilitySet>();
-			foreach (DependencyDefinition dependency in requirements)
+			//TODO test this
+			List<PossibilitySet> possibilities = state.possibilities;
+			foreach (DependencyDefinition dependency in state.requirements)
 			{
-				PossibilitySet possibilitySet = new PossibilitySet();
-				possibilitySet.name = dependency.Name;
-
-				List<Upset> validPackages = new List<Upset>();
-				foreach (Upset pkg in packageRepoStub.GetPackages(dependency.Name))
+				if (!possibilities.Exists(possibilitySet => possibilitySet.name == dependency.Name))
 				{
-					if (dependency.Requirement.IsMetBy(pkg.PackageVersion))
-					{
-						Debug.Log("--[/] Package " + possibilitySet.name + " " + "[" + pkg.PackageVersion + "]" + " matches requirement : " + dependency.Requirement.ToString());
-						validPackages.Add(pkg);
-					}
-					else
-					{
-						Debug.Log("--[X] Package " + possibilitySet.name + " " + "[" + pkg.PackageVersion + "]" + " does not match requirement : " + dependency.Requirement.ToString());
-					}
+					Debug.Log(dependency.Name + " is not listed in possibility sets");
+					possibilities.AddRange(PossibilitySet.GetPossibilitySetsForGivenPackage(dependency.Name));
 				}
-				//TODO check if same subdependencies
-				possibilitySet.packages = validPackages;
-				possibilities.Add(possibilitySet);
 			}
+			//FIXME Print possibilitySets here ?
 			return possibilities;
 		}
 
@@ -180,8 +170,15 @@ namespace Uplift.DependencyResolution
 				if (currentState.GetType() == typeof(DependencyState))
 				{
 					Debug.Log("Current state is dependency state !");
-					currentState.possibilities = GeneratePossibilities(currentState.requirements); //FIXME maybe this can be optimized
+					List<PossibilitySet> possibilitySets = GeneratePossibilitySets(currentState);
 
+					currentState.possibilities = possibilitySets;//FIXME maybe this can be optimized
+																 //FIXME add matching possibilitySet ?
+																 //TODO this is for debug
+					foreach (PossibilitySet possibilitySet in possibilitySets)
+					{
+						Debug.Log(possibilitySet);
+					}
 
 					if (currentState.requirements.Count == 0)
 					{
@@ -198,18 +195,26 @@ namespace Uplift.DependencyResolution
 							stateStack.Push(newPossibilityState);
 						}
 					}
-
 				}
 				else if (currentState.GetType() == typeof(PossibilityState))
 				{
 					Debug.Log("Current state is possibility state !");
 					DependencyState newState = ((PossibilityState)currentState).SolveState();
 
-					//Debug.Log("Pop possibility state");
-					//stateStack.Pop();
-
-					Debug.Log("Push new dependency state in stack");
-					stateStack.Push(newState);
+					if (currentState.conflicts != null && currentState.conflicts.Count > 0)
+					{
+						stateStack = ((PossibilityState)currentState).UnwindForConflict(stateStack);
+					}
+					else
+					{
+						Debug.Log("Push new dependency state in stack");
+						if (newState == null)
+						{
+							Debug.LogError("error, no viable solution found");
+							break;
+						}
+						stateStack.Push(newState);
+					}
 				}
 				else
 				{

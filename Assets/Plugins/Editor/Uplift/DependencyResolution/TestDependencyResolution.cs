@@ -141,6 +141,39 @@ namespace Uplift.DependencyResolution
 			H255.PackageName = "H";
 			H255.PackageVersion = "2.5.5";
 
+			//Package to test rewind
+			Upset I110 = new Upset();
+			I110.PackageName = "I";
+			I110.PackageVersion = "1.1.0";
+
+			Upset I150 = new Upset();
+			I150.PackageName = "I";
+			I150.PackageVersion = "1.5.0";
+
+			Upset J110 = new Upset();
+			J110.PackageName = "J";
+			J110.PackageVersion = "1.1.0";
+			J110.Dependencies = new DependencyDefinition[1];
+			J110.Dependencies[0] = new DependencyDefinition();
+			J110.Dependencies[0].Name = "K";
+			J110.Dependencies[0].Version = "1.1.0+";
+
+			Upset K110 = new Upset();
+			K110.PackageName = "K";
+			K110.PackageVersion = "1.1.0";
+			K110.Dependencies = new DependencyDefinition[1];
+			K110.Dependencies[0] = new DependencyDefinition();
+			K110.Dependencies[0].Name = "H";
+			K110.Dependencies[0].Version = "2.5.5+";
+
+			Upset K150 = new Upset();
+			K150.PackageName = "K";
+			K150.PackageVersion = "1.5.0";
+			K150.Dependencies = new DependencyDefinition[1];
+			K150.Dependencies[0] = new DependencyDefinition();
+			K150.Dependencies[0].Name = "I";
+			K150.Dependencies[0].Version = "1.1.0";
+
 			packages["A"] = new Upset[] { A110, A116, A120 };
 			packages["B"] = new Upset[] { B110, B113 };
 			packages["C"] = new Upset[] { C110, C116 };
@@ -149,7 +182,9 @@ namespace Uplift.DependencyResolution
 			packages["F"] = new Upset[] { F110 };
 			packages["G"] = new Upset[] { G110 };
 			packages["H"] = new Upset[] { H255 };
-
+			packages["I"] = new Upset[] { I110, I150 };
+			packages["J"] = new Upset[] { J110 };
+			packages["K"] = new Upset[] { K110, K150 };
 		}
 		Stack<DependencyDefinition> originalDependencies = new Stack<DependencyDefinition>();
 		DependencyGraph baseGraph = new DependencyGraph();
@@ -173,7 +208,7 @@ namespace Uplift.DependencyResolution
 
 			Debug.Log("-> Creating resolver");
 			Resolver resolver = new Resolver(originalDependencies, baseGraph);
-			resolver.packageRepoStub = packageRepoStub;
+			Resolver.packageRepoStub = packageRepoStub;
 			Debug.Log("=================");
 			Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
 		}
@@ -182,7 +217,7 @@ namespace Uplift.DependencyResolution
 		public void NoRequirement()
 		{
 			Resolver resolver = new Resolver(originalDependencies, baseGraph);
-			resolver.packageRepoStub = packageRepoStub;
+			Resolver.packageRepoStub = packageRepoStub;
 
 			Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
 		}
@@ -199,7 +234,7 @@ namespace Uplift.DependencyResolution
 			originalDependencies.Push(B);
 
 			Resolver resolver = new Resolver(originalDependencies, baseGraph);
-			resolver.packageRepoStub = packageRepoStub;
+			Resolver.packageRepoStub = packageRepoStub;
 
 			Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
 		}
@@ -224,7 +259,7 @@ namespace Uplift.DependencyResolution
 			originalDependencies.Push(D);
 
 			Resolver resolver = new Resolver(originalDependencies, baseGraph);
-			resolver.packageRepoStub = packageRepoStub;
+			Resolver.packageRepoStub = packageRepoStub;
 
 			Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
 		}
@@ -242,7 +277,7 @@ namespace Uplift.DependencyResolution
 			originalDependencies.Push(A);
 
 			Resolver resolver = new Resolver(originalDependencies, baseGraph);
-			resolver.packageRepoStub = packageRepoStub;
+			Resolver.packageRepoStub = packageRepoStub;
 
 			Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
 		}
@@ -256,7 +291,7 @@ namespace Uplift.DependencyResolution
 			originalDependencies.Push(E);
 
 			Resolver resolver = new Resolver(originalDependencies, baseGraph);
-			resolver.packageRepoStub = packageRepoStub;
+			Resolver.packageRepoStub = packageRepoStub;
 
 			Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
 		}
@@ -275,7 +310,7 @@ namespace Uplift.DependencyResolution
 			originalDependencies.Push(G);
 
 			Resolver resolver = new Resolver(originalDependencies, baseGraph);
-			resolver.packageRepoStub = packageRepoStub;
+			Resolver.packageRepoStub = packageRepoStub;
 
 			Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
 		}
@@ -291,7 +326,7 @@ namespace Uplift.DependencyResolution
 			originalDependencies.Push(H);
 
 			Resolver resolver = new Resolver(originalDependencies, baseGraph);
-			resolver.packageRepoStub = packageRepoStub;
+			Resolver.packageRepoStub = packageRepoStub;
 
 			Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
 		}
@@ -305,7 +340,7 @@ namespace Uplift.DependencyResolution
 			originalDependencies.Push(H);
 
 			Resolver resolver = new Resolver(originalDependencies, baseGraph);
-			resolver.packageRepoStub = packageRepoStub;
+			Resolver.packageRepoStub = packageRepoStub;
 
 			Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
 		}
@@ -319,7 +354,7 @@ namespace Uplift.DependencyResolution
 			originalDependencies.Push(H);
 
 			Resolver resolver = new Resolver(originalDependencies, baseGraph);
-			resolver.packageRepoStub = packageRepoStub;
+			Resolver.packageRepoStub = packageRepoStub;
 
 			Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
 		}
@@ -334,7 +369,7 @@ namespace Uplift.DependencyResolution
 			originalDependencies.Push(H);
 
 			Resolver resolver = new Resolver(originalDependencies, baseGraph);
-			resolver.packageRepoStub = packageRepoStub;
+			Resolver.packageRepoStub = packageRepoStub;
 
 			Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
 		}
@@ -348,7 +383,7 @@ namespace Uplift.DependencyResolution
 			originalDependencies.Push(H);
 
 			Resolver resolver = new Resolver(originalDependencies, baseGraph);
-			resolver.packageRepoStub = packageRepoStub;
+			Resolver.packageRepoStub = packageRepoStub;
 
 			Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
 		}
@@ -362,7 +397,7 @@ namespace Uplift.DependencyResolution
 			originalDependencies.Push(H);
 
 			Resolver resolver = new Resolver(originalDependencies, baseGraph);
-			resolver.packageRepoStub = packageRepoStub;
+			Resolver.packageRepoStub = packageRepoStub;
 
 			Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
 		}
@@ -376,9 +411,31 @@ namespace Uplift.DependencyResolution
 			originalDependencies.Push(H);
 
 			Resolver resolver = new Resolver(originalDependencies, baseGraph);
-			resolver.packageRepoStub = packageRepoStub;
+			Resolver.packageRepoStub = packageRepoStub;
 
 			Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
 		}
+
+		#region Conflict management and unwind
+		[Test]
+		public void SimpleUnwind()
+		{
+			DependencyDefinition I = new DependencyDefinition();
+			I.Name = "I";
+			I.Version = "1.5.0";
+
+			DependencyDefinition J = new DependencyDefinition();
+			J.Name = "J";
+			J.Version = "1.1.0+";
+
+			originalDependencies.Push(J);
+			originalDependencies.Push(I);
+
+			Resolver resolver = new Resolver(originalDependencies, baseGraph);
+			Resolver.packageRepoStub = packageRepoStub;
+
+			Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
+		}
+		#endregion
 	}
 }

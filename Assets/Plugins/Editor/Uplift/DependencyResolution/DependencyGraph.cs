@@ -58,12 +58,16 @@ namespace Uplift.DependencyResolution
 
 		public void AddNode(DependencyNode node)
 		{
-			nodeList.Add(node);
+			if (!nodeList.Contains(node))
+			{
+				nodeList.Add(node);
+			}
 		}
 
 		public void AddDependency(DependencyNode parent, DependencyNode child)
 		{
 			parent.Dependencies.Add(child);
+			AddNode(child);
 		}
 
 		public void LoadDependencies(DependencyDefinition dependency, PackageList packageList, DependencyHelper.ConflictChecker checkConflict, out DependencyNode node)

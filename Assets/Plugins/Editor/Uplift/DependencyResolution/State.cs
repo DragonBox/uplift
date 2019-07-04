@@ -29,79 +29,12 @@ using Uplift.Schemas;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using System;
+using System.Linq;
 
 
 namespace Uplift.DependencyResolution
 {
-	public struct PossibilitySet
-	{
-		public string name;
-		public List<Upset> packages;
-
-		public Upset GetMostRecentPackage()
-		{
-			//Could also use VersionParser.GreaterThan(string a, string b)
-
-			Version currentVersion = null;
-			Version mostRecentVersionSofar = null;
-			Upset mostRecentPackageSoFar = null;
-
-			if (packages != null && packages.Count > 0)
-			{
-
-				foreach (Upset package in packages)
-				{
-					currentVersion = VersionParser.ParseVersion(package.PackageVersion, false);
-
-					if (mostRecentVersionSofar == null || currentVersion > mostRecentVersionSofar)
-					{
-						mostRecentVersionSofar = VersionParser.ParseVersion(package.PackageVersion);
-						mostRecentPackageSoFar = package;
-					}
-				}
-
-			}
-			return mostRecentPackageSoFar;
-		}
-
-		public static PossibilitySet GetMostRecentPossibilitySetFromList(List<PossibilitySet> possibilitySetList)
-		{
-			PossibilitySet mostRecentPossibility = new PossibilitySet();
-			string currentVersion = null;
-			string mostRecentVersion = null;
-			if (possibilitySetList != null && possibilitySetList.Count > 0)
-			{
-				foreach (PossibilitySet pos in possibilitySetList)
-				{
-					if (pos.GetMostRecentPackage() == null)
-					{
-						continue;
-					}
-
-					currentVersion = pos.GetMostRecentPackage().PackageVersion;
-					if (mostRecentVersion == null || VersionParser.GreaterThan(currentVersion, mostRecentVersion))
-					{
-						mostRecentVersion = currentVersion;
-						mostRecentPossibility = pos;
-					}
-				}
-			}
-
-			return mostRecentPossibility;
-		}
-
-		public DependencyDefinition[] GetDependencies()
-		{
-			if (packages != null)
-			{
-				return packages.ToArray()[0].Dependencies;
-			}
-			else
-			{
-				return null;
-			}
-		}
-	}
 
 	public class State
 	{
@@ -110,14 +43,14 @@ namespace Uplift.DependencyResolution
 		public DependencyGraph activated;
 		public List<PossibilitySet> possibilities;
 		public int depth;
-		public Dictionary<string, Conflict> conflicts;
+		public List<Conflict> conflicts;
 
 		public State(string name,
 					Stack<DependencyDefinition> requirements,
 					DependencyGraph activated,
 					List<PossibilitySet> possibilities,
 					int depth,
-					Dictionary<string, Conflict> conflicts)
+					List<Conflict> conflicts)
 		{
 			this.name = name;
 			this.requirements = requirements;
@@ -147,7 +80,7 @@ namespace Uplift.DependencyResolution
 			}
 			else
 			{
-				foreach (var item in conflicts.Keys)
+				foreach (var item in conflicts)
 				{
 					stringBuffer.Append("[" + item.ToString() + "]");
 				}
@@ -180,7 +113,7 @@ namespace Uplift.DependencyResolution
 								DependencyGraph activated,
 								List<PossibilitySet> possibilities,
 								int depth,
-								Dictionary<string, Conflict> conflicts) :
+								List<Conflict> conflicts) :
 								base(name, requirements, activated, possibilities, depth, conflicts)
 		{ }
 
@@ -193,19 +126,14 @@ namespace Uplift.DependencyResolution
 			Debug.Log("Dependency graph : ");
 			Debug.Log(activated.ToString());
 			//FIXME : Does nodeList also include children ? (answer = no)
+			//TODO : fix this ! explore add child in node list
 			foreach (DependencyNode node in activated.nodeList)
 			{
-				Debug.Log("a node is explored");
-				if (node.matchingPossibilities.Count > 0)
+				//FIXME : Better euristic to choose possibilities (most recent ?)
+				PossibilitySet chosenPossibililtySet = node.selectedPossibilitySet;
+				if (chosenPossibililtySet.packages.Count > 0)
 				{
-					Debug.Log("Has a matching possibility");
-					//FIXME : Better euristic to choose possibilities (most recent ?)
-					PossibilitySet chosenPossibililtySet = node.matchingPossibilities.ToArray()[0];
-					if (chosenPossibililtySet.packages.Count > 0)
-					{
-						Debug.Log("displaying it");
-						upsetList.Add(chosenPossibililtySet.packages[0]);
-					}
+					upsetList.Add(chosenPossibililtySet.packages[0]);
 				}
 			}
 			return upsetList;
@@ -241,13 +169,16 @@ namespace Uplift.DependencyResolution
 	class PossibilityState : State
 	{
 		DependencyState parent;
+		public List<PossibilitySet> matchingPossibilitySet = new List<PossibilitySet>();
 		DependencyDefinition currentRequirement;
+		List<Conflict> unusedUnwinds = new List<Conflict>(); //FIXME Unwind = conflict + stateToUnwind
+
 		public PossibilityState(string name,
 								Stack<DependencyDefinition> requirements,
 								DependencyGraph activated,
 								List<PossibilitySet> possibilities,
 								int depth,
-								Dictionary<string, Conflict> conflicts,
+								List<Conflict> conflicts,
 								DependencyState parent,
 								DependencyDefinition currentRequirement
 								) :
@@ -255,6 +186,7 @@ namespace Uplift.DependencyResolution
 		{
 			this.parent = parent;
 			this.currentRequirement = currentRequirement;
+			this.matchingPossibilitySet = PossibilitySet.GetMatchingPossibilities(possibilities, currentRequirement);
 		}
 
 		override public string ToString()
@@ -271,40 +203,29 @@ namespace Uplift.DependencyResolution
 		{
 			Debug.Log("Starts to solve possibility state");
 			Debug.Log("Possibilities in current state : ");
-			foreach (PossibilitySet possibilitySet in possibilities)
+			foreach (PossibilitySet possibilitySet in matchingPossibilitySet)
 			{
 				Debug.Log(possibilitySet.name + " | nb of possibilities : " + possibilitySet.packages.Count);
 			}
 
-			List<PossibilitySet> availablePossibilities = possibilities.FindAll(pos => pos.name == currentRequirement.Name);
-
-			if (availablePossibilities.Count == 0)
-			{
-				Debug.LogError("Conflict detected, need to rewind !");
-				GenerateConflict();
-			}
-
-			DependencyState newState = null;
 			if (!activated.Contains(currentRequirement.Name))
 			{
 				Debug.Log("Creates new node and pushes it in activated graph");
 				activated.AddNode(new DependencyNode(currentRequirement));
 			}
-			DependencyNode correspondingNode = activated.FindByName(currentRequirement.Name);
 
-			//FIXME LoadDependency
-			Debug.Log("- Goes through possibilities to update graph for " + currentRequirement.Name);
-			List<PossibilitySet> matchingPossibilities = FindMatchingPossibilities(availablePossibilities, correspondingNode.Requirement);
-
-			if (matchingPossibilities.Count == 0) // TODO IF every matchingPossibility.packages are empty
+			DependencyNode correspondingNode = activated.FindByName(currentRequirement.Name); //FIXME check if dependency graph look into childs to find results
+			DependencyState newState = null;
+			if (matchingPossibilitySet.Count == 0) // TODO IF every matchingPossibility.packages are empty
 			{
-				Debug.LogError("- Conflict detected, need to rewind !");
-				GenerateConflict();
+				Debug.Log("- Conflict detected, need to rewind !");
+				GenerateConflict(currentRequirement, activated);
 			}
 			else
 			{
-				InjectPossibilitiesInDependencyGraph(matchingPossibilities, correspondingNode);
+				InjectPossibilitiesInDependencyGraph(matchingPossibilitySet, correspondingNode);
 				Debug.Log("Poping new dependency state");
+				//TODO change Name
 				newState = new DependencyState(name, requirements, activated, possibilities, depth + 1, conflicts);
 			}
 			return newState;
@@ -318,7 +239,7 @@ namespace Uplift.DependencyResolution
 				{
 					if (!requirement.IsMetBy(pkg.PackageVersion))
 					{
-						Debug.Log("Version " + pkg.PackageVersion + " does not match requirement " + requirement);
+						Debug.Log("Version " + pkg.PackageVersion + " does not match requirement " + requirement.ToString());
 						possibilitySet.packages.Remove(pkg);
 						Debug.Log("Version deleted from matching version");
 					}
@@ -333,12 +254,27 @@ namespace Uplift.DependencyResolution
 
 		private void InjectPossibilitiesInDependencyGraph(List<PossibilitySet> matchingPossibilities, DependencyNode correspondingNode)
 		{
-			PossibilitySet mostRecentPossibility = PossibilitySet.GetMostRecentPossibilitySetFromList(matchingPossibilities);
-			DependencyDefinition[] dependenciesToAdd = mostRecentPossibility.GetDependencies();
+			//TODO remove doubles
+			correspondingNode.matchingPossibilities = correspondingNode.matchingPossibilities
+													.Concat(matchingPossibilities)
+													.Distinct()
+													.ToList();
 
-			//TODO remove doubles || if !contains
-			correspondingNode.matchingPossibilities.AddRange(matchingPossibilities);
-			correspondingNode.AddDependencies(dependenciesToAdd, activated);
+			correspondingNode.UpdateSelectedPossibilitySet();
+
+			if (correspondingNode.selectedPossibilitySet == null)
+			{
+				GenerateConflict(currentRequirement, activated);
+			}
+
+			DependencyDefinition[] dependenciesToAdd = correspondingNode.selectedPossibilitySet.GetDependencies();
+			correspondingNode.AddDependencies(dependenciesToAdd, activated, correspondingNode.selectedPossibilitySet.name);
+
+			if (correspondingNode.conflictingRequirementOnNode != null)
+			{
+				Debug.Log("Conflict detected : incompatible requirements");
+				GenerateConflict(correspondingNode.conflictingRequirementOnNode, activated);
+			}
 
 			if (dependenciesToAdd != null)
 			{

@@ -35,13 +35,18 @@ namespace Uplift.DependencyResolution
 		protected IVersionRequirement requirement;
 		protected string repository;
 		protected string name;
-		protected List<DependencyNode> dependencies;
 		protected int index;
 		protected int lowlink;
 
+		public List<DependencyNode> dependencies;
+		public PossibilitySet selectedPossibilitySet;
 		public List<PossibilitySet> matchingPossibilities = new List<PossibilitySet>();
+		//public List<PossibilitySet> possibilities = new List<PossibilitySet>();
+		public Dictionary<string, IVersionRequirement> restrictions = new Dictionary<string, IVersionRequirement>();
 		public SkipInstallSpec[] skips;
 		public OverrideDestinationSpec[] overrides;
+
+		public DependencyDefinition conflictingRequirementOnNode = null;
 
 		public DependencyNode() { }
 		public DependencyNode(DependencyDefinition definition) : this(

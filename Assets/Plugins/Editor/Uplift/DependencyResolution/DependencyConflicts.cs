@@ -42,6 +42,56 @@ namespace Uplift.DependencyResolution
 			this.activated = activated;
 		}
 
+		public List<string> FindConflictingDependency()
+		{
+			//FIXME conflict might be due to several requirement
+			List<string> conflictingDependencies = new List<string>();
+			DependencyNode correspondingNode = this.activated.FindByName(this.requirement.Name);
+
+			DependencyNode copiedNode = new DependencyNode();
+			copiedNode.restrictions = correspondingNode.restrictions;
+			if (copiedNode.restrictions.Keys != null && copiedNode.restrictions.Keys.Count > 0)
+			{
+				List<String> restrictors = new List<string>(copiedNode.restrictions.Keys);
+
+				foreach (string key in restrictors)
+				{
+					//Initial requirements cannot be changed
+					if (key == "initial")
+					{
+						continue;
+					}
+					//TODO create a function to do this
+					IVersionRequirement tmpVersion = copiedNode.restrictions[key];
+					copiedNode.restrictions[key] = new NoRequirement();
+					try
+					{
+						IVersionRequirement newRequirementForNode = copiedNode.ComputeRequirement();
+						//IVersionRequirement versionRequirementTobeChecked = conflictRaised.requirement.Requirement.RestrictTo(newRequirementForNode);
+
+						foreach (Upset package in correspondingNode.selectedPossibilitySet.packages)
+						{
+							if (newRequirementForNode.IsMetBy(package.PackageVersion))
+							{
+								Debug.Log("When removing " + key + " requirements on " + this.requirement.Name + " no conflict remains.");
+								conflictingDependencies.Add(key);
+								break;
+							}
+						}
+					}
+					catch (Exception e)
+					{
+						Debug.LogError(e.ToString());
+					}
+					finally
+					{
+						copiedNode.restrictions[key] = tmpVersion;
+					}
+				}
+			}
+			return conflictingDependencies;
+		}
+
 		override public string ToString()
 		{
 			StringBuilder sb = new StringBuilder();

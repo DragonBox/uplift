@@ -164,7 +164,13 @@ namespace Uplift.DependencyResolution
 
 					if (currentState.conflicts != null && currentState.conflicts.Count > 0)
 					{
-						stateStack = ((PossibilityState)currentState).UnwindForConflict(stateStack);
+						Conflict conflict = currentState.conflicts.ToArray()[0];
+						Rewinder rewinder = new Rewinder(stateStack);
+						stateStack = rewinder.UnwindForConflict(conflict);
+						currentState.conflicts.Remove(conflict);
+
+						//TODO Remove
+						//stateStack = ((PossibilityState)currentState).UnwindForConflict(stateStack);
 					}
 					else
 					{

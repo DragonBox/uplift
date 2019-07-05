@@ -38,21 +38,18 @@ namespace Uplift.DependencyResolution
 
 	public class State
 	{
-		public string name;
 		public Stack<DependencyDefinition> requirements;
 		public DependencyGraph activated;
 		public List<PossibilitySet> possibilities;
 		public int depth;
 		public List<Conflict> conflicts;
 
-		public State(string name,
-					Stack<DependencyDefinition> requirements,
+		public State(Stack<DependencyDefinition> requirements,
 					DependencyGraph activated,
 					List<PossibilitySet> possibilities,
 					int depth,
 					List<Conflict> conflicts)
 		{
-			this.name = name;
 			this.requirements = requirements;
 			this.activated = activated;
 			this.possibilities = possibilities;
@@ -108,13 +105,12 @@ namespace Uplift.DependencyResolution
 
 	class DependencyState : State
 	{
-		public DependencyState(string name,
-								Stack<DependencyDefinition> requirements,
+		public DependencyState(Stack<DependencyDefinition> requirements,
 								DependencyGraph activated,
 								List<PossibilitySet> possibilities,
 								int depth,
 								List<Conflict> conflicts) :
-								base(name, requirements, activated, possibilities, depth, conflicts)
+								base(requirements, activated, possibilities, depth, conflicts)
 		{ }
 
 
@@ -151,8 +147,7 @@ namespace Uplift.DependencyResolution
 				DependencyDefinition currentRequirement = requirements.Pop();
 
 				//TODO check shallow copy 
-				possibilityState = new PossibilityState(name,
-														requirements,   //Should be shallow copy
+				possibilityState = new PossibilityState(requirements,   //Should be shallow copy
 														activated,
 														possibilities,
 														depth + 1,
@@ -173,8 +168,7 @@ namespace Uplift.DependencyResolution
 		public DependencyDefinition currentRequirement;
 		List<Conflict> unusedUnwinds = new List<Conflict>();
 
-		public PossibilityState(string name,
-								Stack<DependencyDefinition> requirements,
+		public PossibilityState(Stack<DependencyDefinition> requirements,
 								DependencyGraph activated,
 								List<PossibilitySet> possibilities,
 								int depth,
@@ -182,7 +176,7 @@ namespace Uplift.DependencyResolution
 								DependencyState parent,
 								DependencyDefinition currentRequirement
 								) :
-								base(name, requirements, activated, possibilities, depth, conflicts)
+								base(requirements, activated, possibilities, depth, conflicts)
 		{
 			this.parent = parent;
 			this.currentRequirement = currentRequirement;
@@ -226,7 +220,7 @@ namespace Uplift.DependencyResolution
 				InjectPossibilitiesInDependencyGraph(matchingPossibilitySet, correspondingNode);
 				Debug.Log("Poping new dependency state");
 				//TODO change Name
-				newState = new DependencyState(name, requirements, activated, possibilities, depth + 1, conflicts);
+				newState = new DependencyState(requirements, activated, possibilities, depth + 1, conflicts);
 			}
 			return newState;
 		}

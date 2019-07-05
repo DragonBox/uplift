@@ -67,8 +67,7 @@ namespace Uplift.DependencyResolution
 
 			Stack<DependencyDefinition> currentDependencies = originalDependencies;
 			List<Conflict> conflicts = new List<Conflict>();
-			DependencyState initialState = new DependencyState("initial state",
-																currentDependencies,
+			DependencyState initialState = new DependencyState(currentDependencies,
 																dg,
 																new List<PossibilitySet>(), //possibilities
 																0,

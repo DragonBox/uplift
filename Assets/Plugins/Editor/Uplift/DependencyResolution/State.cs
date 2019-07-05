@@ -121,11 +121,9 @@ namespace Uplift.DependencyResolution
 
 			Debug.Log("Dependency graph : ");
 			Debug.Log(activated.ToString());
-			//FIXME : Does nodeList also include children ? (answer = no)
-			//TODO : fix this ! explore add child in node list
+
 			foreach (DependencyNode node in activated.nodeList)
 			{
-				//FIXME : Better euristic to choose possibilities (most recent ?)
 				PossibilitySet chosenPossibililtySet = node.selectedPossibilitySet;
 				if (chosenPossibililtySet.packages.Count > 0)
 				{
@@ -208,9 +206,9 @@ namespace Uplift.DependencyResolution
 				activated.AddNode(new DependencyNode(currentRequirement));
 			}
 
-			DependencyNode correspondingNode = activated.FindByName(currentRequirement.Name); //FIXME check if dependency graph look into childs to find results
+			DependencyNode correspondingNode = activated.FindByName(currentRequirement.Name);
 			DependencyState newState = null;
-			if (matchingPossibilitySet.Count == 0) // TODO IF every matchingPossibility.packages are empty
+			if (matchingPossibilitySet.Count == 0)
 			{
 				Debug.Log("- Conflict detected, need to rewind !");
 				GenerateConflict(currentRequirement, activated);
@@ -248,7 +246,6 @@ namespace Uplift.DependencyResolution
 
 		private void InjectPossibilitiesInDependencyGraph(List<PossibilitySet> matchingPossibilities, DependencyNode correspondingNode)
 		{
-			//TODO remove doubles
 			correspondingNode.matchingPossibilities = correspondingNode.matchingPossibilities
 													.Concat(matchingPossibilities)
 													.Distinct()

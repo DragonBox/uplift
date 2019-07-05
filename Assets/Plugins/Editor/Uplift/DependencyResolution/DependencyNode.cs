@@ -216,7 +216,7 @@ namespace Uplift.DependencyResolution
 					Debug.Log("Depends on " + dd.Name);
 					if (dd != null)
 					{
-						if (!activated.Contains(dd.Name))//FIXME does contains method explore childnodes ?
+						if (!activated.Contains(dd.Name))
 						{
 							Debug.Log("Node added for " + dd.Name);
 							DependencyNode childNode = new DependencyNode(dd);

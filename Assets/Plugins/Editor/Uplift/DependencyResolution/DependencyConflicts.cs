@@ -28,6 +28,8 @@ using Uplift.Packages;
 using Uplift.Schemas;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
+using System;
 
 namespace Uplift.DependencyResolution
 {

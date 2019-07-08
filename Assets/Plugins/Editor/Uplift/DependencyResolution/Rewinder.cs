@@ -105,6 +105,9 @@ namespace Uplift.DependencyResolution
 			Debug.Log("Remove it from matching possibility set");
 			correspondingNode.matchingPossibilities = stateToRewind.matchingPossibilitySet;
 
+			Debug.Log("Clean nodes dependencies");
+			correspondingNode.dependencies = new List<DependencyNode>();
+
 			Debug.Log("Push edited possibility state to stack");
 			stack.Push(stateToRewind);
 			return stack;

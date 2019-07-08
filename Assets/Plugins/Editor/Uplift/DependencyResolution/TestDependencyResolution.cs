@@ -6,6 +6,7 @@ using NUnit.Framework;
 using UnityEngine.TestTools;
 using UnityEngine;
 using System.Text;
+using System.Linq;
 
 namespace Uplift.DependencyResolution
 {
@@ -434,8 +435,26 @@ namespace Uplift.DependencyResolution
 			Resolver resolver = new Resolver(originalDependencies, baseGraph);
 			Resolver.packageRepoStub = packageRepoStub;
 
-			Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
+			Upset[] expected = {packages["I"][1],	//I150
+								packages["J"][0],	//J110
+								packages["K"][0],	//K110
+								packages["H"][0]};  //H255
+
+			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies()));
+			//Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
 		}
 		#endregion
+
+		private bool CheckResolverResults(Upset[] expected, List<Upset> results)
+		{
+			if (expected.Length == results.Count)
+			{
+				return !results.Any(pkg => !expected.Contains(pkg));
+			}
+			else
+			{
+				return false;
+			}
+		}
 	}
 }

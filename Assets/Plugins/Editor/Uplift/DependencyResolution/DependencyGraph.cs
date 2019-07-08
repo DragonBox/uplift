@@ -112,11 +112,12 @@ namespace Uplift.DependencyResolution
 
 
 		//Check if node has a childnode with the given name in parameter and return his parent
-		public List<DependencyNode> FindNodesWithGivenDependency(string name)
+		public List<DependencyNode> FindNodesRelatedToGivenDependency(string name)
 		{
 			List<DependencyNode> matchingNodes = new List<DependencyNode>();
+			matchingNodes.Add(this.FindByName(name));
 
-			foreach (DependencyNode node in nodeList.FindAll(node => node.isChildNode))
+			foreach (DependencyNode node in nodeList)
 			{
 				//Check if depends on given dependency name
 				DependencyDefinition[] dependencies = node.selectedPossibilitySet.GetDependencies();

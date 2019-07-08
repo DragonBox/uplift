@@ -113,16 +113,17 @@ namespace Uplift.DependencyResolution
 								base(requirements, activated, possibilities, depth, conflicts)
 		{ }
 
-
 		public List<Upset> GetResolution()
 		{
 			Debug.Log("getting resolution");
 			List<Upset> upsetList = new List<Upset>();
 
-			Debug.Log("Dependency graph : ");
-			Debug.Log(activated.ToString());
+			List<DependencyNode> nodesToExplore = activated.nodeList.FindAll(node => !node.isChildNode);
+			nodesToExplore = nodesToExplore.Concat(nodesToExplore.SelectMany(node => node.GetChildNodesList()))
+											.Distinct()
+											.ToList();
 
-			foreach (DependencyNode node in activated.nodeList)
+			foreach (DependencyNode node in nodesToExplore)
 			{
 				PossibilitySet chosenPossibililtySet = node.selectedPossibilitySet;
 				if (chosenPossibililtySet.packages.Count > 0)
@@ -133,9 +134,6 @@ namespace Uplift.DependencyResolution
 			return upsetList;
 		}
 
-		/*
-			method for when no requirements
-		 */
 		public PossibilityState PopPossibilityState()
 		{
 			Debug.Log("Poping possibility State");

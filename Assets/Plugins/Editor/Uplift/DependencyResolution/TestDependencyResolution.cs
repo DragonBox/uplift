@@ -175,6 +175,23 @@ namespace Uplift.DependencyResolution
 			K150.Dependencies[0].Name = "I";
 			K150.Dependencies[0].Version = "1.1.0";
 
+			Upset L120 = new Upset();
+			L120.PackageName = "L";
+			L120.PackageVersion = "1.2.0";
+			L120.Dependencies = new DependencyDefinition[1];
+			L120.Dependencies[0] = new DependencyDefinition();
+			L120.Dependencies[0].Name = "H";
+			L120.Dependencies[0].Version = "2.5.5+";
+
+			Upset L150 = new Upset();
+			L150.PackageName = "L";
+			L150.PackageVersion = "1.5.0";
+			L150.Dependencies = new DependencyDefinition[1];
+			L150.Dependencies[0] = new DependencyDefinition();
+			L150.Dependencies[0].Name = "K";
+			L150.Dependencies[0].Version = "1.5.0";
+
+
 			packages["A"] = new Upset[] { A110, A116, A120 };
 			packages["B"] = new Upset[] { B110, B113 };
 			packages["C"] = new Upset[] { C110, C116 };
@@ -186,6 +203,7 @@ namespace Uplift.DependencyResolution
 			packages["I"] = new Upset[] { I110, I150 };
 			packages["J"] = new Upset[] { J110 };
 			packages["K"] = new Upset[] { K110, K150 };
+			packages["L"] = new Upset[] { L120, L150 };
 		}
 		Stack<DependencyDefinition> originalDependencies = new Stack<DependencyDefinition>();
 		DependencyGraph baseGraph = new DependencyGraph();
@@ -442,6 +460,31 @@ namespace Uplift.DependencyResolution
 
 			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies()));
 			//Assert.DoesNotThrow(() => { resolver.SolveDependencies(); });
+		}
+
+		[Test]
+		public void simpleUnwindOnParent()
+		{
+			DependencyDefinition I = new DependencyDefinition();
+			I.Name = "I";
+			I.Version = "1.5.0";
+
+			DependencyDefinition L = new DependencyDefinition();
+			L.Name = "L";
+			L.Version = "1.2.0+";
+
+			originalDependencies.Push(L);
+			originalDependencies.Push(I);
+
+			Resolver resolver = new Resolver(originalDependencies, baseGraph);
+			Resolver.packageRepoStub = packageRepoStub;
+
+			Upset[] expected = {packages["I"][1],	//I150
+								packages["L"][0],	//L120
+								packages["H"][0]};  //H255
+
+			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies()));
+
 		}
 		#endregion
 

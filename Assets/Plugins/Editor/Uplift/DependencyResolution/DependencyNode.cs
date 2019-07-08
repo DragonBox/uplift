@@ -42,7 +42,6 @@ namespace Uplift.DependencyResolution
 		public List<DependencyNode> dependencies;
 		public PossibilitySet selectedPossibilitySet;
 		public List<PossibilitySet> matchingPossibilities = new List<PossibilitySet>();
-		//public List<PossibilitySet> possibilities = new List<PossibilitySet>();
 		public Dictionary<string, IVersionRequirement> restrictions = new Dictionary<string, IVersionRequirement>();
 		public SkipInstallSpec[] skips;
 		public OverrideDestinationSpec[] overrides;
@@ -150,7 +149,6 @@ namespace Uplift.DependencyResolution
 		{
 			//TODO write a test for this
 			Debug.Log("Updating " + this.name + " requirement " + requirement);
-
 			Debug.Log(restrictor + " adds new restriction on " + name);
 
 			restrictions[restrictor] = newRequirements.Requirement;
@@ -232,6 +230,20 @@ namespace Uplift.DependencyResolution
 					}
 				}
 			}
+		}
+
+		public List<DependencyNode> GetChildNodesList()
+		{
+			List<DependencyNode> childNodesList = new List<DependencyNode>();
+			if (dependencies != null)
+			{
+				childNodesList.AddRange(dependencies);
+				foreach (DependencyNode childNode in dependencies)
+				{
+					childNodesList.AddRange(childNode.GetChildNodesList());
+				}
+			}
+			return childNodesList;
 		}
 	}
 }

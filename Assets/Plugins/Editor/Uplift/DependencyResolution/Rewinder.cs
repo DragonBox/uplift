@@ -44,14 +44,14 @@ namespace Uplift.DependencyResolution
 
 		public Stack<State> UnwindForConflict(Conflict conflict) //return stack ?
 		{
-			//In dependencyState ?
-			Debug.Log("unwind for conflict started");
+			Debug.Log("Unwind for conflict started");
 			// Find requirements causing conflict
 			Debug.Log("Get list of conflicting requirements");
 
 			//TODO if null raise error ?
 			List<string> conflictingRequirements = conflict.FindConflictingDependency();
 
+			//Copy current stack
 			Stack<State> stackCopy = new Stack<State>(stack);
 			List<State> possibleRewinds = new List<State>();
 
@@ -75,7 +75,7 @@ namespace Uplift.DependencyResolution
 				// -->  Update list of unused unwinds			
 			}
 
-			PossibilityState rewindStateCandidate = FindStateWithGreaterIndex(possibleRewinds);
+			PossibilityState rewindStateCandidate = FindStateWithGreatestIndex(possibleRewinds);
 			Debug.Log("Rewind candidate is found.");
 			Debug.Log(rewindStateCandidate.currentRequirement.Name + " has other possibility sets matching requirements");
 			//FIXME Remove it from possible rewind and put the remaining one in unusedUnwinds
@@ -126,14 +126,8 @@ namespace Uplift.DependencyResolution
 			//Add possibilityState of dependencyName
 			if (stack.Count >= 1)
 			{
-				listOfPossibleRewinds = listOfPossibleRewinds.Concat(listOfStates)
-															.Where(state => state.GetType() == typeof(PossibilityState))
-															.Where(state => ((PossibilityState)state).currentRequirement.Name == dependencyName)
-															.Where(state => state.activated.FindByName(dependencyName).matchingPossibilities.Count > 1)
-															.Distinct()
-															.ToList();
-
-				foreach (DependencyNode node in currentState.activated.FindNodesWithGivenDependency(dependencyName))
+				List<DependencyNode> relatedNodes = currentState.activated.FindNodesRelatedToGivenDependency(dependencyName);
+				foreach (DependencyNode node in relatedNodes)
 				{
 					matchingPossibilityStates = matchingPossibilityStates.Concat(listOfStates)
 																		.Where(state => state.GetType() == typeof(PossibilityState))
@@ -141,17 +135,13 @@ namespace Uplift.DependencyResolution
 																		.Where(state => state.activated.FindByName(node.Name).matchingPossibilities.Count > 1)
 																		.Distinct()
 																		.ToList();
-					/*
-					matchingPossibilityStates = listOfStates.FindAll(state => state.GetType() == typeof(PossibilityState)
-																		&& ((PossibilityState)state).currentRequirement.Name == node.Name
-																		&& state.activated.FindByName(node.Name).matchingPossibilities.Count > 1);
- 					*/
+
 					listOfPossibleRewinds.AddRange(matchingPossibilityStates);
 				}
 			}
 			return listOfPossibleRewinds;
 		}
-		private PossibilityState FindStateWithGreaterIndex(List<State> possibleRewinds)
+		private PossibilityState FindStateWithGreatestIndex(List<State> possibleRewinds)
 		{
 			PossibilityState rewindCandidate = null;
 			foreach (PossibilityState state in possibleRewinds)

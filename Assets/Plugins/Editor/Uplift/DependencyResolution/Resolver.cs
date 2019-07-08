@@ -120,7 +120,7 @@ namespace Uplift.DependencyResolution
 		}
 
 		// A debug function to display packages in resolution
-		void ShadowResolution(List<Upset> resolution)
+		void ShowResolution(List<Upset> resolution)
 		{
 			StringBuilder sb = new StringBuilder();
 
@@ -227,7 +227,7 @@ namespace Uplift.DependencyResolution
 
 
 			Debug.Log("===== Final resolution : =====");
-			ShadowResolution(resolution);
+			ShowResolution(resolution);
 			return resolution;
 		}
 	}

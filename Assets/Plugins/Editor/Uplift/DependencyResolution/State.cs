@@ -215,12 +215,12 @@ namespace Uplift.DependencyResolution
 			{
 				InjectPossibilitiesInDependencyGraph(matchingPossibilitySet, correspondingNode);
 				Debug.Log("Poping new dependency state");
-				//TODO change Name
 				newState = new DependencyState(requirements, activated, possibilities, depth + 1, conflicts);
 			}
 			return newState;
 		}
 
+		//TODO Remove ?
 		private List<PossibilitySet> FindMatchingPossibilities(List<PossibilitySet> availablePossibilities, IVersionRequirement requirement)
 		{
 			foreach (PossibilitySet possibilitySet in availablePossibilities)

@@ -36,7 +36,7 @@ namespace Uplift.DependencyResolution
 	{
 		public static PackageRepoStub packageRepoStub;
 
-		DependencyGraph baseGraph;
+		DependencyGraph baseGraph = new DependencyGraph();
 		Stack<DependencyDefinition> originalDependencies;
 		Stack<State> stateStack = new Stack<State>();
 
@@ -45,12 +45,9 @@ namespace Uplift.DependencyResolution
 			this.originalDependencies = originalDependencies;
 			this.baseGraph = baseGraph;
 		}
-
-		// Start resolution process
-		void StartResolution()
+		public Resolver(Stack<DependencyDefinition> originalDependencies)
 		{
-			Debug.Log("Start Resolution");
-			pushInitialState();
+			this.originalDependencies = originalDependencies;
 		}
 
 		public void pushInitialState()
@@ -58,6 +55,7 @@ namespace Uplift.DependencyResolution
 			Debug.Log("Pushing initial state");
 			DependencyGraph dg = new DependencyGraph();
 
+			//Create nodes for original dependencies
 			foreach (DependencyDefinition requested in originalDependencies)
 			{
 				DependencyNode node = new DependencyNode(requested);
@@ -65,6 +63,7 @@ namespace Uplift.DependencyResolution
 				dg.AddNode(node);
 			}
 
+			//Create dependency state for original dependencies
 			Stack<DependencyDefinition> currentDependencies = originalDependencies;
 			List<Conflict> conflicts = new List<Conflict>();
 			DependencyState initialState = new DependencyState(currentDependencies,
@@ -78,6 +77,9 @@ namespace Uplift.DependencyResolution
 			Debug.Log(initialState);
 		}
 
+		// Returns list of possibility sets according to the requirements of a given state
+		// Each possibility set representing a group of versions for a dependency which 
+		// share the same sub-dependency requirements and are contiguous.
 		List<PossibilitySet> GeneratePossibilitySets(State state)
 		{
 			List<PossibilitySet> possibilities = state.possibilities;
@@ -92,11 +94,7 @@ namespace Uplift.DependencyResolution
 			return possibilities;
 		}
 
-		void EndResolution()
-		{
-			Debug.Log("Ending resolution");
-		}
-
+		// A debug function to display the state stack.
 		void ShowStateStack()
 		{
 			StringBuilder sb = new StringBuilder();
@@ -108,74 +106,112 @@ namespace Uplift.DependencyResolution
 			sb.AppendLine("================");
 			Debug.Log(sb.ToString());
 		}
+
+		// A debug function to display possibility sets.
+		void ShowPossibilitySets(List<PossibilitySet> possibilitySets)
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.AppendLine("Possibility Sets for current state : ");
+			foreach (PossibilitySet possibilitySet in possibilitySets)
+			{
+				sb.AppendLine("* " + possibilitySet.ToString());
+			}
+			Debug.Log(sb.ToString());
+		}
+
+		// A debug function to display packages in resolution
+		void ShadowResolution(List<Upset> resolution)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			foreach (Upset pkg in resolution)
+			{
+				sb.AppendLine(pkg.PackageName + " : " + pkg.PackageVersion);
+			}
+			Debug.Log(sb.ToString());
+		}
+
+		//TODO doc
+		//Main function which process the [...]
 		public List<Upset> SolveDependencies()
 		{
-			//FIXME Clean code here and split in sub methods
+			// FIXME Clean code here and split in sub methods
 			Debug.Log("Solve dependencies");
-			StartResolution();
 
+			pushInitialState();
+
+			// Final results
 			List<Upset> resolution = new List<Upset>();
 
+			//FIXME change this when algo is operational
 			int i = 100;
 			while (i > 0)//stateStack.Count > 0)
 			{
+				i--;
 				if (stateStack.Count == 0)
 				{
 					break;
 				}
 
-				i--;
 				ShowStateStack();
+
+				// Process Topmost state in stack
 				State currentState = stateStack.Peek();
 
+				// Process either a dependency State or a Possibility State
 				if (currentState.GetType() == typeof(DependencyState))
 				{
 					Debug.Log("Current state is dependency state !");
 					List<PossibilitySet> possibilitySets = GeneratePossibilitySets(currentState);
 					currentState.possibilities = possibilitySets;
 
-					//TODO For debug
-					foreach (PossibilitySet possibilitySet in possibilitySets)
-					{
-						Debug.Log(possibilitySet);
-					}
+					ShowPossibilitySets(possibilitySets);
 
+					// Check if resolution is over
 					if (currentState.requirements.Count == 0)
 					{
+						// No more requirement to fulfill resolution is over
 						Debug.Log("No more requirements to match, getting solutions : ");
 						resolution = ((DependencyState)currentState).GetResolution();
 						break;
 					}
 					else
 					{
+						// Resolution is not over, generating new possibility state for a remaining dependency
 						PossibilityState newPossibilityState = ((DependencyState)currentState).PopPossibilityState();
 						if (newPossibilityState != null)
 						{
 							Debug.Log("Add new possibility state in stack");
 							stateStack.Push(newPossibilityState);
 						}
+						else
+						{
+							//TODO manage error
+						}
 					}
 				}
 				else if (currentState.GetType() == typeof(PossibilityState))
 				{
 					Debug.Log("Current state is possibility state !");
+					// Find resolution for current possibility state
 					DependencyState newState = ((PossibilityState)currentState).SolveState();
 
+					// Check for conflicts
 					if (currentState.conflicts != null && currentState.conflicts.Count > 0)
 					{
+						// Conflicts were found, rewind in a previous state to find solution
 						Conflict conflict = currentState.conflicts.ToArray()[0];
 						Rewinder rewinder = new Rewinder(stateStack);
 						stateStack = rewinder.UnwindForConflict(conflict);
 						currentState.conflicts.Remove(conflict);
-
-						//TODO Remove
-						//stateStack = ((PossibilityState)currentState).UnwindForConflict(stateStack);
 					}
 					else
 					{
+						// State Resolution is successfull
 						Debug.Log("Push new dependency state in stack");
 						if (newState == null)
 						{
+							//TODO exception
 							Debug.LogError("error, no viable solution found");
 							break;
 						}
@@ -184,16 +220,14 @@ namespace Uplift.DependencyResolution
 				}
 				else
 				{
+					// TODO exception
 					Debug.LogError("Error : Current state is neither possibility or dependency state");
 				}
 			}
 
-			EndResolution();
+
 			Debug.Log("===== Final resolution : =====");
-			foreach (Upset pkg in resolution)
-			{
-				Debug.Log(pkg.PackageName + " : " + pkg.PackageVersion);
-			}
+			ShadowResolution(resolution);
 			return resolution;
 		}
 	}

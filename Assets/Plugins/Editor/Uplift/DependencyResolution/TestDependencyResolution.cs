@@ -191,6 +191,21 @@ namespace Uplift.DependencyResolution
 			L150.Dependencies[0].Name = "K";
 			L150.Dependencies[0].Version = "1.5.0";
 
+			Upset M110 = new Upset();
+			M110.PackageName = "M";
+			M110.PackageVersion = "1.1.0";
+			M110.Dependencies = new DependencyDefinition[1];
+			M110.Dependencies[0] = new DependencyDefinition();
+			M110.Dependencies[0].Name = "J";
+			M110.Dependencies[0].Version = "1.1.0+";
+
+			Upset M150 = new Upset();
+			M150.PackageName = "M";
+			M150.PackageVersion = "1.5.0";
+			M150.Dependencies = new DependencyDefinition[1];
+			M150.Dependencies[0] = new DependencyDefinition();
+			M150.Dependencies[0].Name = "L";
+			M150.Dependencies[0].Version = "1.5.0";
 
 			packages["A"] = new Upset[] { A110, A116, A120 };
 			packages["B"] = new Upset[] { B110, B113 };
@@ -204,6 +219,7 @@ namespace Uplift.DependencyResolution
 			packages["J"] = new Upset[] { J110 };
 			packages["K"] = new Upset[] { K110, K150 };
 			packages["L"] = new Upset[] { L120, L150 };
+			packages["M"] = new Upset[] { M110, M150 };
 		}
 		Stack<DependencyDefinition> originalDependencies = new Stack<DependencyDefinition>();
 		DependencyGraph baseGraph = new DependencyGraph();
@@ -463,7 +479,7 @@ namespace Uplift.DependencyResolution
 		}
 
 		[Test]
-		public void simpleUnwindOnParent()
+		public void SimpleUnwindOnParent()
 		{
 			DependencyDefinition I = new DependencyDefinition();
 			I.Name = "I";
@@ -486,6 +502,33 @@ namespace Uplift.DependencyResolution
 			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies()));
 
 		}
+
+		[Test]
+		public void DoubleUnwind()
+		{
+			DependencyDefinition I = new DependencyDefinition();
+			I.Name = "I";
+			I.Version = "1.5.0";
+
+			DependencyDefinition M = new DependencyDefinition();
+			M.Name = "M";
+			M.Version = "1.1.0+";
+
+			originalDependencies.Push(M);
+			originalDependencies.Push(I);
+
+			Resolver resolver = new Resolver(originalDependencies, baseGraph);
+			Resolver.packageRepoStub = packageRepoStub;
+
+			Upset[] expected = {packages["I"][1],	//I150
+								packages["J"][0],	//J110
+								packages["K"][0],	//K110
+								packages["H"][0],	//H255
+								packages["M"][0]};  //M110
+
+			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies()));
+		}
+
 		#endregion
 
 		private bool CheckResolverResults(Upset[] expected, List<Upset> results)

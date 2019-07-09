@@ -136,41 +136,34 @@ namespace Uplift.DependencyResolution
 			return matchingNodes;
 		}
 
-		private List<DependencyNode> FindNodesWithGivenDependencyReq(string name, DependencyNode startingNode)
-		{
-			List<DependencyNode> matchingNodes = new List<DependencyNode>();
-			foreach (DependencyNode node in startingNode.dependencies)
-			{
-				//Check if depends on given dependency name
-				foreach (DependencyDefinition dep in node.selectedPossibilitySet.GetDependencies())
-				{
-					if (dep.Name == name)
-					{
-						matchingNodes.Add(node);
-					}
-				}
-				//If has childnodes, explore them
-				if (node.dependencies.Count > 0)
-				{
-					foreach (var childNode in node.dependencies)
-					{
-						matchingNodes.AddRange(FindNodesWithGivenDependencyReq(name, childNode));
-					}
-				}
-			}
-			return matchingNodes;
-		}
-
 		public override string ToString()
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine("=== Dependency graph : ===");
-			foreach (DependencyNode node in nodeList)
+			foreach (DependencyNode node in nodeList.FindAll(node => !node.isChildNode))
 			{
-				sb.AppendLine(" * " + node.Name + " : " + node.Requirement.ToString());
-				foreach (DependencyNode depNode in node.Dependencies)
+				sb.AppendLine("* " + node.Name + " : " + node.Requirement.ToString());
+
+				if (node.dependencies != null && node.dependencies.Count > 0)
 				{
-					sb.Append(depNode.Name + " | ");
+					sb.AppendLine(PrintChildNodes(node, 1));
+				}
+			}
+			return sb.ToString();
+		}
+
+		private string PrintChildNodes(DependencyNode parent, int depth)
+		{
+			StringBuilder sb = new StringBuilder();
+			foreach (DependencyNode childNode in parent.dependencies)
+			{
+				for (int i = 0; i < depth; i++) sb.Append(" ");
+
+				sb.AppendLine("* " + childNode.Name + " : " + childNode.Requirement.ToString());
+
+				if (childNode.dependencies != null && childNode.dependencies.Count > 0)
+				{
+					sb.AppendLine(PrintChildNodes(childNode, depth + 1));
 				}
 			}
 			return sb.ToString();

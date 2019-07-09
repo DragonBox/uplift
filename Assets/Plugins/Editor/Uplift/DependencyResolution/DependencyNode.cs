@@ -224,7 +224,15 @@ namespace Uplift.DependencyResolution
 						}
 						else
 						{
+							DependencyNode parentNode = activated.FindByName(restrictor);
+							DependencyNode childNode = activated.FindByName(dd.Name);
+
 							Debug.Log("Node for " + dd.Name + " already in tree.");
+							if (!parentNode.Dependencies.Contains(childNode))
+							{
+								Debug.Log("Adding " + restrictor + "as parent for " + dd.Name + ".");
+								parentNode.dependencies.Add(childNode);
+							}
 							activated.FindByName(dd.Name).UpdateNodeRequirements(dd, restrictor);
 						}
 					}

@@ -172,6 +172,7 @@ namespace Uplift.DependencyResolution
 					{
 						// No more requirement to fulfill resolution is over
 						Debug.Log("No more requirements to match, getting solutions : ");
+						Debug.Log(currentState.activated.ToString());
 						resolution = ((DependencyState)currentState).GetResolution();
 						break;
 					}

@@ -128,14 +128,7 @@ namespace Uplift.DependencyResolution
 						if (dep.Name == name)
 						{
 							matchingNodes.Add(node);
-						}
-					}
-					//If has childnodes, explore them
-					if (node.dependencies.Count > 0)
-					{
-						foreach (var childNode in node.dependencies)
-						{
-							matchingNodes.AddRange(FindNodesWithGivenDependencyReq(name, childNode));
+							matchingNodes.AddRange(FindNodesRelatedToGivenDependency(node.Name));
 						}
 					}
 				}

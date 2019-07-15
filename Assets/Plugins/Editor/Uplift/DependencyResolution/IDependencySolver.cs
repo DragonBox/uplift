@@ -22,12 +22,15 @@
  */
 // --- END LICENSE BLOCK ---
 
+using System.Collections.Generic;
+using Uplift.Common;
 using Uplift.Schemas;
 
 namespace Uplift.DependencyResolution
 {
 	interface IDependencySolver
 	{
-		DependencyDefinition[] SolveDependencies(DependencyDefinition[] dependencies);
+		//DependencyDefinition[] SolveDependencies(DependencyDefinition[] dependencies);
+		List<PackageRepo> SolveDependencies(DependencyDefinition[] dependencies);
 	}
 }

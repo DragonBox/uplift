@@ -38,13 +38,13 @@ namespace Uplift.DependencyResolution
 
 	public class State
 	{
-		public Stack<DependencyDefinition> requirements;
+		public LinkedList<DependencyDefinition> requirements;
 		public DependencyGraph activated;
 		public List<PossibilitySet> possibilities;
 		public int depth;
 		public List<Conflict> conflicts;
 
-		public State(Stack<DependencyDefinition> requirements,
+		public State(LinkedList<DependencyDefinition> requirements,
 					DependencyGraph activated,
 					List<PossibilitySet> possibilities,
 					int depth,
@@ -93,9 +93,9 @@ namespace Uplift.DependencyResolution
 			foreach (PossibilitySet possibilitySet in possibilities)
 			{
 				stringBuffer.Append("\n    - " + possibilitySet.name + " : ");
-				foreach (Upset pkg in possibilitySet.packages)
+				foreach (PackageRepo pkg in possibilitySet.packages)
 				{
-					stringBuffer.Append("[" + pkg.PackageVersion + "]" + " ");
+					stringBuffer.Append("[" + pkg.Package.PackageVersion + "]" + " ");
 				}
 			}
 			stringBuffer.Append("\n");
@@ -105,7 +105,7 @@ namespace Uplift.DependencyResolution
 
 	class DependencyState : State
 	{
-		public DependencyState(Stack<DependencyDefinition> requirements,
+		public DependencyState(LinkedList<DependencyDefinition> requirements,
 								DependencyGraph activated,
 								List<PossibilitySet> possibilities,
 								int depth,
@@ -113,10 +113,10 @@ namespace Uplift.DependencyResolution
 								base(requirements, activated, possibilities, depth, conflicts)
 		{ }
 
-		public List<Upset> GetResolution()
+		public List<PackageRepo> GetResolution()
 		{
 			Debug.Log("getting resolution");
-			List<Upset> upsetList = new List<Upset>();
+			List<PackageRepo> repoList = new List<PackageRepo>();
 
 			List<DependencyNode> nodesToExplore = activated.nodeList.FindAll(node => !node.isChildNode);
 			nodesToExplore = nodesToExplore.Concat(nodesToExplore.SelectMany(node => node.GetChildNodesList()))
@@ -128,10 +128,10 @@ namespace Uplift.DependencyResolution
 				PossibilitySet chosenPossibililtySet = node.selectedPossibilitySet;
 				if (chosenPossibililtySet.packages.Count > 0)
 				{
-					upsetList.Add(chosenPossibililtySet.packages[0]);
+					repoList.Add(chosenPossibililtySet.GetMostRecentPackage());
 				}
 			}
-			return upsetList;
+			return repoList;
 		}
 
 		public PossibilityState PopPossibilityState()
@@ -140,8 +140,8 @@ namespace Uplift.DependencyResolution
 			PossibilityState possibilityState = null;
 			if (requirements.Count > 0)
 			{
-				DependencyDefinition currentRequirement = requirements.Pop();
-
+				DependencyDefinition currentRequirement = requirements.First();
+				requirements.RemoveFirst();
 				//TODO check shallow copy 
 				possibilityState = new PossibilityState(requirements,   //Should be shallow copy
 														activated,
@@ -164,7 +164,7 @@ namespace Uplift.DependencyResolution
 		public DependencyDefinition currentRequirement;
 		List<Conflict> unusedUnwinds = new List<Conflict>();
 
-		public PossibilityState(Stack<DependencyDefinition> requirements,
+		public PossibilityState(LinkedList<DependencyDefinition> requirements,
 								DependencyGraph activated,
 								List<PossibilitySet> possibilities,
 								int depth,
@@ -225,17 +225,17 @@ namespace Uplift.DependencyResolution
 		{
 			foreach (PossibilitySet possibilitySet in availablePossibilities)
 			{
-				foreach (Upset pkg in possibilitySet.packages)
+				foreach (PackageRepo pkg in possibilitySet.packages)
 				{
-					if (!requirement.IsMetBy(pkg.PackageVersion))
+					if (!requirement.IsMetBy(pkg.Package.PackageVersion))
 					{
-						Debug.Log("Version " + pkg.PackageVersion + " does not match requirement " + requirement.ToString());
+						Debug.Log("Version " + pkg.Package.PackageVersion + " does not match requirement " + requirement.ToString());
 						possibilitySet.packages.Remove(pkg);
 						Debug.Log("Version deleted from matching version");
 					}
 					else
 					{
-						Debug.Log("Version " + pkg.PackageVersion + " matches requirement " + requirement);
+						Debug.Log("Version " + pkg.Package.PackageVersion + " matches requirement " + requirement);
 					}
 				}
 			}
@@ -270,7 +270,26 @@ namespace Uplift.DependencyResolution
 				foreach (DependencyDefinition dd in dependenciesToAdd)
 				{
 					Debug.Log("Adding " + dd.Name + " to requirements");
-					requirements.Push(dd);
+					DependencyDefinition existingDependency = requirements.FirstOrDefault(tmp => tmp.Name == dd.Name);
+
+					if (existingDependency != null)
+					{
+						IVersionRequirement existingRequirement = existingDependency.Requirement;
+						existingRequirement = existingRequirement.RestrictTo(dd.Requirement);
+
+						DependencyDefinition updatedDependency = new DependencyDefinition();
+						updatedDependency.Name = dd.Name;
+						updatedDependency.Version = existingRequirement.ToString();
+						updatedDependency.Repository = dd.Repository;
+						updatedDependency.SkipInstall = dd.SkipInstall;
+						updatedDependency.OverrideDestination = dd.OverrideDestination;
+						requirements.AddLast(updatedDependency);
+						requirements.Remove(dd);
+					}
+					else
+					{
+						requirements.AddLast(dd);
+					}
 				}
 			}
 		}

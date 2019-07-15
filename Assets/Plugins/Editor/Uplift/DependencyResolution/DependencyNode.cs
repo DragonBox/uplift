@@ -168,15 +168,36 @@ namespace Uplift.DependencyResolution
 			//FIXME Maybe add test if null value in foreach loops...
 
 			Debug.Log("Updating node possibilities according to new requirements");
+			Dictionary<PossibilitySet, List<PackageRepo>> packagesToRemove = new Dictionary<PossibilitySet, List<PackageRepo>>();
 			foreach (PossibilitySet pos in matchingPossibilities)
 			{
-				foreach (Upset package in pos.packages)
+				foreach (PackageRepo package in pos.packages)
 				{
-					if (!requirement.IsMetBy(package.PackageVersion))
+					Debug.Log("Checking if " + package.Package.PackageName + " version " + package.Package.PackageVersion + " matches " + requirement.ToString());
+					if (!requirement.IsMetBy(package.Package.PackageVersion))
 					{
-						Debug.Log("Package " + package.PackageName + " " + package.PackageVersion + " is no longer met by new requirement.");
-						pos.packages.Remove(package);
+						Debug.Log("Package " + package.Package.PackageName + " " + package.Package.PackageVersion + " is no longer met by new requirement.");
+						Debug.Log("Removing a package !");
+						if (!packagesToRemove.ContainsKey(pos)
+						  || packagesToRemove[pos] == null
+						  || packagesToRemove[pos].Count < 1)
+						{
+							packagesToRemove[pos] = new List<PackageRepo>();
+							packagesToRemove[pos].Add(package);
+						}
 					}
+				}
+			}
+
+			Debug.Log("1");
+			foreach (PossibilitySet pos in packagesToRemove.Keys)
+			{
+				Debug.Log("1");
+				foreach (PackageRepo pkg in packagesToRemove[pos])
+				{
+					Debug.Log("2");
+					matchingPossibilities.Find(posSet => pos == posSet).packages.Remove(pkg);
+					Debug.Log("3");
 				}
 			}
 		}

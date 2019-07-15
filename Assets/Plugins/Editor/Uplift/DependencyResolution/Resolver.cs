@@ -32,28 +32,36 @@ using System.Text;
 
 namespace Uplift.DependencyResolution
 {
-	class Resolver //: IDependencySolver
+	class Resolver : IDependencySolver
 	{
-		public static PackageRepoStub packageRepoStub;
+		public PackageList packageList;
 
 		DependencyGraph baseGraph = new DependencyGraph();
-		Stack<DependencyDefinition> originalDependencies;
+		LinkedList<DependencyDefinition> originalDependencies;
 		Stack<State> stateStack = new Stack<State>();
 
-		public Resolver(Stack<DependencyDefinition> originalDependencies, DependencyGraph baseGraph)
+		public Resolver(DependencyGraph baseGraph, PackageList packageList)
 		{
-			this.originalDependencies = originalDependencies;
+
 			this.baseGraph = baseGraph;
-		}
-		public Resolver(Stack<DependencyDefinition> originalDependencies)
-		{
-			this.originalDependencies = originalDependencies;
+			this.packageList = packageList;
+			if (packageList.GetType() == typeof(PackageListStub))
+			{
+				packageList.SetPackages(((PackageListStub)packageList).GetAllPackageRepo());
+			}
 		}
 
-		public void pushInitialState()
+		public Resolver(PackageList packageList)
+		{
+			this.packageList = packageList;
+		}
+
+		public void pushInitialState(DependencyDefinition[] dependencies)
 		{
 			Debug.Log("Pushing initial state");
 			DependencyGraph dg = new DependencyGraph();
+
+			this.originalDependencies = new LinkedList<DependencyDefinition>(dependencies);
 
 			//Create nodes for original dependencies
 			foreach (DependencyDefinition requested in originalDependencies)
@@ -64,14 +72,14 @@ namespace Uplift.DependencyResolution
 			}
 
 			//Create dependency state for original dependencies
-			Stack<DependencyDefinition> currentDependencies = originalDependencies;
+			LinkedList<DependencyDefinition> currentDependencies = originalDependencies;
 			List<Conflict> conflicts = new List<Conflict>();
 			DependencyState initialState = new DependencyState(currentDependencies,
 																dg,
 																new List<PossibilitySet>(), //possibilities
 																0,
 																conflicts //conflicts
-																);
+															);
 			stateStack.Push(initialState);
 			Debug.Log("===> Initial state : ");
 			Debug.Log(initialState);
@@ -80,7 +88,7 @@ namespace Uplift.DependencyResolution
 		// Returns list of possibility sets according to the requirements of a given state
 		// Each possibility set representing a group of versions for a dependency which 
 		// share the same sub-dependency requirements and are contiguous.
-		List<PossibilitySet> GeneratePossibilitySets(State state)
+		List<PossibilitySet> GeneratePossibilitySets(State state, PackageList packageList)
 		{
 			List<PossibilitySet> possibilities = state.possibilities;
 			foreach (DependencyDefinition dependency in state.requirements)
@@ -88,7 +96,7 @@ namespace Uplift.DependencyResolution
 				if (!possibilities.Exists(possibilitySet => possibilitySet.name == dependency.Name))
 				{
 					Debug.Log(dependency.Name + " is not listed in possibility sets");
-					possibilities.AddRange(PossibilitySet.GetPossibilitySetsForGivenPackage(dependency.Name));
+					possibilities.AddRange(PossibilitySet.GetPossibilitySetsForGivenPackage(dependency.Name, packageList));
 				}
 			}
 			return possibilities;
@@ -120,31 +128,31 @@ namespace Uplift.DependencyResolution
 		}
 
 		// A debug function to display packages in resolution
-		void ShowResolution(List<Upset> resolution)
+		void ShowResolution(List<PackageRepo> resolution)
 		{
 			StringBuilder sb = new StringBuilder();
 
-			foreach (Upset pkg in resolution)
+			foreach (PackageRepo pkg in resolution)
 			{
-				sb.AppendLine(pkg.PackageName + " : " + pkg.PackageVersion);
+				sb.AppendLine(pkg.Package.PackageName + " : " + pkg.Package.PackageVersion);
 			}
 			Debug.Log(sb.ToString());
 		}
 
 		//TODO doc
 		//Main function which process the [...]
-		public List<Upset> SolveDependencies()
+		public List<PackageRepo> SolveDependencies(DependencyDefinition[] dependencies)
 		{
 			// FIXME Clean code here and split in sub methods
 			Debug.Log("Solve dependencies");
 
-			pushInitialState();
+			pushInitialState(dependencies);
 
 			// Final results
-			List<Upset> resolution = new List<Upset>();
+			List<PackageRepo> resolution = new List<PackageRepo>();
 
 			//FIXME change this when algo is operational
-			int i = 100;
+			int i = 1000;
 			while (i > 0)//stateStack.Count > 0)
 			{
 				i--;
@@ -162,7 +170,7 @@ namespace Uplift.DependencyResolution
 				if (currentState.GetType() == typeof(DependencyState))
 				{
 					Debug.Log("Current state is dependency state !");
-					List<PossibilitySet> possibilitySets = GeneratePossibilitySets(currentState);
+					List<PossibilitySet> possibilitySets = GeneratePossibilitySets(currentState, packageList);
 					currentState.possibilities = possibilitySets;
 
 					ShowPossibilitySets(possibilitySets);

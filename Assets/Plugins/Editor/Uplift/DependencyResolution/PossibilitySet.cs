@@ -37,30 +37,31 @@ namespace Uplift.DependencyResolution
 	public class PossibilitySet
 	{
 		public string name;
-		public List<Upset> packages = new List<Upset>();
+		public List<PackageRepo> packages = new List<PackageRepo>();
 
-		public Upset GetMostRecentPackage()
+		public PackageRepo GetMostRecentPackage()
 		{
 			//Could also use VersionParser.GreaterThan(string a, string b)
 
 			Version currentVersion = null;
 			Version mostRecentVersionSofar = null;
-			Upset mostRecentPackageSoFar = null;
+			PackageRepo mostRecentPackageSoFar = new PackageRepo();
+			mostRecentPackageSoFar.Package = null;
+			mostRecentPackageSoFar.Repository = null;
 
 			if (packages != null && packages.Count > 0)
 			{
 
-				foreach (Upset package in packages)
+				foreach (PackageRepo package in packages)
 				{
-					currentVersion = VersionParser.ParseVersion(package.PackageVersion, false);
+					currentVersion = VersionParser.ParseVersion(package.Package.PackageVersion, false);
 
 					if (mostRecentVersionSofar == null || currentVersion > mostRecentVersionSofar)
 					{
-						mostRecentVersionSofar = VersionParser.ParseVersion(package.PackageVersion);
+						mostRecentVersionSofar = VersionParser.ParseVersion(package.Package.PackageVersion);
 						mostRecentPackageSoFar = package;
 					}
 				}
-
 			}
 			return mostRecentPackageSoFar;
 		}
@@ -69,9 +70,9 @@ namespace Uplift.DependencyResolution
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.Append(name + " : ");
-			foreach (Upset package in packages)
+			foreach (PackageRepo package in packages)
 			{
-				sb.Append("[" + package.PackageVersion + "] ");
+				sb.Append("[" + package.Package.PackageVersion + "] ");
 			}
 			return sb.ToString();
 		}
@@ -85,12 +86,12 @@ namespace Uplift.DependencyResolution
 			{
 				foreach (PossibilitySet pos in possibilitySetList)
 				{
-					if (pos.GetMostRecentPackage() == null)
+					if (pos.GetMostRecentPackage().Package == null)
 					{
 						continue;
 					}
 
-					currentVersion = pos.GetMostRecentPackage().PackageVersion;
+					currentVersion = pos.GetMostRecentPackage().Package.PackageVersion;
 					if (mostRecentVersion == null || VersionParser.GreaterThan(currentVersion, mostRecentVersion))
 					{
 						mostRecentVersion = currentVersion;
@@ -106,7 +107,7 @@ namespace Uplift.DependencyResolution
 		{
 			if (packages != null)
 			{
-				return packages.ToArray()[0].Dependencies;
+				return packages.ToArray()[0].Package.Dependencies;
 			}
 			else
 			{
@@ -114,18 +115,19 @@ namespace Uplift.DependencyResolution
 			}
 		}
 
-		public static List<PossibilitySet> GetPossibilitySetsForGivenPackage(string packageName) //TODO To Test
+		public static List<PossibilitySet> GetPossibilitySetsForGivenPackage(string packageName, PackageList packageList) //TODO To Test
 		{
 			Debug.Log("- Getting possibility sets for : " + packageName);
 			List<PossibilitySet> possibilities = null;
 
-			foreach (Upset package in Resolver.packageRepoStub.GetPackages(packageName))
+			foreach (PackageRepo packageRepo in packageList.GetPackageRepo(packageName))
 			{
-				Debug.Log("- Found " + package.PackageName + " " + package.PackageVersion + " on repo.");
+				Debug.Log("- Found " + packageRepo.Package.PackageName + " " + packageRepo.Package.PackageVersion + " on repo.");
 				List<DependencyDefinition> currentDependencies = null;
-				if (package.Dependencies != null && package.Dependencies.Length > 0)
+				currentDependencies = new List<DependencyDefinition>();
+				if (packageRepo.Package.Dependencies != null && packageRepo.Package.Dependencies.Length > 0)
 				{
-					currentDependencies = new List<DependencyDefinition>(package.Dependencies);
+					currentDependencies.AddRange(packageRepo.Package.Dependencies);
 					Debug.Log("Depends on : ");
 					foreach (var dep in currentDependencies)
 					{
@@ -137,13 +139,13 @@ namespace Uplift.DependencyResolution
 				{
 					Debug.Log("List of possibilities doesn't exist yet, creating one");
 					PossibilitySet newPossibilitySet = new PossibilitySet();
-					newPossibilitySet.name = package.PackageName;
-					newPossibilitySet.packages = new List<Upset>();
-					newPossibilitySet.packages.Add(package);
+					newPossibilitySet.name = packageRepo.Package.PackageName;
+					newPossibilitySet.packages = new List<PackageRepo>();
+					newPossibilitySet.packages.Add(packageRepo);
 
 					possibilities = new List<PossibilitySet>();
 
-					Debug.Log("Adding possibility set in Possibilities for " + package.PackageName + " " + package.PackageVersion);
+					Debug.Log("Adding possibility set in Possibilities for " + packageRepo.Package.PackageName + " " + packageRepo.Package.PackageVersion);
 					possibilities.Add(newPossibilitySet);
 				}
 				else if (possibilities != null && possibilities.Count > 0)
@@ -162,15 +164,15 @@ namespace Uplift.DependencyResolution
 							Debug.Log("PossibilitySet is null or empty");
 							break;
 						}
-						DependencyDefinition[] existingDependenciesArray = possibilitySet.packages.ToArray()[0].Dependencies;
+						DependencyDefinition[] existingDependenciesArray = possibilitySet.packages.ToArray()[0].Package.Dependencies;
 
 						if (existingDependenciesArray == null || existingDependenciesArray.Length == 0)
 						{
 							Debug.Log("PossibilitySet has no dependency");
-							if (package.Dependencies == null || package.Dependencies.Length < 1)
+							if (currentDependencies == null || currentDependencies.Count < 1)
 							{
 								Debug.Log("Current package doesn't have dependency either, adding package to possibilitySet");
-								possibilitySet.packages.Add(package);
+								possibilitySet.packages.Add(packageRepo);
 								hasMatchedPossibilitySet = true;
 							}
 							break;
@@ -192,10 +194,11 @@ namespace Uplift.DependencyResolution
 								}
 							}
 
+							Debug.Log("Check if packages has same dependencies");
 							if (hasSameDependencies)
 							{
 								Debug.Log("PossibilitySet matches, adding package to possibilitySet");
-								possibilitySet.packages.Add(package);
+								possibilitySet.packages.Add(packageRepo);
 								hasMatchedPossibilitySet = true;
 								break;
 							}
@@ -204,12 +207,12 @@ namespace Uplift.DependencyResolution
 
 					if (!hasMatchedPossibilitySet)
 					{
-						Debug.Log("No PossibilitySet matched current package dependencies, creating a new possibilitySet for package " + package.PackageName);
+						Debug.Log("No PossibilitySet matched current package dependencies, creating a new possibilitySet for package " + packageRepo.Package.PackageName);
 
 						newPossibilitySet = new PossibilitySet();
-						newPossibilitySet.name = package.PackageName;
-						newPossibilitySet.packages = new List<Upset>();
-						newPossibilitySet.packages.Add(package);
+						newPossibilitySet.name = packageRepo.Package.PackageName;
+						newPossibilitySet.packages = new List<PackageRepo>();
+						newPossibilitySet.packages.Add(packageRepo);
 						possibilities.Add(newPossibilitySet);
 					}
 				}
@@ -229,11 +232,11 @@ namespace Uplift.DependencyResolution
 				else
 				{
 					PossibilitySet newMatchingPossibilitySet = null;
-					foreach (Upset pkg in possibilitySet.packages)
+					foreach (PackageRepo pkg in possibilitySet.packages)
 					{
-						if (currentRequirement.Requirement.IsMetBy(pkg.PackageVersion))
+						if (currentRequirement.Requirement.IsMetBy(pkg.Package.PackageVersion))
 						{
-							Debug.Log("--[/] Package " + pkg.PackageName + " " + "[" + pkg.PackageVersion + "]" + " matches requirement : " + currentRequirement.ToString());
+							Debug.Log("--[/] Package " + pkg.Package.PackageName + " " + "[" + pkg.Package.PackageVersion + "]" + " matches requirement : " + currentRequirement.ToString());
 							if (newMatchingPossibilitySet == null)
 							{
 								newMatchingPossibilitySet = new PossibilitySet();
@@ -243,7 +246,7 @@ namespace Uplift.DependencyResolution
 						}
 						else
 						{
-							Debug.Log("--[X] Package " + pkg.PackageName + " " + "[" + pkg.PackageVersion + "]" + " does not match requirement : " + currentRequirement.ToString());
+							Debug.Log("--[X] Package " + pkg.Package.PackageName + " " + "[" + pkg.Package.PackageVersion + "]" + " does not match requirement : " + currentRequirement.ToString());
 						}
 					}
 					if (newMatchingPossibilitySet != null)

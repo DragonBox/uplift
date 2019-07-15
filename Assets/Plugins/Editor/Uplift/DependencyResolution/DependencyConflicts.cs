@@ -71,9 +71,9 @@ namespace Uplift.DependencyResolution
 						IVersionRequirement newRequirementForNode = copiedNode.ComputeRequirement();
 						//IVersionRequirement versionRequirementTobeChecked = conflictRaised.requirement.Requirement.RestrictTo(newRequirementForNode);
 
-						foreach (Upset package in correspondingNode.selectedPossibilitySet.packages)
+						foreach (PackageRepo package in correspondingNode.selectedPossibilitySet.packages)
 						{
-							if (newRequirementForNode.IsMetBy(package.PackageVersion))
+							if (newRequirementForNode.IsMetBy(package.Package.PackageVersion))
 							{
 								Debug.Log("When removing " + key + " requirements on " + this.requirement.Name + " no conflict remains.");
 								conflictingDependencies.Add(key);

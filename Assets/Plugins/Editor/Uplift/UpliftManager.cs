@@ -166,12 +166,13 @@ namespace Uplift
 		{
 			Debug.Log("Get Targets");
 			DependencyDefinition[] upfileDependencies = upfile.Dependencies;
-			DependencyDefinition[] solvedDependencies = solver.SolveDependencies(upfileDependencies);
-			PackageRepo[] installableDependencies = IdentifyInstallable(solvedDependencies);
+			//DependencyDefinition[] solvedDependencies = solver.SolveDependencies(upfileDependencies);
+			PackageRepo[] installableDependencies = solver.SolveDependencies(upfileDependencies).ToArray();//IdentifyInstallable(solvedDependencies);
 			PackageRepo[] targets = new PackageRepo[0];
 			bool present = File.Exists(lockfilePath);
 
-			if (strategy == InstallStrategy.UPDATE_LOCKFILE || (strategy == InstallStrategy.INCOMPLETE_LOCKFILE && !present))
+			//FIXME remove hack
+			if (true || strategy == InstallStrategy.UPDATE_LOCKFILE || (strategy == InstallStrategy.INCOMPLETE_LOCKFILE && !present))
 			{
 				if (updateLockfile)
 				{
@@ -245,6 +246,8 @@ namespace Uplift
 						solvedModified = solvedModified.Where(def => !conflicting.Contains(def)).ToArray();
 					}
 					PackageRepo[] installableModified = IdentifyInstallable(solvedModified);
+					*/
+					PackageRepo[] installableModified = solver.SolveDependencies(modifiedDependencies).ToArray();
 					targets = new PackageRepo[unmodifiable.Length + installableModified.Length];
 					Array.Copy(unmodifiable, targets, unmodifiable.Length);
 					Array.Copy(installableModified, 0, targets, unmodifiable.Length, installableModified.Length);
@@ -292,8 +295,9 @@ namespace Uplift
 
 		public IDependencySolver GetDependencySolver()
 		{
-			TransitiveDependencySolver dependencySolver = new TransitiveDependencySolver();
-			dependencySolver.CheckConflict += SolveVersionConflict;
+			//TransitiveDependencySolver dependencySolver = new TransitiveDependencySolver();
+			Resolver dependencySolver = new Resolver(PackageList.Instance());
+			//dependencySolver.CheckConflict += SolveVersionConflict;
 
 			return dependencySolver;
 		}
@@ -520,11 +524,12 @@ namespace Uplift
 		private void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition, bool updateLockfile)
 		{
 			Debug.Log("Installing package " + package.PackageName + " " + package.PackageVersion);
+			/*
 			if (dependencyDefinition == null)
 			{
 				throw new ArgumentNullException("Failed to install package " + package.PackageName + ". Dependency Definition is null.");
 			}
-
+			*/
 			GitIgnorer VCSHandler = new GitIgnorer();
 
 			using (LogAggregator LA = LogAggregator.InUnity(
@@ -759,16 +764,24 @@ namespace Uplift
 
 			if (updateDependencies)
 			{
-				Debug.Log("Update dependencies enabled, starting update :");
+				/*
+				//TODO
 				DependencyDefinition[] packageDependencies = PackageList.Instance().ListDependenciesRecursively(
 					GetDependencySolver()
 					.SolveDependencies(upfile.Dependencies)
 					.First(dep => dep.Name == newer.Package.PackageName)
 					);
+
 				foreach (DependencyDefinition def in packageDependencies)
 				{
 					PackageRepo dependencyPR = PackageList.Instance().FindPackageAndRepository(def);
-					if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == def.Name))
+
+					*/
+				List<PackageRepo> packageRepo = GetDependencySolver().SolveDependencies(upfile.Dependencies);
+				foreach (PackageRepo dependencyPR in packageRepo)
+				{
+
+					if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == dependencyPR.Package.PackageName))
 					{
 						UpdatePackage(dependencyPR,
 									  updateDependencies: false,
@@ -779,11 +792,7 @@ namespace Uplift
 					{
 						using (TemporaryDirectory td = dependencyPR.Repository.DownloadPackage(dependencyPR.Package))
 						{
-							InstallPackage(dependencyPR.Package,
-										   td,
-										   def,
-										   updateLockfile: updateLockfile
-										  );
+							InstallPackage(dependencyPR.Package, td, null, true);
 						}
 					}
 				}

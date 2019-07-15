@@ -26,7 +26,7 @@ using Uplift.Schemas;
 
 namespace Uplift.DependencyResolution
 {
-	class NoTransitiveDependenciesSolver : IDependencySolver
+	class NoTransitiveDependenciesSolver //: IDependencySolver
 	{
 		public DependencyDefinition[] SolveDependencies(DependencyDefinition[] dependencies)
 		{

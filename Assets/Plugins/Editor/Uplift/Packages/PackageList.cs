@@ -54,6 +54,11 @@ namespace Uplift.Packages
 		protected Repository[] Repositories;
 		protected VersionParser versionParser;
 
+		public void SetPackages(List<PackageRepo> packages)
+		{
+			Packages = packages;
+		}
+
 		public void LoadPackages(Repository[] repositories, bool refresh = false)
 		{
 			if (refresh)

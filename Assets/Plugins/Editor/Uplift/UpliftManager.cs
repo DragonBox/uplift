@@ -154,12 +154,13 @@ namespace Uplift
 		private PackageRepo[] GetTargets(IDependencySolver solver, InstallStrategy strategy, bool updateLockfile = true)
 		{
 			DependencyDefinition[] upfileDependencies = upfile.Dependencies;
-			DependencyDefinition[] solvedDependencies = solver.SolveDependencies(upfileDependencies);
-			PackageRepo[] installableDependencies = IdentifyInstallable(solvedDependencies);
+			//DependencyDefinition[] solvedDependencies = solver.SolveDependencies(upfileDependencies);
+			PackageRepo[] installableDependencies = solver.SolveDependencies(upfileDependencies).ToArray();//IdentifyInstallable(solvedDependencies);
 			PackageRepo[] targets = new PackageRepo[0];
 			bool present = File.Exists(lockfilePath);
 
-			if (strategy == InstallStrategy.UPDATE_LOCKFILE || (strategy == InstallStrategy.INCOMPLETE_LOCKFILE && !present))
+			//FIXME remove hack
+			if (true || strategy == InstallStrategy.UPDATE_LOCKFILE || (strategy == InstallStrategy.INCOMPLETE_LOCKFILE && !present))
 			{
 				if (updateLockfile)
 					GenerateLockfile(new LockfileSnapshot
@@ -206,6 +207,7 @@ namespace Uplift
 							))
 						.ToArray();
 
+					/*
 					DependencyDefinition[] solvedModified = solver.SolveDependencies(modifiedDependencies);
 					DependencyDefinition[] conflicting = solvedModified.Where(def => unmodifiable.Any(pr => pr.Package.PackageName == def.Name)).ToArray();
 					if (conflicting.Length != 0)
@@ -219,6 +221,8 @@ namespace Uplift
 						solvedModified = solvedModified.Where(def => !conflicting.Contains(def)).ToArray();
 					}
 					PackageRepo[] installableModified = IdentifyInstallable(solvedModified);
+					*/
+					PackageRepo[] installableModified = solver.SolveDependencies(modifiedDependencies).ToArray();
 					targets = new PackageRepo[unmodifiable.Length + installableModified.Length];
 					Array.Copy(unmodifiable, targets, unmodifiable.Length);
 					Array.Copy(installableModified, 0, targets, unmodifiable.Length, installableModified.Length);
@@ -257,8 +261,9 @@ namespace Uplift
 
 		public IDependencySolver GetDependencySolver()
 		{
-			TransitiveDependencySolver dependencySolver = new TransitiveDependencySolver();
-			dependencySolver.CheckConflict += SolveVersionConflict;
+			//TransitiveDependencySolver dependencySolver = new TransitiveDependencySolver();
+			Resolver dependencySolver = new Resolver(PackageList.Instance());
+			//dependencySolver.CheckConflict += SolveVersionConflict;
 
 			return dependencySolver;
 		}
@@ -478,11 +483,12 @@ namespace Uplift
 		// This should be contained using kinds of destinations.
 		private void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition, bool updateLockfile = false)
 		{
+			/*
 			if (dependencyDefinition == null)
 			{
 				throw new ArgumentNullException("Failed to install package " + package.PackageName + ". Dependency Definition is null.");
 			}
-
+			*/
 			GitIgnorer VCSHandler = new GitIgnorer();
 
 			using (LogAggregator LA = LogAggregator.InUnity(
@@ -712,15 +718,24 @@ namespace Uplift
 
 			if (updateDependencies)
 			{
+				/*
+				//TODO
 				DependencyDefinition[] packageDependencies = PackageList.Instance().ListDependenciesRecursively(
 					GetDependencySolver()
 					.SolveDependencies(upfile.Dependencies)
 					.First(dep => dep.Name == newer.Package.PackageName)
 					);
+
 				foreach (DependencyDefinition def in packageDependencies)
 				{
 					PackageRepo dependencyPR = PackageList.Instance().FindPackageAndRepository(def);
-					if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == def.Name))
+
+				*/
+				List<PackageRepo> packageRepo = GetDependencySolver().SolveDependencies(upfile.Dependencies);
+				foreach (PackageRepo dependencyPR in packageRepo)
+				{
+
+					if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == dependencyPR.Package.PackageName))
 					{
 						UpdatePackage(dependencyPR, false);
 					}
@@ -728,7 +743,7 @@ namespace Uplift
 					{
 						using (TemporaryDirectory td = dependencyPR.Repository.DownloadPackage(dependencyPR.Package))
 						{
-							InstallPackage(dependencyPR.Package, td, def, true);
+							InstallPackage(dependencyPR.Package, td, null, true);
 						}
 					}
 				}

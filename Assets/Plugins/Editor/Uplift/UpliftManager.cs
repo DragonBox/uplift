@@ -166,7 +166,6 @@ namespace Uplift
 		{
 			Debug.Log("Get Targets");
 			DependencyDefinition[] upfileDependencies = upfile.Dependencies;
-			//DependencyDefinition[] solvedDependencies = solver.SolveDependencies(upfileDependencies);
 			PackageRepo[] installableDependencies = solver.SolveDependencies(upfileDependencies).ToArray();//IdentifyInstallable(solvedDependencies);
 			PackageRepo[] targets = new PackageRepo[0];
 			bool present = File.Exists(lockfilePath);
@@ -764,19 +763,6 @@ namespace Uplift
 
 			if (updateDependencies)
 			{
-				/*
-				//TODO
-				DependencyDefinition[] packageDependencies = PackageList.Instance().ListDependenciesRecursively(
-					GetDependencySolver()
-					.SolveDependencies(upfile.Dependencies)
-					.First(dep => dep.Name == newer.Package.PackageName)
-					);
-
-				foreach (DependencyDefinition def in packageDependencies)
-				{
-					PackageRepo dependencyPR = PackageList.Instance().FindPackageAndRepository(def);
-
-					*/
 				List<PackageRepo> packageRepo = GetDependencySolver().SolveDependencies(upfile.Dependencies);
 				foreach (PackageRepo dependencyPR in packageRepo)
 				{

@@ -204,7 +204,7 @@ namespace Uplift.DependencyResolution
 			DependencyState newState = null;
 			if (matchingPossibilitySet.Count == 0)
 			{
-				Debug.Log("- Conflict detected, need to rewind !");
+				Debug.Log("- Conflict detected, need to rewind : No matching possibility Set available");
 				GenerateConflict(currentRequirement, activated);
 			}
 			else
@@ -249,6 +249,7 @@ namespace Uplift.DependencyResolution
 
 			if (correspondingNode.selectedPossibilitySet == null)
 			{
+				Debug.Log("Selected possibility set is null ! Conflict raised");
 				GenerateConflict(currentRequirement, activated);
 			}
 

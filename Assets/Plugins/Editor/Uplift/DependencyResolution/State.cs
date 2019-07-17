@@ -280,7 +280,7 @@ namespace Uplift.DependencyResolution
 						updatedDependency.SkipInstall = dd.SkipInstall;
 						updatedDependency.OverrideDestination = dd.OverrideDestination;
 						requirements.AddLast(updatedDependency);
-						requirements.Remove(dd);
+						requirements.Remove(existingDependency);
 					}
 					else
 					{

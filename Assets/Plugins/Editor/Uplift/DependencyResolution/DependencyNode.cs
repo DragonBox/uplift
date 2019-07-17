@@ -189,15 +189,11 @@ namespace Uplift.DependencyResolution
 				}
 			}
 
-			Debug.Log("1");
 			foreach (PossibilitySet pos in packagesToRemove.Keys)
 			{
-				Debug.Log("1");
 				foreach (PackageRepo pkg in packagesToRemove[pos])
 				{
-					Debug.Log("2");
 					matchingPossibilities.Find(posSet => pos == posSet).packages.Remove(pkg);
-					Debug.Log("3");
 				}
 			}
 		}

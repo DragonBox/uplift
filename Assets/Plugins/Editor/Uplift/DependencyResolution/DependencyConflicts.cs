@@ -59,7 +59,7 @@ namespace Uplift.DependencyResolution
 				foreach (string key in restrictors)
 				{
 					//Initial requirements cannot be changed
-					if (key == "initial")
+					if (key == "initial" || key == "legacy")
 					{
 						continue;
 					}

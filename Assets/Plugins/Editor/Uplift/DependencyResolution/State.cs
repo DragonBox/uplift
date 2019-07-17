@@ -125,11 +125,7 @@ namespace Uplift.DependencyResolution
 
 			foreach (DependencyNode node in nodesToExplore)
 			{
-				PossibilitySet chosenPossibililtySet = node.selectedPossibilitySet;
-				if (chosenPossibililtySet.packages.Count > 0)
-				{
-					repoList.Add(chosenPossibililtySet.GetMostRecentPackage());
-				}
+				repoList.Add(node.GetResolutionPackage());
 			}
 			return repoList;
 		}

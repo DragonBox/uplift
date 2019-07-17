@@ -56,10 +56,9 @@ namespace Uplift.DependencyResolution
 			this.packageList = packageList;
 		}
 
-		public void pushInitialState(DependencyDefinition[] dependencies)
+		public void pushInitialState(DependencyDefinition[] dependencies, DependencyGraph dg)
 		{
 			Debug.Log("Pushing initial state");
-			DependencyGraph dg = new DependencyGraph();
 
 			this.originalDependencies = new LinkedList<DependencyDefinition>(dependencies);
 
@@ -139,14 +138,20 @@ namespace Uplift.DependencyResolution
 			Debug.Log(sb.ToString());
 		}
 
+		public List<PackageRepo> SolveDependencies(DependencyDefinition[] dependencies)
+		{
+			return SolveDependencies(dependencies, null);
+		}
+
 		//TODO doc
 		//Main function which process the [...]
-		public List<PackageRepo> SolveDependencies(DependencyDefinition[] dependencies)
+		public List<PackageRepo> SolveDependencies(DependencyDefinition[] dependencies, PackageRepo[] startingPackages)
 		{
 			// FIXME Clean code here and split in sub methods
 			Debug.Log("Solve dependencies");
 
-			pushInitialState(dependencies);
+			DependencyGraph dg = new DependencyGraph(startingPackages);
+			pushInitialState(dependencies, dg);
 
 			// Final results
 			List<PackageRepo> resolution = new List<PackageRepo>();

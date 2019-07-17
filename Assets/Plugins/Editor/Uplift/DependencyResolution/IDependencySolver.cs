@@ -32,5 +32,6 @@ namespace Uplift.DependencyResolution
 	{
 		//DependencyDefinition[] SolveDependencies(DependencyDefinition[] dependencies);
 		List<PackageRepo> SolveDependencies(DependencyDefinition[] dependencies);
+		List<PackageRepo> SolveDependencies(DependencyDefinition[] dependencies, PackageRepo[] StartingPackages);
 	}
 }

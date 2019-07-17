@@ -247,7 +247,7 @@ namespace Uplift
 					}
 					PackageRepo[] installableModified = IdentifyInstallable(solvedModified);
 					*/
-					PackageRepo[] installableModified = solver.SolveDependencies(modifiedDependencies).ToArray();
+					PackageRepo[] installableModified = solver.SolveDependencies(modifiedDependencies, unmodifiable).ToArray();
 					targets = new PackageRepo[unmodifiable.Length + installableModified.Length];
 					Array.Copy(unmodifiable, targets, unmodifiable.Length);
 					Array.Copy(installableModified, 0, targets, unmodifiable.Length, installableModified.Length);

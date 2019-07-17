@@ -274,5 +274,21 @@ namespace Uplift.DependencyResolution
 			}
 			return childNodesList;
 		}
+
+		public PackageRepo GetResolutionPackage()
+		{
+			if (restrictions.ContainsKey("legacy"))
+			{
+				String legacyVersion = ((MinimalVersionRequirement)restrictions["legacy"]).minimal.ToString();
+				foreach (PackageRepo pr in selectedPossibilitySet.packages)
+				{
+					if (pr.Package.PackageVersion == legacyVersion)
+					{
+						return pr;
+					}
+				}
+			}
+			return selectedPossibilitySet.GetMostRecentPackage();
+		}
 	}
 }

@@ -24,6 +24,7 @@
 
 using System.Collections.Generic;
 using System.Text;
+using Uplift.Common;
 using Uplift.Packages;
 using Uplift.Schemas;
 
@@ -40,6 +41,22 @@ namespace Uplift.DependencyResolution
 		public DependencyGraph(List<DependencyNode> nodes)
 		{
 			this.nodeList = nodes;
+		}
+
+		public DependencyGraph(PackageRepo[] packages)
+		{
+			//TODO test
+			nodeList = new List<DependencyNode>();
+			if (packages != null && packages.Length > 0)
+			{
+				foreach (PackageRepo pr in packages)
+				{
+					DependencyNode node = new DependencyNode(pr.Package.PackageName, pr.Package.PackageVersion, pr.Repository.ToString());
+					node.restrictions["legacy"] = new MinimalVersionRequirement(pr.Package.PackageVersion);
+					//Dependencies to add ?
+					this.AddNode(node);
+				}
+			}
 		}
 
 		public DependencyNode FindByName(string name)

@@ -272,16 +272,23 @@ namespace Uplift.DependencyResolution
 					if (existingDependency != null)
 					{
 						IVersionRequirement existingRequirement = existingDependency.Requirement;
-						existingRequirement = existingRequirement.RestrictTo(dd.Requirement);
-
-						DependencyDefinition updatedDependency = new DependencyDefinition();
-						updatedDependency.Name = dd.Name;
-						updatedDependency.Version = existingRequirement.ToString();
-						updatedDependency.Repository = dd.Repository;
-						updatedDependency.SkipInstall = dd.SkipInstall;
-						updatedDependency.OverrideDestination = dd.OverrideDestination;
-						requirements.AddLast(updatedDependency);
-						requirements.Remove(existingDependency);
+						try
+						{
+							existingRequirement = existingRequirement.RestrictTo(dd.Requirement);
+							DependencyDefinition updatedDependency = new DependencyDefinition();
+							updatedDependency.Name = dd.Name;
+							updatedDependency.Version = existingRequirement.ToString();
+							updatedDependency.Repository = dd.Repository;
+							updatedDependency.SkipInstall = dd.SkipInstall;
+							updatedDependency.OverrideDestination = dd.OverrideDestination;
+							requirements.AddLast(updatedDependency);
+							requirements.Remove(existingDependency);
+						}
+						catch (IncompatibleRequirementException e)
+						{
+							Debug.Log("Incompatible requirements : Cannot merge them as one");
+							requirements.AddLast(dd);
+						}
 					}
 					else
 					{

@@ -65,9 +65,18 @@ namespace Uplift.DependencyResolution
 			//Create nodes for original dependencies
 			foreach (DependencyDefinition requested in originalDependencies)
 			{
-				DependencyNode node = new DependencyNode(requested);
-				node.restrictions["initial"] = requested.Requirement;
-				dg.AddNode(node);
+				DependencyNode node;
+				if (!dg.Contains(requested.Name))
+				{
+					node = new DependencyNode(requested);
+					node.restrictions["initial"] = requested.Requirement;
+					dg.AddNode(node);
+				}
+				else
+				{
+					node = dg.FindByName(requested.Name);
+					node.restrictions["initial"] = requested.Requirement;
+				}
 			}
 
 			//Create dependency state for original dependencies

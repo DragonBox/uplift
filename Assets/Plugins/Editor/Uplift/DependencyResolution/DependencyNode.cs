@@ -32,7 +32,6 @@ namespace Uplift.DependencyResolution
 {
 	public class DependencyNode
 	{
-		protected IVersionRequirement requirement;
 		protected string repository;
 		protected string name;
 		protected int index;
@@ -42,6 +41,8 @@ namespace Uplift.DependencyResolution
 		public List<DependencyNode> dependencies;
 		public PossibilitySet selectedPossibilitySet;
 		public List<PossibilitySet> matchingPossibilities = new List<PossibilitySet>();
+		public IVersionRequirement requirement;
+
 		public Dictionary<string, IVersionRequirement> restrictions = new Dictionary<string, IVersionRequirement>();
 		public SkipInstallSpec[] skips;
 		public OverrideDestinationSpec[] overrides;
@@ -210,6 +211,19 @@ namespace Uplift.DependencyResolution
 
 		public void UpdateSelectedPossibilitySet()
 		{
+			if (restrictions.ContainsKey("legacy"))
+			{
+				String legacyVersion = ((MinimalVersionRequirement)restrictions["legacy"]).minimal.ToString();
+				foreach (PossibilitySet posSet in matchingPossibilities)
+				{
+					if (posSet.packages.Exists(repo => repo.Package.PackageVersion == legacyVersion))
+					{
+						selectedPossibilitySet = posSet;
+						return;
+					}
+				}
+			}
+
 			if (matchingPossibilities.Count > 0)
 			{
 				selectedPossibilitySet = PossibilitySet.GetMostRecentPossibilitySetFromList(matchingPossibilities);
@@ -273,9 +287,15 @@ namespace Uplift.DependencyResolution
 
 		public PackageRepo GetResolutionPackage()
 		{
+			if (selectedPossibilitySet == null)
+			{
+				UpdateSelectedPossibilitySet();
+			}
+
 			if (restrictions.ContainsKey("legacy"))
 			{
 				String legacyVersion = ((MinimalVersionRequirement)restrictions["legacy"]).minimal.ToString();
+				//TODO Most 1.1.0 not in possibility set
 				foreach (PackageRepo pr in selectedPossibilitySet.packages)
 				{
 					if (pr.Package.PackageVersion == legacyVersion)

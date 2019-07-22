@@ -45,7 +45,7 @@ namespace Uplift.DependencyResolution
 			{
 				PackageRepo correspondingRepo = new PackageRepo();
 				correspondingRepo.Package = pkg;
-				correspondingRepo.Repository = null;
+				correspondingRepo.Repository = new GithubRepository();
 
 				listPackageRepo.Add(correspondingRepo);
 			}

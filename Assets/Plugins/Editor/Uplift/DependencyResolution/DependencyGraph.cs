@@ -52,6 +52,7 @@ namespace Uplift.DependencyResolution
 				foreach (PackageRepo pr in packages)
 				{
 					DependencyNode node = new DependencyNode(pr.Package.PackageName, pr.Package.PackageVersion, pr.Repository.ToString());
+					node.requirement = new MinimalVersionRequirement(pr.Package.PackageVersion);
 					node.restrictions["legacy"] = new MinimalVersionRequirement(pr.Package.PackageVersion);
 					//Dependencies to add ?
 					this.AddNode(node);

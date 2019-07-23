@@ -27,6 +27,7 @@ using Uplift.Common;
 using Uplift.Schemas;
 using UnityEngine;
 using System;
+using Uplift.Packages;
 
 namespace Uplift.DependencyResolution
 {
@@ -160,6 +161,7 @@ namespace Uplift.DependencyResolution
 			}
 			catch (IncompatibleRequirementException e)
 			{
+				Debug.Log("Incompatible requirement on node");
 				conflictingRequirementOnNode = newRequirements;
 				return;
 			}
@@ -283,6 +285,21 @@ namespace Uplift.DependencyResolution
 				}
 			}
 			return childNodesList;
+		}
+
+		public void RemoveRestriction(string restrictor, PackageList pkgList)
+		{
+			restrictions.Remove(restrictor);
+			List<PossibilitySet> possibilitySet = PossibilitySet.GetPossibilitySetsForGivenPackage(this.Name, pkgList);
+			try
+			{
+				matchingPossibilities = PossibilitySet.GetMatchingPossibilities(possibilitySet, name, ComputeRequirement());
+			}
+			catch (IncompatibleRequirementException e)
+			{
+				Debug.Log("Matching possibility is set to null due to conflict on node");
+				matchingPossibilities = new List<PossibilitySet>();
+			}
 		}
 
 		public PackageRepo GetResolutionPackage()

@@ -138,6 +138,8 @@ namespace Uplift.DependencyResolution
 			foreach (DependencyNode node in nodeList)
 			{
 				//Check if depends on given dependency name
+				if (node.selectedPossibilitySet == null) continue;
+
 				DependencyDefinition[] dependencies = node.selectedPossibilitySet.GetDependencies();
 				if (dependencies != null && dependencies.Length > 0)
 				{

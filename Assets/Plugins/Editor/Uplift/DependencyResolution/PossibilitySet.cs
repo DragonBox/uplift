@@ -220,12 +220,12 @@ namespace Uplift.DependencyResolution
 			return possibilities;
 		}
 
-		public static List<PossibilitySet> GetMatchingPossibilities(List<PossibilitySet> possibilities, DependencyDefinition currentRequirement)
+		public static List<PossibilitySet> GetMatchingPossibilities(List<PossibilitySet> possibilities, string requirementName, IVersionRequirement currentRequirement)
 		{
 			List<PossibilitySet> matchingPossibilities = new List<PossibilitySet>();
 			foreach (PossibilitySet possibilitySet in possibilities)
 			{
-				if (possibilitySet.name != currentRequirement.Name)
+				if (possibilitySet.name != requirementName)
 				{
 					continue;
 				}
@@ -234,7 +234,7 @@ namespace Uplift.DependencyResolution
 					PossibilitySet newMatchingPossibilitySet = null;
 					foreach (PackageRepo pkg in possibilitySet.packages)
 					{
-						if (currentRequirement.Requirement.IsMetBy(pkg.Package.PackageVersion))
+						if (currentRequirement.IsMetBy(pkg.Package.PackageVersion))
 						{
 							Debug.Log("--[/] Package " + pkg.Package.PackageName + " " + "[" + pkg.Package.PackageVersion + "]" + " matches requirement : " + currentRequirement.ToString());
 							if (newMatchingPossibilitySet == null)

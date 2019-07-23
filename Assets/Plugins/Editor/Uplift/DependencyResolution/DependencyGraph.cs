@@ -160,19 +160,20 @@ namespace Uplift.DependencyResolution
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine("=== Dependency graph : ===");
+
+			List<DependencyNode> visitedNodes = new List<DependencyNode>();
 			foreach (DependencyNode node in nodeList.FindAll(node => !node.isChildNode))
 			{
 				sb.AppendLine("* " + node.Name + " : " + node.Requirement.ToString());
-
 				if (node.dependencies != null && node.dependencies.Count > 0)
 				{
-					sb.AppendLine(PrintChildNodes(node, 1));
+					sb.AppendLine(PrintChildNodes(node, 1, visitedNodes));
 				}
 			}
 			return sb.ToString();
 		}
 
-		private string PrintChildNodes(DependencyNode parent, int depth)
+		private string PrintChildNodes(DependencyNode parent, int depth, List<DependencyNode> visitedNodes)
 		{
 			StringBuilder sb = new StringBuilder();
 			foreach (DependencyNode childNode in parent.dependencies)
@@ -181,9 +182,12 @@ namespace Uplift.DependencyResolution
 
 				sb.AppendLine("* " + childNode.Name + " : " + childNode.Requirement.ToString());
 
-				if (childNode.dependencies != null && childNode.dependencies.Count > 0)
+				if (childNode.dependencies != null
+				&& !visitedNodes.Contains(childNode)
+				&& childNode.dependencies.Count > 0)
 				{
-					sb.AppendLine(PrintChildNodes(childNode, depth + 1));
+					visitedNodes.Add(parent);
+					sb.AppendLine(PrintChildNodes(childNode, depth + 1, visitedNodes));
 				}
 			}
 			return sb.ToString();

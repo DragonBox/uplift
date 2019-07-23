@@ -264,6 +264,22 @@ namespace Uplift.DependencyResolution
 			U100.Dependencies[0].Name = "Q";
 			U100.Dependencies[0].Version = "1.0.0";
 
+			Upset V100 = new Upset();
+			V100.PackageName = "V";
+			V100.PackageVersion = "1.0.0";
+			V100.Dependencies = new DependencyDefinition[1];
+			V100.Dependencies[0] = new DependencyDefinition();
+			V100.Dependencies[0].Name = "W";
+			V100.Dependencies[0].Version = "1.0.0";
+
+			Upset W100 = new Upset();
+			W100.PackageName = "W";
+			W100.PackageVersion = "1.0.0";
+			W100.Dependencies = new DependencyDefinition[1];
+			W100.Dependencies[0] = new DependencyDefinition();
+			W100.Dependencies[0].Name = "V";
+			W100.Dependencies[0].Version = "1.0.0";
+
 			packages["A"] = new Upset[] { A110, A116, A120 };
 			packages["B"] = new Upset[] { B110, B113 };
 			packages["C"] = new Upset[] { C110, C116 };
@@ -285,6 +301,8 @@ namespace Uplift.DependencyResolution
 			packages["S"] = new Upset[] { S110, S120, S150 };
 			packages["T"] = new Upset[] { T100 };
 			packages["U"] = new Upset[] { U100 };
+			packages["V"] = new Upset[] { V100 };
+			packages["W"] = new Upset[] { W100 };
 
 		}
 		Stack<DependencyDefinition> originalDependencies = new Stack<DependencyDefinition>();
@@ -677,33 +695,33 @@ namespace Uplift.DependencyResolution
 		{
 			originalDependencies = new Stack<DependencyDefinition>();
 
-			DependencyDefinition T = new DependencyDefinition();
-			T.Name = "T";
-			T.Version = "1.0.0+";
-
-			DependencyDefinition Q = new DependencyDefinition();
-			Q.Name = "Q";
-			Q.Version = "1.0.5+";
-
 			DependencyDefinition R = new DependencyDefinition();
 			R.Name = "R";
 			R.Version = "1.1.0+";
+
+			DependencyDefinition Q = new DependencyDefinition();
+			Q.Name = "Q";
+			Q.Version = "1.0.0+";
+
+			DependencyDefinition S = new DependencyDefinition();
+			S.Name = "S";
+			S.Version = "1.5.0+";
 
 			DependencyDefinition U = new DependencyDefinition();
 			U.Name = "U";
 			U.Version = "1.0.0+";
 
 			originalDependencies.Push(U);
-			originalDependencies.Push(R);
+			originalDependencies.Push(S);
 			originalDependencies.Push(Q);
-			originalDependencies.Push(T);
+			originalDependencies.Push(R);
 
 			Resolver resolver = new Resolver(baseGraph, packageListStub);
 
-			Upset[] expected = {packages["Q"][1],	//Q105
+			Upset[] expected = {packages["Q"][0],	//Q105
 								packages["R"][1],	//R110
 								packages["S"][2],	//S150
-							    packages["T"][0],	//T100
+							    packages["H"][0],	//H255
 								packages["U"][0],	//U100
 							   };
 
@@ -717,7 +735,7 @@ namespace Uplift.DependencyResolution
 
 			DependencyDefinition S = new DependencyDefinition();
 			S.Name = "S";
-			S.Version = "1.0.0";
+			S.Version = "1.1.0";
 
 			DependencyDefinition Q = new DependencyDefinition();
 			Q.Name = "Q";
@@ -733,10 +751,9 @@ namespace Uplift.DependencyResolution
 
 			Resolver resolver = new Resolver(baseGraph, packageListStub);
 
-			Upset[] expected = {packages["Q"][0],	//Q100
+			Upset[] expected = {packages["Q"][1],	//Q105
 								packages["R"][0],	//R100
 								packages["S"][0],	//S100
-							    packages["H"][0],	//H255
 								packages["I"][0],	//I110
 							   };
 
@@ -746,24 +763,67 @@ namespace Uplift.DependencyResolution
 		#endregion
 
 		[Test]
-		public void GetPossibilitySetsTest()
-		{
-			//Check if possibility sets are correctly sorted ?
-			//TODO
-		}
-
-		[Test]
 		public void TwiceTheSameRequirement()
 		{
-			//Juste 2 fois le même requirement 
-			//TODO
+			originalDependencies = new Stack<DependencyDefinition>();
+
+			DependencyDefinition H1 = new DependencyDefinition();
+			H1.Name = "H";
+			H1.Version = "2.5.5";
+
+			DependencyDefinition H2 = new DependencyDefinition();
+			H2.Name = "H";
+			H2.Version = "2.5.5";
+
+			originalDependencies.Push(H1);
+			originalDependencies.Push(H2);
+
+			Resolver resolver = new Resolver(baseGraph, packageListStub);
+
+			Upset[] expected = { packages["H"][0] }; //H255
+
+			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
 		}
 
 		[Test]
-		public void CyclicDependencies()
+		public void ExplicitCyclicDependencies()
 		{
-			//A -> B -> C -> A ???
-			//TODO
+			DependencyDefinition V = new DependencyDefinition();
+			V.Name = "V";
+			V.Version = "1.0.0";
+
+			DependencyDefinition W = new DependencyDefinition();
+			W.Name = "W";
+			W.Version = "1.0.0";
+
+			originalDependencies.Push(V);
+			originalDependencies.Push(W);
+
+			Resolver resolver = new Resolver(baseGraph, packageListStub);
+
+			Upset[] expected = {packages["V"][0],	//V100
+								packages["W"][0],	//W100
+								};
+
+			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+		}
+
+		[Test]
+		public void BasicCyclicDependencies()
+		{
+			DependencyDefinition V = new DependencyDefinition();
+			V.Name = "V";
+			V.Version = "1.0.0";
+
+			originalDependencies.Push(V);
+
+			Resolver resolver = new Resolver(baseGraph, packageListStub);
+
+			Upset[] expected = {packages["V"][0],	//V100
+								packages["W"][0],	//W100
+								};
+
+			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
 		}
 
 		private bool CheckResolverResults(Upset[] expected, List<PackageRepo> results)

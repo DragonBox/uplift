@@ -50,7 +50,7 @@ namespace Uplift.DependencyResolution
 					int depth,
 					List<Conflict> conflicts)
 		{
-			this.requirements = requirements;
+			this.requirements = new LinkedList<DependencyDefinition>(requirements);
 			this.activated = activated;
 			this.possibilities = possibilities;
 			this.depth = depth;
@@ -172,7 +172,7 @@ namespace Uplift.DependencyResolution
 		{
 			this.parent = parent;
 			this.currentRequirement = currentRequirement;
-			this.matchingPossibilitySet = PossibilitySet.GetMatchingPossibilities(possibilities, currentRequirement);
+			this.matchingPossibilitySet = PossibilitySet.GetMatchingPossibilities(possibilities, currentRequirement.Name, currentRequirement.Requirement);
 		}
 
 		override public string ToString()
@@ -209,9 +209,10 @@ namespace Uplift.DependencyResolution
 			}
 			else
 			{
-				InjectPossibilitiesInDependencyGraph(matchingPossibilitySet, correspondingNode);
+				DependencyGraph newActivated = new DependencyGraph(activated.nodeList);
+				LinkedList<DependencyDefinition> newRequirements = InjectPossibilitiesInDependencyGraph(matchingPossibilitySet, correspondingNode);
 				Debug.Log("Poping new dependency state");
-				newState = new DependencyState(requirements, activated, possibilities, depth + 1, conflicts);
+				newState = new DependencyState(newRequirements, newActivated, possibilities, depth + 1, conflicts);
 			}
 			return newState;
 		}
@@ -238,7 +239,7 @@ namespace Uplift.DependencyResolution
 			return availablePossibilities;
 		}
 
-		private void InjectPossibilitiesInDependencyGraph(List<PossibilitySet> matchingPossibilities, DependencyNode correspondingNode)
+		private LinkedList<DependencyDefinition> InjectPossibilitiesInDependencyGraph(List<PossibilitySet> matchingPossibilities, DependencyNode correspondingNode)
 		{
 			correspondingNode.matchingPossibilities = correspondingNode.matchingPossibilities
 													.Concat(matchingPossibilities)
@@ -260,7 +261,10 @@ namespace Uplift.DependencyResolution
 			{
 				Debug.Log("Conflict detected : incompatible requirements");
 				GenerateConflict(correspondingNode.conflictingRequirementOnNode, activated);
+				correspondingNode.conflictingRequirementOnNode = null;
 			}
+
+			LinkedList<DependencyDefinition> newRequirements = new LinkedList<DependencyDefinition>(requirements);
 
 			if (dependenciesToAdd != null)
 			{
@@ -268,7 +272,7 @@ namespace Uplift.DependencyResolution
 				{
 					Debug.Log("Adding " + dd.Name + " to requirements");
 					DependencyDefinition existingDependency = requirements.FirstOrDefault(tmp => tmp.Name == dd.Name);
-
+					//TODO Creer une copy de requirements pour pas modifier les requirements actuels
 					if (existingDependency != null)
 					{
 						IVersionRequirement existingRequirement = existingDependency.Requirement;
@@ -281,21 +285,24 @@ namespace Uplift.DependencyResolution
 							updatedDependency.Repository = dd.Repository;
 							updatedDependency.SkipInstall = dd.SkipInstall;
 							updatedDependency.OverrideDestination = dd.OverrideDestination;
-							requirements.AddLast(updatedDependency);
-							requirements.Remove(existingDependency);
+							newRequirements.AddLast(updatedDependency);
+							newRequirements.Remove(existingDependency);
 						}
 						catch (IncompatibleRequirementException e)
 						{
+							// Is existingRequirement aka existingDependency.Requirement
+							// modified ?
 							Debug.Log("Incompatible requirements : Cannot merge them as one");
-							requirements.AddLast(dd);
+							newRequirements.AddLast(dd);
 						}
 					}
 					else
 					{
-						requirements.AddLast(dd);
+						newRequirements.AddLast(dd);
 					}
 				}
 			}
+			return newRequirements;
 		}
 
 		public void GenerateConflict(DependencyDefinition requirement, DependencyGraph activated)

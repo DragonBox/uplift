@@ -25,6 +25,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Uplift.Packages;
+using Uplift.Schemas;
 
 namespace Uplift.DependencyResolution
 {
@@ -42,7 +44,7 @@ namespace Uplift.DependencyResolution
 			this.stack = stack;
 		}
 
-		public Stack<State> UnwindForConflict(Conflict conflict) //return stack ?
+		public Stack<State> UnwindForConflict(Conflict conflict, PackageList pkgList) //return stack ?
 		{
 			Debug.Log("Unwind for conflict started");
 			// Find requirements causing conflict
@@ -77,16 +79,17 @@ namespace Uplift.DependencyResolution
 
 			PossibilityState rewindStateCandidate = FindStateWithGreatestIndex(possibleRewinds);
 			Debug.Log("Rewind candidate is found.");
+			//TODO if rewind candidate is null then unable to find viable solution
 			Debug.Log(rewindStateCandidate.currentRequirement.Name + " has other possibility sets matching requirements");
-			//FIXME Remove it from possible rewind and put the remaining one in unusedUnwinds
+			//FIXME Remove it from possible rewind and put the	 remaining one in unusedUnwinds
 
 			int depthToRewind = rewindStateCandidate.depth;
-			RewindToState(stack, depthToRewind);
+			RewindToState(stack, depthToRewind, pkgList);
 
 			return stack;
 		}
 
-		private Stack<State> RewindToState(Stack<State> stack, int depthToRewind)
+		private Stack<State> RewindToState(Stack<State> stack, int depthToRewind, PackageList pkgList)
 		{
 			Debug.Log("rewinding to state at depth " + depthToRewind);
 			while (stack.Peek().depth > depthToRewind)
@@ -106,6 +109,10 @@ namespace Uplift.DependencyResolution
 			correspondingNode.matchingPossibilities = stateToRewind.matchingPossibilitySet;
 
 			Debug.Log("Clean nodes dependencies");
+			foreach (DependencyNode node in correspondingNode.dependencies)
+			{
+				node.RemoveRestriction(correspondingNode.Name, pkgList);
+			}
 			correspondingNode.dependencies = new List<DependencyNode>();
 
 			Debug.Log("Push edited possibility state to stack");

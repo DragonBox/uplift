@@ -58,7 +58,7 @@ namespace Uplift.DependencyResolution
 
 				foreach (string key in restrictors)
 				{
-					//Initial requirements cannot be changed
+					//Initial & Legacy requirement cannot be changed
 					if (key == "initial" || key == "legacy")
 					{
 						continue;
@@ -83,7 +83,9 @@ namespace Uplift.DependencyResolution
 					}
 					catch (Exception e)
 					{
-						Debug.LogError(e.ToString());
+						Debug.Log(e.ToString());
+						conflictingDependencies.Add(key);
+						break;
 					}
 					finally
 					{

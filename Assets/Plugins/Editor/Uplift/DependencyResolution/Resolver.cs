@@ -225,7 +225,7 @@ namespace Uplift.DependencyResolution
 						// Conflicts were found, rewind in a previous state to find solution
 						Conflict conflict = currentState.conflicts.ToArray()[0];
 						Rewinder rewinder = new Rewinder(stateStack);
-						stateStack = rewinder.UnwindForConflict(conflict);
+						stateStack = rewinder.UnwindForConflict(conflict, packageList);
 						currentState.conflicts.Remove(conflict);
 					}
 					else

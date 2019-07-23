@@ -28,6 +28,7 @@ using Uplift.Schemas;
 using UnityEngine;
 using System;
 using Uplift.Packages;
+using System.Linq;
 
 namespace Uplift.DependencyResolution
 {
@@ -276,15 +277,34 @@ namespace Uplift.DependencyResolution
 		public List<DependencyNode> GetChildNodesList()
 		{
 			List<DependencyNode> childNodesList = new List<DependencyNode>();
+			List<DependencyNode> visitedNodes = new List<DependencyNode>();
 			if (dependencies != null)
 			{
 				childNodesList.AddRange(dependencies);
+				visitedNodes.AddRange(dependencies);
 				foreach (DependencyNode childNode in dependencies)
 				{
-					childNodesList.AddRange(childNode.GetChildNodesList());
+					childNodesList.AddRange(childNode.GetChildNodesListReq(visitedNodes));
 				}
 			}
 			return childNodesList;
+		}
+
+		private List<DependencyNode> GetChildNodesListReq(List<DependencyNode> visitedNodes)
+		{
+			List<DependencyNode> childNodesList = visitedNodes;
+			if (dependencies != null)
+			{
+				foreach (DependencyNode childNode in dependencies)
+				{
+					if (!visitedNodes.Contains(childNode))
+					{
+						childNodesList.Add(childNode);
+						childNodesList.AddRange(childNode.GetChildNodesListReq(childNodesList));
+					}
+				}
+			}
+			return childNodesList.Distinct().ToList();
 		}
 
 		public void RemoveRestriction(string restrictor, PackageList pkgList)

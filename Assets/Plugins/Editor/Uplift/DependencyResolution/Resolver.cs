@@ -86,7 +86,8 @@ namespace Uplift.DependencyResolution
 																dg,
 																new List<PossibilitySet>(), //possibilities
 																0,
-																conflicts //conflicts
+																conflicts, //conflicts
+																new Dictionary<string, List<IVersionRequirement>>() //requirements history
 															);
 			stateStack.Push(initialState);
 			Debug.Log("===> Initial state : ");

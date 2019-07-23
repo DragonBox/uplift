@@ -43,25 +43,34 @@ namespace Uplift.DependencyResolution
 		public List<PossibilitySet> possibilities;
 		public int depth;
 		public List<Conflict> conflicts;
+		public Dictionary<String, List<IVersionRequirement>> requirementHistory;
 
 		public State(LinkedList<DependencyDefinition> requirements,
 					DependencyGraph activated,
 					List<PossibilitySet> possibilities,
 					int depth,
-					List<Conflict> conflicts)
+					List<Conflict> conflicts,
+					Dictionary<String, List<IVersionRequirement>> requirementHistory)
 		{
 			this.requirements = new LinkedList<DependencyDefinition>(requirements);
 			this.activated = activated;
 			this.possibilities = possibilities;
 			this.depth = depth;
 			this.conflicts = conflicts;
+
+			Dictionary<String, List<IVersionRequirement>> newRequirementHistory = new Dictionary<String, List<IVersionRequirement>>();
+			foreach (String key in requirementHistory.Keys)
+			{
+				newRequirementHistory[key] = new List<IVersionRequirement>(requirementHistory[key]);
+			}
+
+			this.requirementHistory = newRequirementHistory;
 		}
 
 		override public string ToString()
 		{
 			StringBuilder stringBuffer = new StringBuilder();
 
-			//Requirements : (name version) (name version) (name version)
 			stringBuffer.Append("Requirements : ");
 			foreach (DependencyDefinition dep in requirements)
 			{
@@ -109,8 +118,9 @@ namespace Uplift.DependencyResolution
 								DependencyGraph activated,
 								List<PossibilitySet> possibilities,
 								int depth,
-								List<Conflict> conflicts) :
-								base(requirements, activated, possibilities, depth, conflicts)
+								List<Conflict> conflicts,
+								Dictionary<String, List<IVersionRequirement>> requirementHistory) :
+								base(requirements, activated, possibilities, depth, conflicts, requirementHistory)
 		{ }
 
 		public List<PackageRepo> GetResolution()
@@ -138,14 +148,15 @@ namespace Uplift.DependencyResolution
 			{
 				DependencyDefinition currentRequirement = requirements.First();
 				requirements.RemoveFirst();
-				//TODO check shallow copy 
+				//TODO check shallow copy
 				possibilityState = new PossibilityState(requirements,   //Should be shallow copy
 														activated,
 														possibilities,
 														depth + 1,
 														conflicts,       //Should be shallow copy
 														this,
-														currentRequirement);
+														currentRequirement,
+														requirementHistory);
 
 				Debug.Log(possibilityState);
 			}
@@ -166,9 +177,9 @@ namespace Uplift.DependencyResolution
 								int depth,
 								List<Conflict> conflicts,
 								DependencyState parent,
-								DependencyDefinition currentRequirement
-								) :
-								base(requirements, activated, possibilities, depth, conflicts)
+								DependencyDefinition currentRequirement,
+								Dictionary<String, List<IVersionRequirement>> requirementHistory) :
+								base(requirements, activated, possibilities, depth, conflicts, requirementHistory)
 		{
 			this.parent = parent;
 			this.currentRequirement = currentRequirement;
@@ -212,7 +223,19 @@ namespace Uplift.DependencyResolution
 				DependencyGraph newActivated = new DependencyGraph(activated.nodeList);
 				LinkedList<DependencyDefinition> newRequirements = InjectPossibilitiesInDependencyGraph(matchingPossibilitySet, correspondingNode);
 				Debug.Log("Poping new dependency state");
-				newState = new DependencyState(newRequirements, newActivated, possibilities, depth + 1, conflicts);
+
+				//Updating history requirement
+				if (!requirementHistory.ContainsKey(currentRequirement.Name))
+				{
+					requirementHistory[currentRequirement.Name] = new List<IVersionRequirement>();
+					requirementHistory[currentRequirement.Name].Add(currentRequirement.Requirement);
+				}
+				else
+				{
+					requirementHistory[currentRequirement.Name].Add(currentRequirement.Requirement);
+					requirementHistory[currentRequirement.Name] = requirementHistory[currentRequirement.Name].Distinct().ToList();
+				}
+				newState = new DependencyState(newRequirements, newActivated, possibilities, depth + 1, conflicts, requirementHistory);
 			}
 			return newState;
 		}
@@ -285,19 +308,27 @@ namespace Uplift.DependencyResolution
 							updatedDependency.Repository = dd.Repository;
 							updatedDependency.SkipInstall = dd.SkipInstall;
 							updatedDependency.OverrideDestination = dd.OverrideDestination;
+
+							Debug.Log("Requirement was already in queue. Updating it");
 							newRequirements.AddLast(updatedDependency);
 							newRequirements.Remove(existingDependency);
 						}
 						catch (IncompatibleRequirementException e)
 						{
-							// Is existingRequirement aka existingDependency.Requirement
-							// modified ?
 							Debug.Log("Incompatible requirements : Cannot merge them as one");
 							newRequirements.AddLast(dd);
 						}
 					}
 					else
 					{
+						if (requirementHistory.ContainsKey(dd.Name)
+						&& requirementHistory[dd.Name].Contains(dd.Requirement)
+						)
+						{
+							Debug.Log("Current requirement was skipped, because he was already in requirement history");
+							return newRequirements;
+						}
+						Debug.Log("Adding requirement to queue");
 						newRequirements.AddLast(dd);
 					}
 				}

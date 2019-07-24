@@ -69,12 +69,19 @@ namespace Uplift.DependencyResolution
 				if (!dg.Contains(requested.Name))
 				{
 					node = new DependencyNode(requested);
-					node.restrictions["initial"] = requested.Requirement;
 					dg.AddNode(node);
 				}
 				else
 				{
 					node = dg.FindByName(requested.Name);
+				}
+
+				if (node.restrictions.ContainsKey("initial"))
+				{
+					throw new IncompatibleRequirementException("initial requirements cannot have twice the same requirement");
+				}
+				else
+				{
 					node.restrictions["initial"] = requested.Requirement;
 				}
 			}

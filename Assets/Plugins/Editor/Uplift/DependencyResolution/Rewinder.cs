@@ -78,15 +78,20 @@ namespace Uplift.DependencyResolution
 			}
 
 			PossibilityState rewindStateCandidate = FindStateWithGreatestIndex(possibleRewinds);
-			Debug.Log("Rewind candidate is found.");
-			//TODO if rewind candidate is null then unable to find viable solution
-			Debug.Log(rewindStateCandidate.currentRequirement.Name + " has other possibility sets matching requirements");
-			//FIXME Remove it from possible rewind and put the	 remaining one in unusedUnwinds
+			if (rewindStateCandidate == null)
+			{
+				throw new IncompatibleRequirementException("No valid rewind candidate were found.");
+			}
+			else
+			{
+				Debug.Log("Rewind candidate is found.");
+				Debug.Log(rewindStateCandidate.currentRequirement.Name + " has other possibility sets matching requirements");
 
-			int depthToRewind = rewindStateCandidate.depth;
-			RewindToState(stack, depthToRewind, pkgList);
+				int depthToRewind = rewindStateCandidate.depth;
+				RewindToState(stack, depthToRewind, pkgList);
 
-			return stack;
+				return stack;
+			}
 		}
 
 		private Stack<State> RewindToState(Stack<State> stack, int depthToRewind, PackageList pkgList)

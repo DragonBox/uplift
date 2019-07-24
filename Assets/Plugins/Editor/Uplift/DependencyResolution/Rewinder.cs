@@ -25,6 +25,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Uplift.Common;
 using Uplift.Packages;
 using Uplift.Schemas;
 
@@ -124,9 +125,6 @@ namespace Uplift.DependencyResolution
 			List<State> listOfStates = new List<State>(stack.ToArray());
 			List<State> listOfPossibleRewinds = new List<State>();
 
-			//Check parent of dependencyName for alternatives, check parent alternative, check gramps alternatives
-			//Do it recursively until top
-			//Add possibilityState of dependencyName
 			if (stack.Count >= 1)
 			{
 				List<DependencyNode> relatedNodes = currentState.activated.FindNodesRelatedToGivenDependency(dependencyName);

@@ -13,9 +13,6 @@ namespace Uplift.DependencyResolution
 	[TestFixture]
 	public class TestDependencyResolution
 	{
-		// TODO 
-		// - Test exception handling
-
 		static Dictionary<string, Upset[]> packages = new Dictionary<string, Upset[]>();
 
 		void FillRepo()

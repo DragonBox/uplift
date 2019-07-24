@@ -45,7 +45,6 @@ namespace Uplift.DependencyResolution
 
 		public DependencyGraph(PackageRepo[] packages)
 		{
-			//TODO test
 			nodeList = new List<DependencyNode>();
 			if (packages != null && packages.Length > 0)
 			{
@@ -54,7 +53,6 @@ namespace Uplift.DependencyResolution
 					DependencyNode node = new DependencyNode(pr.Package.PackageName, pr.Package.PackageVersion, pr.Repository.ToString());
 					node.requirement = new MinimalVersionRequirement(pr.Package.PackageVersion);
 					node.restrictions["legacy"] = new MinimalVersionRequirement(pr.Package.PackageVersion);
-					//Dependencies to add ?
 					this.AddNode(node);
 				}
 			}

@@ -46,6 +46,7 @@ namespace Uplift.DependencyResolution
 		public IVersionRequirement requirement;
 
 		public Dictionary<string, IVersionRequirement> restrictions = new Dictionary<string, IVersionRequirement>();
+
 		public SkipInstallSpec[] skips;
 		public OverrideDestinationSpec[] overrides;
 
@@ -150,7 +151,6 @@ namespace Uplift.DependencyResolution
 
 		private void UpdateNodeRequirements(DependencyDefinition newRequirements, string restrictor)
 		{
-			//TODO write a test for this
 			Debug.Log("Updating " + this.name + " requirement " + requirement);
 			Debug.Log(restrictor + " adds new restriction on " + name);
 
@@ -169,7 +169,6 @@ namespace Uplift.DependencyResolution
 
 			Debug.Log("Requirement updated");
 			Debug.Log("New requirement is : " + requirement);
-			//FIXME Maybe add test if null value in foreach loops...
 
 			Debug.Log("Updating node possibilities according to new requirements");
 			Dictionary<PossibilitySet, List<PackageRepo>> packagesToRemove = new Dictionary<PossibilitySet, List<PackageRepo>>();
@@ -332,7 +331,7 @@ namespace Uplift.DependencyResolution
 			if (restrictions.ContainsKey("legacy"))
 			{
 				String legacyVersion = ((MinimalVersionRequirement)restrictions["legacy"]).minimal.ToString();
-				//TODO Most 1.1.0 not in possibility set
+
 				foreach (PackageRepo pr in selectedPossibilitySet.packages)
 				{
 					if (pr.Package.PackageVersion == legacyVersion)

@@ -39,7 +39,6 @@ namespace Uplift.DependencyResolution
 
 			cycleDetector.DetectCycles(dependencyGraph);
 
-			// TODO: Save the current dependency tree so the whole tree doesn't have to be solved entirely later on
 			DependencyDefinition[] solvedDependencies = GetDependencyDefinitions(dependencyGraph);
 
 			return solvedDependencies;

@@ -35,7 +35,6 @@ namespace Uplift.DependencyResolution
 	class Resolver : IDependencySolver
 	{
 		public PackageList packageList;
-
 		DependencyGraph baseGraph = new DependencyGraph();
 		LinkedList<DependencyDefinition> originalDependencies;
 		Stack<State> stateStack = new Stack<State>();
@@ -160,11 +159,9 @@ namespace Uplift.DependencyResolution
 			return SolveDependencies(dependencies, null);
 		}
 
-		//TODO doc
-		//Main function which process the [...]
+		//Main function which process the different states in the state stack to solve dependencies
 		public List<PackageRepo> SolveDependencies(DependencyDefinition[] dependencies, PackageRepo[] startingPackages)
 		{
-			// FIXME Clean code here and split in sub methods
 			Debug.Log("Solve dependencies");
 
 			DependencyGraph dg = new DependencyGraph(startingPackages);
@@ -173,7 +170,7 @@ namespace Uplift.DependencyResolution
 			// Final results
 			List<PackageRepo> resolution = new List<PackageRepo>();
 
-			//FIXME change this when algo is operational
+			//FIXME change this for final version
 			int i = 1000;
 			while (i > 0)//stateStack.Count > 0)
 			{
@@ -215,10 +212,6 @@ namespace Uplift.DependencyResolution
 							Debug.Log("Add new possibility state in stack");
 							stateStack.Push(newPossibilityState);
 						}
-						else
-						{
-							//TODO manage error
-						}
 					}
 				}
 				else if (currentState.GetType() == typeof(PossibilityState))
@@ -242,7 +235,6 @@ namespace Uplift.DependencyResolution
 						Debug.Log("Push new dependency state in stack");
 						if (newState == null)
 						{
-							//TODO exception
 							Debug.LogError("error, no viable solution found");
 							break;
 						}
@@ -251,11 +243,9 @@ namespace Uplift.DependencyResolution
 				}
 				else
 				{
-					// TODO exception
 					Debug.LogError("Error : Current state is neither possibility or dependency state");
 				}
 			}
-
 
 			Debug.Log("===== Final resolution : =====");
 			ShowResolution(resolution);

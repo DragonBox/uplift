@@ -51,7 +51,6 @@ namespace Uplift.DependencyResolution
 
 			if (packages != null && packages.Count > 0)
 			{
-
 				foreach (PackageRepo package in packages)
 				{
 					currentVersion = VersionParser.ParseVersion(package.Package.PackageVersion, false);
@@ -115,7 +114,7 @@ namespace Uplift.DependencyResolution
 			}
 		}
 
-		public static List<PossibilitySet> GetPossibilitySetsForGivenPackage(string packageName, PackageList packageList) //TODO To Test
+		public static List<PossibilitySet> GetPossibilitySetsForGivenPackage(string packageName, PackageList packageList)
 		{
 			Debug.Log("- Getting possibility sets for : " + packageName);
 			List<PossibilitySet> possibilities = null;

@@ -46,7 +46,6 @@ namespace Uplift.DependencyResolution
 
 		public List<string> FindConflictingDependency()
 		{
-			//FIXME conflict might be due to several requirement
 			List<string> conflictingDependencies = new List<string>();
 			DependencyNode correspondingNode = this.activated.FindByName(this.requirement.Name);
 
@@ -63,7 +62,7 @@ namespace Uplift.DependencyResolution
 					{
 						continue;
 					}
-					//TODO create a function to do this
+
 					IVersionRequirement tmpVersion = copiedNode.restrictions[key];
 					copiedNode.restrictions[key] = new NoRequirement();
 					try

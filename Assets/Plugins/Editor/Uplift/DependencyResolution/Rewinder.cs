@@ -47,10 +47,9 @@ namespace Uplift.DependencyResolution
 		public Stack<State> UnwindForConflict(Conflict conflict, PackageList pkgList) //return stack ?
 		{
 			Debug.Log("Unwind for conflict started");
+
 			// Find requirements causing conflict
 			Debug.Log("Get list of conflicting requirements");
-
-			//TODO if null raise error ?
 			List<string> conflictingRequirements = conflict.FindConflictingDependency();
 
 			//Copy current stack
@@ -61,20 +60,6 @@ namespace Uplift.DependencyResolution
 			foreach (string nodeName in conflictingRequirements)
 			{
 				possibleRewinds.AddRange(GetPossibleRewinds(stackCopy, nodeName));
-
-				//TODO look for unwinds in previous unused unwinds
-				// --> Check unwind that were not executed (in list of unused unwinds)
-				// * Keep only those that are smaller than those in the array[]
-				// * Check if unwind has the chance of prevent encounter current conflict
-				//		* the unwind must have been rejected an unwind leading to
-				//		* one of the state in the current conflict reqt tree
-
-				// --> Launch unwind
-				// * If unwinds are found take the smallest one
-				//		* filter destination state's possibilities to prevent conflict
-				// * else
-				//		* raise VersionConflict error
-				// -->  Update list of unused unwinds			
 			}
 
 			PossibilityState rewindStateCandidate = FindStateWithGreatestIndex(possibleRewinds);
@@ -103,11 +88,17 @@ namespace Uplift.DependencyResolution
 			}
 			//Use other possibilitySet than selected possibilitySet
 			PossibilityState stateToRewind = (PossibilityState)stack.Pop();
+			Debug.Log("State to rewind requirements : ");
+			foreach (DependencyDefinition req in stateToRewind.requirements)
+			{
+				Debug.Log(req.Name + " " + req.Requirement.ToString());
+			}
+
 			DependencyNode correspondingNode = stateToRewind.activated.FindByName(stateToRewind.currentRequirement.Name);
 
 			Debug.Log("removing previously selected possibility set");
 			PossibilitySet selectedPossibilitySet = correspondingNode.selectedPossibilitySet;
-			//FIXME : dangerous to have duplicate matching possibilitySet...
+
 			stateToRewind.matchingPossibilitySet.Remove(selectedPossibilitySet);
 
 			Debug.Log("Remove it from matching possibility set");
@@ -133,7 +124,7 @@ namespace Uplift.DependencyResolution
 			List<State> listOfStates = new List<State>(stack.ToArray());
 			List<State> listOfPossibleRewinds = new List<State>();
 
-			//_Check parent of dependencyName for alternatives, check parent alternative, check gramps alternatives
+			//Check parent of dependencyName for alternatives, check parent alternative, check gramps alternatives
 			//Do it recursively until top
 			//Add possibilityState of dependencyName
 			if (stack.Count >= 1)

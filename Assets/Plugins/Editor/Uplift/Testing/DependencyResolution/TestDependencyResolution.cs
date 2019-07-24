@@ -277,6 +277,22 @@ namespace Uplift.DependencyResolution
 			W100.Dependencies[0].Name = "V";
 			W100.Dependencies[0].Version = "1.0.0";
 
+			Upset X100 = new Upset();
+			X100.PackageName = "X";
+			X100.PackageVersion = "1.0.0";
+			X100.Dependencies = new DependencyDefinition[1];
+			X100.Dependencies[0] = new DependencyDefinition();
+			X100.Dependencies[0].Name = "S";
+			X100.Dependencies[0].Version = "1.1.0";
+
+			Upset Y100 = new Upset();
+			Y100.PackageName = "Y";
+			Y100.PackageVersion = "1.0.0";
+			Y100.Dependencies = new DependencyDefinition[1];
+			Y100.Dependencies[0] = new DependencyDefinition();
+			Y100.Dependencies[0].Name = "S";
+			Y100.Dependencies[0].Version = "1.2.0";
+
 			packages["A"] = new Upset[] { A110, A116, A120 };
 			packages["B"] = new Upset[] { B110, B113 };
 			packages["C"] = new Upset[] { C110, C116 };
@@ -300,7 +316,8 @@ namespace Uplift.DependencyResolution
 			packages["U"] = new Upset[] { U100 };
 			packages["V"] = new Upset[] { V100 };
 			packages["W"] = new Upset[] { W100 };
-
+			packages["X"] = new Upset[] { X100 };
+			packages["Y"] = new Upset[] { Y100 };
 		}
 		Stack<DependencyDefinition> originalDependencies = new Stack<DependencyDefinition>();
 		DependencyGraph baseGraph = new DependencyGraph();
@@ -317,6 +334,8 @@ namespace Uplift.DependencyResolution
 			Debug.Log(packageListStub);
 		}
 
+		#region simple tests
+
 		[Test]
 		public void NoRequirement()
 		{
@@ -325,6 +344,64 @@ namespace Uplift.DependencyResolution
 			Upset[] expected = { };
 			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
 		}
+		[Test]
+		public void InitWithPackageRepos()
+		{
+			DependencyDefinition[] originalDependencies = new DependencyDefinition[3];
+			DependencyDefinition A = new DependencyDefinition();
+			A.Name = "A";
+			A.Version = "1.1.0+";
+			DependencyDefinition B = new DependencyDefinition();
+			B.Name = "B";
+			B.Version = "1.1.0+";
+			DependencyDefinition C = new DependencyDefinition();
+			C.Name = "C";
+			C.Version = "1.1.0+";
+
+			Resolver resolver = new Resolver(baseGraph, packageListStub);
+
+			originalDependencies[0] = A;
+			originalDependencies[1] = B;
+			originalDependencies[2] = C;
+
+			List<PackageRepo> startingRepos = new List<PackageRepo>();
+
+			startingRepos.AddRange(packageListStub.GetPackageRepo("A").Where(pr => pr.Package.PackageVersion == "1.1.0"));
+			startingRepos.AddRange(packageListStub.GetPackageRepo("B").Where(pr => pr.Package.PackageVersion == "1.1.0"));
+			startingRepos.AddRange(packageListStub.GetPackageRepo("C").Where(pr => pr.Package.PackageVersion == "1.1.0"));
+
+			foreach (var item in startingRepos)
+			{
+				Debug.Log(item.Package.PackageName + " " + item.Package.PackageVersion);
+			}
+
+			Assert.IsTrue(CheckResolverResults(startingRepos.Select(pr => pr.Package).ToArray(),
+											   resolver.SolveDependencies(originalDependencies, startingRepos.ToArray())));
+		}
+		[Test]
+		public void TwiceTheSameRequirement()
+		{
+			originalDependencies = new Stack<DependencyDefinition>();
+
+			DependencyDefinition H1 = new DependencyDefinition();
+			H1.Name = "H";
+			H1.Version = "2.5.5";
+
+			DependencyDefinition H2 = new DependencyDefinition();
+			H2.Name = "H";
+			H2.Version = "2.5.5";
+
+			originalDependencies.Push(H1);
+			originalDependencies.Push(H2);
+
+			Resolver resolver = new Resolver(baseGraph, packageListStub);
+
+			Upset[] expected = { packages["H"][0] }; //H255
+
+			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+		}
+
+		#endregion
 
 		#region No Dependency
 
@@ -433,7 +510,7 @@ namespace Uplift.DependencyResolution
 		}
 		#endregion
 
-		#region Dependencies
+		#region Tweaking package versions
 		[Test]
 		public void DependencyOnExactVersion()
 		{
@@ -470,7 +547,7 @@ namespace Uplift.DependencyResolution
 			H.Version = "2.5.7+";
 			originalDependencies.Push(H);
 			Resolver resolver = new Resolver(baseGraph, packageListStub);
-			Assert.DoesNotThrow(() => { resolver.SolveDependencies(originalDependencies.ToArray()); });
+			Assert.Throws<IncompatibleRequirementException>(() => resolver.SolveDependencies(originalDependencies.ToArray()));
 		}
 
 		[Test]
@@ -497,7 +574,7 @@ namespace Uplift.DependencyResolution
 			originalDependencies.Push(H);
 
 			Resolver resolver = new Resolver(baseGraph, packageListStub);
-			Assert.DoesNotThrow(() => { resolver.SolveDependencies(originalDependencies.ToArray()); });
+			Assert.Throws<IncompatibleRequirementException>(() => resolver.SolveDependencies(originalDependencies.ToArray()));
 		}
 
 		[Test]
@@ -522,7 +599,7 @@ namespace Uplift.DependencyResolution
 			H.Version = "3.5.5+";
 			originalDependencies.Push(H);
 			Resolver resolver = new Resolver(baseGraph, packageListStub);
-			Assert.DoesNotThrow(() => { resolver.SolveDependencies(originalDependencies.ToArray()); });
+			Assert.Throws<IncompatibleRequirementException>(() => resolver.SolveDependencies(originalDependencies.ToArray()));
 		}
 
 		#endregion
@@ -603,64 +680,7 @@ namespace Uplift.DependencyResolution
 
 		#endregion
 
-		[Test]
-		public void PossibilitySetRestriction()
-		{
-			originalDependencies = new Stack<DependencyDefinition>();
-			DependencyDefinition N = new DependencyDefinition();
-			N.Name = "N";
-			N.Version = "1.1.0+";
-
-			DependencyDefinition O = new DependencyDefinition();
-			O.Name = "O";
-			O.Version = "1.1.0+";
-
-			originalDependencies.Push(N);
-			originalDependencies.Push(O);
-
-			Resolver resolver = new Resolver(baseGraph, packageListStub);
-
-			Upset[] expected = { packages["N"][0],	//N110
-								 packages["O"][0],	//O110
-								 packages["P"][2] };//P150
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
-		}
-
-		#region Dependency Graph
-		[Test]
-		public void ResolutionWithStartingPackageRepos()
-		{
-			DependencyDefinition[] originalDependencies = new DependencyDefinition[3];
-			DependencyDefinition A = new DependencyDefinition();
-			A.Name = "A";
-			A.Version = "1.1.0+";
-			DependencyDefinition B = new DependencyDefinition();
-			B.Name = "B";
-			B.Version = "1.1.0+";
-			DependencyDefinition C = new DependencyDefinition();
-			C.Name = "C";
-			C.Version = "1.1.0+";
-
-			Resolver resolver = new Resolver(baseGraph, packageListStub);
-
-			originalDependencies[0] = A;
-			originalDependencies[1] = B;
-			originalDependencies[2] = C;
-
-			List<PackageRepo> startingRepos = new List<PackageRepo>();
-
-			startingRepos.AddRange(packageListStub.GetPackageRepo("A").Where(pr => pr.Package.PackageVersion == "1.1.0"));
-			startingRepos.AddRange(packageListStub.GetPackageRepo("B").Where(pr => pr.Package.PackageVersion == "1.1.0"));
-			startingRepos.AddRange(packageListStub.GetPackageRepo("C").Where(pr => pr.Package.PackageVersion == "1.1.0"));
-
-			foreach (var item in startingRepos)
-			{
-				Debug.Log(item.Package.PackageName + " " + item.Package.PackageVersion);
-			}
-
-			Assert.IsTrue(CheckResolverResults(startingRepos.Select(pr => pr.Package).ToArray(),
-											   resolver.SolveDependencies(originalDependencies, startingRepos.ToArray())));
-		}
+		#region Node restrictors
 
 		[Test]
 		public void SeveralRestrictorOnNode()
@@ -757,34 +777,38 @@ namespace Uplift.DependencyResolution
 			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
 
 		}
-		#endregion
 
 		[Test]
-		public void TwiceTheSameRequirement()
+		public void DoubleRestrictorOnNode()
 		{
 			originalDependencies = new Stack<DependencyDefinition>();
+			DependencyDefinition N = new DependencyDefinition();
+			N.Name = "N";
+			N.Version = "1.1.0+";
 
-			DependencyDefinition H1 = new DependencyDefinition();
-			H1.Name = "H";
-			H1.Version = "2.5.5";
+			DependencyDefinition O = new DependencyDefinition();
+			O.Name = "O";
+			O.Version = "1.1.0+";
 
-			DependencyDefinition H2 = new DependencyDefinition();
-			H2.Name = "H";
-			H2.Version = "2.5.5";
-
-			originalDependencies.Push(H1);
-			originalDependencies.Push(H2);
+			originalDependencies.Push(N);
+			originalDependencies.Push(O);
 
 			Resolver resolver = new Resolver(baseGraph, packageListStub);
 
-			Upset[] expected = { packages["H"][0] }; //H255
-
+			Upset[] expected = { packages["N"][0],	//N110
+								 packages["O"][0],	//O110
+								 packages["P"][2] };//P150
 			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
 		}
 
+		#endregion
+
+		#region cyclic dependencies
 		[Test]
 		public void ExplicitCyclicDependencies()
 		{
+			originalDependencies = new Stack<DependencyDefinition>();
+
 			DependencyDefinition V = new DependencyDefinition();
 			V.Name = "V";
 			V.Version = "1.0.0";
@@ -808,6 +832,8 @@ namespace Uplift.DependencyResolution
 		[Test]
 		public void BasicCyclicDependencies()
 		{
+			originalDependencies = new Stack<DependencyDefinition>();
+
 			DependencyDefinition V = new DependencyDefinition();
 			V.Name = "V";
 			V.Version = "1.0.0";
@@ -822,7 +848,72 @@ namespace Uplift.DependencyResolution
 
 			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
 		}
+		#endregion
 
+		#region Exception Handling
+
+		[Test]
+		public void IncompatibleOriginalDependencies()
+		{
+			originalDependencies = new Stack<DependencyDefinition>();
+
+			DependencyDefinition S1 = new DependencyDefinition();
+			S1.Name = "S";
+			S1.Version = "1.1.0";
+
+			DependencyDefinition S2 = new DependencyDefinition();
+			S2.Name = "S";
+			S2.Version = "1.2.0";
+
+			originalDependencies.Push(S1);
+			originalDependencies.Push(S2);
+
+			Resolver resolver = new Resolver(baseGraph, packageListStub);
+			Assert.Throws<IncompatibleRequirementException>(() => resolver.SolveDependencies(originalDependencies.ToArray()));
+		}
+
+		[Test]
+		public void IncompatibilityWithOrginalDependency()
+		{
+			originalDependencies = new Stack<DependencyDefinition>();
+
+			DependencyDefinition S = new DependencyDefinition();
+			S.Name = "S";
+			S.Version = "1.1.0";
+
+			DependencyDefinition R = new DependencyDefinition();
+			R.Name = "R";
+			R.Version = "1.1.0";
+
+			originalDependencies.Push(S);
+			originalDependencies.Push(R);
+
+			Resolver resolver = new Resolver(baseGraph, packageListStub);
+			//resolver.SolveDependencies(originalDependencies.ToArray());
+			Assert.Throws<IncompatibleRequirementException>(() => resolver.SolveDependencies(originalDependencies.ToArray()));
+		}
+
+		[Test]
+		public void IncompatibleDependencies()
+		{
+			originalDependencies = new Stack<DependencyDefinition>();
+
+			DependencyDefinition X = new DependencyDefinition();
+			X.Name = "X";
+			X.Version = "1.0.0";
+
+			DependencyDefinition Y = new DependencyDefinition();
+			Y.Name = "Y";
+			Y.Version = "1.0.0";
+
+			originalDependencies.Push(X);
+			originalDependencies.Push(Y);
+
+			Resolver resolver = new Resolver(baseGraph, packageListStub);
+			Assert.Throws<IncompatibleRequirementException>(() => resolver.SolveDependencies(originalDependencies.ToArray()));
+		}
+
+		#endregion
 		private bool CheckResolverResults(Upset[] expected, List<PackageRepo> results)
 		{
 			List<Upset> resultsUpset = new List<Upset>();

@@ -398,7 +398,7 @@ namespace Uplift.DependencyResolution
 
 			Upset[] expected = { packages["H"][0] }; //H255
 
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.Throws<IncompatibleRequirementException>(() => resolver.SolveDependencies(originalDependencies.ToArray()));
 		}
 
 		#endregion

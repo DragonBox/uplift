@@ -170,8 +170,7 @@ namespace Uplift
 			PackageRepo[] targets = new PackageRepo[0];
 			bool present = File.Exists(lockfilePath);
 
-			//FIXME remove hack
-			if (true || strategy == InstallStrategy.UPDATE_LOCKFILE || (strategy == InstallStrategy.INCOMPLETE_LOCKFILE && !present))
+			if (strategy == InstallStrategy.UPDATE_LOCKFILE || (strategy == InstallStrategy.INCOMPLETE_LOCKFILE && !present))
 			{
 				if (updateLockfile)
 				{

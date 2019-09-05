@@ -228,7 +228,7 @@ namespace Uplift
 							))
 						.ToArray();
 
-					Debug.Log("Solve modified dependencies");
+					/*
 					DependencyDefinition[] solvedModified = solver.SolveDependencies(modifiedDependencies);
 					Debug.Log("Check conflicts");
 					DependencyDefinition[] conflicting = solvedModified.Where(def => unmodifiable.Any(pr => pr.Package.PackageName == def.Name)).ToArray();

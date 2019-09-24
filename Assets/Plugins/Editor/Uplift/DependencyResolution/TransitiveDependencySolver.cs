@@ -30,7 +30,7 @@ using Uplift.Schemas;
 
 namespace Uplift.DependencyResolution
 {
-	class TransitiveDependencySolver //: IDependencySolver
+	class TransitiveDependencySolver : IDependencySolver
 	{
 		public event DependencyHelper.ConflictChecker CheckConflict;
 

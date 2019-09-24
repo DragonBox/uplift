@@ -41,13 +41,8 @@ namespace Uplift.DependencyResolution
 
 		public Resolver(DependencyGraph baseGraph, PackageList packageList)
 		{
-
 			this.baseGraph = baseGraph;
 			this.packageList = packageList;
-			if (packageList.GetType() == typeof(PackageListStub))
-			{
-				packageList.SetPackages(((PackageListStub)packageList).GetAllPackageRepo());
-			}
 		}
 
 		public Resolver(PackageList packageList)

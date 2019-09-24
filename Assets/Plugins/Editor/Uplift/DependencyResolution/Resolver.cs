@@ -156,7 +156,16 @@ namespace Uplift.DependencyResolution
 		{
 			Debug.Log("Solve dependencies");
 
-			DependencyGraph dg = new DependencyGraph(startingPackages);
+			DependencyGraph dg;
+			if (startingPackages != null)
+			{
+				dg = new DependencyGraph(startingPackages);
+			}
+			else
+			{
+				dg = new DependencyGraph();
+			}
+
 			pushInitialState(dependencies, dg);
 
 			// Final results

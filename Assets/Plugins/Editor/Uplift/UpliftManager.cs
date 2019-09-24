@@ -166,7 +166,7 @@ namespace Uplift
 		{
 			Debug.Log("Get Targets");
 			DependencyDefinition[] upfileDependencies = upfile.Dependencies;
-			PackageRepo[] installableDependencies = solver.SolveDependencies(upfileDependencies).ToArray();//IdentifyInstallable(solvedDependencies);
+			PackageRepo[] installableDependencies = solver.SolveDependencies(upfileDependencies).ToArray();
 			PackageRepo[] targets = new PackageRepo[0];
 			bool present = File.Exists(lockfilePath);
 
@@ -228,23 +228,7 @@ namespace Uplift
 							))
 						.ToArray();
 
-					/*
-					DependencyDefinition[] solvedModified = solver.SolveDependencies(modifiedDependencies);
-					Debug.Log("Check conflicts");
-					DependencyDefinition[] conflicting = solvedModified.Where(def => unmodifiable.Any(pr => pr.Package.PackageName == def.Name)).ToArray();
-					if (conflicting.Length != 0)
-					{
-						Debug.Log("Conflicts found !");
-						foreach (DependencyDefinition def in conflicting)
-						{
-							if (!def.Requirement.IsMetBy(unmodifiable.First(pr => pr.Package.PackageName == def.Name).Package.PackageVersion))
-								throw new ApplicationException("Existing dependency on " + def.Name + " would be broken when installing. Please update it manually.");
-						}
-						Debug.Log("Solve modified dependencies by selecting only unconflicting dependencies");
-						solvedModified = solvedModified.Where(def => !conflicting.Contains(def)).ToArray();
-					}
-					PackageRepo[] installableModified = IdentifyInstallable(solvedModified);
-					*/
+
 					PackageRepo[] installableModified = solver.SolveDependencies(modifiedDependencies, unmodifiable).ToArray();
 					targets = new PackageRepo[unmodifiable.Length + installableModified.Length];
 					Array.Copy(unmodifiable, targets, unmodifiable.Length);
@@ -293,10 +277,7 @@ namespace Uplift
 
 		public IDependencySolver GetDependencySolver()
 		{
-			//TransitiveDependencySolver dependencySolver = new TransitiveDependencySolver();
 			Resolver dependencySolver = new Resolver(PackageList.Instance());
-			//dependencySolver.CheckConflict += SolveVersionConflict;
-
 			return dependencySolver;
 		}
 

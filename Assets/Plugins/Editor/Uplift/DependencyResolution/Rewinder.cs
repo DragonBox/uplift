@@ -45,7 +45,7 @@ namespace Uplift.DependencyResolution
 			this.stack = stack;
 		}
 
-		public Stack<State> UnwindForConflict(Conflict conflict, PackageList pkgList) //return stack ?
+		public Stack<State> UnwindForConflict(Conflict conflict, PackageList pkgList)
 		{
 			Debug.Log("Unwind for conflict started");
 

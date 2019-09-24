@@ -225,7 +225,6 @@ namespace Uplift.DependencyResolution
 					requirementHistory[currentRequirement.Name] = new List<IVersionRequirement>();
 				}
 				requirementHistory[currentRequirement.Name].Add(currentRequirement.Requirement);
-				//requirementHistory[currentRequirement.Name] = requirementHistory[currentRequirement.Name].Distinct().ToList();
 
 				newState = new DependencyState(newRequirements, newActivated, possibilities, depth + 1, conflicts, requirementHistory);
 			}

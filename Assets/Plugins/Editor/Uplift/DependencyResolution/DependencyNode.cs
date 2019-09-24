@@ -253,7 +253,7 @@ namespace Uplift.DependencyResolution
 							DependencyNode childNode = new DependencyNode(dd);
 							Debug.Log(restrictor + " adds first restriction on new dep node " + dd.Name);
 							childNode.restrictions[restrictor] = dd.Requirement;
-							activated.AddDependency(this, childNode); //activated.AddNode(childNode);
+							activated.AddDependency(this, childNode);
 						}
 						else
 						{

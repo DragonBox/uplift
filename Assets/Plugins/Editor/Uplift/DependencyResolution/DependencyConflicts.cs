@@ -68,7 +68,6 @@ namespace Uplift.DependencyResolution
 					try
 					{
 						IVersionRequirement newRequirementForNode = copiedNode.ComputeRequirement();
-						//IVersionRequirement versionRequirementTobeChecked = conflictRaised.requirement.Requirement.RestrictTo(newRequirementForNode);
 
 						foreach (PackageRepo package in correspondingNode.selectedPossibilitySet.packages)
 						{

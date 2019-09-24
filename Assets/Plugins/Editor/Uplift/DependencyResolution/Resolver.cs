@@ -74,10 +74,7 @@ namespace Uplift.DependencyResolution
 				{
 					throw new IncompatibleRequirementException("initial requirements cannot have twice the same requirement");
 				}
-				else
-				{
-					node.restrictions["initial"] = requested.Requirement;
-				}
+				node.restrictions["initial"] = requested.Requirement;
 			}
 
 			//Create dependency state for original dependencies
@@ -219,14 +216,14 @@ namespace Uplift.DependencyResolution
 					if (currentState.conflicts != null && currentState.conflicts.Count > 0)
 					{
 						// Conflicts were found, rewind in a previous state to find solution
-						Conflict conflict = currentState.conflicts.ToArray()[0];
+						Conflict conflict = currentState.conflicts[0];
 						Rewinder rewinder = new Rewinder(stateStack);
 						stateStack = rewinder.UnwindForConflict(conflict, packageList);
 						currentState.conflicts.Remove(conflict);
 					}
 					else
 					{
-						// State Resolution is successfull
+						// State Resolution is successful
 						Debug.Log("Push new dependency state in stack");
 						if (newState == null)
 						{

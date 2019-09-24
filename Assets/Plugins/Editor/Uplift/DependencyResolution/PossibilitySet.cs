@@ -44,7 +44,7 @@ namespace Uplift.DependencyResolution
 			//Could also use VersionParser.GreaterThan(string a, string b)
 
 			Version currentVersion = null;
-			Version mostRecentVersionSofar = null;
+			Version mostRecentVersionSoFar = null;
 			PackageRepo mostRecentPackageSoFar = new PackageRepo();
 			mostRecentPackageSoFar.Package = null;
 			mostRecentPackageSoFar.Repository = null;
@@ -55,9 +55,9 @@ namespace Uplift.DependencyResolution
 				{
 					currentVersion = VersionParser.ParseVersion(package.Package.PackageVersion, false);
 
-					if (mostRecentVersionSofar == null || currentVersion > mostRecentVersionSofar)
+					if (mostRecentVersionSoFar == null || currentVersion > mostRecentVersionSoFar)
 					{
-						mostRecentVersionSofar = VersionParser.ParseVersion(package.Package.PackageVersion);
+						mostRecentVersionSoFar = VersionParser.ParseVersion(package.Package.PackageVersion);
 						mostRecentPackageSoFar = package;
 					}
 				}
@@ -110,7 +110,7 @@ namespace Uplift.DependencyResolution
 		{
 			if (packages != null)
 			{
-				return packages.ToArray()[0].Package.Dependencies;
+				return packages[0].Package.Dependencies;
 			}
 			else
 			{
@@ -167,7 +167,7 @@ namespace Uplift.DependencyResolution
 							Debug.Log("PossibilitySet is null or empty");
 							break;
 						}
-						DependencyDefinition[] existingDependenciesArray = possibilitySet.packages.ToArray()[0].Package.Dependencies;
+						DependencyDefinition[] existingDependenciesArray = possibilitySet.packages[0].Package.Dependencies;
 
 						if (existingDependenciesArray == null || existingDependenciesArray.Length == 0)
 						{
@@ -232,31 +232,29 @@ namespace Uplift.DependencyResolution
 				{
 					continue;
 				}
-				else
+				PossibilitySet newMatchingPossibilitySet = null;
+				foreach (PackageRepo pkg in possibilitySet.packages)
 				{
-					PossibilitySet newMatchingPossibilitySet = null;
-					foreach (PackageRepo pkg in possibilitySet.packages)
+					if (currentRequirement.IsMetBy(pkg.Package.PackageVersion))
 					{
-						if (currentRequirement.IsMetBy(pkg.Package.PackageVersion))
+						Debug.Log("--[/] Package " + pkg.Package.PackageName + " " + "[" + pkg.Package.PackageVersion + "]" + " matches requirement : " + currentRequirement.ToString());
+						if (newMatchingPossibilitySet == null)
 						{
-							Debug.Log("--[/] Package " + pkg.Package.PackageName + " " + "[" + pkg.Package.PackageVersion + "]" + " matches requirement : " + currentRequirement.ToString());
-							if (newMatchingPossibilitySet == null)
-							{
-								newMatchingPossibilitySet = new PossibilitySet();
-								newMatchingPossibilitySet.name = possibilitySet.name;
-							}
-							newMatchingPossibilitySet.packages.Add(pkg);
+							newMatchingPossibilitySet = new PossibilitySet();
+							newMatchingPossibilitySet.name = possibilitySet.name;
 						}
-						else
-						{
-							Debug.Log("--[X] Package " + pkg.Package.PackageName + " " + "[" + pkg.Package.PackageVersion + "]" + " does not match requirement : " + currentRequirement.ToString());
-						}
+						newMatchingPossibilitySet.packages.Add(pkg);
 					}
-					if (newMatchingPossibilitySet != null)
+					else
 					{
-						matchingPossibilities.Add(newMatchingPossibilitySet);
+						Debug.Log("--[X] Package " + pkg.Package.PackageName + " " + "[" + pkg.Package.PackageVersion + "]" + " does not match requirement : " + currentRequirement.ToString());
 					}
 				}
+				if (newMatchingPossibilitySet != null)
+				{
+					matchingPossibilities.Add(newMatchingPossibilitySet);
+				}
+
 			}
 			return matchingPossibilities;
 		}

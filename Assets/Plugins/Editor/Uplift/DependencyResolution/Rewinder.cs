@@ -68,16 +68,13 @@ namespace Uplift.DependencyResolution
 			{
 				throw new IncompatibleRequirementException("No valid rewind candidate were found.");
 			}
-			else
-			{
-				Debug.Log("Rewind candidate is found.");
-				Debug.Log(rewindStateCandidate.currentRequirement.Name + " has other possibility sets matching requirements");
+			Debug.Log("Rewind candidate is found.");
+			Debug.Log(rewindStateCandidate.currentRequirement.Name + " has other possibility sets matching requirements");
 
-				int depthToRewind = rewindStateCandidate.depth;
-				RewindToState(stack, depthToRewind, pkgList);
+			int depthToRewind = rewindStateCandidate.depth;
+			RewindToState(stack, depthToRewind, pkgList);
 
-				return stack;
-			}
+			return stack;
 		}
 
 		private Stack<State> RewindToState(Stack<State> stack, int depthToRewind, PackageList pkgList)

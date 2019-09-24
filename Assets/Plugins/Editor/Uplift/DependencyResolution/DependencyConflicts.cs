@@ -97,7 +97,6 @@ namespace Uplift.DependencyResolution
 		override public string ToString()
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.AppendLine(requirement.Name + " " + requirement.Version + " conflicts with state :");
 			sb.Append(requirement.Name);
 			sb.Append(" ");
 			sb.Append(requirement.Version);

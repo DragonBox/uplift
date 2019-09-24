@@ -61,7 +61,10 @@ namespace Uplift.DependencyResolution
 			{
 				foreach (Upset pkg in dicoPackages[pkgName])
 				{
-					sb.AppendLine("* " + pkg.PackageName + " " + pkg.PackageVersion);
+					sb.Append("* ");
+					sb.Append(pkg.PackageName);
+					sb.Append(" ");
+					sb.AppendLine(pkg.PackageVersion);
 					sb.Append("  |_ dep : ");
 					if (pkg.Dependencies != null)
 					{
@@ -69,7 +72,10 @@ namespace Uplift.DependencyResolution
 						{
 							if (dep != null)
 							{
-								sb.Append(dep.Name + "_" + dep.Version + "  ");
+								sb.Append(dep.Name);
+								sb.Append("_");
+								sb.Append(dep.Version);
+								sb.Append("  ");
 							}
 						}
 					}

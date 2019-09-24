@@ -177,8 +177,10 @@ namespace Uplift.DependencyResolution
 			foreach (DependencyNode childNode in parent.dependencies)
 			{
 				for (int i = 0; i < depth; i++) sb.Append(" ");
-
-				sb.AppendLine("* " + childNode.Name + " : " + childNode.Requirement.ToString());
+				sb.Append("* ");
+				sb.Append(childNode.Name);
+				sb.Append(" : ");
+				sb.AppendLine(childNode.Requirement.ToString());
 
 				if (childNode.dependencies != null
 				&& !visitedNodes.Contains(childNode)

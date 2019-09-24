@@ -68,13 +68,17 @@ namespace Uplift.DependencyResolution
 		override public string ToString()
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.Append(name + " : ");
+			sb.Append(name);
+			sb.Append(" : ");
 			foreach (PackageRepo package in packages)
 			{
-				sb.Append("[" + package.Package.PackageVersion + "] ");
+				sb.Append("[");
+				sb.Append(package.Package.PackageVersion);
+				sb.Append("] ");
 			}
 			return sb.ToString();
 		}
+
 
 		public static PossibilitySet GetMostRecentPossibilitySetFromList(List<PossibilitySet> possibilitySetList)
 		{

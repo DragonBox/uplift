@@ -98,6 +98,10 @@ namespace Uplift.DependencyResolution
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine(requirement.Name + " " + requirement.Version + " conflicts with state :");
+			sb.Append(requirement.Name);
+			sb.Append(" ");
+			sb.Append(requirement.Version);
+			sb.AppendLine(" conflicts with state :");
 			sb.AppendLine(activated.ToString());
 			return sb.ToString();
 		}

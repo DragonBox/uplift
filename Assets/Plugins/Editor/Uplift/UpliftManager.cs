@@ -503,12 +503,12 @@ namespace Uplift
 		private void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition, bool updateLockfile)
 		{
 			Debug.Log("Installing package " + package.PackageName + " " + package.PackageVersion);
-			/*
+
 			if (dependencyDefinition == null)
 			{
 				throw new ArgumentNullException("Failed to install package " + package.PackageName + ". Dependency Definition is null.");
 			}
-			*/
+
 			GitIgnorer VCSHandler = new GitIgnorer();
 
 			using (LogAggregator LA = LogAggregator.InUnity(

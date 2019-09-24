@@ -24,6 +24,7 @@
 
 using System.Collections.Generic;
 using System.Text;
+using System;
 using Uplift.Common;
 using Uplift.Packages;
 using Uplift.Schemas;
@@ -56,6 +57,11 @@ namespace Uplift.DependencyResolution
 					this.AddNode(node);
 				}
 			}
+			else
+			{
+				throw new Exception("Failed to load packages: Package Repo does not contain any package");
+			}
+
 		}
 
 		public DependencyNode FindByName(string name)

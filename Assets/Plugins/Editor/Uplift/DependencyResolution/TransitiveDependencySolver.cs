@@ -22,6 +22,8 @@
  */
 // --- END LICENSE BLOCK ---
 
+using System;
+using System.Collections.Generic;
 using Uplift.Common;
 using Uplift.Packages;
 using Uplift.Schemas;
@@ -32,7 +34,7 @@ namespace Uplift.DependencyResolution
 	{
 		public event DependencyHelper.ConflictChecker CheckConflict;
 
-		public DependencyDefinition[] SolveDependencies(DependencyDefinition[] dependencies)
+		public List<PackageRepo> SolveDependencies(DependencyDefinition[] dependencies)
 		{
 			DependencyGraph dependencyGraph = GenerateGraph(dependencies);
 			TarjanCycleDetector cycleDetector = new TarjanCycleDetector();
@@ -41,7 +43,26 @@ namespace Uplift.DependencyResolution
 
 			DependencyDefinition[] solvedDependencies = GetDependencyDefinitions(dependencyGraph);
 
-			return solvedDependencies;
+			List<PackageRepo> packageList = new List<PackageRepo>();
+
+			foreach (DependencyDefinition dd in solvedDependencies)
+			{
+				Upset package = new Upset();
+				package.PackageName = dd.Name;
+				package.PackageVersion = dd.Version;
+				package.Dependencies = new DependencyDefinition[1]; ;
+				package.Dependencies[0] = dd;
+
+				PackageRepo packageRepo = new PackageRepo();
+				packageRepo.Package = package;
+				packageList.Add(packageRepo);
+			}
+			return packageList;
+		}
+
+		public List<PackageRepo> SolveDependencies(DependencyDefinition[] dependencies, PackageRepo[] StartingPackages)
+		{
+			throw new NotImplementedException();
 		}
 
 		private DependencyGraph GenerateGraph(DependencyDefinition[] dependencies)

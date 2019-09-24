@@ -170,15 +170,14 @@ namespace Uplift.DependencyResolution
 
 			// Final results
 			List<PackageRepo> resolution = new List<PackageRepo>();
-
-			//FIXME change this for final version
-			int i = 1000;
-			while (i > 0)//stateStack.Count > 0)
+			//Max nb of iterations
+			int i = 10000;
+			while (stateStack.Count > 0)
 			{
 				i--;
-				if (stateStack.Count == 0)
+				if (i <= 0)
 				{
-					break;
+					throw new System.Exception("Max number of iteration was reach");
 				}
 
 				ShowStateStack();

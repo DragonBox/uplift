@@ -79,7 +79,7 @@ namespace Uplift.DependencyResolution
 							}
 						}
 					}
-					catch (Exception e)
+					catch (IncompatibleRequirementException e)
 					{
 						Debug.Log(e.ToString());
 						conflictingDependencies.Add(key);

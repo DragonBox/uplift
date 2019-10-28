@@ -335,9 +335,9 @@ namespace Uplift.Common
 				var otherRange = other as RangeVersionRequirement;
 				if (lower == otherRange.lower && upper == otherRange.upper) return this;
 				// self include other?
-				if (IsMetBy(otherRange.lower) && IsMetBy(otherRange.upper)) return other;
+				if (lower <= otherRange.lower && upper >= otherRange.upper) return other;
 				// other include self?
-				if (other.IsMetBy(lower) && other.IsMetBy(upper)) return this;
+				if (lower >= otherRange.lower && upper <= otherRange.upper) return this;
 				// They are overlapping or not intersecting
 				// overlap top?
 				if (IsMetBy(otherRange.lower) && other.IsMetBy(upper)) return new RangeVersionRequirement(

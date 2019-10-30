@@ -889,7 +889,6 @@ namespace Uplift.DependencyResolution
 			originalDependencies.Push(R);
 
 			Resolver resolver = new Resolver(baseGraph, packageListStub);
-			//resolver.SolveDependencies(originalDependencies.ToArray());
 			Assert.Throws<IncompatibleRequirementException>(() => resolver.SolveDependencies(originalDependencies.ToArray()));
 		}
 

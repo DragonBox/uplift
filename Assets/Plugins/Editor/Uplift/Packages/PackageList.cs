@@ -54,6 +54,11 @@ namespace Uplift.Packages
 		protected Repository[] Repositories;
 		protected VersionParser versionParser;
 
+		public void SetPackages(List<PackageRepo> packages)
+		{
+			Packages = packages;
+		}
+
 		public void LoadPackages(Repository[] repositories, bool refresh = false)
 		{
 			if (refresh)
@@ -205,5 +210,19 @@ namespace Uplift.Packages
 			// As an array
 			).ToArray();
 		}
+
+		public List<PackageRepo> GetPackageRepo(string requirementName)
+		{
+			return (
+				// From All the available packages
+				from packageRepo in GetAllPackages()
+					// Select the ones that match the definition name
+				where packageRepo.Package.PackageName == requirementName
+				// And use found package
+				select packageRepo
+			// As an List<PackageRepo>
+			).ToList();
+		}
+
 	}
 }

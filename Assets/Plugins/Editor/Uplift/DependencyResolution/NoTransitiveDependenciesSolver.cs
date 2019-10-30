@@ -21,16 +21,37 @@
  * SOFTWARE.
  */
 // --- END LICENSE BLOCK ---
-
+using System;
+using System.Collections.Generic;
+using Uplift.Common;
 using Uplift.Schemas;
 
 namespace Uplift.DependencyResolution
 {
 	class NoTransitiveDependenciesSolver : IDependencySolver
 	{
-		public DependencyDefinition[] SolveDependencies(DependencyDefinition[] dependencies)
+		public List<PackageRepo> SolveDependencies(DependencyDefinition[] dependencies)
 		{
-			return dependencies;
+			List<PackageRepo> packageList = new List<PackageRepo>();
+
+			foreach (DependencyDefinition dd in dependencies)
+			{
+				Upset package = new Upset();
+				package.PackageName = dd.Name;
+				package.PackageVersion = dd.Version;
+				package.Dependencies = new DependencyDefinition[1]; ;
+				package.Dependencies[0] = dd;
+
+				PackageRepo packageRepo = new PackageRepo();
+				packageRepo.Package = package;
+				packageList.Add(packageRepo);
+			}
+			return packageList;
+		}
+
+		public List<PackageRepo> SolveDependencies(DependencyDefinition[] dependencies, PackageRepo[] StartingPackages)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

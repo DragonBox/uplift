@@ -166,8 +166,7 @@ namespace Uplift
 		{
 			Debug.Log("Get Targets");
 			DependencyDefinition[] upfileDependencies = upfile.Dependencies;
-			DependencyDefinition[] solvedDependencies = solver.SolveDependencies(upfileDependencies);
-			PackageRepo[] installableDependencies = IdentifyInstallable(solvedDependencies);
+			PackageRepo[] installableDependencies = solver.SolveDependencies(upfileDependencies).ToArray();
 			PackageRepo[] targets = new PackageRepo[0];
 			bool present = File.Exists(LockfileManager.lockfilePath);
 
@@ -229,23 +228,8 @@ namespace Uplift
 							))
 						.ToArray();
 
-					Debug.Log("Solve modified dependencies");
-					DependencyDefinition[] solvedModified = solver.SolveDependencies(modifiedDependencies);
-					Debug.Log("Check conflicts");
-					DependencyDefinition[] conflicting = solvedModified.Where(def => unmodifiable.Any(pr => pr.Package.PackageName == def.Name)).ToArray();
-					if (conflicting.Length != 0)
-					{
-						Debug.Log("Conflicts found !");
-						foreach (DependencyDefinition def in conflicting)
-						{
-							if (!def.Requirement.IsMetBy(unmodifiable.First(pr => pr.Package.PackageName == def.Name).Package.PackageVersion))
-								throw new ApplicationException("Existing dependency on " + def.Name + " would be broken when installing. Please update it manually.");
-						}
-						Debug.Log("Solve modified dependencies by selecting only unconflicting dependencies");
+					PackageRepo[] installableModified = solver.SolveDependencies(modifiedDependencies, unmodifiable).ToArray();
 
-						solvedModified = solvedModified.Where(def => !conflicting.Contains(def)).ToArray();
-					}
-					PackageRepo[] installableModified = IdentifyInstallable(solvedModified);
 					targets = new PackageRepo[unmodifiable.Length + installableModified.Length];
 					Array.Copy(unmodifiable, targets, unmodifiable.Length);
 					Array.Copy(installableModified, 0, targets, unmodifiable.Length, installableModified.Length);
@@ -293,9 +277,7 @@ namespace Uplift
 
 		public IDependencySolver GetDependencySolver()
 		{
-			TransitiveDependencySolver dependencySolver = new TransitiveDependencySolver();
-			dependencySolver.CheckConflict += SolveVersionConflict;
-
+			Resolver dependencySolver = new Resolver(PackageList.Instance());
 			return dependencySolver;
 		}
 
@@ -401,6 +383,7 @@ namespace Uplift
 		private void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition, bool updateLockfile)
 		{
 			Debug.Log("Installing package " + package.PackageName + " " + package.PackageVersion);
+
 			if (dependencyDefinition == null)
 			{
 				throw new ArgumentNullException("Failed to install package " + package.PackageName + ". Dependency Definition is null.");
@@ -639,16 +622,11 @@ namespace Uplift
 
 			if (updateDependencies)
 			{
-				Debug.Log("Update dependencies enabled, starting update :");
-				DependencyDefinition[] packageDependencies = PackageList.Instance().ListDependenciesRecursively(
-					GetDependencySolver()
-					.SolveDependencies(upfile.Dependencies)
-					.First(dep => dep.Name == newer.Package.PackageName)
-				);
-				foreach (DependencyDefinition def in packageDependencies)
+				List<PackageRepo> packageRepo = GetDependencySolver().SolveDependencies(upfile.Dependencies);
+				foreach (PackageRepo dependencyPR in packageRepo)
 				{
-					PackageRepo dependencyPR = PackageList.Instance().FindPackageAndRepository(def);
-					if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == def.Name))
+
+					if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == dependencyPR.Package.PackageName))
 					{
 						UpdatePackage(dependencyPR,
 									  updateDependencies: false,
@@ -659,11 +637,7 @@ namespace Uplift
 					{
 						using (TemporaryDirectory td = dependencyPR.Repository.DownloadPackage(dependencyPR.Package))
 						{
-							InstallPackage(dependencyPR.Package,
-										   td,
-										   def,
-										   updateLockfile: updateLockfile
-										  );
+							InstallPackage(dependencyPR.Package, td, null, true);
 						}
 					}
 				}

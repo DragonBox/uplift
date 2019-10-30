@@ -30,7 +30,6 @@ namespace Uplift.DependencyResolution
 {
 	interface IDependencySolver
 	{
-		//DependencyDefinition[] SolveDependencies(DependencyDefinition[] dependencies);
 		List<PackageRepo> SolveDependencies(DependencyDefinition[] dependencies);
 		List<PackageRepo> SolveDependencies(DependencyDefinition[] dependencies, PackageRepo[] StartingPackages);
 	}

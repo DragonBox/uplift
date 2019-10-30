@@ -342,7 +342,7 @@ namespace Uplift.DependencyResolution
 			originalDependencies = new Stack<DependencyDefinition>();
 			Resolver resolver = new Resolver(baseGraph, packageListStub);
 			Upset[] expected = { };
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 		[Test]
 		public void InitWithPackageRepos()
@@ -417,7 +417,7 @@ namespace Uplift.DependencyResolution
 
 			Resolver resolver = new Resolver(baseGraph, packageListStub);
 			Upset[] expected = { packages["B"][1] };//B113
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 
 		[Test]
@@ -444,7 +444,7 @@ namespace Uplift.DependencyResolution
 			Upset[] expected = { packages["B"][1],	//B113
 								 packages["C"][1],	//C116
 								 packages["D"][0] };//D110
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 
 		#endregion
@@ -463,7 +463,7 @@ namespace Uplift.DependencyResolution
 			Resolver resolver = new Resolver(baseGraph, packageListStub);
 			Upset[] expected = { packages["A"][2],	 //A120
 								 packages["C"][1] }; //C116
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 		[Test]
 		public void RequirementSingleWithSeveralDependencies()
@@ -481,7 +481,7 @@ namespace Uplift.DependencyResolution
 								 packages["C"][1],	//C116
 								 packages["D"][0],	//D110
 								 packages["E"][0] };//E110
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 		[Test]
 		public void RequirementSeveralWithSeveralDependencies()
@@ -506,7 +506,7 @@ namespace Uplift.DependencyResolution
 								 packages["D"][0],	//D110
 								 packages["F"][0],	//F110
 								 packages["G"][0] };//G110
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 		#endregion
 
@@ -522,7 +522,7 @@ namespace Uplift.DependencyResolution
 
 			Resolver resolver = new Resolver(baseGraph, packageListStub);
 			Upset[] expected = { packages["H"][0] };  //H255
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 
 		[Test]
@@ -535,7 +535,7 @@ namespace Uplift.DependencyResolution
 			originalDependencies.Push(H);
 			Resolver resolver = new Resolver(baseGraph, packageListStub);
 			Upset[] expected = { packages["H"][0] };  //H255
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 
 		[Test]
@@ -561,7 +561,7 @@ namespace Uplift.DependencyResolution
 
 			Resolver resolver = new Resolver(baseGraph, packageListStub);
 			Upset[] expected = { packages["H"][0] };  //H255
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 
 		[Test]
@@ -587,7 +587,7 @@ namespace Uplift.DependencyResolution
 			originalDependencies.Push(H);
 			Resolver resolver = new Resolver(baseGraph, packageListStub);
 			Upset[] expected = { packages["H"][0] };  //H255
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 
 		[Test]
@@ -626,7 +626,7 @@ namespace Uplift.DependencyResolution
 								packages["K"][0],	//K110
 								packages["H"][0]};  //H255
 
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 
 		[Test]
@@ -649,7 +649,7 @@ namespace Uplift.DependencyResolution
 								packages["L"][0],	//L120
 								packages["H"][0]};  //H255
 
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 
 		[Test]
@@ -675,7 +675,7 @@ namespace Uplift.DependencyResolution
 								packages["H"][0],	//H255
 								packages["M"][0]};  //M110
 
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 
 		#endregion
@@ -704,7 +704,7 @@ namespace Uplift.DependencyResolution
 								packages["S"][2],	//S150
 							   };
 
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 
 		[Test]
@@ -742,7 +742,7 @@ namespace Uplift.DependencyResolution
 								packages["U"][0],	//U100
 							   };
 
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 
 		[Test]
@@ -774,7 +774,7 @@ namespace Uplift.DependencyResolution
 								packages["I"][0],	//I110
 							   };
 
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 
 		}
 
@@ -798,7 +798,7 @@ namespace Uplift.DependencyResolution
 			Upset[] expected = { packages["N"][0],	//N110
 								 packages["O"][0],	//O110
 								 packages["P"][2] };//P150
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 
 		#endregion
@@ -826,7 +826,7 @@ namespace Uplift.DependencyResolution
 								packages["W"][0],	//W100
 								};
 
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 
 		[Test]
@@ -846,7 +846,7 @@ namespace Uplift.DependencyResolution
 								packages["W"][0],	//W100
 								};
 
-			Assert.IsTrue(CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray())));
+			Assert.IsTrue(CheckResolverResults(expected));
 		}
 		#endregion
 
@@ -914,6 +914,11 @@ namespace Uplift.DependencyResolution
 		}
 
 		#endregion
+		private bool CheckResolverResults(Upset[] expected)
+		{
+			return CheckResolverResults(expected, resolver.SolveDependencies(originalDependencies.ToArray()));
+		}
+
 		private bool CheckResolverResults(Upset[] expected, List<PackageRepo> results)
 		{
 			List<Upset> resultsUpset = new List<Upset>();

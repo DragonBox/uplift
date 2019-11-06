@@ -464,7 +464,7 @@ namespace Uplift
 						if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == pr.Package.PackageName))
 						{
 							Debug.Log("update " + pr.Package.PackageName);
-							UpdatePackage(pr, updateLockfile: updateLockfile);
+							UpdatePackage(pr, updateDependencies: false, updateLockfile: updateLockfile);
 						}
 						else
 						{

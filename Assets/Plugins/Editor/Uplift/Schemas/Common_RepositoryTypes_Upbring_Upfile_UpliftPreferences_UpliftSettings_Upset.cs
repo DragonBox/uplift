@@ -947,6 +947,8 @@ namespace Uplift.Schemas
 
 		private bool useGithubProxyField;
 
+		private bool verboseField;
+
 		private string githubProxyUrlField;
 
 		public UpliftPreferences()
@@ -954,6 +956,7 @@ namespace Uplift.Schemas
 			this.useExperimentalFeaturesField = false;
 			this.trustUnknowCertificatesField = false;
 			this.useGithubProxyField = false;
+			this.verboseField = false;
 		}
 
 		/// <remarks/>
@@ -992,6 +995,19 @@ namespace Uplift.Schemas
 			set
 			{
 				this.useGithubProxyField = value;
+			}
+		}
+
+		/// <remarks/>
+		public bool Verbose
+		{
+			get
+			{
+				return this.verboseField;
+			}
+			set
+			{
+				this.verboseField = value;
 			}
 		}
 

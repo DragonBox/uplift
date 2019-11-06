@@ -39,6 +39,7 @@ namespace Uplift.SourceControl
 
 		public void HandleDirectory(string path)
 		{
+			if (path.EndsWith(".meta")) return; // Handled by base file
 			string unixPath = "/" + Uplift.Common.FileSystemUtil.MakePathUnix(path);
 			Ignore(unixPath);
 			Ignore(unixPath + ".meta");
@@ -46,6 +47,7 @@ namespace Uplift.SourceControl
 
 		public void HandleFile(string path)
 		{
+			if (path.EndsWith(".meta")) return; // Handled by base file
 			string unixPath = "/" + Uplift.Common.FileSystemUtil.MakePathUnix(path);
 			Ignore(unixPath);
 			Ignore(unixPath + ".meta");

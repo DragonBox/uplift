@@ -166,12 +166,13 @@ namespace Uplift
 		{
 			Debug.Log("Get Targets");
 			DependencyDefinition[] upfileDependencies = upfile.Dependencies;
-			PackageRepo[] installableDependencies = solver.SolveDependencies(upfileDependencies).ToArray();
 			PackageRepo[] targets = new PackageRepo[0];
 			bool present = File.Exists(LockfileManager.lockfilePath);
 
 			if (strategy == InstallStrategy.UPDATE_LOCKFILE || (strategy == InstallStrategy.INCOMPLETE_LOCKFILE && !present))
 			{
+				PackageRepo[] installableDependencies = solver.SolveDependencies(upfileDependencies).ToArray();
+
 				if (updateLockfile)
 				{
 					Debug.Log(">Update Lockfile");
@@ -186,6 +187,8 @@ namespace Uplift
 			}
 			else if (strategy == InstallStrategy.INCOMPLETE_LOCKFILE)
 			{
+				PackageRepo[] installableDependencies = solver.SolveDependencies(upfileDependencies).ToArray();
+
 				// Case where the file does not exist is already covered
 				Debug.Log("Load Lockfile Lockfile");
 				LockfileManager.LockfileSnapshot snapshot = LockfileManager.LoadLockfile();

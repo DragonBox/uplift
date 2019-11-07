@@ -41,6 +41,7 @@ namespace Uplift
 	class UpliftManager
 	{
 		protected LogHandler logHandler;
+		private UpliftPreferences preferences;
 
 		// --- SINGLETON DECLARATION ---
 		protected static UpliftManager instance;
@@ -73,6 +74,7 @@ namespace Uplift
 		{
 			instance = new UpliftManager();
 			instance.upfile = Upfile.Instance();
+			instance.preferences = UpliftPreferences.FromDefaultFile();
 		}
 
 		// --- CLASS DECLARATION ---
@@ -95,7 +97,10 @@ namespace Uplift
 
 		public void InstallDependencies(InstallStrategy strategy = InstallStrategy.UPDATE_LOCKFILE)
 		{
-			using (LogHandler LH = new LogHandler(appendToCurrentLogFile: true, showStack: false))
+			using (LogHandler logHandler = new LogHandler(
+				appendToCurrentLogFile: false,
+				showStack: false,
+				logType: preferences.Verbose ? LogType.Log : LogType.Warning))
 			{
 				Debug.Log("Install Dependencies with strategy " + strategy);
 				PackageRepo[] targets = GetTargets(GetDependencySolver(), strategy);

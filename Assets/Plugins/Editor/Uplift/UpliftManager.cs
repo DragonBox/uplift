@@ -63,7 +63,6 @@ namespace Uplift
 
 		public static void ResetInstances()
 		{
-			Debug.Log("---> Resetting instances : ");
 			instance = null;
 			Upfile.ResetInstance();
 			Upbring.ResetInstance();

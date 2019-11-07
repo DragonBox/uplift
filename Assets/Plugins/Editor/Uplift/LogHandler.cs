@@ -51,7 +51,7 @@ namespace Uplift
 			output = logString;
 			stack = stackTrace;
 
-			OutputStream.WriteLine("[" + type + "]" + output);
+			OutputStream.WriteLine("[" + type.ToString().ToUpper() + "] " + output);
 			OutputStream.Flush();
 
 			if (showStackTrace)

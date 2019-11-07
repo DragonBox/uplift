@@ -15,9 +15,17 @@ namespace Uplift
 		private string stack = "";
 
 		private StreamWriter OutputStream;
+		private LogType previouslyFilteredType;
 
-		public LogHandler(string fileName = "uplift.log", bool appendToCurrentLogFile = false, bool showStack = false)
+		public LogHandler(
+			string fileName = "uplift.log",
+			bool appendToCurrentLogFile = false,
+			bool showStack = false,
+			LogType logType = LogType.Log)
 		{
+			previouslyFilteredType = Debug.logger.filterLogType;
+			Debug.logger.filterLogType = logType;
+
 			showStackTrace = showStack;
 			logFileName = fileName;
 
@@ -29,6 +37,7 @@ namespace Uplift
 		public void Dispose()
 		{
 			Application.logMessageReceived -= HandleLog;
+			Debug.logger.filterLogType = previouslyFilteredType;
 
 			if (OutputStream != null)
 			{
@@ -42,7 +51,7 @@ namespace Uplift
 			output = logString;
 			stack = stackTrace;
 
-			OutputStream.WriteLine("[" + type + "]" + output);
+			OutputStream.WriteLine("[" + type.ToString().ToUpper() + "] " + output);
 			OutputStream.Flush();
 
 			if (showStackTrace)

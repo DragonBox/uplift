@@ -23,8 +23,13 @@ namespace Uplift
 			bool showStack = false,
 			LogType logType = LogType.Log)
 		{
+#if UNITY_2017_1_OR_NEWER
+			previouslyFilteredType = Debug.unityLogger.filterLogType;
+			Debug.unityLogger.filterLogType = logType;
+#else
 			previouslyFilteredType = Debug.logger.filterLogType;
 			Debug.logger.filterLogType = logType;
+#endif
 
 			showStackTrace = showStack;
 			logFileName = fileName;
@@ -37,7 +42,11 @@ namespace Uplift
 		public void Dispose()
 		{
 			Application.logMessageReceived -= HandleLog;
+#if UNITY_2017_1_OR_NEWER
+			Debug.unityLogger.filterLogType = previouslyFilteredType;
+#else
 			Debug.logger.filterLogType = previouslyFilteredType;
+#endif
 
 			if (OutputStream != null)
 			{

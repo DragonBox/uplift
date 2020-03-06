@@ -32,8 +32,8 @@ namespace Uplift
 
 		public static bool HasChanged()
 		{
-			if (!System.IO.File.Exists(LockfileManager.lockfilePath)) return false;
-			string currentMD5 = Uplift.Common.FileSystemUtil.GetFileMD5(LockfileManager.lockfilePath);
+			if (!System.IO.File.Exists(UpliftManager.lockfilePath)) return false;
+			string currentMD5 = Uplift.Common.FileSystemUtil.GetFileMD5(UpliftManager.lockfilePath);
 			string oldMD5 = Environment.GetEnvironmentVariable(envVariable);
 
 			return !string.Equals(currentMD5, oldMD5);
@@ -41,7 +41,7 @@ namespace Uplift
 
 		public static void SaveState()
 		{
-			Environment.SetEnvironmentVariable(envVariable, Uplift.Common.FileSystemUtil.GetFileMD5(LockfileManager.lockfilePath));
+			Environment.SetEnvironmentVariable(envVariable, Uplift.Common.FileSystemUtil.GetFileMD5(UpliftManager.lockfilePath));
 		}
 	}
 }

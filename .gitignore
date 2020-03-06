@@ -25,10 +25,6 @@ Thumbs.db
 /.vscode
 /results.xml
 
-/Build/UnityPackageManager/
-/UnityPackageManager/
-
-
 /Assets/UPackages.meta
 # == UPLIFT GITIGNORE START ==
 # This section of the .gitignore has been created automatically by Uplift. Do not modify it or remove it.

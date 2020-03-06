@@ -644,14 +644,6 @@ namespace Uplift.Testing.Unit
 					}
 				);
 			}
-
-			[Test]
-			public void ProblematicScenarii()
-			{
-				RangeVersionRequirement rangeVersionRequirement = new RangeVersionRequirement("0.9.27", "0.10");
-				BoundedVersionRequirement boundedVersionRequirement = new BoundedVersionRequirement("0.9");
-				Assert.AreSame(rangeVersionRequirement.RestrictTo(boundedVersionRequirement), rangeVersionRequirement);
-			}
 		}
 
 		[TestFixture]

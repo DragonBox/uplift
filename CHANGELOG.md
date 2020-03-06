@@ -1,10 +1,49 @@
 # Change Log
 
+## [v1.0.0beta16](https://github.com/DragonBox/uplift/tree/v1.0.0beta16) (2020-03-06)
+[Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta15...v1.0.0beta16)
+
+**Implemented enhancements:**
+
+- XML file\(s\) format/versioning/upgrade mechanism [\#4](https://github.com/DragonBox/uplift/issues/4)
+- UplfitManager: do not solve dependencies if InstallStrategy.ONLY\_LOCKFILE [\#94](https://github.com/DragonBox/uplift/pull/94) ([niezbop](https://github.com/niezbop))
+- Feature/logging/verbose [\#93](https://github.com/DragonBox/uplift/pull/93) ([niezbop](https://github.com/niezbop))
+
+**Fixed bugs:**
+
+- GitIgnorer: do not register .meta files in the .gitignore [\#95](https://github.com/DragonBox/uplift/pull/95) ([niezbop](https://github.com/niezbop))
+- Do not update dependencies when installing several dependencies at once [\#92](https://github.com/DragonBox/uplift/pull/92) ([niezbop](https://github.com/niezbop))
+
+**Closed issues:**
+
+- .gitignore contains .meta.meta entries [\#87](https://github.com/DragonBox/uplift/issues/87)
+- Support Nuget Based Repository [\#65](https://github.com/DragonBox/uplift/issues/65)
+
+**Merged pull requests:**
+
+- Revert to v1.0.0beta14 with backports to fix urgent bug [\#102](https://github.com/DragonBox/uplift/pull/102) ([niezbop](https://github.com/niezbop))
+- Revert "Fix/beta14 with backports" [\#101](https://github.com/DragonBox/uplift/pull/101) ([niezbop](https://github.com/niezbop))
+- Fix/beta14 with backports [\#100](https://github.com/DragonBox/uplift/pull/100) ([niezbop](https://github.com/niezbop))
+
+## [v1.0.0beta15](https://github.com/DragonBox/uplift/tree/v1.0.0beta15) (2019-10-30)
+[Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta14...v1.0.0beta15)
+
+**Fixed bugs:**
+
+- Fix/RangeVersionRequirement restriction to another one [\#90](https://github.com/DragonBox/uplift/pull/90) ([niezbop](https://github.com/niezbop))
+
+**Merged pull requests:**
+
+- Preparing release for 1.0.0beta15 [\#91](https://github.com/DragonBox/uplift/pull/91) ([niezbop](https://github.com/niezbop))
+- Extract lockfile specific logic from UpliftManager [\#89](https://github.com/DragonBox/uplift/pull/89) ([scassard](https://github.com/scassard))
+- Feature/new dependency resolution [\#88](https://github.com/DragonBox/uplift/pull/88) ([scassard](https://github.com/scassard))
+
 ## [v1.0.0beta14](https://github.com/DragonBox/uplift/tree/v1.0.0beta14) (2019-05-29)
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta12...v1.0.0beta14)
 
 **Merged pull requests:**
 
+- Preparing release for 1.0.0beta14 [\#85](https://github.com/DragonBox/uplift/pull/85) ([lacostej](https://github.com/lacostej))
 - Debug/add a log handler [\#84](https://github.com/DragonBox/uplift/pull/84) ([scassard](https://github.com/scassard))
 - Fix/lockfile/prevent editing of transitive dependency when installing from lockfile [\#83](https://github.com/DragonBox/uplift/pull/83) ([scassard](https://github.com/scassard))
 - Add missing usings [\#82](https://github.com/DragonBox/uplift/pull/82) ([scassard](https://github.com/scassard))

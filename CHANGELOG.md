@@ -1,10 +1,23 @@
 # Change Log
 
+## [v1.0.0beta15](https://github.com/DragonBox/uplift/tree/v1.0.0beta15) (2019-10-30)
+[Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta14...v1.0.0beta15)
+
+**Fixed bugs:**
+
+- Fix/RangeVersionRequirement restriction to another one [\#90](https://github.com/DragonBox/uplift/pull/90) ([niezbop](https://github.com/niezbop))
+
+**Merged pull requests:**
+
+- Extract lockfile specific logic from UpliftManager [\#89](https://github.com/DragonBox/uplift/pull/89) ([scassard](https://github.com/scassard))
+- Feature/new dependency resolution [\#88](https://github.com/DragonBox/uplift/pull/88) ([scassard](https://github.com/scassard))
+
 ## [v1.0.0beta14](https://github.com/DragonBox/uplift/tree/v1.0.0beta14) (2019-05-29)
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta12...v1.0.0beta14)
 
 **Merged pull requests:**
 
+- Preparing release for 1.0.0beta14 [\#85](https://github.com/DragonBox/uplift/pull/85) ([lacostej](https://github.com/lacostej))
 - Debug/add a log handler [\#84](https://github.com/DragonBox/uplift/pull/84) ([scassard](https://github.com/scassard))
 - Fix/lockfile/prevent editing of transitive dependency when installing from lockfile [\#83](https://github.com/DragonBox/uplift/pull/83) ([scassard](https://github.com/scassard))
 - Add missing usings [\#82](https://github.com/DragonBox/uplift/pull/82) ([scassard](https://github.com/scassard))

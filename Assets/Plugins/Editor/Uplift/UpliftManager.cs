@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
+
 using Uplift.Common;
 using Uplift.DependencyResolution;
 using Uplift.Packages;
@@ -40,6 +41,8 @@ namespace Uplift
 	class UpliftManager
 	{
 		protected LogHandler logHandler;
+		private UpliftPreferences preferences;
+
 		// --- SINGLETON DECLARATION ---
 		protected static UpliftManager instance;
 
@@ -60,7 +63,6 @@ namespace Uplift
 
 		public static void ResetInstances()
 		{
-			Debug.Log("---> Resetting instances : ");
 			instance = null;
 			Upfile.ResetInstance();
 			Upbring.ResetInstance();
@@ -71,10 +73,10 @@ namespace Uplift
 		{
 			instance = new UpliftManager();
 			instance.upfile = Upfile.Instance();
+			instance.preferences = UpliftPreferences.FromDefaultFile();
 		}
 
 		// --- CLASS DECLARATION ---
-		public static readonly string lockfilePath = "Upfile.lock";
 		protected Upfile upfile;
 
 		public enum InstallStrategy
@@ -94,7 +96,10 @@ namespace Uplift
 
 		public void InstallDependencies(InstallStrategy strategy = InstallStrategy.UPDATE_LOCKFILE)
 		{
-			using (LogHandler LH = new LogHandler(appendToCurrentLogFile: true, showStack: false))
+			using (LogHandler logHandler = new LogHandler(
+				appendToCurrentLogFile: false,
+				showStack: false,
+				logType: preferences.Verbose ? LogType.Log : LogType.Warning))
 			{
 				Debug.Log("Install Dependencies with strategy " + strategy);
 				PackageRepo[] targets = GetTargets(GetDependencySolver(), strategy);
@@ -118,12 +123,11 @@ namespace Uplift
 			List<DependencyState> dependenciesState = new List<DependencyState>();
 			foreach (DependencyDefinition definition in upfile.Dependencies)
 				AppendDependencyState(
-						ref dependenciesState,
-						definition,
-						targets,
-						anyInstalled
-					);
-
+					ref dependenciesState,
+					definition,
+					targets,
+					anyInstalled
+				);
 			return dependenciesState.ToArray();
 		}
 
@@ -167,17 +171,16 @@ namespace Uplift
 			Debug.Log("Get Targets");
 			DependencyDefinition[] upfileDependencies = upfile.Dependencies;
 			PackageRepo[] targets = new PackageRepo[0];
-			bool present = File.Exists(lockfilePath);
+			bool present = File.Exists(LockfileManager.lockfilePath);
 
 			if (strategy == InstallStrategy.UPDATE_LOCKFILE || (strategy == InstallStrategy.INCOMPLETE_LOCKFILE && !present))
 			{
-				DependencyDefinition[] solvedDependencies = solver.SolveDependencies(upfileDependencies);
-				PackageRepo[] installableDependencies = IdentifyInstallable(solvedDependencies);
+				PackageRepo[] installableDependencies = solver.SolveDependencies(upfileDependencies).ToArray();
 
 				if (updateLockfile)
 				{
 					Debug.Log(">Update Lockfile");
-					GenerateLockfile(new LockfileSnapshot
+					LockfileManager.GenerateLockfile(new LockfileManager.LockfileSnapshot
 					{
 						upfileDependencies = upfileDependencies,
 						installableDependencies = installableDependencies
@@ -188,12 +191,11 @@ namespace Uplift
 			}
 			else if (strategy == InstallStrategy.INCOMPLETE_LOCKFILE)
 			{
-				DependencyDefinition[] solvedDependencies = solver.SolveDependencies(upfileDependencies);
-				PackageRepo[] installableDependencies = IdentifyInstallable(solvedDependencies);
+				PackageRepo[] installableDependencies = solver.SolveDependencies(upfileDependencies).ToArray();
 
 				// Case where the file does not exist is already covered
 				Debug.Log("Load Lockfile Lockfile");
-				LockfileSnapshot snapshot = LoadLockfile();
+				LockfileManager.LockfileSnapshot snapshot = LockfileManager.LoadLockfile();
 
 				DependencyDefinition[] modifiedDependencies =
 					upfileDependencies
@@ -233,22 +235,8 @@ namespace Uplift
 							))
 						.ToArray();
 
-					Debug.Log("Solve modified dependencies");
-					DependencyDefinition[] solvedModified = solver.SolveDependencies(modifiedDependencies);
-					Debug.Log("Check conflicts");
-					DependencyDefinition[] conflicting = solvedModified.Where(def => unmodifiable.Any(pr => pr.Package.PackageName == def.Name)).ToArray();
-					if (conflicting.Length != 0)
-					{
-						Debug.Log("Conflicts found !");
-						foreach (DependencyDefinition def in conflicting)
-						{
-							if (!def.Requirement.IsMetBy(unmodifiable.First(pr => pr.Package.PackageName == def.Name).Package.PackageVersion))
-								throw new ApplicationException("Existing dependency on " + def.Name + " would be broken when installing. Please update it manually.");
-						}
-						Debug.Log("Solve modified dependencies by selecting only unconflicting dependencies");
-						solvedModified = solvedModified.Where(def => !conflicting.Contains(def)).ToArray();
-					}
-					PackageRepo[] installableModified = IdentifyInstallable(solvedModified);
+					PackageRepo[] installableModified = solver.SolveDependencies(modifiedDependencies, unmodifiable).ToArray();
+
 					targets = new PackageRepo[unmodifiable.Length + installableModified.Length];
 					Array.Copy(unmodifiable, targets, unmodifiable.Length);
 					Array.Copy(installableModified, 0, targets, unmodifiable.Length, installableModified.Length);
@@ -258,7 +246,7 @@ namespace Uplift
 				if (updateLockfile)
 				{
 					Debug.Log("Update lockfile according to targets");
-					GenerateLockfile(new LockfileSnapshot
+					LockfileManager.GenerateLockfile(new LockfileManager.LockfileSnapshot
 					{
 						upfileDependencies = upfileDependencies,
 						installableDependencies = targets
@@ -271,7 +259,7 @@ namespace Uplift
 					throw new ApplicationException("Uplift cannot install dependencies in strategy ONLY_LOCKFILE if there is no lockfile");
 
 				Debug.Log("targets = installable dependencies in logfile");
-				targets = LoadLockfile().installableDependencies;
+				targets = LockfileManager.LoadLockfile().installableDependencies;
 			}
 			else
 			{
@@ -296,9 +284,7 @@ namespace Uplift
 
 		public IDependencySolver GetDependencySolver()
 		{
-			TransitiveDependencySolver dependencySolver = new TransitiveDependencySolver();
-			dependencySolver.CheckConflict += SolveVersionConflict;
-
+			Resolver dependencySolver = new Resolver(PackageList.Instance());
 			return dependencySolver;
 		}
 
@@ -318,124 +304,6 @@ namespace Uplift
 			existing.Requirement = restricted;
 		}
 
-		private struct LockfileSnapshot
-		{
-			public DependencyDefinition[] upfileDependencies;
-			public PackageRepo[] installableDependencies;
-		}
-
-		private void GenerateLockfile(LockfileSnapshot snapshot)
-		{
-			Debug.Log("Generating a new lockfile : ");
-			string result = "# UPFILE DEPENDENCIES\n";
-			foreach (DependencyDefinition def in snapshot.upfileDependencies)
-			{
-				result += string.Format("{0} ({1})\n", def.Name, def.Version);
-			}
-
-			result += "\n# SOLVED DEPENDENCIES\n";
-
-			foreach (PackageRepo pr in snapshot.installableDependencies)
-			{
-				Upset package = pr.Package;
-				result += string.Format("{0} ({1})\n", package.PackageName, package.PackageVersion);
-				if (package.Dependencies != null && package.Dependencies.Length != 0)
-					foreach (DependencyDefinition dependency in package.Dependencies)
-					{
-						result += string.Format("\t{0} ({1})\n", dependency.Name, dependency.Version);
-					}
-			}
-			Debug.Log(result);
-			using (StreamWriter file = new StreamWriter(lockfilePath, false))
-			{
-				file.WriteLine(result);
-			}
-
-			LockFileTracker.SaveState();
-		}
-
-		private LockfileSnapshot LoadLockfile()
-		{
-			string pattern = @"([\w\.\-]+)\s\(([\w\.\+!\*]+)\)";
-			LockfileSnapshot result = new LockfileSnapshot();
-
-			using (StreamReader file = new StreamReader(lockfilePath))
-			{
-				string line = file.ReadLine();
-				if (line == null || line != "# UPFILE DEPENDENCIES")
-					throw new FileLoadException("Cannot load Upfile.lock, it is missing the \'UPFILE DEPENDENCIES\' header");
-
-				List<DependencyDefinition> upfileDependencyList = new List<DependencyDefinition>();
-
-				Match match;
-				while (!string.IsNullOrEmpty(line = file.ReadLine()))
-				{
-					match = Regex.Match(line, pattern);
-					if (!match.Success || match.Groups.Count < 3)
-						throw new FileLoadException("Cannot load Upfile.lock, the line " + line + " does not match \'package_name (version_requirement)\'");
-
-					DependencyDefinition temp = new DependencyDefinition
-					{
-						Name = match.Groups[1].Value,
-						Version = match.Groups[2].Value
-					};
-					upfileDependencyList.Add(temp);
-				}
-				result.upfileDependencies = upfileDependencyList.ToArray();
-
-				if (line == null)
-					throw new FileLoadException("Cannot load Upfile.lock, it is incomplete");
-
-				line = file.ReadLine();
-				if (line == null || line != "# SOLVED DEPENDENCIES")
-					throw new FileLoadException("Cannot load Upfile.lock, it is missing the \'SOLVED DEPENDENCIES\' header");
-
-				List<PackageRepo> installableList = new List<PackageRepo>();
-				line = file.ReadLine();
-				PackageList packageList = PackageList.Instance();
-				while (!string.IsNullOrEmpty(line))
-				{
-					match = Regex.Match(line, pattern);
-					if (!match.Success || match.Groups.Count < 3)
-						throw new FileLoadException("Cannot load Upfile.lock, the line " + line + " does not match \'package_name (installed_version)\'");
-
-					PackageRepo temp = packageList.FindPackageAndRepository(new DependencyDefinition
-					{
-						Name = match.Groups[1].Value,
-						Version = match.Groups[2].Value + "!" // Check for exact version
-					});
-
-					if (temp.Package != null && temp.Repository != null)
-					{
-						Debug.Log("The line :\"" + temp.Package.PackageName + " " + temp.Package.PackageVersion + "\" was written in lockfile.");
-						installableList.Add(temp);
-					}
-					else
-					{
-						UnityEngine.Debug.LogError("Could not find a repository while loading lockfile for " + match.Groups[1].Value);
-						installableList.Add(new PackageRepo
-						{
-							Package = new Upset
-							{
-								PackageName = match.Groups[1].Value,
-								PackageVersion = match.Groups[2].Value
-							}
-						});
-					}
-					// Read the dependencies
-					while ((line = file.ReadLine()) != null && line.StartsWith("\t"))
-					{
-						match = Regex.Match(line, pattern);
-						if (!match.Success || match.Groups.Count < 3)
-							throw new FileLoadException("Cannot load Upfile.lock, the line " + line + " does not match \'package_name (version_requirement)\'");
-					}
-				}
-				result.installableDependencies = installableList.ToArray();
-			}
-
-			return result;
-		}
-
 		public void InstallPackages(PackageRepo[] targets, bool updateLockfile = true)
 		{
 			Debug.Log("Install Packages");
@@ -444,16 +312,14 @@ namespace Uplift
 				"Successfully installed dependencies ({0} actions were done) but warnings were raised",
 				"Some errors occured while installing dependencies",
 				targets.Length
-				))
+			))
 			{
 				// Remove installed dependencies that are no longer in the dependency tree
-
 				foreach (InstalledPackage ip in Upbring.Instance().InstalledPackage)
 				{
 					if (targets.Any(tar => tar.Package.PackageName == ip.Name)) continue;
 
 					UnityEngine.Debug.Log("Removing unused dependency on " + ip.Name);
-
 					NukePackage(ip.Name);
 				}
 
@@ -496,7 +362,7 @@ namespace Uplift
 				"{0} packages were successfully nuked but warnings were raised",
 				"Some errors occured while nuking {0} packages",
 				upbring.InstalledPackage.Length
-				))
+			))
 			{
 				foreach (InstalledPackage package in upbring.InstalledPackage)
 				{
@@ -524,6 +390,7 @@ namespace Uplift
 		private void InstallPackage(Upset package, TemporaryDirectory td, DependencyDefinition dependencyDefinition, bool updateLockfile)
 		{
 			Debug.Log("Installing package " + package.PackageName + " " + package.PackageVersion);
+
 			if (dependencyDefinition == null)
 			{
 				throw new ArgumentNullException("Failed to install package " + package.PackageName + ". Dependency Definition is null.");
@@ -536,7 +403,7 @@ namespace Uplift
 				"Package {0} was successfully installed but raised warnings",
 				"An error occured while installing package {0}",
 				package.PackageName
-				))
+			))
 			{
 				Upbring upbring = Upbring.Instance();
 
@@ -640,8 +507,7 @@ namespace Uplift
 				if (updateLockfile)
 				{
 					Debug.Log("Updating Lockfile entry for " + package.PackageName);
-
-					LockfileSnapshot snapshot = LoadLockfile();
+					LockfileManager.LockfileSnapshot snapshot = LockfileManager.LoadLockfile();
 					int index;
 					bool found = false;
 					for (index = 0; index < snapshot.installableDependencies.Length; index++)
@@ -661,7 +527,7 @@ namespace Uplift
 						Array.Resize<PackageRepo>(ref snapshot.installableDependencies, snapshot.installableDependencies.Length + 1);
 						snapshot.installableDependencies[snapshot.installableDependencies.Length] = new PackageRepo { Package = package };
 					}
-					GenerateLockfile(snapshot);
+					LockfileManager.GenerateLockfile(snapshot);
 				}
 
 				td.Dispose();
@@ -689,8 +555,8 @@ namespace Uplift
 								guidPath,
 								file,
 								package.PackageName
-								)
-							);
+							)
+						);
 					}
 					// else, the guid is cached but there are no longer anything linked with it
 				}
@@ -763,16 +629,11 @@ namespace Uplift
 
 			if (updateDependencies)
 			{
-				Debug.Log("Update dependencies enabled, starting update :");
-				DependencyDefinition[] packageDependencies = PackageList.Instance().ListDependenciesRecursively(
-					GetDependencySolver()
-					.SolveDependencies(upfile.Dependencies)
-					.First(dep => dep.Name == newer.Package.PackageName)
-					);
-				foreach (DependencyDefinition def in packageDependencies)
+				List<PackageRepo> packageRepo = GetDependencySolver().SolveDependencies(upfile.Dependencies);
+				foreach (PackageRepo dependencyPR in packageRepo)
 				{
-					PackageRepo dependencyPR = PackageList.Instance().FindPackageAndRepository(def);
-					if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == def.Name))
+
+					if (Upbring.Instance().InstalledPackage.Any(ip => ip.Name == dependencyPR.Package.PackageName))
 					{
 						UpdatePackage(dependencyPR,
 									  updateDependencies: false,
@@ -783,11 +644,7 @@ namespace Uplift
 					{
 						using (TemporaryDirectory td = dependencyPR.Repository.DownloadPackage(dependencyPR.Package))
 						{
-							InstallPackage(dependencyPR.Package,
-										   td,
-										   def,
-										   updateLockfile: updateLockfile
-										  );
+							InstallPackage(dependencyPR.Package, td, null, true);
 						}
 					}
 				}

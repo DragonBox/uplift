@@ -4,50 +4,62 @@ using System.IO;
 using System.Text;
 using System;
 
-public class LogHandler : IDisposable
+namespace Uplift
 {
-	public bool showStackTrace = false;
-	public string logFileName = "log.txt";
-
-	private string output = "";
-	private string stack = "";
-
-	private StreamWriter OutputStream;
-
-	public LogHandler(string fileName = "uplift.log", bool appendToCurrentLogFile = false, bool showStack = false)
+	public class LogHandler : IDisposable
 	{
-		showStackTrace = showStack;
-		logFileName = fileName;
+		public bool showStackTrace = false;
+		public string logFileName = "log.txt";
 
-		OutputStream = new StreamWriter(logFileName, appendToCurrentLogFile);
+		private string output = "";
+		private string stack = "";
 
-		Application.logMessageReceived += HandleLog;
-	}
+		private StreamWriter OutputStream;
+		private LogType previouslyFilteredType;
 
-	public void Dispose()
-	{
-		Application.logMessageReceived -= HandleLog;
-
-		if (OutputStream != null)
+		public LogHandler(
+			string fileName = "uplift.log",
+			bool appendToCurrentLogFile = false,
+			bool showStack = false,
+			LogType logType = LogType.Log)
 		{
-			OutputStream.Close();
-			OutputStream = null;
+			previouslyFilteredType = Debug.logger.filterLogType;
+			Debug.logger.filterLogType = logType;
+
+			showStackTrace = showStack;
+			logFileName = fileName;
+
+			OutputStream = new StreamWriter(logFileName, appendToCurrentLogFile);
+
+			Application.logMessageReceived += HandleLog;
 		}
-	}
 
-	void HandleLog(string logString, string stackTrace, LogType type)
-	{
-		output = logString;
-		stack = stackTrace;
-
-		OutputStream.WriteLine("[" + type + "]" + output);
-		OutputStream.Flush();
-
-		if (showStackTrace)
+		public void Dispose()
 		{
-			OutputStream.WriteLine("[--> Stack Trace <--]");
-			OutputStream.WriteLine(stack + "[-------------------]\n");
+			Application.logMessageReceived -= HandleLog;
+			Debug.logger.filterLogType = previouslyFilteredType;
+
+			if (OutputStream != null)
+			{
+				OutputStream.Close();
+				OutputStream = null;
+			}
+		}
+
+		void HandleLog(string logString, string stackTrace, LogType type)
+		{
+			output = logString;
+			stack = stackTrace;
+
+			OutputStream.WriteLine("[" + type.ToString().ToUpper() + "] " + output);
 			OutputStream.Flush();
+
+			if (showStackTrace)
+			{
+				OutputStream.WriteLine("[--> Stack Trace <--]");
+				OutputStream.WriteLine(stack + "[-------------------]\n");
+				OutputStream.Flush();
+			}
 		}
 	}
 }

@@ -13,7 +13,6 @@
       <xs:element type="xs:boolean" name="UseExperimentalFeatures" default="false" />
       <xs:element type="xs:boolean" name="TrustUnknowCertificates" default="false" />
       <xs:element type="xs:boolean" name="UseGithubProxy" default="false" />
-      <xs:element type="xs:boolean" name="Verbose" default="false" />
       <xs:element type="xs:string" name="GithubProxyUrl" />
     </xs:sequence>
   </xs:complexType>

@@ -1,4 +1,4 @@
-future-release=v1.0.0beta15
+future-release=v1.0.0beta14
 since-tag=v1.0.0beta1
 exclude_tags_regex=v0\.[0-8]\..*
 exclude-labels=nochangelog

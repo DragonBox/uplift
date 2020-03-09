@@ -1,6 +1,17 @@
-# Change Log
+# Changelog
+
+## [v1.0.0beta17](https://github.com/DragonBox/uplift/tree/v1.0.0beta17) (2020-03-09)
+
+[Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta16...v1.0.0beta17)
+
+**Merged pull requests:**
+
+- Bump rack from 2.0.6 to 2.2.2 [\#105](https://github.com/DragonBox/uplift/pull/105) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Feature/support unity 2017 4 [\#104](https://github.com/DragonBox/uplift/pull/104) ([lacostej](https://github.com/lacostej))
+- Bump rake from 12.3.2 to 13.0.1 [\#99](https://github.com/DragonBox/uplift/pull/99) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [v1.0.0beta16](https://github.com/DragonBox/uplift/tree/v1.0.0beta16) (2020-03-06)
+
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta15...v1.0.0beta16)
 
 **Implemented enhancements:**
@@ -21,11 +32,11 @@
 
 **Merged pull requests:**
 
+- Preparing release for 1.0.0beta16 [\#103](https://github.com/DragonBox/uplift/pull/103) ([niezbop](https://github.com/niezbop))
 - Revert to v1.0.0beta14 with backports to fix urgent bug [\#102](https://github.com/DragonBox/uplift/pull/102) ([niezbop](https://github.com/niezbop))
-- Revert "Fix/beta14 with backports" [\#101](https://github.com/DragonBox/uplift/pull/101) ([niezbop](https://github.com/niezbop))
-- Fix/beta14 with backports [\#100](https://github.com/DragonBox/uplift/pull/100) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta15](https://github.com/DragonBox/uplift/tree/v1.0.0beta15) (2019-10-30)
+
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta14...v1.0.0beta15)
 
 **Fixed bugs:**
@@ -39,6 +50,7 @@
 - Feature/new dependency resolution [\#88](https://github.com/DragonBox/uplift/pull/88) ([scassard](https://github.com/scassard))
 
 ## [v1.0.0beta14](https://github.com/DragonBox/uplift/tree/v1.0.0beta14) (2019-05-29)
+
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta12...v1.0.0beta14)
 
 **Merged pull requests:**
@@ -57,6 +69,7 @@
 - Correct update package function to prevent error in First method [\#70](https://github.com/DragonBox/uplift/pull/70) ([scassard](https://github.com/scassard))
 
 ## [v1.0.0beta12](https://github.com/DragonBox/uplift/tree/v1.0.0beta12) (2019-03-26)
+
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta11...v1.0.0beta12)
 
 **Fixed bugs:**
@@ -70,6 +83,7 @@
 - Introduce Range version requirement [\#67](https://github.com/DragonBox/uplift/pull/67) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta11](https://github.com/DragonBox/uplift/tree/v1.0.0beta11) (2018-12-18)
+
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta10...v1.0.0beta11)
 
 **Implemented enhancements:**
@@ -88,6 +102,7 @@
 - Project: Add a TODO list and add necessary env variables to DEVELOPMENT\_PROCESS [\#59](https://github.com/DragonBox/uplift/pull/59) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta10](https://github.com/DragonBox/uplift/tree/v1.0.0beta10) (2018-03-15)
+
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta9...v1.0.0beta10)
 
 **Implemented enhancements:**
@@ -104,6 +119,7 @@
 - Preparing release for 1.0.0beta10 [\#57](https://github.com/DragonBox/uplift/pull/57) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta9](https://github.com/DragonBox/uplift/tree/v1.0.0beta9) (2018-02-26)
+
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta8...v1.0.0beta9)
 
 **Implemented enhancements:**
@@ -118,6 +134,7 @@
 - Cleaner failure when trying to download an asset [\#50](https://github.com/DragonBox/uplift/pull/50) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta8](https://github.com/DragonBox/uplift/tree/v1.0.0beta8) (2017-12-14)
+
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta7...v1.0.0beta8)
 
 **Implemented enhancements:**
@@ -144,6 +161,7 @@
 - Fix upfile not refreshed before install [\#39](https://github.com/DragonBox/uplift/pull/39) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta7](https://github.com/DragonBox/uplift/tree/v1.0.0beta7) (2017-12-07)
+
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta6...v1.0.0beta7)
 
 **Implemented enhancements:**
@@ -159,6 +177,7 @@
 - Preparing release for 1.0.0beta7 [\#34](https://github.com/DragonBox/uplift/pull/34) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta6](https://github.com/DragonBox/uplift/tree/v1.0.0beta6) (2017-12-05)
+
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta5...v1.0.0beta6)
 
 **Implemented enhancements:**
@@ -173,6 +192,7 @@
 - Cleanup: remove unused usings [\#29](https://github.com/DragonBox/uplift/pull/29) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta5](https://github.com/DragonBox/uplift/tree/v1.0.0beta5) (2017-11-30)
+
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta4...v1.0.0beta5)
 
 **Fixed bugs:**
@@ -187,6 +207,7 @@
 - Compiler: use defines to make sure that .unitypackage is built correctly [\#21](https://github.com/DragonBox/uplift/pull/21) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta4](https://github.com/DragonBox/uplift/tree/v1.0.0beta4) (2017-11-28)
+
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta3...v1.0.0beta4)
 
 **Implemented enhancements:**
@@ -198,6 +219,7 @@
 - Preparing release for 1.0.0beta4 [\#19](https://github.com/DragonBox/uplift/pull/19) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta3](https://github.com/DragonBox/uplift/tree/v1.0.0beta3) (2017-11-16)
+
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta2...v1.0.0beta3)
 
 **Merged pull requests:**
@@ -207,6 +229,7 @@
 - Automate build and release of binaries on Github [\#15](https://github.com/DragonBox/uplift/pull/15) ([niezbop](https://github.com/niezbop))
 
 ## [v1.0.0beta2](https://github.com/DragonBox/uplift/tree/v1.0.0beta2) (2017-11-14)
+
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta1...v1.0.0beta2)
 
 **Implemented enhancements:**
@@ -233,4 +256,4 @@
 
 
 
-\* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*

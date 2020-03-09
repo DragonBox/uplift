@@ -34,7 +34,7 @@ namespace Uplift
 	{
 		public static void SetLogging(bool on)
 		{
-			Debug.logger.logEnabled = on;
+			Debug.unityLogger.logEnabled = on;
 		}
 	}
 }

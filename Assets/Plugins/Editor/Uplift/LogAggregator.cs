@@ -33,8 +33,8 @@ namespace Uplift
 	{
 		public static ILogHandler ReplaceLogHandler(ILogHandler newLogHandler)
 		{
-			ILogHandler currentLogHandler = Debug.logger.logHandler;
-			Debug.logger.logHandler = newLogHandler;
+			ILogHandler currentLogHandler = Debug.unityLogger.logHandler;
+			Debug.unityLogger.logHandler = newLogHandler;
 			return currentLogHandler;
 		}
 	}

@@ -48,12 +48,14 @@ end
 
 desc 'Build the Uplift DLL and the unitypackage contain the DLL and its dependencies'
 task :build, [:unity_version] => [:chdir] do |_t, args|
-  args.with_defaults(unity_version: '5.6.5f1')
+  # overwrite the default version if necessary
   unity_version = args[:unity_version]
+  sh("git checkout -- ProjectSettings/ProjectVersion.txt")
+  File.write('ProjectSettings/ProjectVersion.txt', "m_EditorVersion: #{unity_version}") if unity_version
+  # create files necessary for the package build
   FileUtils.mkdir_p('Build/ProjectSettings')
-  File.write('ProjectSettings/ProjectVersion.txt', "m_EditorVersion: #{unity_version}")
   FileUtils.cp('ProjectSettings/ProjectVersion.txt', 'Build/ProjectSettings/ProjectVersion.txt')
-
+  # build
   sh('bundle exec u3d -- -logFile u3d.log -batchmode -quit -executeMethod BuildTool.DllCompiler.BuildPackage')
 
   editor_dir = File.join('Assets', 'Plugins', 'Editor')

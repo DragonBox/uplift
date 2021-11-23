@@ -96,7 +96,7 @@ namespace Uplift.Schemas
 						if (String.IsNullOrEmpty(guidPath))
 						{
 							Debug.Log("Warning, tracked file not found: guid: " + specGuid.Guid + " " + specGuid.Type);
-							return;
+							continue;
 						}
 						if (specGuid.Type == InstallSpecType.Root)
 						{

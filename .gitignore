@@ -4,6 +4,7 @@
 /target
 /test-results
 /obj
+/.bundle
 /*.csproj
 /*.csproj.user
 /*.pidb

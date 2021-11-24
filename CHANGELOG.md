@@ -1,11 +1,24 @@
 # Changelog
 
+## [v1.0.0beta18](https://github.com/DragonBox/uplift/tree/v1.0.0beta18) (2021-11-24)
+
+[Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta17...v1.0.0beta18)
+
+**Merged pull requests:**
+
+- Bump activesupport from 6.0.2.1 to 6.1.4.1 [\#113](https://github.com/DragonBox/uplift/pull/113) ([dependabot[bot]](https://github.com/apps/dependabot))
+- We need to continue nuking when we find out an asset that was already… [\#112](https://github.com/DragonBox/uplift/pull/112) ([lacostej](https://github.com/lacostej))
+- Bump addressable from 2.7.0 to 2.8.0 [\#111](https://github.com/DragonBox/uplift/pull/111) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump rack from 2.2.2 to 2.2.3 [\#109](https://github.com/DragonBox/uplift/pull/109) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Make sure the default ci\_build doesn't use deprecated 5.6 version by default [\#107](https://github.com/DragonBox/uplift/pull/107) ([lacostej](https://github.com/lacostej))
+
 ## [v1.0.0beta17](https://github.com/DragonBox/uplift/tree/v1.0.0beta17) (2020-03-09)
 
 [Full Changelog](https://github.com/DragonBox/uplift/compare/v1.0.0beta16...v1.0.0beta17)
 
 **Merged pull requests:**
 
+- Preparing release for 1.0.0beta17 [\#106](https://github.com/DragonBox/uplift/pull/106) ([lacostej](https://github.com/lacostej))
 - Bump rack from 2.0.6 to 2.2.2 [\#105](https://github.com/DragonBox/uplift/pull/105) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Feature/support unity 2017 4 [\#104](https://github.com/DragonBox/uplift/pull/104) ([lacostej](https://github.com/lacostej))
 - Bump rake from 12.3.2 to 13.0.1 [\#99](https://github.com/DragonBox/uplift/pull/99) ([dependabot[bot]](https://github.com/apps/dependabot))
